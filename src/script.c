@@ -55,6 +55,9 @@
  ***************************************************************************/
 /* script.c
  $Log: not supported by cvs2svn $
+ Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
+ Initial Rasmol 2.7.3 Import
+
  Revision 1.1  2004/05/07 19:46:16  yaya
  Initial revision
 
@@ -1394,7 +1397,7 @@ static void OutputKinemageVector( RAtom __far *src,  RAtom __far *dst, int col )
         fprintf(OutFile," P %g %g %g\n", 
           (src->xorg + src->fxorg + src->xtrl/40. + OrigCX)/250.0, 
           RestoreY((src->yorg + src->fyorg + src->ytrl/40. + OrigCY))/250.0,
-          -(src->zorg + src->fzorg - src->ztrl/40. + OrigCZ)/250.0 );
+          -(src->zorg + src->fzorg + src->ztrl/40. + OrigCZ)/250.0 );
     }
 
     if( col1 != col2 )
@@ -1402,7 +1405,7 @@ static void OutputKinemageVector( RAtom __far *src,  RAtom __far *dst, int col )
           (src->xtrl + dst->xtrl)/40. + OrigCX + OrigCX)/500.0;
         y = (src->yorg + dst->yorg + src->fyorg + dst->fyorg +
           (src->ytrl + dst->ytrl)/40. + OrigCY + OrigCY)/500.0;
-        z = (src->zorg + dst->zorg + src->fzorg + dst->fzorg -
+        z = (src->zorg + dst->zorg + src->fzorg + dst->fzorg +
           (src->ztrl + dst->ztrl)/40. + OrigCZ + OrigCZ)/500.0;
 
         fprintf(OutFile,"{} L %g %g %g\n", x, RestoreY(y), -z );
@@ -1417,7 +1420,7 @@ static void OutputKinemageVector( RAtom __far *src,  RAtom __far *dst, int col )
     fprintf(OutFile," L %g %g %g\n", 
       (dst->xorg + dst->fxorg + dst->xtrl/40. + OrigCX)/250.0,
       RestoreY((dst->yorg + dst->fyorg + dst->ytrl/40. + OrigCY))/250.0,
-       -(dst->zorg + dst->fzorg - dst->ztrl/40. + OrigCZ)/250.0 );
+       -(dst->zorg + dst->fzorg + dst->ztrl/40. + OrigCZ)/250.0 );
 
     MagePrev = dst;
     MageCol = col2;
@@ -1834,7 +1837,7 @@ int WritePOVRayFile( char *name )
             y = (double)(aptr->yorg + aptr->fyorg)/250.0 
                 + (double)(aptr->ytrl)/10000.;
             z = (double)(aptr->zorg + aptr->fzorg)/250.0 
-                - (double)(aptr->ztrl)/10000.;
+                + (double)(aptr->ztrl)/10000.;
 #ifdef __STDC__
             fprintf(OutFile,"object {sphere {<%g, %g, %g> %g}\n",
 #else
@@ -1924,7 +1927,7 @@ static void WriteVRMLAtoms( void )
                     y = (double)(aptr->yorg + aptr->fyorg)/250.0
                       + (double)(aptr->ytrl)/10000.;
                     z = -(double)(aptr->zorg + aptr->fzorg)/250.0
-                      + (double)(aptr->ztrl)/10000.;
+                      - (double)(aptr->ztrl)/10000.;
 
                     fputs("    Translation { translation ",OutFile);
                     WriteVRMLTriple(x-ox,RestoreY(y-oy),z-oz);
@@ -2003,7 +2006,7 @@ static void WriteVRMLWireframe( void )
                 y = (double)(dst->yorg + dst->fyorg)/250.0
                   + (double)(dst->ytrl)/10000.;
                 z = -(double)(dst->zorg + dst->fzorg)/250.0
-                  + (double)(dst->ztrl)/10000.;
+                  - (double)(dst->ztrl)/10000.;
 
                 fputs("        ",OutFile);
                 WriteVRMLTriple(x,RestoreY(y),z);
@@ -2020,7 +2023,7 @@ static void WriteVRMLWireframe( void )
                       +(double)(src->ytrl + dst->ytrl)/20000.;
                 z = -(double)(src->zorg + dst->zorg +
                       src->fzorg + dst->fzorg)/500.0
-                      +(double)(src->ztrl + dst->ztrl)/20000.;
+                      -(double)(src->ztrl + dst->ztrl)/20000.;
                 
                 fputs("        ",OutFile);
                 WriteVRMLTriple(x,RestoreY(y),z);

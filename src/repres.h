@@ -55,6 +55,9 @@
  ***************************************************************************/
 /* repres.h
  $Log: not supported by cvs2svn $
+ Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
+ Initial Rasmol 2.7.3 Import
+
  Revision 1.1  2004/05/07 19:46:16  yaya
  Initial revision
 
@@ -99,7 +102,7 @@ typedef struct _Monitor {
         RAtom __far *mid2;
         RAtom __far *dst;
         int monmode;
-        int dist;
+        Long dist;
         short col;
         unsigned char units;
     } Monitor;
@@ -162,7 +165,7 @@ void DisplayLabels( void );
 void DeleteMonitors( void );
 void AddMonitors2( RAtom __far*, RAtom __far*,
   RAtom __far*, RAtom __far*, 
-  short, unsigned char, int );
+  Long, unsigned char, int );
 void AddMonitors( RAtom __far*, RAtom __far* );
 void CreateMonitor( Long, Long );
 void DisplayMonitors( void );

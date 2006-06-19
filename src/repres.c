@@ -55,6 +55,9 @@
  ***************************************************************************/
 /* repres.c
  $Log: not supported by cvs2svn $
+ Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
+ Initial Rasmol 2.7.3 Import
+
  Revision 1.1  2004/05/07 19:46:16  yaya
  Initial revision
 
@@ -523,7 +526,7 @@ void DeleteMonitors( void )
 /* [GSG 11/21/95] AddMonitors2 can add a monitor w/a given number */
 void AddMonitors2( RAtom __far *src, RAtom __far *dst,
       RAtom __far *mid1, RAtom __far *mid2,
-      short dist, unsigned char units, int monmode )
+      Long dist, unsigned char units, int monmode )
 {
     register Monitor **prev;
     register Monitor *ptr;
@@ -567,17 +570,9 @@ void AddMonitors2( RAtom __far *src, RAtom __far *dst,
 
 void AddMonitors( RAtom __far *src, RAtom __far *dst )
 {
-    register Long dx, dy, dz;
-    register Long dist;
-    short temp;
+    Long temp;
  
-    dx = src->xorg - dst->xorg + src->fxorg - dst->fxorg;
-    dy = src->yorg - dst->yorg + src->fyorg - dst->fyorg;
-    dz = src->zorg - dst->zorg + src->fzorg - dst->fzorg;
-
-    /* ptr->dist = 100.0*CalcDistance(src,dst) */
-    dist = isqrt( dx*dx + dy*dy + dz*dz );
-    temp = rint(100.0*CalcDistance(src,dst));
+    temp = (Long)rint(100.0*CalcDistance(src,dst));
 
     AddMonitors2(src, dst, 
       (RAtom __far *)NULL, (RAtom __far *)NULL, temp, 127, PickDist);

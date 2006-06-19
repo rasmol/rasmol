@@ -55,6 +55,9 @@
  ***************************************************************************/
 /* infile.c
  $Log: not supported by cvs2svn $
+ Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
+ Initial Rasmol 2.7.3 Import
+
  Revision 1.1  2004/05/07 19:46:16  yaya
  Initial revision
 
@@ -3047,7 +3050,7 @@ int SavePDBMolecule( char *filename )
             y = (double)(aptr->yorg + aptr->fyorg + OrigCY)/250.0
                 +(double)(aptr->ytrl)/10000.0;
             z = (double)(aptr->zorg + aptr->fzorg + OrigCZ)/250.0
-                -(double)(aptr->ztrl)/10000.0;
+                +(double)(aptr->ztrl)/10000.0;
  
 #ifdef INVERT
             fprintf(DataFile,"%8.3f%8.3f%8.3f",x,-y,-z);
@@ -3134,7 +3137,7 @@ int SaveMDLMolecule( char *filename )
             y = (double)(aptr->yorg + aptr->fyorg + OrigCY)/250.0
                 +(double)(aptr->ytrl)/10000.0;
             z = (double)(aptr->zorg + aptr->fzorg + OrigCZ)/250.0
-                -(double)(aptr->ztrl)/10000.0;
+                +(double)(aptr->ztrl)/10000.0;
 #ifdef INVERT
 #ifdef __STDC__
             fprintf(DataFile,"%10.4f%10.4f%10.4f ",x,-y,-z);
@@ -3287,7 +3290,7 @@ int SaveAlchemyMolecule( char *filename )
             y = (double)(aptr->yorg + aptr->fyorg + OrigCY)/250.0
                 +(double)(aptr->ytrl)/10000.0;
             z = (double)(aptr->zorg + aptr->fzorg + OrigCZ)/250.0
-                -(double)(aptr->ztrl)/10000.0;
+                +(double)(aptr->ztrl)/10000.0;
  
             /* Apply Current Viewpoint Rotation Matrix */
             xpos = (float)(x*RotX[0] + y*RotX[1] + z*RotX[2]);
@@ -3365,7 +3368,7 @@ int SaveXYZMolecule( char *filename )
             y = (double)(aptr->yorg + aptr->fyorg + OrigCY)/250.0
                 +(double)(aptr->ytrl)/10000.0;
             z = (double)(aptr->zorg + aptr->fzorg + OrigCZ)/250.0
-                -(double)(aptr->ztrl)/10000.0;
+                +(double)(aptr->ztrl)/10000.0;
 
 #ifdef INVERT
             fprintf(DataFile," %8.3f %8.3f %8.3f",x,-y,-z);

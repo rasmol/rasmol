@@ -1289,15 +1289,15 @@ void ResetSymbolTable( void )
 
 double CalcDistance( RAtom __far *atm1, RAtom __far *atm2 )
 {
-    register Long dx,dy,dz;
+    register double dx,dy,dz;
     register double dist2;
 
-    dx = atm1->xorg - atm2->xorg + atm1->fxorg - atm2->fxorg;
-    dy = atm1->yorg - atm2->yorg + atm1->fyorg - atm2->fyorg;
-    dz = atm1->zorg - atm2->zorg + atm1->fzorg - atm2->fzorg;
-    if( dx || dy || dz )
+    dx = (double)(atm1->xorg - atm2->xorg + atm1->fxorg - atm2->fxorg);
+    dy = (double)(atm1->yorg - atm2->yorg + atm1->fyorg - atm2->fyorg);
+    dz = (double)(atm1->zorg - atm2->zorg + atm1->fzorg - atm2->fzorg);
+    if( dx != 0.0 || dy != 0.0 || dz != 0.0 )
     {   dist2 = dx*dx + dy*dy + dz*dz;
-        return( sqrt(dist2)/250.0 );
+        return( sqrt(dist2/62500.) );
     } else return 0.0;
 }
 
@@ -1353,7 +1353,7 @@ double CalcTorsion( RAtom __far *atm1, RAtom __far *atm2,
     ay = atm2->yorg - atm1->yorg + atm2->fyorg - atm1->fyorg
          + (double)(atm2->ytrl - atm1->ytrl)/40.;
     az = atm2->zorg - atm1->zorg + atm2->fzorg - atm1->fzorg
-         - (double)(atm2->ztrl - atm1->ztrl)/40.;
+         + (double)(atm2->ztrl - atm1->ztrl)/40.;
     if( !ax && !ay && !az )
         return 0.0;
 
@@ -1362,7 +1362,7 @@ double CalcTorsion( RAtom __far *atm1, RAtom __far *atm2,
     by = atm3->yorg - atm2->yorg + atm3->fyorg - atm2->fyorg
          + (double)(atm3->ytrl - atm2->ytrl)/40.;
     bz = atm3->zorg - atm2->zorg + atm3->fzorg - atm2->fzorg
-         - (double)(atm3->ztrl - atm2->ztrl)/40.;
+         + (double)(atm3->ztrl - atm2->ztrl)/40.;
     if( !bx && !by && !bz )
         return 0.0;
 
@@ -1371,7 +1371,7 @@ double CalcTorsion( RAtom __far *atm1, RAtom __far *atm2,
     cy = atm4->yorg - atm3->yorg + atm4->fyorg - atm3->fyorg
          + (double)(atm4->ytrl - atm3->ytrl)/40.;
     cz = atm4->zorg - atm3->zorg + atm4->fzorg - atm3->fzorg
-         - (double)(atm4->ztrl - atm3->ztrl)/40.;
+         + (double)(atm4->ztrl - atm3->ztrl)/40.;
     if( !cx && !cy && !cz )
         return 0.0;
 
@@ -1567,7 +1567,7 @@ char *DescribeObj( AtomRef *ptr, Selection select )
       y = (double)(ptr->atm->yorg + ptr->atm->fyorg + OrigCY)/250.0
          +(double)(ptr->atm->ytrl)/10000.0;
       z = (double)(ptr->atm->zorg + ptr->atm->fzorg + OrigCZ)/250.0
-         -(double)(ptr->atm->ztrl)/10000.0;
+         +(double)(ptr->atm->ztrl)/10000.0;
 
 #ifdef INVERT
       sprintf(eptr, "\n  Coordinates: %9.3f %9.3f %9.3f\n",x,-y,-z);
