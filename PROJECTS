@@ -1,0 +1,104 @@
+# File PROJECTS
+# RasMol2, Roger Sayle
+# Glaxo Research & Development
+# Last Modified 28/03/95
+
+# Any person (university or company) wishing to help with any
+# of the projects described below, please e-mail the author at
+# "ras32425@ggr.co.uk".
+
+
+[A] Machine Independent
+=======================
+
+[A1] Input Formats
+------------------
+    [1] BioSym's .car format (including polymer extensions).
+    [2] Macromodel format files.
+    [3] Implement STAR file parser for mmCIF,MIF and MODEL files
+    [3] Gaussian (z-matrix) files.
+    [4] DayLight Chemical System's Thor data trees (.tdt)
+    [5] Support for complex parsing of ASN.1 mmdb 
+
+[A2] Chemistry/Biology Support
+------------------------------
+    [1] Priestle-style Structure Smoothing
+    [2] Define "cisproline" from Omega angles.
+    [3] Crystallographic Symmetry operators.
+    [4] Richardson's `typed' turn definitions (instead of DSSP)
+    [5] "phi" & "psi" properties of amino acid residues.
+    [6] "helix(3)" and "turn(2)" subtypes in expressions.
+    [7] "set dielectric" parameter for potential surfaces.
+    [8] Read default SSBOND from PDB file.
+    [9] Determine charges using "Marselli-Gasteiger"
+
+[A3] Output Formats
+-------------------
+    [1] Persistance of Vision (POV) ray tracer format
+    [2] Write out secondary structure to PDB files
+    [3] Vector PostScript output of Ribbons (MolScript)
+
+[A5] Representations
+--------------------
+    [1] Flat Capped Cylinder Representation
+    [2] Full `Connolly' Solvent Accessible Surface
+    [3] Solid Polygonal Solvent Surfaces [like GRASP].
+    [4] Priestle "Ribbons" for alpha carbon only backbones.
+    [5] Group (Bounding) Spheres Representation 
+    [6] Ortep Style thermal ellipsoid Graphics.
+    [7] Solid `Extruded Ellipse' Representation (MIDAS & Ribbons)
+
+[A4] Rendering
+--------------
+    [1] Zaphod (Stereo) Mode Transformation
+    [2] Red-Green Stereo line drawings
+    [3] Improved Quality Cylinder Rendering
+    [4] Shadow Casting from Cylinders (IA & Quadric).
+    [5] Back Clipping/Slabbing Plane
+    [6] Shadow Casting from (Ribbon/Surface) Polygons
+
+[A5] Misc.
+----------
+    [1] Rewrite Manual and develop tutorial introduction.
+    [2] RESIZE command to set resolution even in non-iteractive mode.
+    [3] Increased support for MolScript & PDBregion expressions.
+    [4] BSD `socket'-based Inter-process Communication (OML & Flex).
+    [5] Optimise select expressions of the form "(atomno=%d) or (atomno=%d)"
+
+
+[B] Machine & OS Dependent
+==========================
+
+[B1] UNIX & X11 Window System
+-----------------------------
+    [1] FileOpen and FileSave Dialog Boxes
+    [2] X Windows Resource Database (XDefaults)
+    [3] Graphics Tablet and Spaceball Input
+    [4] X11's SGIFullScreenStereo Extension
+    [5] Colour 85x67 Icon for 4Dwm on SGI Machines!
+
+
+[B2] MS-DOS & MS Windows 3.1
+----------------------------
+    [1] MS Windows WINDOWS.INI File Processing
+    [2] DDE Transfer of Valuators
+    [3] Develop 32/24bit graphics version of RasWin
+
+[B3] Apple Macintosh & PowerMac
+--------------------------------
+    [1] Select and Copy text from the command line.
+    [2] Simple AppleEvents to ExecuteCommands.
+    [3] Advanced AppleEvents to Transfer Data.
+    [4] Initialisation [Preference?] File.
+
+[B4] VAX/AXP VMS
+----------------
+    [1] Improved filename parsing and expansion!
+    [2] Spawn process to uncompress files.
+
+[B5] Other Systems
+------------------
+    [1] Acorn Archimedes (ARM) version for UK schools.
+    [2] Commodore Amiga version (???).
+
+

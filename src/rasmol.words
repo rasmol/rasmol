@@ -1,0 +1,417 @@
+      /*
+        ACIDIC               AcidicTok
+        ACYCLIC              AcyclicTok
+        ALCHEMY              AlchemyTok
+        ALIPHATIC            AliphaticTok
+        ALL                  AllTok
+        ALPHA                AlphaTok
+        ALT                  AltlTok
+        AMBIENT              AmbientTok
+        AMINO                AminoTok
+        AND                  AndTok
+        ANGLE                AngleTok
+        ANGLES               AngleTok
+        AROMATIC             AromaticTok
+        ASSE                 AxesTok
+        ASSI                 AxesTok
+        AT                   ATTok
+        ATOM                 AtomTok
+        ATOMNO               AtomNoTok
+        ATOMNUMBER           AtomNoTok
+        ATOMS                AtomTok
+        AXES                 AxesTok
+        AXIS                 AxesTok
+      */
+
+      /*
+        BACKBONE             BackboneTok
+        BACKFADE             BackFadeTok
+        BACKGROUND           BackgroundTok
+        BASIC                BasicTok
+        BIOSYM               BiosymTok
+        BLACK                BlackTok
+        BLUE                 BlueTok
+        BLUETINT             BlueTintTok
+        BMP                  BMPTok
+        BOND                 BondTok
+        BONDED               BondedTok
+        BONDMODE             BondModeTok
+        BONDS                BondTok
+        BOUNDBOX             BoundBoxTok
+        BOUNDINGBOX          BoundBoxTok
+        BROWN                BrownTok
+        BURIED               BuriedTok
+      */
+
+      /*
+        CADENA               ChainTok
+        CADENAS              ChainTok
+        CARTOON              CartoonTok
+        CARTOONS             CartoonTok
+        CATENA               ChainTok
+        CATENE               ChainTok
+        CENTER               CentreTok
+        CENTRE               CentreTok
+        CEX                  CEXTok
+        CG                   CGTok
+        CHAIN                ChainTok
+        CHAINS               ChainTok
+        CHARGE               ChargeTok
+        CHARGED              ChargedTok
+        CHARGES              ChargeTok
+        CHARMM               CharmmTok
+        CIF                  CIFTok
+        CISANGLE             CisAngleTok
+        CISBONDED            CisBondedTok
+        CLIPBOARD            ClipboardTok
+        COLOR                ColourTok
+        COLORS               ColourTok
+        COLOUR               ColourTok
+        COLOURS              ColourTok
+        CONNECT              ConnectTok
+        COORDINATE           CoordTok
+        COORDINATES          CoordTok
+        COORD                CoordTok
+        COORDS               CoordTok
+        COPY                 CopyTok
+        CPK                  CPKTok
+        CYAN                 CyanTok
+        CYCLIC               CyclicTok
+        CYSTINE              CystineTok
+      */
+
+      /*
+        DASH                 DashTok
+        DASHES               DashTok
+        DATA_...             CIFDataTok
+        DEFINE               DefineTok
+		DEPTH                DepthTok
+        DEPTHCUE             DepthCueTok
+        DIBUJO               CartoonTok
+        DIBUJOS              CartoonTok
+        DISPLAY              DisplayTok
+        DISTANCE             DistanceTok
+        DISTANCES            DistanceTok
+        DNA                  DNATok
+        DOTS                 DotsTok
+      */
+
+      /*
+        E                    AndTok
+        ECHO                 EchoTok
+        EJE                  AxesTok
+        EJES                 AxesTok
+        ELANCE               BondTok
+        ELANCES              BondTok
+        ELEMNO               ElemNoTok
+        ELEMENTNUMBER        ElemNoTok
+        ELICHE               HelixTok
+        ENGLISH              EnglishTok
+        EPSF                 EPSFTok
+        ELICHE               HelixTok
+        ESQUELETO            BackboneTok
+        ETIQUETA             LabelTok
+        ETIQUETAS            LabelTok
+        ETICHETTA            LabelTok
+        ETICHETTE            LabelTok  
+        EXIT                 ExitTok
+      */
+
+      /*
+        FALSE                FalseTok
+        FDAT                 FDATTok
+        FILODIFERRO          WireframeTok
+        FILDIFERRO           WireframeTok
+        FILI                 StrandsTok  
+        FONTSIZE             FontSizeTok
+        FONTSTROKE           FontStrokeTok
+        FRENCH               FrenchTok
+        FS                   FSTok
+      */
+
+      /*
+        GAUSSIAN             GaussianTok
+        GIF                  GIFTok
+        GIRO                 TurnTok
+        GIROS                TurnTok
+        GOLD                 GoldTok
+        GRAY                 GrayTok
+        GREEN                GreenTok
+        GREENBLUE            GreenBlueTok
+        GREENTINT            GreenTintTok
+        GREY                 GrayTok
+        GROUP                GroupTok
+        GRUPO                GroupTok
+        GRUPPO               GroupTok 
+      */
+
+      /*
+        HALF                 HalfTok
+        HARDWARE             HardwareTok
+        HBOND                HBondTok
+        HBONDS               HBondTok
+        HEADER               HeaderTok
+        HEBRAS               StrandsTok
+        HELICES              HelixTok
+        HELIX                HelixTok
+        HELP                 HelpTok
+        HETERO               HeteroTok
+        HOLLOW               HollowTok
+        HOTPINK              HotPinkTok
+        HOURGLASS            HourGlassTok
+        HYDROGEN             HydrogenTok
+        HYDROPHOBIC          HydrophobicTok
+      */
+
+      /*
+        IDENT                IdentifyTok
+        IDENTIFY             IdentifyTok
+		IMAGE				 ImageTok
+        INFO                 InfoTok
+        INFORMATION          InfoTok
+        INLINE               InLineTok
+        INSIGHT              InsightTok
+        ION                  IonTok
+        IONS                 IonTok
+        IRIS                 IRISTok
+        ITALIAN              ItalianTok
+      */
+
+      /*
+        JPEG                 JPEGTok
+      */
+
+      /*
+        KINEMAGE             KinemageTok
+      */
+
+      /*
+        LABEL                LabelTok
+        LABELS               LabelTok
+        LARGE                LargeTok
+        LIGAND               LigandTok
+        LIGANDS              LigandTok
+        LOAD                 LoadTok
+      */
+
+      /*
+        MACROMODEL           MacroModelTok
+        MAGENTA              MagentaTok
+        MAINCHAIN            MainChainTok
+        MDL                  MDLTok
+        MEDIUM               MediumTok
+        MENUS                MenusTok
+        MMDB                 MMDBTok
+        MODEL                ModelTok
+        MOL2                 Mol2Tok
+        MOLECULE             MoleculeTok
+        MOLSCRIPT            MolScriptTok
+        MONITOR              MonitorTok
+        MONITORS             MonitorTok
+        MONO                 MonoTok
+        MONOCHROME           MonoTok
+        MONOPS               MonoPSTok
+        MOPAC                MOPACTok
+        MOSTRAR              DisplayTok
+        MOUSE                MouseTok
+        MOUSEMODE            MouseTok
+      */
+
+      /*
+        NASTRO               RibbonTok 
+        NASTRI               RibbonTok 
+        NEGATIVE             AcidicTok
+        NEUTRAL              NeutralTok
+        NMRPDB               NMRPDBTok
+        NONE                 NoneTok
+        NORMAL               NormalTok
+        NOT                  NotTok
+        NUCLEIC              NucleicTok
+      */
+
+      /*
+        OFF                  FalseTok
+        ON                   TrueTok
+        OR                   OrTok
+        ORANGE               OrangeTok
+        ORIGIN               OriginTok
+      */
+
+      /*
+        PASTE				 PasteTok
+        PAUSE                WaitTok
+        PDB                  PDBTok
+        PHIPSI               PhiPsiTok
+        PICK                 PickingTok
+        PICKING              PickingTok
+        PICT                 PICTTok
+        PINK                 PinkTok
+        PINKTINT             PinkTintTok
+        PNG                  PNGTok
+        POLAR                PolarTok
+        POSITIVE             BasicTok
+        POTENTIAL            PotentialTok
+        POVRAY               POVRayTok
+        POVRAY2              POVRay2Tok
+        POVRAY3              POVRay3Tok
+        PPM                  PPMTok
+        PRINT                PrintTok
+        PROTEIN              ProteinTok
+        PS                   EPSFTok
+        PURINE               PurineTok
+        PURINES              PurineTok
+        PURPLE               PurpleTok
+        PYRIMIDINE           PyrimidineTok
+        PYRIMIDINES          PyrimidineTok
+      */
+
+      /*
+        QUANTA               QuantaTok
+        QUIT                 QuitTok
+      */
+
+      /*
+        RADIUS               RadiusTok
+        RAMACHAN             RamachanTok
+        RAMACHANDRANDATAFILE RamachanTok
+        RAMACHANDRANPRINTERPLOT RamPrintTok
+        RAMDATA              RamachanTok
+        RAMPRINT             RamPrintTok
+        RASMAC               RasMolTok
+        RASMOL               RasMolTok
+        RASWIN               RasMolTok
+        RDF                  RamachanTok
+        RED                  RedTok
+        REDORANGE            RedOrangeTok
+        REFRESH              RefreshTok
+        REJECT               RejectTok
+        RENUM                RenumTok
+        RENUMBER             RenumTok
+        RESET                ResetTok
+        RESIDUE              ResidueTok
+        RESIDUENUMBER        ResNoTok
+        RESIZE               ResizeTok
+        RESNO                ResNoTok
+        RESTRICT             RestrictTok
+        RGB                  IRISTok
+        RIBBON               RibbonTok
+        RIBBON1              Ribbon1Tok
+        RIBBON2              Ribbon2Tok
+        RIBBONS              RibbonTok
+        RIBBONS1             Ribbon1Tok
+        RIBBONS2             Ribbon2Tok
+        RIEMPIMENTO          SpacefillTok
+        RNA                  RNATok
+        ROT                  RotateTok
+        ROTATE               RotateTok
+        ROTATION             RotateTok
+        RPP                  RamPrintTok
+      */
+
+      /*
+        SALIR                ExitTok
+        SAVE                 SaveTok
+        SCHELETRO            BackboneTok
+        SCRIPT               ScriptTok
+        SECTION              SectionTok
+        SEAGREEN             SeaGreenTok
+        SELECT               SelectTok
+        SELECTED             SelectedTok
+        SELECTION            SelectionTok
+        SEQUENCE             SequenceTok
+        SET                  SetTok
+        SHADEPOWER           ShadePowerTok
+        SHADOW               ShadowTok
+        SHADOWS              ShadowTok
+        SHAPELY              ShapelyTok
+        SHEET                SheetTok
+        SHEETS               SheetTok
+        SHELX                SHELXTok
+        SHOW                 ShowTok
+        SIDECHAIN            SidechainTok
+        SKYBLUE              SkyBlueTok
+        SLAB                 SlabTok
+        SLABMODE             SlabModeTok
+        SMALL                SmallTok
+        SOLID                SolidTok
+        SOLVENT              SolventTok
+        SOLVENTS             SolventTok
+        SOURCE               SourceTok
+        SPACEFILL            SpacefillTok
+        SPANISH              SpanishTok
+        SPECPOWER            SpecPowerTok
+        SPECULAR             SpecularTok
+        SSBOND               SSBondTok
+        SSBONDS              SSBondTok
+        STAR                 StarTok
+        STARS                StarTok
+        STEREO               StereoTok
+        STRANDS              StrandsTok
+        STRUCTURE            StructureTok
+        SUN                  SUNTok
+        SUNRLE               SUNRLETok
+        SURFACE              SurfaceTok
+        SYBYL                SybylTok
+        SYMMETRY             SymmetryTok
+      */
+
+      /*
+        TEMPERATURE          TemperatureTok
+        TITLE                TitleTok
+        TODO                 AllTok
+        TORSION              TorsionTok
+        TORSIONS             TorsionTok
+        TRACE                TraceTok
+        TRANSLATE            TranslateTok
+        TRANSLATION          TranslateTok
+        TRANSPARENT          TransparentTok
+        TRUE                 TrueTok
+        TURN                 TurnTok
+        TURNS                TurnTok
+        TUTTO                AllTok 
+        TYPE                 TypeTok
+      */
+
+      /*
+        UNBOND               UnBondTok
+        UNITCELL             UnitCellTok
+        USER                 UserTok
+      */
+
+      /*
+        VDW                  VDWTok
+        VECTPS               VectPSTok
+		VIEW                 ViewTok
+        VIGNETTA             CartoonTok
+        VIOLET               VioletTok
+        VISUALIZZA           DisplayTok 
+        VRML                 VRMLTok
+      */
+
+      /*
+        WAIT                 WaitTok
+        WATER                WaterTok
+        WATERS               WaterTok
+        WHITE                WhiteTok
+        WIREFRAME            WireframeTok
+        WITHIN               WithinTok
+        WRITE                WriteTok
+      */
+
+      /*
+        X                    XTok
+        XYZ                  XYZTok
+      */
+
+      /*
+        Y                    YTok
+        YELLOW               YellowTok
+        YELLOWTINT           YellowTintTok
+      */
+
+      /*
+        Z                    ZTok
+        ZAP                  ZapTok
+        ZOOM                 ZoomTok
+      */
+

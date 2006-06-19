@@ -1,0 +1,23 @@
+*** rasmol.h	Sat Feb  5 21:37:41 2005
+--- rasmol.h	Sun Feb  6 14:21:27 2005
+***************
+*** 143,151 ****
+  /*==============================*/
+  
+  #define MAIN_COPYRIGHT "Copyright (C) Roger Sayle 1992-1999"
+! #define VERSION "2.7.2.1.1"
+! #define VER_COPYRIGHT "Copyright (C) Herbert J. Bernstein 1998-2004"
+! #define VER_DATE "January 2004"
+  
+  #ifndef True
+  #define True  1
+--- 143,151 ----
+  /*==============================*/
+  
+  #define MAIN_COPYRIGHT "Copyright (C) Roger Sayle 1992-1999"
+! #define VERSION "2.7.3"
+! #define VER_COPYRIGHT "Copyright (C) Herbert J. Bernstein 1998-2005"
+! #define VER_DATE "February 2005"
+  
+  #ifndef True
+  #define True  1

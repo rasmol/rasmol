@@ -1,0 +1,279 @@
+<HTML>
+<HEAD>
+<TITLE>RasMol History</TITLE>
+</HEAD>
+<BODY  BGCOLOR="F0F0FF" BACKGROUND="html_graphics/rasmolwallpaper.jpg">
+<center>
+<img src="html_graphics/rasmollogo.jpg">
+</center>
+<H1 ALIGN=CENTER><FONT SIZE=5>The Historical Context of RasMol
+Development</FONT></H1>
+<P ALIGN=CENTER>
+by<BR>
+Herbert J. Bernstein<BR>
+Bernstein + Sons<BR>
+P.O. Box 177, Bellport, NY 11713<BR>
+</P>
+<P ALIGN=CENTER>
+<A href="mailto:yaya@bernstein-plus-sons.com">yaya@bernstein-plus-sons.com</A>
+<P ALIGN=CENTER>
+&#169; Copyright Herbert J. Bernstein 2000
+<BR>
+</P>
+
+<H3>Introduction</H3>
+<P>
+This document is an attempt to explain the historical context within
+which the current thread of RasMol development is being done.  This is
+a very narrow view of a very rich subject area.  For a broader view of
+the history of molecular graphics, see the references to this note and
+various web pages on the subject.
+<P>
+
+<H3>Historical Context</H3>
+<P>
+Pictures help in understanding the structure and function of
+biologically significant molecules.  When individual atoms and bonds
+are being considered, representations of bonds as sticks and atoms as
+balls or as ellipsoids showing thermal librations are commonly used.   
+When structure on a larger scale is being considered, renderings based
+on stick bonds without explicit representations of atoms,
+spaced-filling balls for atoms without explicit representations of
+bonds, ribbons and curved tubes to represent polymeric backbones and
+isoparametric surfaces coloured by the state of other parameters are
+commonly used.  On either scale, electron density maps are useful.  The
+small scale renderings were standardized in 1965 when Carroll
+Johnson<FONT SIZE=1><SUP><A HREF="#footnote1">1</A></SUP></FONT>
+created the Oak Ridge Thermal Ellipsoid Program, ORTEP, a computer
+program that renders atoms as balls or ellipsoids connected by stick
+bonds.  Cyrus Levinthal and Robert Langridge<FONT SIZE=1><SUP><A
+HREF="#footnote2">2</A></SUP></FONT> used computer graphics for larger
+scale renderings in structural biology.  In 1969, Irving Geis<FONT
+SIZE=1><SUP><A HREF="#footnote3">3</A></SUP></FONT> set the standard
+for hand-drawn, graphical renderings of the features of biological
+macromolecules.  In the 1960's and 1970's computer generated graphics
+gradually caught up with the standard set by Geis.  See the F. Scott
+Mathews 1983 review<FONT SIZE=1><SUP><A
+HREF="#footnote4">4</A></SUP></FONT>.  High quality graphical
+representations of molecules became an essential element of scientific
+research in structural biology.  In 1991, Kraulis<FONT SIZE=1><SUP><A
+HREF="#footnote5">5</A></SUP></FONT> released Molscript, which, in
+combination with Raster3D<FONT SIZE=1><SUP><A
+HREF="#footnote6">6</A></SUP></FONT>, has become the standard for
+high-quality renderings of macromolecules as static images.  In 1992,
+the Richardsons released a Macintosh-based visualization program for
+kinemages<FONT SIZE=1><SUP><A HREF="#footnote7">7</A></SUP></FONT> of
+macromolecules.  In 1992, Roger Sayle<FONT SIZE=1><SUP><A
+HREF="#footnote8">8</A></SUP></FONT> described the program RasMol,
+which used a highly efficient rendering algorithm to allow high quality
+interactive rendering of macromolecules on a wide variety of platforms.
+ The program was released in 1993.  Roger Sayle's maintenance and
+development of RasMol was supported by Glaxo for several years.
+<P>
+There are many other graphic rendering programs in use in structural
+biology.  Swiss-PdbViewer<FONT SIZE=1><SUP><A
+HREF="#footnote9">9</A></SUP></FONT> displays and manipulates multiple
+models and electron density maps.   Raster3D<FONT SIZE=1><SUP><A
+HREF="#footnote10">6</A>,</SUP></FONT><FONT SIZE=1><SUP><A
+HREF="#footnote10">10</A>,</SUP></FONT><SUP><FONT SIZE=1><A
+HREF="#footnote11">11</A></FONT></SUP><FONT SIZE=1></FONT> provides a
+powerful set of rendering tools for quality images of ribbons,
+space-filling atoms, etc.  Molscript<FONT SIZE=1><SUP><A
+HREF="#footnote12">12</A>13</SUP></FONT> is a rendering program both
+for visualisation and export to other rendering programs, such as
+Raster3D.   Molecular Simulations Inc. (MSI)  distributes WebLab
+ViewerLite for free and sells WebLab ViewerPro for visualisation of
+molecules on Macs and PCs (see
+<A HREF="http://www.msi.com/life/products/weblab/viewer">http://www.msi.com/life/products/weblab/viewer</A>).   MDL Information
+Systems, Inc (MDL) distributes Chemscape Chime, a derivative of RasMol
+that works as a web browser &quot;plug-in&quot;.  In the late 1980's
+UCSF Computer Graphics Laboratory's MIDAS <FONT SIZE=1><SUP><A
+HREF="#footnote13">13</A></SUP></FONT> provided graphics tools for drug
+design by visualisation and docking of molecules.  In the early 1990's
+Anthony Nicholls' GRASP<FONT SIZE=1><SUP><A
+HREF="#footnote14">14</A></SUP></FONT> brought a new level of rigor and
+quality to visualisation of surfaces. 
+<P>
+Many of the programs mentioned in an historical context above have
+continued to develop.  Ortep is alive and well with a new user-friendly
+semi-interactive interface (see <A HREF="http://www.ornl.gov/ortep">http://www.ornl.gov/ortep</A>).  The
+current descendant of MIDAS is Chimera (see
+<A HREF="http://www.cgl.ucsf.edu/chimera">http://www.cgl.ucsf.edu/chimera</A>), which emphasizes extensibility. 
+GRASP has been made highly accessible by a web server (GRASS, see
+<A HREF="http://trantor.bioc.columbia.edu/GRASS/surfserv_enter.cgi">http://trantor.bioc.columbia.edu/GRASS/surfserv_enter.cgi</A>).  For
+pointers to additional rendering programs, see the RCSB web page
+(http://www.rcsb.org), and the IUCr web page (<A href="http://www.iucr.org">http://www.iucr.org</A>). 
+<P>
+
+<H3>RasMol Developmental Threads</H3>
+<P>
+The RasMol 2 series began with the release of RasMol 2.1 in 1993 by
+Roger Sayle.  In 1995 and 1995, Marco Molinaro modified Roger Sayle's
+RasMol versions 2.5 and 2.6 to create 2.5-ucb and 2.6-ucb.  In late
+1996, Roger Sayle release 2.6b2 which proved to be very popular and
+durable.  Arne Mueller worked with Roger Sayle in 1998 and created a
+modified version of 2.6b2 called 2.6x1, which was recently used as a
+base for a version called 2.6ab2 by Andreas Bohne.  In late 1998,
+Herbert Bernstein (the author of this review) modified 2.6b2 to create
+the 2.6 CIF series.  At the same time Roger Sayle was completing his
+own update to 2.6b2 called 2.6.4.  In early 1999, Roger Sayle, Arne
+Mueller and Herbert Bernstein agreed to work together on a new, common,
+open source version of RasMol, the 2.7 series, which is managed and
+released by Herbert Bernstein.  As of this writing, versions 2.6.4,
+2.6_CIF and 2.6x1 have all been integrated into the 2.7 series, and
+agreement has been reached with Marco Molinaro and Andreas Bohne on
+integration of their modifications into the main line of development.
+A preliminary release incorporating some of the 2.5-ucb and 2.6-ucb
+mods was released in August 2000.
+
+<P>
+<P ALIGN=CENTER><IMG SRC="html_graphics/rasmol_history.jpg"><BR>
+<B>Figure 1.  Relationships among some of the variants of RasMol.  The
+initials used are:  &quot;RS&quot; for Roger Sayle, &quot;AM&quot; for
+Arne Mueller, &quot;MM&quot; for Marco Molinaro, &quot;AB&quot; for
+Andreas Bohne, and &quot;HJB&quot; for Herbert J. Bernstein.<BR>
+</B></P>
+
+<P>The new 2.7 series differs from the earlier version by being a
+copyright-protected open source version.    Roger Sayle's earlier
+versions were made freely available without restriction.  The new
+series does have some restrictions.  The following conditions are
+imposed on copying and distribution:
+<P>
+<DIR>
+This version is based on RasMol version 2.6_CIF.2, on RasMol version
+2.6x1 and on RasMol version 2.6.4. Please read the file NOTICE for
+important notices which apply to this package. If you are not going to
+make changes to RasMol, you are not only permitted to freely make
+copies and distribute them, you are encouraged to do so, provided you
+do the following:
+<P>
+<DIR>
+1. Either include the complete documentation, especially the file
+NOTICE, with what you distribute or provide a clear indication where
+people can get a copy of the documentation; and
+<P>
+2. Please give credit where credit is due by citing the version and
+original authors properly; and
+<P>
+3. Please do not give anyone the impression that the original authors
+are providing a warranty of any kind.
+</DIR>
+<P>
+If you would like to use major pieces of RasMol in some other program,
+make modifications to RasMol, or in some other way make what a lawyer
+would call a &quot;derived work&quot;, you are not only permitted to do
+so, you are encouraged to do so. In addition to the things we discussed
+above, please do the following:
+<P>
+<DIR>
+4. Please explain in your documentation how what you did differs from
+the version of RasMol you started with; and
+<P>
+5. Please make your modified source code available.
+<P>
+</DIR>
+This version of RasMol is not in the public domain, but it is given
+freely to the community in the hopes of advancing science. If you make
+changes, please make them in a responsible manner, and please offer us
+the opportunity to include those changes in future versions of
+RasMol.
+</DIR>
+<BR>
+<BR>
+These conditions should help ensure the continued open source
+development of RasMol for the indefinite future.  There may have been
+some concern in the past that such &quot;open-source&quot; licensing
+might discourage commercial use of the new versions of RasMol, but the
+recent commercial successes of other open-source based efforts would
+seem to indicate that such concerns are not to be taken as seriously as
+they might once have been, and uses of RasMol in research and
+instruction can only benefit from ensuring access to source code of the
+full series.<BR>
+<BR>
+Roger Sayle's RasMol 2.6b2 is, arguably, the most popular variant of
+RasMol.  It has been ported to almost all platforms used in structural
+studies.  It allows the display and manipulation of a single molecule
+as one rigid body.<BR>
+<BR>
+RasMol 2.5-ucb is a version of RasMol derived in 1995 from RasMol 2.5 by
+Marco Molinaro of the MultiChem Facility at the University of
+California, Berkeley (see <A HREF="http://mc2.cchem.berkeley.edu/RasMol">http://mc2.cchem.berkeley.edu/RasMol</A>).  It
+was then upgraded to RasMol 2.6-ucb, based on RasMol 2.6.  The
+MultiChem modified version of RasMol can display up to 5 molecules, and
+can rotate portions of a molecule around a selected bond.  This is also
+a very popular variant of RasMol.  However, until January 2000, this
+version was been released only in binary form for Macs, PC's, Linux,
+Ultrix and HP-UX.  As noted above, agreement has been reached to allow
+the merging of these modifications into a future release of the common
+open-source version, which should allow for wider user of these
+features.<BR>
+<BR>
+Arne Mueller's RasMol 2.6x1 added the ability to calculate individual
+torsion angles and Ramachandran plot data,  to show selected chains,
+groups and atoms, to select by CIS bond angles, and added POV-Ray 3
+output capabilities.  In merging 2.6x1 into the 2.7 series, the
+Ramachandran plot capabilities were extended to full printer plot logic
+using Frances Bernstein's fisipl (see
+<A href="ftp://bnlarchive.rcsb.org/pub/pdb_software/program_tape/fisipl.for">
+ftp://bnlarchive.rcsb.org/pub/pdb_software/program_tape/fisipl.for</A>).
+<P>
+Herbert Bernstein's RasMol 2.6_CIF added the abilty to read either mmCIF
+or CIF data sets, and to colour by alternate confomer or model.  The
+work on colouring by alternate conformer or model was done in
+collaboration with Frances C. Bernstein.
+<P>
+Roger Sayle's RasMol 2.6.4 was a major cleanup and reorganization of the
+source code of RasMol for maintainability.
+<P>
+Andreas Bohne's RasMol 2.6ab series adds automatic detection of pixel
+depth, extended menus, and better scripting capabilities.<BR>
+<BR>
+</P>
+<H3>References</H3>
+<P>
+
+<P><SUP><A NAME="footnote1">1</A></SUP> Johnson, C.K. (1965) ORTEP, Oak Ridge National Laboratory<BR>
+</P>
+
+<P><SUP><A NAME="footnote2">2</A></SUP> Levinthal, C. (1966) Molecular Model-Building by Computer.  <I>Sci. American</I> 214, No. 6, 42-52<BR>
+</P>
+
+<P><SUP><A NAME="footnote3">3</A></SUP> Dickerson, R.E. and Geis, I (1969) The Structure and Action of Proteins, W. A. Benjamin, Inc.<BR>
+</P>
+
+<P><SUP><A NAME="footnote4">4</A></SUP> Mathews, F.S. (1983) Interactive Graphics in the Study of Molecules of Biological Interest, in <I>Crystallography in North America</I> (McLachlan, D., Jr. and Glusker, J.P., eds.), pp. 235-240, American Crystallographic Association<BR>
+</P>
+
+<P><SUP><A NAME="footnote5">5</A></SUP> Kraulis, P. J. (1991) Molscript: A Program to Produce both Detailed and Schematic Plots of Protein Structures.  <I>J. Appl. Cryst</I>. 24, 946-950<BR>
+</P>
+
+<P><SUP><A NAME="footnote6">6</A></SUP> Bacon, D.J. and Anderson, W.F. (1988) A Fast Algorithm for Rendering Space-Filling Molecule Pictures.  <I>J. Mol. Graphics</I> 6, 219-220. <BR>
+</P>
+
+<P><SUP><A NAME="footnote7">7</A></SUP> Richardson, D.C. and Richardson, J.S. (1992)  The Kinemage: A Tool for Scientific Communication. <I>Protein Sci</I>. 1, 3-9<BR>
+</P>
+
+<P><SUP><A NAME="footnote8">8</A></SUP> Sayle, R. and Bissell, A. (1992). RasMol: A Program for Fast Realistic Rendering of Molecular Structures with Shadows, in <I>Proceedings of the 10th Eurographics UK '92 Conference</I>, <I>University of Edinburgh, Scotland</I><BR>
+</P>
+
+<P><SUP><A NAME="footnote9">9</A></SUP> Guex, N. and Peitsch, M.C. (1997) SWISS-MODEL and the Swiss-PdbViewer: An environment for comparative protein modeling. <I>Electrophoresis</I> 18, 2714-2723. </P>
+
+<P><SUP><A NAME="footnote10">10</A></SUP>  Merritt, E.A. and Bacon, D.J. (1997) Raster3D: Photorealistic Molecular Graphics.  <I>Meth. Enzymology</I> 277, 505-524. </P>
+
+<P><SUP><A NAME="footnote11">11</A></SUP>  Ferrin, T.E., Huang,C.C., Jarvis,L.E.  and Langridge, R. (1988) The MIDAS Display System. <I>J. Mol. Graphics</I>, 6, 13-27,36-37<BR>
+</P>
+
+<P><SUP><A NAME="footnote12">12</A></SUP>  Nicholls, A. and Honig, B. (1991) A rapid finite difference algorithm, utilizing successive over-relaxation to solve the Poisson-Boltzmann equation. <I>J. Comput. Chem.</I> 12, 435-445<BR>
+</P>
+<P>
+<HR>
+<P>
+Updated 29 August 2000<BR>
+<address>
+<A href="mailto:yaya@bernstein-plus-sons.com">yaya@bernstein-plus-sons.com</A>
+</address>
+
+</BODY>
+</HTML>
+

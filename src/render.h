@@ -1,0 +1,255 @@
+
+/***************************************************************************
+ *                               RasMol 2.7.3                              *
+ *                                                                         *
+ *                                 RasMol                                  *
+ *                 Molecular Graphics Visualisation Tool                   *
+ *                             6 February 2005                             *
+ *                                                                         *
+ *                   Based on RasMol 2.6 by Roger Sayle                    *
+ * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
+ *                      Stevenage, Hertfordshire, UK                       *
+ *         Version 2.6, August 1995, Version 2.6.4, December 1998          *
+ *                   Copyright (C) Roger Sayle 1992-1999                   *
+ *                                                                         *
+ *                          and Based on Mods by                           *
+ *Author             Version, Date             Copyright                   *
+ *Arne Mueller       RasMol 2.6x1   May 98     (C) Arne Mueller 1998       *
+ *Gary Grossman and  RasMol 2.5-ucb Nov 95     (C) UC Regents/ModularCHEM  *
+ *Marco Molinaro     RasMol 2.6-ucb Nov 96         Consortium 1995, 1996   *
+ *                                                                         *
+ *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
+ *                                                                         *
+ *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *                   RasMol 2.7.1.1 Jan 01                                 *
+ *                   RasMol 2.7.2   Aug 00                                 *
+ *                   RasMol 2.7.2.1 Apr 01                                 *
+ *                   RasMol 2.7.2.1.1 Jan 04                               *
+ *                   RasMol 2.7.3   Feb 05                                 *
+ *                                                                         *
+ *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
+ *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
+ *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
+ *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
+ *of Energy.                                                               *
+ *                                                                         *
+ *                    and Incorporating Translations by                    *
+ *  Author                               Item                      Language*
+ *  Isabel Servan Martinez,                                                *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *                                                                         *
+ *                             This Release by                             *
+ * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ *                       yaya@bernstein-plus-sons.com                      *
+ *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *                                                                         *
+ *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
+ *Please read the file NOTICE for important notices which apply to this    *
+ *package and for license terms (GPL or RASLIC).                           *
+ ***************************************************************************/
+/* render.h
+ $Log: not supported by cvs2svn $
+ Revision 1.1  2004/05/07 19:46:16  yaya
+ Initial revision
+
+ Revision 1.2  2004/02/15 00:24:00  yaya
+ *** empty log message ***
+
+ Revision 1.1  2003/12/12 21:10:38  yaya
+ Initial revision
+
+ Revision 1.1  2001/01/31 02:13:45  yaya
+ Initial revision
+
+ Revision 1.4  2000/08/26 18:12:59  yaya
+ Updates to header comments in all files
+
+ Revision 1.3  2000/08/13 20:56:43  yaya
+ Conversion from toolbar to menus
+
+ Revision 1.2  2000/08/09 01:18:37  yaya
+ Rough cut with ucb
+
+*/
+
+/* These values set the sizes of the sphere rendering
+ * tables. The first value, maxrad, is the maximum
+ * sphere radius and the second value is the table
+ * size = (maxrad*(maxrad+1))/2 + 1
+ */
+/* #define MAXRAD    120   256   */
+/* #define MAXTABLE  7261  32897 */
+#define MAXRAD    255
+#define MAXTABLE  32641
+
+
+#define SlabReject       0x00
+#define SlabHalf         0x01
+#define SlabHollow       0x02
+#define SlabFinal        0x03
+#define SlabClose        0x04
+#define SlabSection      0x05
+
+#define PickNone         0x00
+#define PickIdent        0x01
+#define PickDist         0x02
+#define PickAngle        0x03
+#define PickTorsn        0x04
+#define PickLabel        0x05
+#define PickMonit        0x06
+#define PickCentr        0x07
+#define PickOrign        0x08
+#define PickCoord        0x09
+#define PickAtom         0x0A
+#define PickGroup        0x0B
+#define PickChain        0x0C
+#define PickBond         0x0D
+
+#define RotBond          0x01
+#define RotMol           0x02
+#define RotAll           0x04
+
+#define ViewLeft         0
+#define ViewRight        1
+
+#define ColBits          24
+
+/* To handle larger molecules efficiently
+   use VOXORDER 32 or larger.  To save space
+   use VOXORDER 21 or smaller */
+#define VOXORDER       32
+#define VOXORDER2      (VOXORDER*VOXORDER)
+#define VOXSIZE        (VOXORDER2*VOXORDER)
+
+typedef struct _Item {
+        struct _Item __far *list;
+        RAtom  __far *data;
+    } Item;
+ 
+
+
+#ifdef RENDER
+int UseDepthCue;
+int UseStereo,StereoView;
+int UseShadow,DisplayMode;
+int UseClipping,UseSlabPlane;
+int UseAutoDepthCue,UseDepthPlane;
+int SlabMode,SlabValue,DepthValue;
+int SlabInten,SliceValue;
+int ImageRadius,ImageSize;
+int SSBondMode,HBondMode;
+int PickCount;
+int LabelOptFlag;
+
+double StereoAngle;
+int PickMode;
+int RotMode;
+int DrawArea;
+int AreaX1, AreaX2, AreaY1, AreaY2;
+
+int DrawBoundBox,DrawAxes;
+int DrawDoubleBonds;
+int DrawUnitCell;
+
+Real IVoxRatio;
+int VoxelsClean;
+int BucketFlag;
+int FBClear;
+
+
+
+
+Card __far *ColConst;
+#if defined(IBMPC) || defined(APPLEMAC)
+void __far * __far *HashTable;
+Byte __far * __far *LookUp;
+Byte __far *Array;
+
+#else /* UNIX or VMS */
+void *HashTable[VOXSIZE];
+Byte *LookUp[MAXRAD];
+Byte Array[MAXTABLE];
+#endif
+
+
+#else
+extern int UseDepthCue;
+extern int UseStereo,StereoView;
+extern int UseShadow, DisplayMode;
+extern int UseClipping,UseSlabPlane;
+extern int UseAutoDepthCue,UseDepthPlane;
+extern int SlabMode,SlabValue,DepthValue;
+extern int SlabInten,SliceValue;
+extern int ImageRadius,ImageSize;
+extern int SSBondMode, HBondMode;
+extern int PickCount;
+extern int LabelOptFlag;
+
+extern double StereoAngle;
+extern int PickMode;
+extern int RotMode;
+extern int DrawArea;
+extern int AreaX1, AreaX2, AreaY1, AreaY2;
+
+extern int DrawBoundBox,DrawAxes;
+extern int DrawDoubleBonds;
+extern int DrawUnitCell;
+
+extern Real IVoxRatio;
+extern int VoxelsClean;
+extern int BucketFlag;
+extern int FBClear;
+
+
+
+
+extern Card __far *ColConst;
+#if defined(IBMPC) || defined(APPLEMAC)
+extern void __far * __far *HashTable;
+extern Byte __far * __far *LookUp;
+extern Byte __far *Array;
+
+#else /* UNIX or VMS */
+extern void *HashTable[VOXSIZE];
+extern Byte *LookUp[MAXRAD];
+extern Byte Array[MAXTABLE];
+#endif
+
+
+#endif
+
+#define pythag(h,x) \
+           ((h)<MAXRAD? \
+             (int)LookUp[(h)][(x)]: \
+             (int)(.5+(sqrt((double)((h)*(h)-(x)*(x))))))
+#define apythag(h,x) \
+           ((h)<MAXRAD/2? \
+             (int)LookUp[(h)][(x)]: \
+             (int)(.5+(sqrt((double)((h)*(h)-(x)*(x))))))
+#define colconst(r) \
+     ((r)<MAXRAD? \
+       ColConst[(r)] : \
+       (Card)(((Card)ColourDepth<<ColBits)/((int)(LightLength*(r)+4))))
+
+void ClearBuffers( void );
+void ReSizeScreen( void );
+void ReAllocBuffers( void );
+void ShadowTransform( void );
+
+void ResetVoxelData( void );
+void CreateVoxelData( int );
+
+void DrawFrame( void );
+void ResetRenderer( void );
+void InitialiseRenderer( void );
+void SetStereoMode( int );
+void SetPickMode( int );
+int PickAtoms( int, int, int );
+unsigned int isqrt( Card );
+

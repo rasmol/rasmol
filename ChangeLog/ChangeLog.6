@@ -1,0 +1,301 @@
+[05/05/95]	RS	render.c
+		Corrected 16bit precision problem with cartoons on PCs and
+		Macintoshes.  These caused rounding errors in `ribbons'.
+
+[02/05/95]	RS	INSTALL
+		Added additional build info for RasMac on the PowerPC using
+		Metrowerks C++ v1.2. This requires additional files to v1.1.
+		Special thanks to Graham Palmer.
+
+[03/04/95]	RS	pixutils.c pixutils.h render.c command.c
+		Added the ability to display dashed "strands" ribbons.
+
+[03/04/95]	RS	render.c
+		Modified the handling of the first and last residue in
+		a chain to only extend to the alpha carbon except when
+		the last residue is an arrow head.
+
+[27/03/95]	RS	render.c
+		Fixed bug in cartoon representation when final residue in a
+		chain is a beta-sheet.  Improved "CalculateInten" performance.
+
+[27/03/95]	RS	rasmol.c
+		Made several changes to rasmol.c to allow RasMol to compile
+		with DEC C (on AXP and VAX) without /standard=vaxc. Special
+		thanks to Martin Zinser.
+
+[26/03/95]	RS	render.c render.h pixutils.c pixutils.h command.c 
+		tokens.h
+		Added the new representation "cartoon" which represents a
+		protein as a Richardson-style cartoon. The width of the
+		cartoon is given as a parameter, the depth of the ribbon 
+		and use of arrow heads may be changed using "set cartoon".
+
+[25/03/95]	RS	render.c command.c transfor.c molecule.h
+		Changed the semantics of the "trace" command and added a
+		new representation, "trace" which displays a cylindrical
+		spline representation of "backbone".
+
+[22/03/95]	RS	render.c render.h command.c tokens.h transfor.c 
+		script.c
+		Added the "Monitor" representation to RasMol as an dashed 
+		line between two atoms, optionally labelled by the distance
+		between the atoms (the default).
+
+[16/03/95]	Makefile
+		Added comments about use of +O4 optimisation using HPUX 9.05
+		on the native PA-RISC compiler. Thanks to Richard Mathar.
+
+[13/03/95]	RS	outfile.c
+		Implemented dashed lines in RasMol's vector PostScript output.
+		This now includes the ability output of hbonds and ssbonds.
+
+[13/03/95]	RS	script.c
+		Fixed bug when generating RasMol scripts caused by overlapping
+		datum type masks. This caused errors with dashed vectors.
+
+[12/03/95]	RS	x11win.c
+		Fixed a problem using scroll bar arrows to spin a molecule
+		with three-button emulation on XFree (Linux and NetBSD).
+
+[07/03/95]	RS	render.c
+		Improved performance of "isqrt" routine, the most frequently
+		called function when rendering ribbons.
+
+[06/03/95]	RS	render.c
+		Implemented the routine "InitialiseTables" to avoid using
+		"isqrt". This drastically reduces the start-up time.
+
+[06/03/95]	RS	render.c
+		Improved rendering of double & triple bonds.
+
+[03/03/95]	RS	command.c render.c render.h pixutils.c
+		Added the ability to display double and triple bonds as
+		two and three lines using the "set bonds true" command.
+
+[03/03/95]	RS	command.c tokens.h render.c transfor.c script.c 
+		rasmol.c 
+		Added the ability to display bonds and backbones as dashed 
+		lines using either the "dashes" command or the "dashes"
+		parameter to the "wireframe" and "backbone" commands.
+
+[03/03/95]	RS	command.c
+		Modified 'FetchFile' to display explicitly specified 
+		hydrogen bonds by default.
+
+[03/03/95]	RS	pixutils.c
+		Improved quality of dashed lines.
+
+[02/03/95]	RS	render.c molecule.c transfor.c transfor.h
+		Ported RasMol to compile under Borland's Turbo C/C++. This
+		required rewrite of ClearBuffers to avoid "_fmemset" bug.
+
+[02/03/95]	RS	outfile.c outfile.h command.c tokens.h x11win.c 
+		rasmol.c
+		Added support for Silicon Graphics' IRIS RGB format image
+		files for both 8 and 32bit versions, "write iris <filename>".
+
+[01/03/95]	RS	outfile.c
+		Tidied up many of the image file output routines.
+
+[28/02/95]	RS	molecule.h abstree.c abstree.h
+		Improved handling of RNA bases and conversion of non-standard
+		nucleotide atom names. Thanks to Hans Hoppe.
+
+[17/02/95]	RS	molecule.c
+		Finally implemented internal to cartesian co-ordinate
+		conversion for MOPAC internal input files. Very special
+		thanks to Klaus-Peter Gulden.
+
+[16/02/95]	RS	molecule.c
+		Added detection of MOPAC file types, and added support
+		for MOPAC cartesian co-ordinate input files.
+
+[15/02/95]	RS	molecule.c
+		Added support for reading MOPAC output files including 
+		charge information (provided the job doesn't use the
+		"NOXYZ" keyword as an option).
+
+[14/02/95]	RS	render.c
+		Added "X", "Y" and "Z" axes labels to the "set axes on"
+		command.
+
+[13/02/95]	RS	render.c render.h command.c
+		Implemented the "set picking centre" command to allow the
+		centre of rotation to be selected by clicking on an atom.
+
+[10/02/95]	RS	render.c render.h pixutils.c pixutils.h command.c tokens.h
+		Started adding more support for RasMol stereo viewing.
+		Stereo is enabled by either "stereo on" or "set stereo on".
+
+[10/02/95]	RS	pixutils.c
+		Improved performance of function DisplayString avoiding
+		clipping and reduced intensity of atom labels.
+
+[09/02/95]	RS	abstree.c
+		Implemented function 'CalcTorsion' for "set picking torsion".
+
+[06/02/95]	RS	render.c
+		Increased the maximum sphere rendering radius within RasMol.
+		This is the first step to producing high-resolution output.
+
+[02/02/95]	RS	abstree.c abstree.h command.c tokens.h
+		Added support for selecting individual models in "nmrpdb" 
+		files, either use "model=25" property or expression "::25".
+		RasMol also now allows chains to be specified ":a" and ":1".
+
+[01/02/95]	RS	outfile.c
+		Modified the vector Postscript output routines to saturate 
+		sphere colouring following "set ambient 100".
+
+[23/01/95]	RS	abstree.c
+		Added the "%m" label format specifier for amino acid codes.
+
+[20/01/95]	RS	render.c render.h rasmol.c x11win.c
+		Added the menu option "Labels" to RasMol for easy labelling.
+		Improved internal label handling.
+
+[20/01/95]	RS	abstree.c
+		Made functions CalcAngle and CalcDistance more robust.
+
+[18/01/95]	RS	transfor.c transfor.h command.c command.h
+		Modified the RasMol "restrict" command to disable the display
+		of backbone, ribbons and strand representations. Labels??
+
+[18/01/95]	RS	script.c
+		Corrected bug in Kinemage format output that occurred when
+		bonds were displayed in some chains but not in others. Also
+		fixed potential problems with backbone DNA hydrogen bonds 
+		in Kinemage files. Thanks to Piotr Zimniak.
+
+[18/01/95]	RS	command.c render.c x11win.c rasmac.c raswin.c abstree.
+		Added the options "distance", "angle" and "torsion" to
+		the RasMol "set picking" command to inspect geometry.
+
+[17/01/95]	RS	command.c tokens.h render.c render.h
+		Added the RasMol command "set picking" with options "none",
+		"ident" (default) and "label". The final option toggles the
+		display of atom labels on the picked atom.
+
+[13/01/95]	RS	command.c
+		Added the "set write" command to allow "write" and "save"
+		commands to work from the command line.
+
+[13/01/95]	RS	command.c tokens.h x11win.c
+		Added "refresh" command to update screen from script file.
+
+[12/01/95]	RS	render.c
+		Modified DrawRibbon to use divisons rather than right shifts.
+		This corrects problems on Convex. Thanks to Andy Quick.
+
+[06/01/95]	RS	molecule.h molecule.c abstree.c render.c transfor.c
+		Modified the "Atom" structure definition to contain atomic
+		number, this allowed correct determination of Brookhaven
+		NAD and CoenzymeA elements by changing GetElemNumber().
+
+[16/12/94]	RS	raswin.c raswin.rc raswin.idm rasmac.c
+		Modified the menu ogranisation of RasWin to include an Edit
+		menu containing "Select All" and a "Print SetUp..." option.
+
+[16/12/94]	RS	molecule.c
+		Corrected bug reading CHARMm format files that sometimes
+		placed different residues in separate chains. Thanks to
+		Stefan Fischer.
+
+[15/12/94]	RS	script.c
+		Fixed bug in WriteMolScriptFile that occasionally resulted
+		in all residues additionally being displayed as coil.
+
+[13/12/94]	RS	molecule.c molecule.h command.c rasmol.c raswin.c
+		Added the "nmrpdb" file format to allow all NMR conformations
+		to be loaded into RasMol into different `models'.
+
+[08/12/94]	RS	command.c
+		Corrected a bug in command.c that resulted in an error if
+		a label string wasn't placed between string terminators.
+
+[08/12/94]	RS	rasmol.c
+		Corrected bug in RasMol performance profiling routines.
+
+[08/12/94]	RS	x11win.c
+		Improved support for monochrome X. The improved performance
+		algorithm now performs bidirectional error diffusion and
+		correctly handles Black/White bit variations (e.g NEC & SUN).
+
+[30/11/94]	RS	molecule.c
+		Modified LoadAlchemyMolecule and ConnectAtoms to enable
+		hydrogen bonding to be specified in Alchemy format files.
+		Fixed bug with bond types. Thanks to Chris Wilson.
+
+[30/11/94]	RS	outfile.c
+		Changed the creator and file type of PostScript files on
+		the Mac to 'vgrd' and 'TEXT' respectively. This enables 
+		printing by Apple's PostScript utility. Thanks to Tom Jovin.
+
+[29/11/94]	RS	x11win.c
+		Added support for Monochrome only X Windows displays by
+		dithering 8bit images before calling XPutImage. The current
+		error term diffusion algorithm may have to be improved for 
+		wireframes and dot surfaces. Thanks to Cheuk-san Edward Wang.
+
+[28/11/94]	RS	molecule.c
+		Made several changes to RasMol to account for unconventional
+		atom naming in PDB files, such as strange hydrogens 'HD', 
+		'HG' and 'HH' and cysteine sulphurs ' SB1'. Thanks to Bruce
+		Livett.
+
+[28/11/94]	RS	rasmol.doc
+		Added "primitives" to the keyword list in the on-line help
+		documentation to solve xref `bug'. Thanks to Steve Brenner.
+
+[21/11/94]	RS	molecule.c
+		Changed the handling of PDB residue synonyms to make name
+		comparison more efficient. Added synonyms for standard
+		nucleic acids. Thanks to Hans Hoppe.
+
+[21/11/94]	RS	rasmol.c
+		Corrected problem with the static forward declaration
+		of HandleEvents that caused problems on IRIX 4.0 compilers.
+		Thanks to Noham Weinberg.
+
+[16/11/94]	RS	rasmol.c command.c
+		Implemented the "Save As..." option on the File Menu in
+		the UNIX version of RasMol. Thanks to Henry Rzepa.
+
+[11/11/94]	RS	molecule.c
+		Added the ability to read in connectivity records from
+		columns 32 and 37 of PDB's CONECT records. These are used
+		by some programs for heavy elements instead of hbonds!
+
+[10/11/94]	RS	abstree.h
+		Corrected errors in the covalent radii of several of the
+		heavy elements in the periodic table.
+
+[08/11/94]	RS	molecule.c
+		Corrected a bug in FindSybylResNo that resulted in the wrong
+		atom types being found in Mol2 files. Thanks to Jim Bentley.
+
+[08/11/94]	RS	rasmol.h outfile.c
+		Corrected problem with undefined _fstricmp in raswin.c and
+		funtion WriteIRISFile under Windows NT. Thanks to Pedro Mendes.
+
+[08/11/94]	RS	descrip.mms
+		Corrected several typos. Thanks to Ulrich Schmitt.
+
+[08/11/94]	RS	render.c script.c
+		Fixed bug in RasMol that resulted in a division by zero
+		when "set unitcell on", but the PDB file contains no
+		crystal unit cell information. Thanks to Arne Eofsson.
+
+[01/11/94]	RS	pixutils.c
+		Corrected bug in routines SolidRibbon and StrandRibbon
+		that didn't specify __far pointers to Knots despite the
+		defintion in pixutils.h. Announced RasWin version 2.5.1!
+
+[28/10/94]	RS	!Announced the public release of RasMol, RasMac 
+		and RasWin version 2.5, available by anonymous FTP from 
+		ftp.dcs.ed.ac.uk [129.215.160.5] in the directory 
+		/pub/rasmol. The announcement was made in bionet.software, 
+		bionet.announce, sci.bio, sci.chem, 
+		comp.graphics.visualisation, bionet.xtallography
+		and sci.techniques.xtallography newsgroups.

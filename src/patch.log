@@ -1,0 +1,420 @@
+Script started on Sat Feb  5 22:06:56 2005
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src yaya$ foreach file (new_patches/*)
+bash: syntax error near unexpected token `('
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src yaya$ csh
+[Herbert-J-Bernsteins-Computer:RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src] yaya% foreach file (new_patches/*)
+foreach? patch -b -p0 < $file
+foreach? end
+patching file cif.c
+patching file command.c
+patching file command.c
+patching file command.c
+Hunk #1 succeeded at 3728 (offset 3 lines).
+patching file command.c
+Hunk #1 succeeded at 3706 (offset 3 lines).
+patching file command.c
+patching file command.c
+Hunk #1 succeeded at 3674 (offset 9 lines).
+patching file abstree.h
+patching file command.c
+patching file script.c
+patching file tokens.c
+patching file tokens.h
+patching file transfor.c
+patching file transfor.h
+patching file repres.c
+Hunk #1 succeeded at 539 (offset -2 lines).
+Hunk #2 succeeded at 585 (offset -2 lines).
+Hunk #3 succeeded at 593 (offset -2 lines).
+patching file render.c
+Hunk #1 succeeded at 1843 (offset -180 lines).
+Hunk #2 succeeded at 2064 (offset -180 lines).
+Hunk #3 succeeded at 2088 (offset -180 lines).
+Hunk #4 succeeded at 2112 (offset -180 lines).
+patching file repres.h
+Hunk #1 succeeded at 175 (offset -5 lines).
+patching file infile.c
+patching file mac/RasMac.r
+patching file mac/RasMac68K.prj.xml
+patching file mac/RasMacPPC.prj.xml
+patching file mac/rasmol.h
+patching file molecule.c
+patching file applemac.c
+patching file cmndline.c
+patching file command.c
+Hunk #7 succeeded at 2977 (offset 3 lines).
+Hunk #8 succeeded at 3073 (offset 3 lines).
+Hunk #9 succeeded at 3531 (offset 8 lines).
+Hunk #10 succeeded at 3539 (offset 8 lines).
+patching file command.h
+patching file graphics.h
+patching file infile.c
+Hunk #1 succeeded at 1058 (offset -3 lines).
+Hunk #2 succeeded at 2005 (offset -3 lines).
+patching file langsel.c
+patching file langsel.h
+patching file langsel_mac.c
+patching file molecule.c
+Hunk #4 succeeded at 1245 (offset 2 lines).
+Hunk #5 succeeded at 1333 (offset 2 lines).
+Hunk #6 succeeded at 1490 (offset 2 lines).
+Hunk #7 succeeded at 1680 (offset 2 lines).
+Hunk #8 succeeded at 1691 (offset 2 lines).
+Hunk #9 succeeded at 1716 (offset 2 lines).
+Hunk #10 succeeded at 1747 (offset 2 lines).
+Hunk #11 succeeded at 1799 (offset 2 lines).
+Hunk #12 succeeded at 1862 (offset 2 lines).
+Hunk #13 succeeded at 1937 (offset 2 lines).
+Hunk #14 succeeded at 2198 (offset 2 lines).
+Hunk #15 succeeded at 2667 (offset 2 lines).
+Hunk #16 succeeded at 2703 (offset 2 lines).
+Hunk #17 succeeded at 3066 (offset 2 lines).
+Hunk #18 succeeded at 3137 (offset 2 lines).
+patching file molecule.h
+patching file mswin31.c
+Hunk #1 succeeded at 413 (offset -3 lines).
+patching file multiple.c
+patching file pixutils.c
+patching file pixutils.h
+patching file rasmac.c
+patching file rasmol.c
+Hunk #1 succeeded at 898 (offset -154 lines).
+Hunk #2 succeeded at 932 (offset -154 lines).
+Hunk #3 succeeded at 1342 (offset -158 lines).
+patching file rastxt.c
+patching file raswin.c
+Hunk #1 succeeded at 1989 with fuzz 1.
+patching file render.c
+patching file render.h
+patching file repres.c
+patching file repres.h
+patching file tokens.c
+Hunk #1 succeeded at 921 (offset 6 lines).
+Hunk #2 succeeded at 974 (offset 6 lines).
+patching file tokens.h
+Hunk #1 succeeded at 132 (offset 3 lines).
+patching file transfor.c
+Hunk #1 succeeded at 131 (offset 6 lines).
+Hunk #2 succeeded at 147 (offset 6 lines).
+Hunk #3 succeeded at 281 (offset 25 lines).
+Hunk #4 succeeded at 297 (offset 25 lines).
+Hunk #5 succeeded at 316 (offset 25 lines).
+Hunk #6 succeeded at 382 (offset 25 lines).
+Hunk #7 succeeded at 391 (offset 25 lines).
+Hunk #8 succeeded at 414 (offset 25 lines).
+Hunk #9 succeeded at 449 (offset 25 lines).
+Hunk #10 succeeded at 521 (offset 25 lines).
+Hunk #11 succeeded at 529 (offset 25 lines).
+Hunk #12 succeeded at 579 (offset 25 lines).
+Hunk #13 succeeded at 620 (offset 25 lines).
+Hunk #14 succeeded at 690 (offset 25 lines).
+Hunk #15 succeeded at 759 (offset 25 lines).
+Hunk #16 succeeded at 993 (offset 25 lines).
+Hunk #17 succeeded at 1060 (offset 25 lines).
+Hunk #18 succeeded at 1097 (offset 25 lines).
+Hunk #19 succeeded at 1118 (offset 25 lines).
+Hunk #20 succeeded at 1155 (offset 25 lines).
+Hunk #21 succeeded at 1174 (offset 25 lines).
+Hunk #22 succeeded at 1205 (offset 25 lines).
+Hunk #23 succeeded at 1250 (offset 25 lines).
+Hunk #24 succeeded at 1291 (offset 25 lines).
+Hunk #25 succeeded at 1343 (offset 25 lines).
+Hunk #26 succeeded at 1371 (offset 25 lines).
+Hunk #27 succeeded at 1415 (offset 25 lines).
+Hunk #28 succeeded at 1448 (offset 25 lines).
+Hunk #29 succeeded at 1489 (offset 25 lines).
+Hunk #30 succeeded at 1537 (offset 25 lines).
+Hunk #31 succeeded at 2572 (offset 25 lines).
+Hunk #32 succeeded at 2581 (offset 25 lines).
+Hunk #33 succeeded at 2591 (offset 25 lines).
+Hunk #34 succeeded at 3043 (offset 68 lines).
+Hunk #35 succeeded at 3132 (offset 68 lines).
+Hunk #36 succeeded at 3220 (offset 68 lines).
+Hunk #37 succeeded at 3277 (offset 68 lines).
+Hunk #38 succeeded at 3287 (offset 68 lines).
+Hunk #39 succeeded at 3297 (offset 68 lines).
+Hunk #40 succeeded at 3329 (offset 68 lines).
+patching file transfor.h
+patching file x11win.c
+patching file vector.c
+patching file Imakefile
+patching file rasmol.c
+Hunk #1 succeeded at 181 (offset -3 lines).
+Hunk #2 succeeded at 822 (offset -3 lines).
+Hunk #3 succeeded at 971 (offset -3 lines).
+Hunk #4 succeeded at 1227 (offset 10 lines).
+Hunk #5 succeeded at 1613 (offset 11 lines).
+Hunk #6 succeeded at 1691 (offset 11 lines).
+[Herbert-J-Bernsteins-Computer:RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src] yaya% l[Kexit
+exit
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src yaya$ ls *.rej
+ls: *.rej: No such file or directory
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src yaya$ ls
+CW_fixup.csh		build_HPUX_PARISC.csh	font.h			mswin31.c.orig		rasmol.h		string_case.c
+Imakefile		build_all.csh		graphics.h		mswin31.c_26Jan04	rasmol.hlp		string_case.h
+Imakefile.orig		cexio.c			graphics.h.orig		multiple.c		rasmol.hlp.gz		tokens.c
+Makefile		cif.c			infile.c		multiple.c.orig		rasmol.man		tokens.c.orig
+Makefile.in		cif.c.orig		infile.c.orig		multiple.h		rasmol.words		tokens.h
+Makefile.mingw		cif.h			infile.h		new_patches		rastxt.c		tokens.h.orig
+Makefile.nt		cif.stx.tab.c		langsel.c		old_patches		rastxt.c.orig		transfor.c
+Makefile.pc		cif.stx.y		langsel.c.orig		outfile.c		raswin.c		transfor.c.orig
+Makefile_HPUX_IA64_32	cif_ctonum.c		langsel.h		outfile.h		raswin.c.orig		transfor.h
+Makefile_HPUX_IA64_64	cif_ctonum.h		langsel.h.orig		patch.log		render.c		transfor.h.orig
+Makefile_hp		cif_fract.c		langsel_mac.c		pixutils.c		render.c.orig		txt
+RCS			cif_fract.h		langsel_mac.c.orig	pixutils.c.orig		render.h		vector.c
+abstree.c		cif_stx.c		mac			pixutils.h		render.h.orig		vector.c.orig
+abstree.h		cmndline.c		mingw			pixutils.h.orig		repres.c		vector.h
+abstree.h.orig		cmndline.c.orig		molecule.c		rasmac.c		repres.c.orig		vms
+acos.c			cmndline.h		molecule.c.orig		rasmac.c.orig		repres.h		wbrotate.c
+applemac.c		command.c		molecule.h		rasmac.h		repres.h.orig		wbrotate.h
+applemac.c.orig		command.c.orig		molecule.h.orig		rasmol.1.html		script.c		x11win.c
+bitmaps.h		command.h		mswin			rasmol.c		script.c.orig		x11win.c.orig
+build_HPUX_IA64.csh	command.h.orig		mswin31.c		rasmol.c.orig		script.h
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src yaya$ ls mac
+RasMac.prj.bin.gz		RasMacPPC.prj.xml		RasMac_FAT_32BIT.bin.gz		rasmol.h
+RasMac.r			RasMacPPC.prj.xml.orig		RasMac_FAT_8BIT.bin.gz		rasmol.h.orig
+RasMac.r.orig			RasMac_68K_32BIT.SYM.bin.gz	RasMac_PPC_32BIT.bin.gz		rasmol.hlp
+RasMac.rsrc.bin.gz		RasMac_68K_32BIT.bin.gz		RasMac_PPC_8BIT.bin.gz		rasmol.hlp.gz
+RasMac68K.prj.xml		RasMac_68K_8BIT.SYM.bin.gz	RasMac_PPC_8BIT.xSYM.bin.gz	rasmol_32BIT.h
+RasMac68K.prj.xml.orig		RasMac_68K_8BIT.bin.gz		rasmac.make			rasmol_8BIT.h
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src yaya$ r ls
+CW_fixup.csh		build_HPUX_PARISC.csh	font.h			mswin31.c.orig		rasmol.h		string_case.c
+Imakefile		build_all.csh		graphics.h		mswin31.c_26Jan04	rasmol.hlp		string_case.h
+Imakefile.orig		cexio.c			graphics.h.orig		multiple.c		rasmol.hlp.gz		tokens.c
+Makefile		cif.c			infile.c		multiple.c.orig		rasmol.man		tokens.c.orig
+Makefile.in		cif.c.orig		infile.c.orig		multiple.h		rasmol.words		tokens.h
+Makefile.mingw		cif.h			infile.h		new_patches		rastxt.c		tokens.h.orig
+Makefile.nt		cif.stx.tab.c		langsel.c		old_patches		rastxt.c.orig		transfor.c
+Makefile.pc		cif.stx.y		langsel.c.orig		outfile.c		raswin.c		transfor.c.orig
+Makefile_HPUX_IA64_32	cif_ctonum.c		langsel.h		outfile.h		raswin.c.orig		transfor.h
+Makefile_HPUX_IA64_64	cif_ctonum.h		langsel.h.orig		patch.log		render.c		transfor.h.orig
+Makefile_hp		cif_fract.c		langsel_mac.c		pixutils.c		render.c.orig		txt
+RCS			cif_fract.h		langsel_mac.c.orig	pixutils.c.orig		render.h		vector.c
+abstree.c		cif_stx.c		mac			pixutils.h		render.h.orig		vector.c.orig
+abstree.h		cmndline.c		mingw			pixutils.h.orig		repres.c		vector.h
+abstree.h.orig		cmndline.c.orig		molecule.c		rasmac.c		repres.c.orig		vms
+acos.c			cmndline.h		molecule.c.orig		rasmac.c.orig		repres.h		wbrotate.c
+applemac.c		command.c		molecule.h		rasmac.h		repres.h.orig		wbrotate.h
+applemac.c.orig		command.c.orig		molecule.h.orig		rasmol.1.html		script.c		x11win.c
+bitmaps.h		command.h		mswin			rasmol.c		script.c.orig		x11win.c.orig
+build_HPUX_IA64.csh	command.h.orig		mswin31.c		rasmol.c.orig		script.h
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src yaya$ cd mac
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ ks
+bash: ks: command not found
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ ls
+RasMac.prj.bin.gz		RasMacPPC.prj.xml		RasMac_FAT_32BIT.bin.gz		rasmol.h
+RasMac.r			RasMacPPC.prj.xml.orig		RasMac_FAT_8BIT.bin.gz		rasmol.h.orig
+RasMac.r.orig			RasMac_68K_32BIT.SYM.bin.gz	RasMac_PPC_32BIT.bin.gz		rasmol.hlp
+RasMac.rsrc.bin.gz		RasMac_68K_32BIT.bin.gz		RasMac_PPC_8BIT.bin.gz		rasmol.hlp.gz
+RasMac68K.prj.xml		RasMac_68K_8BIT.SYM.bin.gz	RasMac_PPC_8BIT.xSYM.bin.gz	rasmol_32BIT.h
+RasMac68K.prj.xml.orig		RasMac_68K_8BIT.bin.gz		rasmac.make			rasmol_8BIT.h
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ rm *.gz
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ ls
+RasMac.r		RasMac68K.prj.xml	RasMacPPC.prj.xml	rasmac.make		rasmol.h.orig		rasmol_32BIT.h
+RasMac.r.orig		RasMac68K.prj.xml.orig	RasMacPPC.prj.xml.orig	rasmol.h		rasmol.hlp		rasmol_8BIT.h
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ ls
+RasMac.r		RasMac68K.prj.xml.orig	RasMacPPC.prj.xml	rasmol.h		rasmol_32BIT.h
+RasMac.r.orig		RasMacPPC Data		RasMacPPC.prj.xml.orig	rasmol.h.orig		rasmol_8BIT.h
+RasMac68K.prj.xml	RasMacPPC.prj		rasmac.make		rasmol.hlp
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ man Rez
+7[?47h[?1h=[32;1H[KREZ(1)                                                                  REZ(1)
+
+[1mNAME[m
+       Rez - compiles resources
+
+[1mSYNOPSIS[m
+       [1mRez[m [ [4mrezFile1[m ] [ [4mrezFile2[m ] ...
+       [ [1m-align[m [1mword[m | [1mlongword[m ] [ [1m-a[m[[1mppend[m] ]
+       [ [1m-c[m[[1mreator[m] [4mcreatorExpr[m ] [ [1m-d[m[[1mefine[m] [4mmacro[m [ = [4mdata[m ] ]
+       [ [1m-i[m [4mdirectoryPath[m ] [ [1m-m[m[[1modification[m] ]
+       [ [1m-noResolve[m [ [1moutput[m | [1minclude[m ] ] [ [1m-o[m [4moutputFile[m ]
+       [ [1m-ov[m ] [ [1m-p[m[[1mrogress[m] ] [ [1m-rd[m ] [ [1m-ro[m ]
+       [ [1m-s[m [4mdirectoryPath[m ]
+       [ [1m-script[m [1mRoman[m | [1mJapanese[m | [1mKorean[m |
+          [1mSimpChinese[m | [1mTradChinese[m ]
+       [ [1m-t[m[[1mype[m] [4mtypeExpr[m ] [ [1m-u[m[[1mndef[m] [4mmacro[m ]
+       [ [1m-useDF[m ]
+
+[1mDESCRIPTION[m
+       The [1mRez[m tool compiles the resource fork of a file according to the
+       textual description contained in the resource description files. These
+       resource description files must contain both the type declarations and
+       the resource definitions needed to compile the resources. This data can
+       come directly from the resource description files, as in this example:
+
+       Rez SysTypes.r Types.r myResource.r
+
+       The data can also come from other text files that are included in
+       resource description files using [1m#include[m and [1mread[m directives. For
+       example, [1mmyResource.r[m could use [1m#include[m to include the files
+       [1mSysTypes.r[m and [1mTypes.r.[m
+[32;1H[K:[32;1H[K[?1l>[2J[?47l8Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ Rez   / whereis Rez
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ /Developer/Tools/Rex RasMac.r[1P[4hz[4l
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ ls
+RasMac.r		RasMac68K.prj.xml.orig	RasMacPPC.prj.xml	RasMac_PPC.xSYM		rasmol.h.orig		rasmol_8BIT.h
+RasMac.r.orig		RasMacPPC Data		RasMacPPC.prj.xml.orig	rasmac.make		rasmol.hlp
+RasMac68K.prj.xml	RasMacPPC.prj		RasMac_PPC		rasmol.h		rasmol_32BIT.h
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ mkdir RCS
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ ls
+RCS			RasMac68K.prj.xml	RasMacPPC.prj		RasMac_PPC		rasmol.h		rasmol_32BIT.h
+RasMac.r		RasMac68K.prj.xml.orig	RasMacPPC.prj.xml	RasMac_PPC.xSYM		rasmol.h.orig		rasmol_8BIT.h
+RasMac.r.orig		RasMacPPC Data		RasMacPPC.prj.xml.orig	rasmac.make		rasmol.hlp
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ ci -l *.xml
+RCS/RasMac68K.prj.xml,v  <--  RasMac68K.prj.xml
+enter description, terminated with single '.' or end of file:
+NOTE: This is NOT the log message!
+>> .
+initial revision: 1.1
+done
+RCS/RasMacPPC.prj.xml,v  <--  RasMacPPC.prj.xml
+enter description, terminated with single '.' or end of file:
+NOTE: This is NOT the log message!
+>> .
+initial revision: 1.1
+done
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ tr \\r \\n < RasMacPPC.xml > RasMacPPC.xmllf
+bash: RasMacPPC.xml: No such file or directory
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ ls
+RCS			RasMac68K.prj.xml	RasMacPPC.prj		RasMac_PPC		rasmol.h		rasmol_32BIT.h
+RasMac.r		RasMac68K.prj.xml.orig	RasMacPPC.prj.xml	RasMac_PPC.xSYM		rasmol.h.orig		rasmol_8BIT.h
+RasMac.r.orig		RasMacPPC Data		RasMacPPC.prj.xml.orig	rasmac.make		rasmol.hlp
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ lstr \\r \\n < RasMacPPC.xml > RasMacPPC.xmllf.[4h.[4l[4hp[4l[4hr[4l[4hj[4l.xml > RasMacPPC.[4h.[4l[4hp[4l[4hr[4l[4hj[4l[4h.[4l[1P
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ mv RasMacPPC.prj.xmllf RasMacPPC.prj.xmllf  
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ rcsdiff RasMacPPC.prj.xml[4h-[4l[4hc[4l[4h [4l
+===================================================================
+RCS file: RCS/RasMacPPC.prj.xml,v
+retrieving revision 1.1
+diff -c -r1.1 RasMacPPC.prj.xml
+*** RasMacPPC.prj.xml	2005/02/06 03:22:55	1.1
+--- RasMacPPC.prj.xml	2005/02/06 03:24:20
+***************
+*** 1047,1059 ****
+                  </FILE>
+                  <FILE>
+                      <PATHTYPE>Name</PATHTYPE>
+-                     <PATH>RasMac.rsrc</PATH>
+-                     <PATHFORMAT>MacOS</PATHFORMAT>
+-                     <FILEKIND>Resource</FILEKIND>
+-                     <FILEFLAGS>Debug</FILEFLAGS>
+-                 </FILE>
+-                 <FILE>
+-                     <PATHTYPE>Name</PATHTYPE>
+                      <PATH>cif_stx.c</PATH>
+                      <PATHFORMAT>MacOS</PATHFORMAT>
+                      <FILEKIND>Text</FILEKIND>
+--- 1047,1052 ----
+***************
+*** 1122,1127 ****
+--- 1115,1127 ----
+                      <FILEKIND>Library</FILEKIND>
+                      <FILEFLAGS>Debug</FILEFLAGS>
+                  </FILE>
++                 <FILE>
++                     <PATHTYPE>Name</PATHTYPE>
++                     <PATH>RasMac.r</PATH>
++                     <PATHFORMAT>Unix</PATHFORMAT>
++                     <FILEKIND>Text</FILEKIND>
++                     <FILEFLAGS>Debug</FILEFLAGS>
++                 </FILE>
+              </FILELIST>
+              <LINKORDER>
+                  <FILEREF>
+***************
+*** 1221,1231 ****
+                  </FILEREF>
+                  <FILEREF>
+                      <PATHTYPE>Name</PATHTYPE>
+-                     <PATH>RasMac.rsrc</PATH>
+-                     <PATHFORMAT>MacOS</PATHFORMAT>
+-                 </FILEREF>
+-                 <FILEREF>
+-                     <PATHTYPE>Name</PATHTYPE>
+                      <PATH>cif_stx.c</PATH>
+                      <PATHFORMAT>MacOS</PATHFORMAT>
+                  </FILEREF>
+--- 1221,1226 ----
+***************
+*** 1274,1279 ****
+--- 1269,1279 ----
+                      <PATH>UTCUtils</PATH>
+                      <PATHFORMAT>Unix</PATHFORMAT>
+                  </FILEREF>
++                 <FILEREF>
++                     <PATHTYPE>Name</PATHTYPE>
++                     <PATH>RasMac.r</PATH>
++                     <PATHFORMAT>Unix</PATHFORMAT>
++                 </FILEREF>
+              </LINKORDER>
+          </TARGET>
+      </TARGETLIST>
+***************
+*** 1425,1432 ****
+              <FILEREF>
+                  <TARGETNAME>RasMac_PPC</TARGETNAME>
+                  <PATHTYPE>Name</PATHTYPE>
+!                 <PATH>RasMac.rsrc</PATH>
+!                 <PATHFORMAT>MacOS</PATHFORMAT>
+              </FILEREF>
+          </GROUP>
+          <GROUP><NAME>Mac Libraries</NAME>
+--- 1425,1432 ----
+              <FILEREF>
+                  <TARGETNAME>RasMac_PPC</TARGETNAME>
+                  <PATHTYPE>Name</PATHTYPE>
+!                 <PATH>RasMac.r</PATH>
+!                 <PATHFORMAT>Unix</PATHFORMAT>
+              </FILEREF>
+          </GROUP>
+          <GROUP><NAME>Mac Libraries</NAME>
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ ls
+RCS			RasMac68K.prj.xml	RasMacPPC.prj		RasMac_PPC		rasmol.h		rasmol_32BIT.h
+RasMac.r		RasMac68K.prj.xml.orig	RasMacPPC.prj.xml	RasMac_PPC.xSYM		rasmol.h.orig		rasmol_8BIT.h
+RasMac.r.orig		RasMacPPC Data		RasMacPPC.prj.xml.orig	rasmac.make		rasmol.hlp
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ ls ../csh
+ls: ../csh: No such file or directory
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ ls ../*csh
+../CW_fixup.csh			../build_HPUX_IA64.csh		../build_HPUX_PARISC.csh	../build_all.csh
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ ../CW_fixup.csh               more ../CW_fixup.csh
+[?1h=[32;1H[K#!/bin/csh
+#  CW_fixup.csh
+#  H. J. Bernstein, 15 Feb 2004
+#
+#  This script is intended for use under Mac OS X to fixup
+#  the creator (CWIE) and the type (TEXT) of all *.c and *.h
+#  files
+#
+#  Change the following definition to the path to SetFile
+set setfile=/Developer/Tools/SetFile
+foreach file (*.c *.h *.idm *.def *.rc)
+$setfile -c "CWIE" -t "TEXT" $file
+end
+
+[32;1H[K[?1l>Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ cp ../CW_fixup.csh .
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ ex CW_fixup.csh
+7[?47h[?1h=[1;32r[32;1H"CW_fixup.csh" [32;16H[K[32;1H"CW_fixup.csh" 14L, 367C
+Entering Ex mode.  Type "visual" to go to Normal mode.
+:1
+#!/bin/csh
+:
+[31;1H#  CW_fixup.csh[32;1H[K[32;1H:
+[31;1H#  H. J. Bernstein, 15 Feb 2004[32;1H[K[32;1H:
+[31;1H#[31;4H[K[32;1H[K[32;1H:
+[31;1H#  This script is intended for use under Mac OS X to fixup[32;1H[K[32;1H:
+[31;1H#  the creator (CWIE) and the type (TEXT) of all *.c and *.h[32;1H[K[32;1H:
+[31;1H#  files[31;9H[K[32;1H[K[32;1H:
+[31;1H#[31;4H[K[32;1H[K[32;1H:
+[31;1H#  Change the following definition to the path to SetFile[32;1H[K[32;1H:
+[31;1Hset setfile=/Developer/Tools/SetFile[31;37H[K[32;1H[K[32;1H:
+[31;1Hforeach file (*.c *.h *.idm *.def *.rc)[32;1H[K[32;1H:
+[31;1H$setfile -c "CWIE" -t "TEXT" $file[31;35H[K[32;1H[K[32;1H:-01  1
+foreach file (*.c *.h *.idm *.def *.rc)
+:s/rc/rc \*.r \*.xml/
+:p
+foreach file (*.c *.h *.idm *.def *.rc *.r *.xml)
+:w
+"CW_fixup.csh" "CW_fixup.csh" 14L, 377C written
+:q
+[?1l>[2J[?47l8Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ ./CW_fixup.csh
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src/mac yaya$ cd ..
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src yaya$ ./CW_fixup.csh
+Herbert-J-Bernsteins-Computer:~/rasmol/RasMol_2.7.3_builds/RasMol_2.7.2.1.1/src yaya$ 

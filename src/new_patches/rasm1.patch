@@ -1,0 +1,53 @@
+*** rasmol.doc	2001-04-21 14:53:38.000000000 -0400
+--- rasmol.doc	2004-12-08 13:46:17.000000000 -0500
+***************
+*** 631,637 ****
+  HR<td><a href="#stereo">Stereo</a>
+  HR<td><a href="#strands">Strands</a>
+  HR<td><a href="#structure">Structure</a>
+! HR<td><a href="#backbone">Trace</a>
+  HR<td><a href="#translate">Translate</a>
+  
+  HR<tr><td><a href="#unbond">UnBond</a>
+--- 631,637 ----
+  HR<td><a href="#stereo">Stereo</a>
+  HR<td><a href="#strands">Strands</a>
+  HR<td><a href="#structure">Structure</a>
+! HR<td><a href="#trace">Trace</a>
+  HR<td><a href="#translate">Translate</a>
+  
+  HR<tr><td><a href="#unbond">UnBond</a>
+***************
+*** 1939,1945 ****
+  HR<td><a href="#stereo">Stereo</a>
+  HR<td><a href="#strands">Strands</a>
+  HR<td><a href="#structure">Structure</a>
+! HR<td><a href="#backbone">Trace</a>
+  HR<td><a href="#translate">Translate</a>
+  
+  HR<tr><td><a href="#unbond">UnBond</a>
+--- 1939,1945 ----
+  HR<td><a href="#stereo">Stereo</a>
+  HR<td><a href="#strands">Strands</a>
+  HR<td><a href="#structure">Structure</a>
+! HR<td><a href="#trace">Trace</a>
+  HR<td><a href="#translate">Translate</a>
+  
+  HR<tr><td><a href="#unbond">UnBond</a>
+***************
+*** 3885,3891 ****
+  NR
+  HR<pre>
+  HRSyntax:  trace {&lt;boolean&gt;}
+! HR         trace <value>
+  HR         trace temperature   
+  HR</pre><p>
+  RR\tx1200
+--- 3885,3891 ----
+  NR
+  HR<pre>
+  HRSyntax:  trace {&lt;boolean&gt;}
+! HR         trace &lt;value&gt;
+  HR         trace temperature   
+  HR</pre><p>
+  RR\tx1200

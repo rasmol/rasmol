@@ -1,0 +1,27 @@
+*** vector.c	2004/04/26 20:30:26	1.1
+--- vector.c	2004/04/26 20:34:44
+***************
+*** 173,183 ****
+  /* Subtract two atoms and get a vector */
+  void SubtractAtoms( RAtom __far *a, RAtom __far *b, Real c[3] )
+  {
+!     c[0] = (double)(a->xorg - b->xorg)
+             + (double)((a->xtrl - b->xtrl)/40.);
+!     c[1] = (double)(a->yorg - b->yorg)
+             + (double)((a->ytrl - b->ytrl)/40.);
+!     c[2] = (double)(a->zorg - b->zorg)
+             + (double)((a->ztrl - b->ztrl)/40.);
+  }
+  
+--- 173,183 ----
+  /* Subtract two atoms and get a vector */
+  void SubtractAtoms( RAtom __far *a, RAtom __far *b, Real c[3] )
+  {
+!     c[0] = (double)(a->xorg - b->xorg) + (double)(a->fxorg - b->fxorg)
+             + (double)((a->xtrl - b->xtrl)/40.);
+!     c[1] = (double)(a->yorg - b->yorg) + (double)(a->fyorg - b->fyorg)
+             + (double)((a->ytrl - b->ytrl)/40.);
+!     c[2] = (double)(a->zorg - b->zorg) + (double)(a->fzorg - b->fzorg)
+             + (double)((a->ztrl - b->ztrl)/40.);
+  }
+  

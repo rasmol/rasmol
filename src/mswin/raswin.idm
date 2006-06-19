@@ -1,0 +1,148 @@
+
+/***************************************************************************
+ *                               RasMol 2.7.3                              *
+ *                                                                         *
+ *                                 RasMol                                  *
+ *                 Molecular Graphics Visualisation Tool                   *
+ *                             6 February 2005                             *
+ *                                                                         *
+ *                   Based on RasMol 2.6 by Roger Sayle                    *
+ * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
+ *                      Stevenage, Hertfordshire, UK                       *
+ *         Version 2.6, August 1995, Version 2.6.4, December 1998          *
+ *                   Copyright (C) Roger Sayle 1992-1999                   *
+ *                                                                         *
+ *                          and Based on Mods by                           *
+ *Author             Version, Date             Copyright                   *
+ *Arne Mueller       RasMol 2.6x1   May 98     (C) Arne Mueller 1998       *
+ *Gary Grossman and  RasMol 2.5-ucb Nov 95     (C) UC Regents/ModularCHEM  *
+ *Marco Molinaro     RasMol 2.6-ucb Nov 96         Consortium 1995, 1996   *
+ *                                                                         *
+ *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
+ *                                                                         *
+ *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *                   RasMol 2.7.1.1 Jan 01                                 *
+ *                   RasMol 2.7.2   Aug 00                                 *
+ *                   RasMol 2.7.2.1 Apr 01                                 *
+ *                   RasMol 2.7.2.1.1 Jan 04                               *
+ *                   RasMol 2.7.3   Feb 05                                 *
+ *                                                                         *
+ *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
+ *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
+ *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
+ *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
+ *of Energy.                                                               *
+ *                                                                         *
+ *                    and Incorporating Translations by                    *
+ *  Author                               Item                      Language*
+ *  Isabel Servan Martinez,                                                *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *                                                                         *
+ *                             This Release by                             *
+ * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ *                       yaya@bernstein-plus-sons.com                      *
+ *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *                                                                         *
+ *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
+ *Please read the file NOTICE for important notices which apply to this    *
+ *package and for license terms (GPL or RASLIC).                           *
+ ***************************************************************************/
+
+/* raswin.idm
+ */
+
+#define IDM_OPEN       1000
+#define IDM_INFO       1001
+#define IDM_CLOSE      1002
+#define IDM_PRINT      1003
+#define IDM_SETUP      1004
+#define IDM_EXIT       1005
+#define IDM_MOL1       1006
+#define IDM_MOL2       1007
+#define IDM_MOL3       1008
+#define IDM_MOL4       1009
+#define IDM_MOL5       1010
+
+#define IDM_SELECT     1020
+#define IDM_CUT        1021
+#define IDM_COPY       1022
+#define IDM_PASTE      1023
+#define IDM_DELETE     1024
+
+#define IDM_WIREFRAME  1030
+#define IDM_BACKBONE   1031
+#define IDM_STICKS     1032
+#define IDM_SPHERES    1033
+#define IDM_BALLSTICK  1034
+#define IDM_RIBBONS    1035
+#define IDM_STRANDS    1036
+#define IDM_CARTOONS   1037
+#define IDM_MOLSURF    1038
+
+#define IDM_MONO       1040
+#define IDM_CPK        1041
+#define IDM_SHAPELY    1042
+#define IDM_GROUP      1043
+#define IDM_CHAIN      1044
+#define IDM_TEMPER     1045
+#define IDM_STRUCT     1046
+#define IDM_USER       1047
+#define IDM_MODEL      1048
+#define IDM_ALT        1049
+
+#define IDM_SLAB       1050
+#define IDM_HYDROGEN   1051
+#define IDM_HETERO     1052
+#define IDM_SPECULAR   1053
+#define IDM_SHADOW     1054
+#define IDM_STEREO     1055
+#define IDM_LABELS     1056
+
+#define IDM_PKNONE     1060
+#define IDM_PKIDENT    1061
+#define IDM_PKDIST     1062
+#define IDM_PKMONIT    1063
+#define IDM_PKANGLE    1064
+#define IDM_PKTORSN    1065
+#define IDM_PKLABEL    1066
+#define IDM_PKORIGN    1067
+#define IDM_PKCOORD    1068
+#define IDM_PKBOND     1069
+#define IDM_RTBOND     1070
+#define IDM_RTMOL      1071
+#define IDM_RTALL      1072
+
+
+#define IDM_BMP        1080
+#define IDM_PCX        1081
+#define IDM_GIF        1082
+#define IDM_EPSF       1083
+#define IDM_PPM        1084
+#define IDM_RAST       1085
+#define IDM_PICT       1086
+#define IDM_IRIS       1087
+
+#define IDM_ABOUT      1090
+#define IDM_HELP       1091
+
+#define IDD_HARDWARE   200
+#define IDD_FILETEXT   201
+#define IDD_FILELIST   202
+#define IDD_DIRTEXT    203
+#define IDD_DIRLIST    204
+
+
+#define IDD_INFOTEXT   210
+#define IDD_INFOTEXT1  210
+#define IDD_INFOTEXT2  211
+#define IDD_INFOTEXT3  212
+#define IDD_INFOTEXT4  213
+#define IDD_INFOTEXT5  214
+#define IDD_INFOTEXT6  215
+#define IDD_INFOTEXT7  216

@@ -1,0 +1,291 @@
+[06/06/94]	RS	raswin.c rasmol.h molecule.c render.c
+		Completed port of RasMol v2.4 to Windows NT. Thanks to
+		David Stranz and David Digby.
+
+[05/06/94]	RS	outfile.c
+		Corrected bug in generating Vector Postscript in RasWin,
+		resulting in the image appearing inverted on the page.
+		Thanks to Tomasz Heyduk.
+
+[01/06/94]	RS	raswin.c raswin.rc raswin.idm
+		Added CHARMm format files to the RasWin file open dialog box
+		and added the "Strands" menu item to the "Display" menu.
+
+[01/06/94]	RS	outfile.c transfor.c transfor.h
+		Optimised representation of molecule in generated RasMol
+		script files by detecting "cpk" colours and VdW radius.
+
+[31/05/94]	RS	outfile.c
+		Added complete support for writing out the current molecule
+		representation in a RasMol script file using "write script".
+
+[31/05/94]	RS	molecule.c transfor.c
+		Improved lazy calculation of hydrogen bonding and disulphide
+		bridges, hence "hbonds off" and "colour hbonds none" no longer
+		force evaluation.
+
+[27/05/94]	RS	command.c render.c transfor.c
+		Modified the DisplayRibbon routine to allow the simultaneous
+		display of strands and ribbons. Removed the "set ribbons"
+		command and replaced it with "ribbons" and "strands".
+
+[26/05/94]	RS	transfor.c render.c
+		Changed the way that ribbons are selected and rendered in
+		different colours. This brings the ribbon rendering in line
+		with alpha carbon position and colouring.
+
+[23/05/94]	RS	molecule.c
+		Corrected bug in LoadAlchemyMolecule that resulted in molecules
+		having the wrong chirality. Thanks to Mikhail Matrosovich.
+
+[20/05/94]	RS	outfile.c
+		Improved the Molscript script file interface. The RasMol
+		"write molscript" command now stores the scaling, translation
+		and slabbing (z-clipping) information. Thanks to Kevin Gardner.
+
+[20/05/94]	RS	raswin.c
+		Corrected bug that caused the DIB copied to the clipboard or
+		DDE'ed to another application to have the wrong colour map.
+
+[19/05/94]	RS	molecule.c
+		Corrected bug in RasMol that caused it to report far too many
+		ladders in DSSP. Changed references to "Ladders" to "Strands".
+
+[19/05/94]	RS	molecule.c molecule.h command.c tokens.h
+		Added support for CHARMm format co-ordinate files. Thanks to 
+		Charles Brooks.
+
+[18/05/94]	RS	molecule.c
+		Removed interchain bonding. This makes loading a multi-chain
+		protein faster and allows for RMS fitting with RasMol.
+
+[18/05/94]	RS	command.c tokens.h transfor.c transfor.h render.c 
+		pixutils.c
+		Added a second colour to RasMol strands ribbons. Hence, the
+		command "colour ribbons1 blue" and "colour ribbons2 red" 
+		draws blue ribbons with the outmost stands in red.
+
+[17/05/94]	RS	command.c render.c render.h
+		Renamed the command "set dots" to "set radius" and added the
+		command "set solvent" which controls the dot surface as 
+		either VDW or solvent accessible. The radius controls either
+		the VDW radius or the Solvent Probe Sphere radius.
+
+[16/05/94]	RS	raswin.c
+		Added scroll bar and terminal history to the RasMol command 
+		line window. Improved scrolling in resized windows.
+
+[12/05/94]	RS	raswin.c rasmol.c mswin31.c transfor.c
+		Corrected bug in RasMol that resulted in the "specular",
+		"specpower" and "ambient" parameters not being reset by a
+		RasMol "zap" command and fixed initial RasWin CMap.
+
+[12/05/94]	RS	command.c tokens.h abstree.c abstree.h
+		Added the atom property "elemno" that uniquely identifies
+		each atoms element type, hence "select elemno=26" identifies
+		all sulphur atoms.
+
+[12/05/94]	RS	molecule.c
+		Added a test to check if the PDB x, y and z co-ordinates of
+		an atom are 9999.000 indicating an XPLOR pseudo atom. Thanks
+		to Chris Littler and Harren Jhoti.
+
+[11/05/94]	RS	command.c render.c render.h
+		Added the command "set dots <value>" to set the probe
+		sphere radius for calculating the solvent accessible 
+		surface of a protein.
+
+[11/05/94]	RS	render.c
+		Corrected bug when drawing thin cylinders since the change
+		to DrawTwinLine for axes, bounding box and unit cell.
+
+[10/05/94]	RS	raswin.c
+		Corrected bug in the DDE formating of the picked atoms
+		co-ordinates.
+
+[10/05/94]	RS	molecule.c
+		Fixed bug in RasMol that incorrectly determined the lowest
+		residue number in PDB files that are unordered. Thanks to
+		Ken Davis.
+
+[09/05/94]	RS	molecule.c molecule.h command.c render.c tokens.h
+		Fully implemented the RasMol commands "set unitcell" and
+		"show symmetry", these now take the crystal symmetry 
+		information from the CRYST1 record of a PDB file.
+
+[03/05/94]	RS	render.c
+		Corrected RasWin problem in DisplayRibbon caused by rounding
+		when interpolating Z-coordinates with large ZOffset.
+
+[03/05/94]	RS	transfor.c
+		Corrected RasWin overflow bug in ScaleColourAttrib that 
+		caused `hot' atoms to be displayed black instead of red.
+
+[03/05/94]	RS	rasmol.doc
+		Corrected several typographic mistakes and errors within
+		the rasmol documentation. Thanks to Naoum Salame.
+
+[29/04/94]	RS	raswin.c mswin31.c
+		Managed to trace a RasWin colour map initialisation problem
+		that occasionally caused RasWin to crash with a GDI error or
+		start with wrong colour background. Thanks to Dave Digby.
+
+[28/04/94]	RS	x11win.c
+		Corrected buffer char types in x11win.c that were causing
+		warnings on pedantic compilers. Thanks to Ethan Merritt.
+
+[20/04/94]	RS	outfile.c
+		Added support for vector PostScript output of dot surfaces.
+
+[20/04/94]	RS	render.c render.h command.c transfor.c transfor.h 
+		tokens.h
+		Added a Van der Waals dot surface representation to RasMol.
+		The command "dots <boolean>" enables and disables a dot
+		surface of the currently selected atoms. "dots <value>" can
+		control the dot density, "colour dots" colours the whole
+		dot surface a given colour [the default is taken from atoms]
+
+[20/04/94]	RS	rasmol.c
+		Corrected bug with including <unistd.h> on Evans & Sutherland
+		ESV workstations.
+
+[19/04/94]	RS	render.c
+		Solved a bug in IdentifyAtom that refused to identify picked
+		non-connected atoms when bonds are being displayed.
+
+[19/04/94]	RS	molecule.c
+		Corrected bug in loading alchemy format files. Atom serial
+		numbers were incorrect resulting in incorrect bonding. Thanks
+		to Ben Gaskins.
+
+[18/04/94]	RS	render.c render.h tokens.h command.c
+		Added the commands "set axes" and "set boundingbox" to display
+		the co-ordinate axes and molecule bounding box on screen.
+
+[18/04/94]	RS	pixutils.c
+		Corrected bug in routines `ClipLine' and `ClipVector' which
+		caused lines that clipped the bottom of the screen to bend.
+
+[18/04/94]	RS	raswin.c
+		Corrected bug in the DDE transfer of CF_DIB objects for the
+		DDE "Image" item. Thanks to Dave Digby and Ken Davis.
+
+[15/04/94]	RS	rasmol.c raswin.c abstree.h transfor.c molecule.c 
+		molecule.h
+		Better support for the display of small molecules. Smaller
+		bond cylinder radius for `sticks' images of molecules with
+		less than 256 atoms, and use unadjusted Van der Waals radius 
+		for molecules containing explicit hydrogen atoms.
+
+[15/04/94]	RS	molecule.c
+		RasMol now uses the connectivity specified in PDB CONECT
+		records when displaying molecules with less than 256 atoms,
+		i.e. small compounds. Thanks to Brian Dunford-Shore.
+
+[14/04/94]	RS	rasmol.h raswin.c
+		Extended the range of items exported by DDE to include the
+		picked atom's co-ordinates and the image being drawn on
+		the screen (transfered as CF_DIB).
+
+[13/04/94]	RS	raswin.c
+		Improved the processing of WM_SIZE handling by increasing
+		XRange to be long aligned rather than decreasing it. This
+		avoids the occasional black line down the side of the screen.
+
+[13/04/94]	RS	transfor.c
+		Corrected bug in transfor.c that cleared more entries in
+		in the StructShade table than there were. This sometimes
+		caused RasMol to crash later during keyword lookup.
+
+[12/04/94]	RS	rasmol.c
+		Changed the TERMIOS handling section to support FreeBSD1.1
+		using XFree2.x. Special thanks to Pedro A M Vazquez.
+
+[11/04/94]	RS	molecule.c
+		Corrected bug in RasMol that caused residues with different
+		insertion codes to be placed in the same group. They're now
+		placed in consecutive Groups but with the same serial number
+		hence may be "renumbered". Thanks to Anne Cleasby.
+
+[07/04/94]	RS	molecule.c
+		Corrected bug in sizing molecule read from an MDL Mol file.
+
+[05/04/94]	RS	molecule.c molecule.h command.c tokens.h raswin.c 
+		rasmol.c
+		Added support for reading in files in Molecular Design Ltd's
+		(MDL) Mol file format.
+
+[30/03/94]	RS	rasmol.doc
+		Corrected HTML bug that caused the NCSA PC Mosiaic viewer to
+		crash when displaying rasmol.html.
+
+[28/03/94]	RS	pixutils.c
+		Corrected a bug in RenderPolygon that caused a floating point
+		division by zero error and huge/far segment problems on the 
+		IBM PC.
+
+[25/03/94]	RS	outfile.c
+		Finished implementing correctly intersecting spheres when
+		outputing vector postscript. However, this may cause
+		problems for low memory laser printers.
+
+[23/03/94]	RS	transfor.c
+		Corrected bug that set the default scale too large for very
+		small molecules.
+
+[22/03/94]	RS	molecule.c
+		Handle incompletely specificed @<TRIPOS>MOLECULE records in
+		Sybyl Mol2 files such as those exported from InSight. Handle
+		`small molecule' atom names (containing serial numbers) in 
+		PDB files. Thanks to Martin Hargreaves
+
+[18/03/94]	RS	pixutils.c
+		Improved the polygon rendering algorithm. RasMol now displays
+		solid ribbons as gouraud rather than constant normal shaded
+		polygons.
+
+[18/03/94]	RS	rasmol.c
+		Added the command line options "-pdb", "-alchemy", "-mol2"
+		and "-xyz" to specify the format of the file given on the
+		command line.
+
+[17/03/94]	RS	molecule.h command.h
+		Increased the maximum filename length from 80 to 256 chars.
+
+[15/03/94]	RS	outfile.c outfile.c command.c
+		Improved the quality of "vectps" output. RasMol now correctly
+		handles intersection of spheres in vector PostScript output.
+		The use of `cartoon' outlines is now controlled by the
+		"set vectps <boolean>" command.
+
+[14/03/94]	RS	x11win.c
+		Change Visual detection code for 24bit and 32bit displays to
+		support both TrueColor and DirectColor. This adds support for
+		the HP 735 CRX-24. Special Thanks to Thomas Lew.
+
+[11/03/94]	RS	outfile.c
+		Improved speed of vector PostScript printing by performing
+		sphere and bond culling before sorting/generating output.
+
+[11/03/94]	RS	molecule.c molecule.h command.c tokens.h raswin.c
+		Added support for MSC XMOL's XYZ format files.
+
+[10/03/94]	RS	molecule.c molecule.h command.c tokens.h raswin.c
+		Added support for Sybyl .mol2 file format for reading in
+		a file (i.e. "load mol2"). Read small molecule connectivity
+		from "alchemy" and "mol2" files, if it exists.
+
+[09/03/94]	RS	x11win.c
+		Allow the EIGHTBIT version of RasMol to display on 8-bit
+		grey-scale X displays. Special thanks to Gerald Loeffler.
+
+[09/03/94]	RS	molecule.c
+		Allow backbone traces to be drawn to unknown residues
+		that contain an alpha carbon.
+
+[04/03/94]	RS	!Announced the public release of RasMol and 
+		RasWin version 2.3, available by anonymous FTP from 
+		ftp.dcs.ed.ac.uk [129.215.160.5] in the directory 
+		/pub/rasmol. The announcement was made in both 
+		bionet.software, bionet.announce, sci.bio,
+		sci.chem, comp.graphics.visualisation newsgroups.

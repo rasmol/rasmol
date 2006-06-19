@@ -1,0 +1,436 @@
+[08/10/93]	RS	molecule.c
+		Solved problem with protein hydrogen bonding, in PDB files
+		containing both protein and nucleic acid sequences.
+
+[07/10/93]	RS	outfile.c
+		Corrected problem with compressed postscript output using
+		"colour" instead of "color" resulting in monochrome output.
+
+[06/10/93]	RS	abstree.c rasmol.c render.c
+		Moved #include <stdlib.h> inside the #ifdef IBMPC to avoid
+		compilation errors on SUN 386is without stdlib.h!
+
+[05/10/93]	RS	command.c abstree.c
+		Added support for negative residue numbers when specifing
+		single residue numbers and ranges of residues, and allow the
+		use of negative numbers in RasMol conditional expressions.
+
+[05/10/93]	RS	rasmol.c molecule.h
+		Altered the main loop of RasMol and the way char arrays are
+		initialised in molecule.h to avoid compilation warnings with
+		SGI's cc compiler. Thanks to Lachlan Bell (lhb@seqnet.dl..).
+
+[04/10/93]	RS	Makefile Imakefile
+		Added a comment to the Makefile to the effect that the Xinput
+		library is linked using -lXi instead of -lXinput on SGIs.
+
+[01/10/93]	RS	molecule.c render.c
+		Modified bug in molecule.c that only created new groups or 
+		chains at changes in PDB residue serial numbers. This caused
+		ribbon problems on some GAP3.pdb. Thanks to Andrew Coulson.
+
+[29/09/93]	RS	molecule.c
+		Changed method for determining hydrogen bond offests for the
+		RasMol "colour hbond type" command to not use the residue
+		serial numbers found in the PDB file.
+
+[29/09/93]	RS	molecule.c molecule.h render.c
+		Recorded breaks in protein backbone caused by large alpha
+		carbon separation to avoid drawing ribbon over chain breaks.
+
+[27/09/93]	RS	x11win.c
+		Improved the scroll bars to allow the `button' to be dragged
+		by moving the mouse whilst a button is depressed.
+
+[27/09/93]	RS	molecule.c
+		Added a flag to indicate the source of the current secondary
+		structure assignment used by the program, i.e PDB vs DSSP.
+
+[27/09/93]	RS	rasmol.c raswin.c raswin.rc raswin.idm command.c transfor.c
+		Replaced "Ball & Wire" with "Ribbons" on the display menu
+		and improved the way representations are enabled and disabled.
+
+[24/09/93]	RS	molecule.c tokens.h command.c
+		Modified LoadPDBMolecule to read the secondary structure
+		assignment records (HELIX and SHEET) and use these as default
+		secondary structure assignments when they are present. Added 
+		the command "structure" to force the use of DSSP definitions.
+
+[24/09/93]	RS	molecule.c
+		Optimised Implementation of Kabsch and Sander's algorithm to
+		determine beta sheet secondary structures, reducing time to
+		analyse GLS2 from over two hours to 7mins on a sun4.
+
+[23/09/93]	RS	abstree.c
+		Modified EvaluateProperty to test amino acid properties by
+		using an array containing a bitvector of properties for each
+		amino acid. This is both faster and easier to maintain.
+
+[23/09/93]	RS	molecule.c command.c tokens.h abstree.c abstree.h
+		Completed prototype beta sheet secondary structure 
+		determination based upon the Kabsch and Sander's algorithm.
+		Added the predicate "sheet" for amino acids in ladders.
+
+[23/09/93]	RS	molecule.c molecule.h transfor.c abstree.c
+		Added pyrrolidine carboxylic acid and hydroxyproline (and
+		ASX and GLX) to the list of recognised amino acids for 
+		determining hydrogen bonding and structure determination.
+
+[22/09/93]	RS	molecule.c molecule.h tokens.h command.c render.c 
+		abstree.c
+		Corrected bug with RasMol that caused proteins with actyl
+		N-terminii not to be recognised as amino acid sequences.
+		Added the predicate "protein" which is the set "amino" and
+		the n-terminal acetic acid. Thanks to Andrew Coulson.
+
+[21/09/93]	RS	transfor.c transfor.h
+		Solved remaining problems with huge proteins in RasWin.
+
+[21/09/93]	RS	molecule.c
+		Improved the performance of (helix) secondary structure
+		determination, by ordering the h-bonds to reduce searching.
+
+[21/09/93]	RS	molecule.c render.c render.h transfor.c command.c
+		Modified altered the "Boxing" algorithm used to determine
+		bonding to use the Shadow tracing hash table. This both
+		reduces memory and dramatically increases performance
+		(halving the time to read 2GLS from 43s to 21s on a sun4).
+
+[17/09/93]	RS	molecule.c molecule.h command.c raswin.c
+		Solved (some) problems caused by reading in huge proteins 
+		with more than 32767 atoms and bonds, and larger in diameter
+		than can be represented by 16 bit integers.
+
+[17/09/93]	RS	render.c
+		Corrected more problems caused by integer overflow and the
+		division by zero errors when zooming Ribbon models in RasWin.
+
+[15/09/93]	RS	command.c
+		Extended expression syntax to include numbers as primitive
+		expressions to specify a given residue sequence number. Hence 
+		the "select 5,6" is equiavalent to "select resno=5,resno=6"
+		and "select 10-20" means "select (resno>=10) and (resno<=20)".
+
+[14/09/93]	RS	render.c
+		Corrected problems caused by integer overflow and integral
+		type conversion warnings with Spline code when zooming.
+
+[13/09/93]	RS	x11win.c rasmol.h
+		Added check to the X Window System MIT shared memory extension
+		to test if server is on the same host (bug in XShm?) and hence
+		made MITSHM enabled as the default option.
+
+[13/09/93]	RS	render.c pixutils.c pixutils.h
+		Completed implementation of ribbons using a MolScript-like
+		Hermite spline through Carson's control points. Optimized
+		fixed point implementation and improved ribbon clipping.
+
+[12/09/93]	RS	render.c transfor.c transfor.h command.c molecule.h
+		Added an optional width parameter to the "ribbons" command
+		to allow the user to define ribbon width at each residue
+		independently, allowing for example wider ribbons in helix.
+
+[12/09/93]	RS	pixutils.c pixutils.h command.c tokens.h
+		Added the command "set strands <number>" to allow the user to
+		globally modify the number strands in ribbon representations.
+
+[29/08/93]	RS	pixutils.c render.c command.c tokens.h transfor.c 
+		transfor.h
+		Added prototype support for the RasMol ribbon representation
+		based on a fixed number of straight strands through Carson's
+		control points (peptide plane miday between alpha carbons).
+
+[26/08/93]	RS	raswin.c rasmol.c command.c
+		Changed the default colour scheme to CPK.
+
+[26/08/93]	RS	molecule.c
+		Added support for saving the currently selected atoms and 
+		their connectivity information in an alchemy format file.
+
+[26/08/93]	RS	x11win.c
+		Increased the minimum width of the screen to avoid bug in
+		the X Scroll bar range checking and limit XRange to word
+		boundaries to solve shared memory bug on some machines.
+
+[25/08/93]	RS	transfor.c
+		Changed type of OrigCX, OrigCY and OrigCZ to type Long to
+		prevent RasWin crashing when loading PDB files centered a 
+		long way from the co-ordinate origin.
+
+[25/08/93]	RS	x11win.c
+		Improved code for using MIT's shared memory extension. The
+		code now uses the XShmCreateImage call and destroys the shmid
+		to ensure that the shared memory is reclaimed when RasMol is
+		terminated. Thanks to Andre Beck.
+
+[24/08/93]	RS	abstree.c
+		Extended the syntax of primitive atom expressions to allow
+		the user to select residues (groups) whose names contain non
+		alphabetic characters, such as digits. Hence the new syntax
+		allows expressions of the form [SO4]20 and [+U]*P
+
+[24/08/93]	RS	molecule.c molecule.h render.c transfor.c abstree.c
+		Added code to determine hydrogen bonding between nucleic
+		acid residues in distrinct chains. Modified "set hbond
+		backbone" code, to only draw a single bond between sugar
+		phosphate backbones for each pair of nucleotides.
+
+[23/08/93]	RS	transfor.c
+		Modified the way in which ScaleColourAttrib tries to allocate
+		the colour map. Now if there are no free shades, it attempts
+		to allocate as many close matches as possible.
+
+[23/08/93]	RS	x11win.c
+		Improved the XInput extensions dials box handling code, to
+		explicitly check the number of Dials and LEDs present. This
+		avoids problems on some SGI dials boxes. Thanks to Nick Blom.
+
+[20/08/93]	RS	molecule.c molecule.h
+		Added a backbone representation for nucleic acid structures
+		by connecting sugar phosphate P atoms of consecutive residues.
+
+[20/08/93]	RS	command.c
+		Fixed bug caused by "UpdateScrollBars" being called by the
+		`rotate' command, even when not running interactively.
+
+[20/08/93]	RS	molecule.c molecule.h tokens.h command.c abstree.c 
+		abstree.h
+		Added complete code for Kabsch and Sander secondary structure
+		determination of alpha helices. Added predefined set "HELIX"
+		that contains all atoms contained in a alpha helix structure.
+
+[19/08/93]	RS	command.c
+		Fixed bug in LoadScriptFile that assumed that it was being
+		called after parsing a command line, causing RasMol to crash
+		SGI machines that had ".rasmolrc" initialisation files. Thanks 
+		to Peter Murray-Rust and special thanks to Tom Smith!
+
+[19/08/93]	RS	transfor.c command.c
+		The restrict command (and hydrogen/hetero menu options) now
+		removes bonds connected to any removed atom ignoring the
+		bondmode setting. Isabelle Phan (phan@bioch.ox.ac.uk)
+
+[19/08/93]	RS	raswin.c
+		Added Alchemy file type to the RasWin FileOpen dialog box.
+
+[19/08/93]	RS	molecule.c
+		Imposed maximum backbone bond length of 7.00 Angstroms.
+
+[18/08/93]	RS	rasmol.c raswin.c
+		Modified the actions performed by ReDrawFlag when no 
+		molecule is loaded. This allows the background colour
+		to be changed before loading a molecule.
+
+[18/08/93]	RS	x11win.c
+		Corrected a memory deallocation problem, caused by the
+		XDestroyImage freeing the current frame buffer. This has
+		caused numerous untracable errors in previous versions. 
+
+[18/08/93]	RS	abstree.c molecule.c
+		Added support for IUPAC hydrogen names "1H", "2H" etc...
+
+[10/08/93]	RS	command.c transfor.c transfor.h molecule.c molecule.h
+		Added the "colour hbond type" command to enable hydrogen
+		bonds to be drawn in colours associated with their offsets.
+
+[09/08/93]	RS	abstree.c abstree.h command.c tokens.h
+		Completely reorganised the classification of amino acids into
+		predefined sets. Added sets for "surface" and "buried", for
+		"small", "medium" and "large" and synonyms "positive" and
+		"negative" for "acidic" and "basic", the "charged" sets.
+
+[05/08/93]	RS	molecule.c molecule.h command.c tokens.h
+		Added support for reading in Alchemy format data files, as
+		used by the popular PC and Mac program. Thanks to Steve Ludtke.
+
+[05/08/93]	RS	rasmol.c raswin.c x11win.c mswin31.c command.c
+		Changed default value of ReDrawFlag to initially be zero
+		until the molecule is loaded. This corrects bug when the
+		dispatcher doesn't check stdin when no molecule loaded.
+
+[03/08/93]	RS	raswin.c mswin31.c
+		Added Print option to the RasWin file menu to allow the
+		current image to be printed out using the MS Windows
+		printer drivers. Tested for Mono & Colour PostScript.
+
+[03/08/93]	RS	abstree.c
+		Changed definition of the sets "hydrophobic" and "polar".
+		Glycine (GLY) is now considered a polar amino acid residue.
+
+[03/08/93]	RS	rasmol.c x11win.c
+		Improved dispatch of pending X11 events [RasMol now processes
+		all X Events until quiescent]. Holding down scroll bar arrow
+		spins until mouse button released. Fixed server colour search
+		bug when not running interactively. Thanks to Doug Phillips.
+
+[03/08/93]	RS	molecule.c
+		Modified the order in which molecules are internally stored
+		so saving PDB files preserves the correct atom ordering. Also
+		solved output chirality problems when INVERT is defined.
+
+[03/08/93]	RS	outfile.c
+		Fixed bugs and improved performance of writing output files
+		under MS Windows caused by rounding when INVERT is defined.
+
+[29/07/93]	RS	outfile.c
+		Fixed bug when generating 24bit Run Length Encoded sun 
+		rasterfile format images, thanks to Doug Phillips. Fixed
+		Monochrome RLE PostScript bug, thanks to Andrew Coulson. Also
+		changed "64 idiv" to "-6 bitshift" to speed up PostScript.
+
+[28/07/93]	RS	outfile.c outfile.h command.c rasmol.c raswin.c
+		Modified the PostScript output routines to include a run
+		length encoding (RLE) compression option (as default). This
+		has significantly reduced the size of output files from
+		several megabytes to a few hundred kilobytes per image.
+
+[27/07/93]	RS	tokens.h command.c molecule.c molecule.h
+		Added functions to write out currently selected atoms to a
+		PDB file as viewed from the current rotation matrix. This
+		command doesn't output CONNECT, SSBOND or MASTER records 
+		yet. May also add HELIX, TURN and SHEET records in future.
+
+[27/07/93]	RS	mswin31.c
+		Corrected bug that resulted in the PixMap image of a molecule
+		persisting (being redrawn after expose events) after the 
+		molecule has been `closed' or `zapped!'.
+
+[26/07/93]	RS	!Defined macro "Long" in rasmol.h to be the 32bit 
+		integer type on the current architecture. This should be 
+		defined as long on all architectures except the 64bit 
+		DEC Alpha.
+
+[23/07/93]	RS	Imakefile
+		Created Imakefile to allow easy compilation on local machines
+		using the `xmkmf' command to generate Makefiles with the
+		appropriate parameters.
+
+[21/07/93]	RS	bitmaps.h graphics.h transfor.c
+		Corrected compilation warnings generated by the Solaris v2.0
+		C Compiler due to default signed chars and ANSI C division.
+
+[08/07/93]	RS	command.c tokens.h
+		Changed the way keywords are identified from searching a table
+		of binary search trees ordered by frequency, to binary search
+		of an initialised array by token length. This should reduce
+		both memory and processing time.
+
+[08/07/93]	RS	abstree.h
+		Altered the syntax of primitive atom expressions to provide
+		better support for numeric chain identifiers using optional
+		colon before chain. CYS11:1 can be distinguished from CYS111!
+
+[03/07/93]	RS	rasmol.h raswin.c rasmol.c render.c molecule.c
+		Added support for Dynamic Data Exchange (DDE) of RasMol
+		parameters and valuation data under MS Windows 3.1.
+
+[02/07/93]	RS	molecule.c
+		Corrected a typographical error resulting in molecules being
+		drawn back to front. This produced images of molecules with
+		the wrong chirality. Thanks to Pedro Coutinho and Tom Smith.
+
+[01/07/93]	RS	command.c molecule.c
+		Solved problems when reading in PDB files that contain no
+		atoms such as the documentation files cpk.pdb and shapely.pdb.
+		This allows colour masks to be stored in a separate PDB file
+		and preloaded before the main molecule. Thanks to Bob Strunz.
+
+[01/07/93]	RS	graphics.h x11win.c
+		Added much better support for 24bit and 32bit XVisual display
+		types. This now permits the 8bit RasMol to run find an 
+		appropriate visual on 24bit and 32bit screens. This solves
+		problems with obscure default visuals. Special thanks to
+		Jenny Barna.
+
+[30/06/93]	RS	command.c abstree.c abstree.c
+		Implemented the "WITHIN" function in atom expressions. This
+		selects all atoms within a specified radius of a given set
+		of atoms (defined by an atom expression). This even permits
+		the WITHIN command to be used recursively.
+
+[29/06/93]	RS	x11win.c
+		Improved the local colour map support for 8bit displays. The
+		program no detects if the entire global colour map is already
+		allocated and forces the use of a local colour map. This gets
+		around the problems of black on black menu bottons and scroll
+		bars.
+
+[27/06/93]	RS	command.c transfor.c transfor.h
+		Implemented the "colour [atom] amino" command that colours
+		amino acid residues by their properties. These colours are
+		more intuitive (conventional) than shapely colours and better
+		for a range of displays. Thanks to Andrew Coulson.
+
+[27/06/93]	RS	molecule.c transfor.c abstree.h abstree.c
+		Added much better support for a wide variety of element
+		types by introducing element handles. Van der Waals radii
+		and CPK colours are now maintained for a much larger number
+		of atom types.
+
+[27/06/93]	RS	command.c render.c render.h transfor.c transfor.h
+		Implemented the "ssbond <value>" and "hbond <value>" commands
+		to represent hydrogen bonds and disulphide bridges as thick
+		cylinders as well as dashed vectors. Significantly altered
+		the dynamics of RasMol by making backbone, hbond and ssbond
+		selection lazy. All these modes always clip vectors and
+		cylinders. This'll speed up transformation and selection.
+
+[27/06/93]	RS	rasmol.c raswin.c abstree.c abstree.h
+		Added predicates for "aliphatic" and "aromatic" predefined 
+		sets. Separated expression handling from molecule.c
+
+[27/06/93]	RS	command.c graphics.h x11win.c mswin31.c
+		Added the "hourglass" variable to rasmol, that enables and
+		disables the use of the hou glass cursor whilst RasMol is
+		busy drawing and image. This was infuriating during DDE.
+
+[27/06/93]	RS	render.c pixutils.c
+		Implemented the section slabmode to draw only a two a cross
+		section on the current clipping plane. Modified the atom
+		picking to accept this mode, and fixed a minor bug in the
+		"half" and "solid" slabmodes for drawing and picking. Removed
+		clipping code from the shadowing scanline routine.
+
+[24/06/93]	RS	outfile.c
+		Corrected problem when outputing postscript files. A rounding
+		error when shrinking a picture to fit a page resulted in an
+		axis being scaled by zero. Thanks to Ian Morrison.
+
+[23/06/93]	RS	!RasMol and RasWin added to the EMBL file server and 
+		anonymous FTP server in Heidelberg, in the directories 
+		/pub/software/dos and /pub/software/unix of 
+		ftp.embl-heidelberg.de
+
+[22/06/93]	RS	x11win.c
+		Fixed problem in selecting the required visual class that
+		caused RasMol to crash when running the OpenWin3 server.
+
+[22/06/93]	RS	rasmol.h
+		Added warning messages to the RasMol banner to describe
+		current visual depth and if not displaying interactively.
+
+[21/06/93]	RS	molecule.h molecule.c
+		Added short radius and irad fields to HBond structure
+		to allow for `thick' hydrogen and disulphide bonds.
+
+[21/06/93]	RS	pixutils.c command.c render.c outfile.c
+		Ensured all function prototypes were surrounded by #if
+		defined(__STDC__) || defined(IBMPC) to avoid errors with 
+		non ANSI C compilers and MS DOS compilers.
+
+[20/06/93]	RS	Makefile
+		Added the "-systype bsd43" and "-signed" options to the mips
+		entry for sysv and bsd43 domains E&S ESV workstations thanks
+		to Andy Sheppard (mbasd@seqnet.dl.ac.uk)
+
+[18/06/93]	RS	!RasMol version 2.1 added to the Frequently Asked 
+		Questions (FAQ) list of comp.graphics in the section on 
+		molecular visualization stuff. A RasMol entry ias also 
+		added to the molecular graphics menu of the John Hopkins 
+		University Medical Library Gopher system.
+
+[18/06/93]	RS	!Announced first public release of RasMol and RasWin 
+		version 2.1, available by anonymous FTP from ftp.dcs.ed.ac.uk
+		[129.215.160.5] in the directory /pub/rasmol. The announcement
+		was made in both bionet.software and comp.graphics newsgroups.
+

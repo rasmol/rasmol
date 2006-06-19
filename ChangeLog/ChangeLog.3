@@ -1,0 +1,100 @@
+[02/03/94]	RS	pixutils.c
+		Improved the efficiency of the RasMol polygon rendering.
+
+[02/03/94]	RS	command.c tokens.h
+		Added the "colour trace" command (and the "trace" command)
+		to make "trace" synonymous with the "backbone" command.
+
+[01/03/94]	RS	abstree.c abstree.h command.c tokens.h
+		Added the rasmol "define" command to allow sets to be
+		defined by the user.
+
+[01/03/94]	RS	command.c tokens.h
+		Added the RasMol "echo" command.
+
+[28/02/94]	RS	outfile.c
+		Improved the implementation of "write vectps" to correctly
+		handle wireframe intersections with spheres and to draw
+		cylinder bonds to produce effective ball & stick pictures.
+
+[22/02/94]	RS	command.c render.c transfor.c
+		Added nucleic acid ribbon representations. By default, a
+		nucleic acid ribbon is 720 RasMol units wide. The O5* atom
+		defines the RNA ribbon plane, and the midpoint between O5*
+		and O2P defines the DNA ribbon plane.
+
+[21/02/94]	RS	command.c tokens.h render.h
+		Added RasMol commands "set axes", "set boundbox" and "set
+		unitcell" to display additional objects.
+
+[17/02/94]	RS	transfor.c transfor.h
+		Added the RasMol command "colour structure" to colour proteins
+		by secondary structure type. Removed the "user" colour option
+		from the UNIX menu system and replaced with "structure".
+
+[16/02/94]	RS	command.c transfor.c
+		Changed the semantics of "ribbons 0" and the RasMol "ribbons"
+		menu option to display ribbons whose width varies by secondary
+		structure type.
+
+[15/02/94]	RS	rasmol.c raswin.rc
+		Changed the menu item "Save" to "Export" which makes more 
+		sense for generating image files.
+
+[14/02/94]	RS	raswin.c x11win.c graphics.h command.c tokens.h
+		Added the "set mouse" command to RasMol to allow the RasMol
+		mouse bindings to emulate other packages. RasMol currently
+		supports "set mouse insight" and "set mouse quanta".
+
+[13/02/94]	RS	rasmol.1 rasmol.hlp rasmol.html raswin.hlp
+		Completed work on the RasMol "on-line" help preparation
+		system. Now the UNIX man pages, Microsoft Windows help,
+		Mosaic HTML and RasMol/RasWin online help is prepared from
+		the same source. All these files are now up to date.
+
+[10/02/94]	RS	command.c tokens.h molecule.c molecule.h
+		Added the rasmol "show symmetry" command.
+
+[27/01/94]	RS	rasmol.c
+		Improved command line editting under VAX VMS. Fixed VMS bug
+		that caused the process to "crash" after RasMolExit().
+
+[26/01/94]	RS	rasmol.c
+		Extended VAX VMS port of RasMol using ASTs to allow the
+		asynchronous receipt of characters from SYS$INPUT:
+
+[26/01/94]	RS	graphics.h command.c
+		Allow the command line state (prompt) to enable/disable
+		the menu buttons, this solves a GUI style flaw/bug.
+
+[07/01/94]	RS	molecule.c transfor.c
+		Corrected potential bugs when detailing with upper and lower
+		bounds on Main and Heta residue numbers and temperatures.
+
+[07/01/94]	RS	x11win.c
+		Made the second and third mouse buttons synonymous.
+
+[07/01/94]	RS	molecule.c molecule.h command.c tokens.h
+		Added the RasMol "renumber" command to ensure sequential
+		residue numbering alongs macromolecular chains.
+
+[07/01/94]	RS	transfor.c transfor.h command.c tokens.h
+		Added the RasMol "centre" command to allow rotation of a
+		molecule about the centre of gravity of a given set of atoms.
+
+[06/01/94]	RS	x11win.c
+		Solved colourmap problem on Silicon Graphics machines that
+		caused some colours to be displayed incorrectly!
+
+[06/01/94]	RS	abstree.c
+		Corrected bug in ParsePrimitiveExpression that caused general
+		wildcards (i.e. "*" and "*.*") to be treated incorrectly.
+
+[05/01/94]	RS	x11win.c
+		Renamed the variable "shminfo" to avoid a name clash when
+		compiling on the DEC Alpha using OSF/1 and Ultrix. Thanks
+		to Dan Jacobson.
+
+[04/01/94]	RS	!Started visiting research post with the 
+		Protein Biochemistry group at Glaxo Group Research, 
+		Greenford, Middlesex.

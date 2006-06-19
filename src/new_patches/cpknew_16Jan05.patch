@@ -1,0 +1,328 @@
+*** abstree.h	2004/05/07 19:46:16	1.1
+--- abstree.h	2004/10/20 21:40:18
+***************
+*** 215,221 ****
+      { { 'B', 'e' },  88, 157, 12, "BERYLLIUM"    },  /*   4 */
+      { { 'B', ' ' }, 208, 387, 13, "BORON"        },  /*   5 */
+      { { 'C', ' ' }, 180, 387,  0, "CARBON"       },  /*   6 */
+!     { { 'N', ' ' }, 170, 350,  1, "NITROGEN"     },  /*   7 */
+      { { 'O', ' ' }, 170, 337,  2, "OXYGEN"       },  /*   8 */
+      { { 'F', ' ' }, 160, 325,  6, "FLUORINE"     },  /*   9 */
+      { { 'N', 'e' }, 280, 505, 12, "NEON"         },  /*  10 */
+--- 215,221 ----
+      { { 'B', 'e' },  88, 157, 12, "BERYLLIUM"    },  /*   4 */
+      { { 'B', ' ' }, 208, 387, 13, "BORON"        },  /*   5 */
+      { { 'C', ' ' }, 180, 387,  0, "CARBON"       },  /*   6 */
+!     { { 'N', ' ' }, 170, 350,  1, "NITROGEN"     },  /*   7 */
+      { { 'O', ' ' }, 170, 337,  2, "OXYGEN"       },  /*   8 */
+      { { 'F', ' ' }, 160, 325,  6, "FLUORINE"     },  /*   9 */
+      { { 'N', 'e' }, 280, 505, 12, "NEON"         },  /*  10 */
+*** command.c	2004/05/07 19:46:16	1.1
+--- command.c	2004/10/06 16:47:03
+***************
+*** 2451,2456 ****
+--- 2451,2459 ----
+              {   case(CPKTok):         CPKColourAttrib(); 
+                                        ReDrawFlag |= RFColour; break;
+  
++ 		case(CpkNewTok):      CpkNewColourAttrib();
++ 			              ReDrawFlag |= RFColour; break;	      
++ 
+                  case(AminoTok):       AminoColourAttrib();
+                                        ReDrawFlag |= RFColour; break;
+  
+*** script.c	2004/05/07 19:46:16	1.1
+--- script.c	2005/01/17 01:40:06
+***************
+*** 680,686 ****
+      register RAtom __far *aptr;
+      register Long first=0,last=0;
+      register int same,init;
+!     register int cpk=0,vdw=0;
+      register int col=0,rad=0;
+      register int prevflag,staron,sphereon;
+  
+--- 680,686 ----
+      register RAtom __far *aptr;
+      register Long first=0,last=0;
+      register int same,init;
+!     register int cpk=0,cpknew=0,vdw=0;
+      register int col=0,rad=0;
+      register int prevflag,staron,sphereon;
+  
+***************
+*** 693,716 ****
+          if( !init )
+          {   first = last = aptr->serno;
+              cpk = IsCPKColour( aptr );
+              col = aptr->col;
+              init = True;
+!         } else if( cpk && IsCPKColour(aptr) )
+          {   last = aptr->serno;
+              if( aptr->col != col )
+                  col = 0;
+          } else if( aptr->col == col )
+          {   last = aptr->serno;
+              cpk = False;
+          } else if( aptr->col != col )
+          {   WriteScriptBetween( first, last );
+              if( !col )
+!             {   fputs("colour atoms cpk\n",OutFile);
+              } else WriteScriptColour("atoms",col);
+                  
+              first = last = aptr->serno;
+              cpk = IsCPKColour( aptr );
+              col = aptr->col;
+              same = False;
+          } else last = aptr->serno; 
+          
+--- 693,726 ----
+          if( !init )
+          {   first = last = aptr->serno;
+              cpk = IsCPKColour( aptr );
++ 	        cpknew = IsCpkNewColour( aptr );
+              col = aptr->col;
++             if (cpk || cpknew ) col = 0;
+              init = True;
+!         } else if( (cpk && IsCPKColour(aptr)) || 
+!                    (cpknew && IsCpkNewColour(aptr)))
+          {   last = aptr->serno;
+              if( aptr->col != col )
+                  col = 0;
+          } else if( aptr->col == col )
+          {   last = aptr->serno;
+              cpk = False;
++             cpknew = False;
+          } else if( aptr->col != col )
+          {   WriteScriptBetween( first, last );
+              if( !col )
+!             {   if (cpk) {
+!                    fputs("colour atoms cpk\n",OutFile);
+!                 } else {
+!                    fputs("colour atoms cpknew\n",OutFile);
+!                 }
+              } else WriteScriptColour("atoms",col);
+                  
+              first = last = aptr->serno;
+              cpk = IsCPKColour( aptr );
++             cpknew = IsCpkNewColour( aptr );
+              col = aptr->col;
++             if (cpk || cpknew ) col = 0;
+              same = False;
+          } else last = aptr->serno; 
+          
+***************
+*** 720,728 ****
+          } else WriteScriptAll();
+  
+          if( !col )
+!         {   fputs("colour atoms cpk\n",OutFile);
+          } else WriteScriptColour("atoms",col);
+      }
+  
+      staron = False;
+      sphereon = False;
+--- 730,745 ----
+          } else WriteScriptAll();
+  
+          if( !col )
+!         {   if (cpk) {
+!               fputs("colour atoms cpk\n",OutFile);
+!             } else {
+!                fputs("colour atoms cpknew\n",OutFile);
+!             }
+          } else WriteScriptColour("atoms",col);
+      }
++ 
++     
++ 	    
+  
+      staron = False;
+      sphereon = False;
+*** tokens.c	2004/05/07 19:46:16	1.1
+--- tokens.c	2004/10/21 20:38:24
+***************
+*** 70,75 ****
+--- 70,78 ----
+  
+  /* tokens.c
+   $Log: not supported by cvs2svn $
++  Revision 1.2  2004/09/29 22:39:14  chigboc
++  *** empty log message ***
++ 
+   Revision 1.1  2004/05/07 19:46:16  yaya
+   Initial revision
+  
+***************
+*** 325,330 ****
+--- 328,334 ----
+          COORDS               CoordTok
+          COPY                 CopyTok
+          CPK                  CPKTok
++ 	CPKNEW               CpkNewTok
+          CYAN                 CyanTok
+          CYCLIC               CyclicTok
+          CYSTINE              CystineTok
+***************
+*** 419,424 ****
+--- 423,430 ----
+                  case('P'):
+                      if( (*ptr=='K') && !ptr[1] ) {
+                          return( CPKTok );
++                     } else if( !strcmp(ptr,"KNEW") ) {
++                       return( CpkNewTok );
+                      }
+                      break;
+  
+*** tokens.h	2004/05/07 19:46:16	1.1
+--- tokens.h	2004/10/06 16:47:17
+***************
+*** 71,76 ****
+--- 71,79 ----
+  
+  /* tokens.h
+   $Log: not supported by cvs2svn $
++  Revision 1.2  2004/09/29 22:39:14  chigboc
++  *** empty log message ***
++ 
+   Revision 1.1  2004/05/07 19:46:16  yaya
+   Initial revision
+  
+***************
+*** 321,326 ****
+--- 324,330 ----
+  #define TypeTok        450
+  #define PotentialTok   451
+  #define ChargeTok      452
++ #define CpkNewTok      453
+  
+  /* Variable Tokens */
+  #define ShadePowerTok  459
+*** transfor.c	2004/05/07 19:46:16	1.1
+--- transfor.c	2004/10/21 19:52:33
+***************
+*** 70,75 ****
+--- 70,81 ----
+  
+  /* transfor.c
+   $Log: not supported by cvs2svn $
++  Revision 1.3  2004/09/29 22:39:14  chigboc
++  *** empty log message ***
++ 
++  Revision 1.2  2004/09/27 14:27:50  chigboc
++  *** empty log message ***
++ 
+   Revision 1.1  2004/05/07 19:46:16  yaya
+   Initial revision
+  
+***************
+*** 157,162 ****
+--- 163,187 ----
+       { 0, 0, 178,  34,  34 },       /* 14 Fire Brick   */
+       { 0, 0,  34, 139,  34 } };     /* 15 Forest Green */
+  
++ #define CpkNewMax 16
++ static ShadeRef CpkNewShade[] = {
++      { 0, 0, 211, 211, 211 },       /*  0 Light Grey   */
++      { 0, 0, 135, 206, 235 },       /*  1 Sky Blue     */
++      { 0, 0, 255,   0,   0 },       /*  2 Red          */
++      { 0, 0, 255, 255,   0 },       /*  3 Yellow       */
++      { 0, 0, 255, 255, 255 },       /*  4 White        */
++      { 0, 0, 255, 192, 203 },       /*  5 Pink         */
++      { 0, 0, 218, 165,  32 },       /*  6 Golden Rod   */
++      { 0, 0,   0,   0, 255 },       /*  7 Blue         */
++      { 0, 0, 255, 170,   0 },       /*  8 Orange       */
++      { 0, 0, 105, 105, 105 },       /*  9 Dark Grey    */
++      { 0, 0, 128,  40,  40 },       /* 10 Brown        */
++      { 0, 0, 160,  32, 240 },       /* 11 Purple       */
++      { 0, 0, 250,  22, 145 },       /* 12 Deep Pink    */
++      { 0, 0,   0, 255,   0 },       /* 13 Green        */
++      { 0, 0, 178,  33,  33 },       /* 14 Fire Brick   */
++      { 0, 0,  34, 139,  34 } };     /* 15 Forest Green */
++ 
+  
+  static ShadeRef Shapely[] = {
+       { 0, 0, 140, 255, 140 },    /* ALA */
+***************
+*** 2445,2450 ****
+--- 2470,2505 ----
+  
+  }
+  
++ void CpkNewColourAttrib( void )
++ {
++     register ShadeRef *ref;
++     register Chain __far *chain;
++     register Group __far *group;
++     register RAtom __far *ptr;
++     register int i;
++ 
++     if ( !Database ) return;
++     for ( i=0; i<CpkNewMax; i++ )
++ 	 CpkNewShade[i].col = 0;
++     ResetColourAttrib();
++     ScaleColourMap(CpkNewMax);
++ 
++     ForEachAtom
++ 	if( ptr->flag&SelectFlag )
++ 	{   ref = CpkNewShade + Element[ptr->elemno].cpkcol;
++ 
++ 	    if( !ref->col )
++ 	    {   ref->shade = DefineShade( ref->r, ref->g, ref->b );
++ 		ref->col = Shade2Colour(ref->shade);
++ 	    }
++ 	    Shade[ref->shade].refcount++;
++ 	    ptr->col = ref->col;
++ 	}
++     AddAltlColours();
++ 
++ }
++ 
++ 
+  
+  void AminoColourAttrib( void )
+  {
+***************
+*** 2579,2584 ****
+--- 2634,2652 ----
+  }
+  
+  
++ int IsCpkNewColour( RAtom __far *ptr )
++ {
++     register ShadeRef *cpknew;
++     register ShadeDesc *col;
++ 
++     cpknew = CpkNewShade + Element[ptr->elemno].cpkcol;
++     col = Shade + Colour2Shade(ptr->col);
++     return( (col->r==cpknew->r) &&
++             (col->g==cpknew->g) &&
++ 	    (col->b==cpknew->b) );
++ }
++ 	
++ 
+  int IsVDWRadius( RAtom __far *ptr )
+  {
+      register int rad;
+*** transfor.h	2004/05/07 19:46:16	1.1
+--- transfor.h	2004/10/21 19:56:34
+***************
+*** 312,317 ****
+--- 312,318 ----
+  void SelectChain( int, Chain __far * );
+  
+  int IsCPKColour( RAtom __far * );
++ int IsCpkNewColour( RAtom __far * );
+  int IsVDWRadius( RAtom __far * );
+  
+  int DefineShade( int, int, int );
+***************
+*** 335,340 ****
+--- 336,342 ----
+  void MonoColourAttrib( int, int, int );
+  void ScaleColourAttrib( int );
+  void CPKColourAttrib( void );
++ void CpkNewColourAttrib( void );
+  void AminoColourAttrib( void );
+  void ShapelyColourAttrib( void );
+  void StructColourAttrib( void );

@@ -1,0 +1,183 @@
+###########################################################################
+#                               RasMol 2.7.3                              #
+#                                                                         #
+#                                 RasMol                                  #
+#                 Molecular Graphics Visualisation Tool                   #
+#                            6 February 2005                              #
+#                                                                         #
+#                   Based on RasMol 2.6 by Roger Sayle                    #
+# Biomolecular Structures Group, Glaxo Wellcome Research & Development,   #
+#                      Stevenage, Hertfordshire, UK                       #
+#         Version 2.6, August 1995, Version 2.6.4, December 1998          #
+#                   Copyright (C) Roger Sayle 1992-1999                   #
+#                                                                         #
+#                          and Based on Mods by                           #
+#  Author             Version, Date             Copyright                 #
+#                                                                         #
+#  Arne Mueller       RasMol 2.6x1     May 98   (C) Arne Mueller 1998     #
+#                                                                         #
+#  Gary Grossman and  RasMol 2.5-ucb   Nov 95   (C) UC Regents/ModularCHEM#
+#  Marco Molinaro     RasMol 2.5-ucb   Nov 96       Consortium 1995, 1996 #
+#                                                                         #
+#  Philippe Valadon   RasTop 1.3       Aug 00   (C) Philippe Valadon 2000 #
+#                                                                         #
+#  Herbert J.         RasMol 2.7.0     Mar 99   (C) Herbert J. Bernstein  #
+#  Bernstein          RasMol 2.7.1     Jun 99       1998-2005             #
+#                     RasMol 2.7.1.1   Jan 01                             #
+#                     RasMol 2.7.2     Aug 00                             #
+#                     RasMol 2.7.2.1   Apr 01                             #
+#                     RasMol 2.7.2.1.1 Jan 04                             #
+#                     RasMol 2.7.3     Feb 05                             #
+#                                                                         #
+#  with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky       #
+#  Chachra, and Mamoru Yamanishi                                          #
+#                                                                         #
+#                     and Incorporating Translations by                   #
+#  Author                               Item                     Language #
+#  Isabel Servan Martinez,                                                #
+#  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish #
+#  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish #
+#  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish #
+#  Jean-Pierre Demailly                 2.7.1 menus and messages  French  #
+#  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          #
+#  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian #
+#                                                                         #
+#                             This Release by                             #
+# Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA #
+#                       yaya@bernstein-plus-sons.com                      #
+#               Copyright(C) Herbert J. Bernstein 1998-2005               #
+#                                                                         #
+#   This version is based in directly on RasMol version 2.7.2.1.1, on     #
+#   RasMol version 2.7.2, on RasMol version 2.7.1, on RasMol version      #
+#   2.6_CIF.2, on RasMol version 2.6x1, on RasMol version 2.6.4, and      #
+#   RasMol 2.5-ucb and 2.6-ucb.                                           #
+#                                                                         #
+#   Please read the file NOTICE for important notices which apply to this # 
+#   package and for license terms (GPL  or RASLIC).                       #
+##########################################################################
+#
+# Imakefile
+# RasMol2 Molecular Graphics
+# Roger Sayle, June 1994
+# Version 2.6.4
+# Roger Sayle, December 1998
+#
+# Version 2.6.9
+# Herbert J. Bernstein, March 1999
+# yaya@bernstein-plus-sons.com
+
+# Version 2.7.2.1+
+# Herbert J. Bernstein, April 2002
+# yaya@Bernstein-plus-sons.com
+
+# Version 2.7.3
+# Herbert J. Bernstein, February 2005
+# yaya@Bernstein-plus-sons.com
+
+# USER DEFINITIONS
+#
+#  At this point, you may define the cpp macro PIXELDEPTH as 8, 16 or 32
+
+#ifdef PIXELDEPTH
+#if PIXELDEPTH==8
+  DEPTHDEF = -DEIGHTBIT
+#endif
+#if PIXELDEPTH==16
+  DEPTHDEF = -DSIXTEENBIT
+#endif
+#if PIXELDEPTH==32
+  DEPTHDEF = -DTHIRTYTWOBIT
+#endif
+#else
+DEPTHDEF = -DTHIRTYTWOBIT
+# DEPTHDEF = -DSIXTEENBIT
+# DEPTHDEF = -DEIGHTBIT
+#endif
+
+# using xform library to show GUI dialog
+# Use the first form for Mac OS X, the second for Linux x86
+#ifdef XFORMSLIB
+# XFORMSLIB = -lXpm -L/usr/local/lib -lforms
+# GUIOPTION = -DXFORMSLIB -I/sw/include
+ XFORMSLIB = -lXpm -L/usr/local/lib -lforms
+ GUIOPTION = -DXFORMSLIB -I/usr/local/include
+#endif
+
+# RasMol's on-line help direcory
+#   e.g. /usr/local/lib/rasmol/rasmol.hlp
+RASMOLDIR = $(USRLIBDIR)/rasmol/
+
+
+
+DEFINES = -DRASMOLDIR=\"$(RASMOLDIR)\" $(DEPTHDEF) -D_USE_RASMOL_H_ $(GUIOPTION)
+
+SRCS = rasmol.c rasmol.h molecule.c molecule.h abstree.c abstree.h \
+       cmndline.c cmndline.h command.c command.h tokens.h transfor.c \
+       transfor.h render.c render.h x11win.c graphics.h pixutils.c \
+       pixutils.h font.h outfile.c outfile.h script.c script.h infile.c \
+       infile.h repres.c repres.h tokens.c cif_fract.c cif_fract.h cif.c \
+       cif.h cif_ctonum.c cif_ctonum.h cif_stx.c \
+       multiple.h multiple.c vector.h vector.c \
+       wbrotate.c wbrotate.c langsel.h langsel.c
+
+OBJS = rasmol.o molecule.o abstree.o cmndline.o command.o transfor.o \
+       render.o repres.o  x11win.o pixutils.o outfile.o script.o \
+       infile.o tokens.o  cif_fract.o cif.o cif_ctonum.o cif_stx.o \
+       multiple.o vector.o wbrotate.o langsel.o
+
+# Previous Risc/Os definition
+# LDLIBS = -lm -lXinput $(XLIB)
+
+# Additional RS6000 AIX MITSHM Library
+# LDLIBS = -lm -lXi -lXextSam $(XLIB)
+
+LDLIBS = -lm -lXi $(XLIB) $(EXTRA_LIBRARIES) $(XFORMSLIB)
+
+
+
+#
+# Architecture Specific Rules
+#
+#    If running under HPUX, define the appropriate variant
+#    with #define
+#
+
+#ifdef HPArchitecture
+CCOPTIONS = -Ae
+CDEBUGFLAGS = +O2 +Onolimit
+
+#ifdef HPUX_PARISC_32
+CCOPTIONS = -Ae +DA2.0 +DS2.0
+#endif
+
+#ifdef HPUX_PARISC_64
+CCOPTIONS = -Ae +DA2.0W +DS2.0 -D_LONGLONG
+#endif
+
+#ifdef HPUX_IA64_32
+CCOPTIONS = -Ae +DD32 +DSmckinley
+#endif
+
+#ifdef HPUX_IA64_64
+CCOPTIONS = -Ae +DD64 +DSmckinley -D_LONGLONG
+#endif
+#endif
+
+#ifdef MACOSX_FINK
+#ifdef XFORMSLIB
+XFORMSLIB = -lXpm -L/sw/lib -lforms
+GUIOPTION = -DXFORMSLIB -I/sw/include
+#endif
+#endif
+
+ComplexProgramTarget(rasmol)
+MakeDirectories(install,$(RASMOLDIR))
+InstallNonExec(../doc/rasmol.hlp,$(RASMOLDIR))
+InstallNonExec(../data/1crn.pdb,$(RASMOLDIR))
+InstallNonExec(../data/3cro.pdb,$(RASMOLDIR))
+
+rasmol.man::	../doc/rasmol.1
+		ln -s ../doc/rasmol.1 rasmol.man
+
+../doc/rasmol.1:	../doc/rasmol.1.gz
+		gunzip  <../doc/rasmol.1.gz > ../doc/rasmol.1

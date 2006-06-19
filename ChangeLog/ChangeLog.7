@@ -1,0 +1,101 @@
+[10/10/96]	RS	render.c
+		Fixed bug in ReSize screen that incorrectly set MaxZoom. This
+		should match the code in InitialTransform().  Special Thanks
+		to Tim Maffet.
+
+[10/10/96]	RS	pixutils.c
+		Correct bug testing incorrect OutCode in routine ClipLine().
+		Special thanks to Tim Maffet.
+
+[07/10/96]	RS	raswin.c
+		Changed the style and class of the command line window to 
+		allow it to be minimized in Windows 95.  Thanks to Ken Davis.
+
+[30/09/96]	RS	render.c
+		Fixed a bug displaying crystallographic unit cell. Very
+		Special Thanks to Wei Dong <wei@chem.gla.ac.uk>
+
+[24/09/96]	RS	 rasmol.c
+		Add support for several command line options including
+		"-width", "-height", "-noconnect" and "-port".  Special
+		thanks to Ryan Hung for the WidthxHeight code.
+
+[23/09/96]	RS	command.c
+		Modified the FetchFile function to trap SIGPIPE when calling
+		popen(3) to gunzip or decompress. Thanks to Guy Slater.
+
+[17/07/96]	RS	 command.c
+		Fixed a bug in RasWin under Windows 95 that prevents 
+		filenames from containing spaces.  Thanks to Bob Long.
+
+[16/07/96]	RS	transfor.c
+		Improved the implementation of ScaleColourMap that no
+		longer uses floating point values.  This fixes problems
+		on IBM PC and improves performance.
+
+[16/07/96]	RS	command.c
+		Add the "set sequence <boolean>" command to RasMol and
+		implemented "DescribeSequence" that controls whether "show
+		sequence" displays three-letter or one-letter amino codes.
+
+[16/07/96]	RS	pixutils.c
+		Fixed 16bit overflow problem when display polygons in 
+		RasWin in routines "DrawPolygon" and "ClipPolygon".
+
+[02/07/96]	RS	x11win.c
+		Fixed a bug in RasMol that treated the SGI NumLock key as
+		an Alt-modifier.  Popping up menus when typing into the
+		canvas window.  Thanks to Andrew Leach and Ryan Smith.
+
+[01/07/96]	RS	rasmac.c
+		Corrected problems in "OpenDialogHook" and "SaveDialogHook"
+		that caused several problems including a system crash when
+		running Symmantec Directory Assistance II.  Special Thanks
+		to Kevin E. Gilbert (for the patch) and Henry Rzepa (for
+		discovering the problem).
+
+[07/05/96]	RS	command.c
+		Corrected bug in "ExecuteSetCommand" that caused "set backfade"
+		to always reset "set transparency" (a missing break statement).
+		Special Thanks to Tim Maffett.
+
+[09/04/96]	RS	script.c
+		Modified the generation of script files to fix a bug in
+		writing the "colour axes" command to include commas. Special
+		to Guy Slater.
+
+[29/03/96]	RS	script.c
+		Modified the generation of script files to avoid writing
+		"colour ribbons none" at each residue, which is the default.
+		Thanks to Alan Lewis.
+
+[21/11/95]	RS	command.c
+		Changed the conditions in FetchFile on when RasMol determines
+		bonds itself to the condition "bonds < atoms-chains".  This
+		allows multiple connected fragments.  Thanks to William Hart.
+
+[10/11/95]	RS	infile.c x11win.c
+		Made several #ifdef VMS changes to allow RasMol to compile
+		with VAX C.  Thanks to Gail Schuman.
+
+[10/11/95]	RS	pixutils.h pixutils.c repres.c
+		Changed the field names hx, hy and hz in structure Knot to
+		to dx, dy and dz to avoid clash with predefined AIX macro hz.
+		Thanks to Hiroki Morizono.
+
+[09/11/95]	RS	transfor.c
+		Fixed bug in ApplyTransform() that caused RasMol to crash if
+		all atoms have the same co-ordinates. Thanks to Guy Slater.
+
+[06/11/95]	RS	script.c
+		Fixed bug in RasMol script generation that outputs the
+		background colour before the zap command (which resets
+		the background colour to black). Thanks to Niels Kristian 
+		Bech Jensen.
+
+[20/10/95]	RS	infile.c
+		Fixed bug in RasMol CHARMm file format reader.  RasMol now
+		uses the standard PDB residue numbering in column 56, rather
+		than the sequential numbering in column 5.  Thanks to Milan
+		Hodoscek
+

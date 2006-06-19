@@ -1,0 +1,39 @@
+
+If you do not use the GPL, the following license terms apply:
+ 
+                           RasMol License
+
+Even though the authors of the various documents and software found here
+have made a good faith effort to ensure that the documents are correct and
+that the software performs according to its documentation, and we would
+greatly appreciate hearing of any problems you may encounter, the programs
+and documents any files created by the programs are provided **AS IS**
+without any warranty as to correctness, merchantability or fitness for any
+particular or general use.
+
+THE RESPONSIBILITY FOR ANY ADVERSE CONSEQUENCES FROM THE USE OF PROGRAMS OR
+DOCUMENTS OR ANY FILE OR FILES CREATED BY USE OF THE PROGRAMS OR DOCUMENTS
+LIES SOLELY WITH THE USERS OF THE PROGRAMS OR DOCUMENTS OR FILE OR FILES AND
+NOT WITH AUTHORS OF THE PROGRAMS OR DOCUMENTS.
+
+Subject to your acceptance of the conditions stated above, and your respect
+for the terms and conditions stated in the notices in NOTICE, if you are not
+going to make any modifications or create derived works, you are given
+permission to freely copy and distribute this package, provided you do the
+following:
+
+   * 1. Either include the complete documentation, especially the file
+     NOTICE, with what you distribute or provide a clear indication where
+     people can get a copy of the documentation; and
+   * 2. Give credit where credit is due citing the version and original
+     authors properly; and
+   * 3. Do not give anyone the impression that the original authors are
+     providing a warranty of any kind.
+
+In addition, you may also modify this package and create derived works
+provided you do the following:
+
+   * 4. Explain in your documentation how what you did differs from this
+     version of RasMol; and
+   * 5. Make your modified source code available.
+

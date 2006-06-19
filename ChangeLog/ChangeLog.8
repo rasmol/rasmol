@@ -1,0 +1,195 @@
+[24/2/99]	HJB	Release of RasMol_2.6_CIF(Rev 2) at
+		http://www/bernstein-plus-sons.com/software/rasmol
+		and announce to mailing lists.
+
+[21/2/99]	HJB	cif.h
+		Add prototypes of cif_make_handle, cif_read_file,
+		cif_make_file, cif_save_character to avoid compiler warnings
+
+[21/2/99]	HJB	cif_ctonum.c
+		Remove unneeded values.h
+
+[21/2/99]	HJB	cif_ctonum.h
+		Correct prototype
+
+[21/2/99]	HJB	infile.c
+		Add cif_ctonum.h, define LoadCIFMolecule prototype,
+		initialize ch, add return  to avoid compiler warnings.
+
+[21/2/99]	HJB	abstree.c, cif.c, cif_ctonum.c, command.c, 
+	        infile.c, molecule.c
+		Use string_case.h instead of <strings.h> for IBMPC,
+		VMS and APPLEMAC.
+
+[21/2/99]	HJB	rasmol.h
+		Update version, add some definitions from R. Sayle's
+		2.6.4 in preparation for 2.7.0.
+
+[21/2/99]	HJB	rasmac.c, rasmol.c, raswin.c
+		Update reported date on startup.
+
+[21/2/99]	HJB	render.c
+		Add cif_fract.h to avoid compiler warnings.
+
+[21/2/99]	HJB	string_case.c
+		Replace garbled version, provide string_case.h.
+
+[21/2/99]	HJB	script.c
+		Initialize first, last, radius, to avoid compiler warnings
+
+[21/2/99]	HJB	transfor.c
+		Initialize min and max to avoid compiler warnings.
+
+[10/1/99]	HJB	Release of RasMol_2.6_CIF(Rev 1) at
+		http://www.bernstein-plus-sons.com/software/rasmol
+		and announce to mmCIF mailing list.
+
+[9/1/99]	HJB	cif.c
+		Change toupper calls to ToUpper calls.  
+
+[8/1/99]	HJB	command.c
+		Add argument to CreateMoleculeBonds to force zapping
+		on connect.  
+
+[8/1/99]	HJB	infile.c
+		Log requested bonds which cannot be made in NullBonds
+		and report to users, add RightJustify to right-justify
+		residue names, recognize _atom_site_disorder_group
+		for small molecule alternate conformerse, recognize bonds
+		which don't have either atom names or atom numbers.
+
+[8/1/99]	HJB	molecule.c
+		Add argument to CreateMoleculeBonds to force zapping
+		on connect.  
+
+[8/1/99]	HJB	molecule.h
+		Add argument to CreateMoleculeBonds to force zapping
+		on connect, add NullBonds to log requested bonds which
+		cannot be made.  
+
+[8/1/99]	HJB	mswin31.c
+		Use VERSION to construct window title.
+
+[8/1/99]	HJB	outfile.c
+		Use VERSION to construct Postscript output file header.
+
+[8/1/99]	HJB	rasmac.c
+		Use VERSION to report version on startup.
+
+[8/1/99]	HJB	rasmol.c
+		Use VERSION to report version on startup.
+
+[8/1/99]	HJB	raswin.c
+		Use VERSION to report version on startup.
+
+[8/1/99]	HJB	script.c
+		Use VERSION to construct various output file headers.
+
+[8/1/99]	HJB	x11win.c
+		Use VERSION to construct window title.
+
+[22/12/98]	HJB	Preliminary release of RasMol_2.6_CIF at
+		http://www.bernstein-plus-sons.com/software/rasmol
+
+[19/12/98]	HJB	command.c
+		correct handling of internal help files under windows,
+		and allow for unix help files on a mac.
+
+[18/12/98]	HJB	Makefile.in, Imakefile
+		Update for CIF support. 
+
+[09/12/98]	HJB	infile.c
+		Cummulative changes for fractional coordinates,
+		CIF.  
+
+[09/12/98]	HJB	command.c
+		Changes for alt, model labels, colour schemes,
+		CIF.  
+
+[09/12/98]	HJB	molecule.h
+		Cummulative changes for fractional coordinates,
+		new colour schemes, CIF.  
+
+[09/12/98]	HJB	molecule.c
+		Cummulative changes for fractional coordinates,
+		new colour schemes, CIF.  
+[09/12/98]	HJB	x11win.c
+		Update comments, menus and version text.
+
+[09/12/98]	HJB	mswin31.c
+		Update comments, output file commentary.
+
+[09/12/98]	HJB	outfile.c
+		Update comments, output file commentary.
+
+[09/12/98]	HJB	script.c
+		Update comments, output file commentary.
+
+[09/12/98]	HJB	rasmol.c
+		Update comments, output file commentary.
+
+[04/12/98]	HJB	pixutils.c
+		Update comments, code to stripe bonds for alternate
+		conformers.  
+
+[04/12/98]	HJB	pixutils.h
+		Update comments, protytpes to stripe bonds for alternate
+		conformers. 
+
+[04/12/98]	HJB	rasmac.c
+		Update comments, adjust code for current Metrowerks
+		compiler.  
+
+[04/12/98]	HJB	raswin.c
+		Update comments, adjust code for current Metrowerks
+		compiler.  
+
+[04/12/98]	HJB	tokens.h
+		Update comments, tokens for alt, model colours.
+
+[04/12/98]	HJB	transfor.c
+		Update comments, add code for alt, model colours.
+		
+[04/12/98]	HJB	transfor.h
+		Update comments, prototypes for alt, model colours.
+
+[23/11/98]	HJB	abstree.c
+		Add code for %A, %M specifiers, divide u/l case. 
+
+[22/11/98]	HJB	cif_fract.c
+		New routine, derived from cif2pdb by H.J. Bernstein
+		and F. C. Bernstein.  
+
+[22/11/98]	HJB	cif_fract.h.
+		New header for cif_fact.c. 
+
+[22/11/98]	HJB	cif_stx.c
+		New routine, derived from P. Ellis CBFlib parser.
+
+[23/11/98]	HJB	render.c
+		Update comments, add code to stripe bonds for alternate
+		conformers. 
+
+[23/11/98]	HJB	repres.c
+		Update comments, add code to stripe bonds for alternate
+		conformers. 
+
+[09/09/98]	HJB	cif_ctonum.c
+		New routine, derived from ciftbx by S. R. Hall
+		and H. J. Bernstein.  
+
+[09/09/98]	HJB	cif_ctonum.h
+		New header for cif_ctonum.c. 
+
+[18/08/98]	HJB	cif.h
+		New header for cif.c, derived from CBFlib by P. Ellis
+		and H. J. Bernstein. 
+				 
+[18/08/98]	HJB	cif.c
+		New routine derived from CBFlib by P. Ellis and 
+		H. J. Bernstein. 
+				 
+[14/08/98]	HJB	rasmol.c
+		Added hooks for termio for Linux.  These changes
+		are similar to, but not identical to the FreeBSD hooks.
+		See the linux conditionals. 

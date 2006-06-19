@@ -1,0 +1,206 @@
+*** repres.c	2004/11/02 03:20:24	1.2
+--- repres.c	2005/01/12 15:56:35
+***************
+*** 541,547 ****
+  /* [GSG 11/21/95] AddMonitors2 can add a monitor w/a given number */
+  void AddMonitors2( RAtom __far *src, RAtom __far *dst,
+        RAtom __far *mid1, RAtom __far *mid2,
+!      unsigned short dist, unsigned char units, int monmode )
+  {
+      register Monitor **prev;
+      register Monitor *ptr;
+--- 541,547 ----
+  /* [GSG 11/21/95] AddMonitors2 can add a monitor w/a given number */
+  void AddMonitors2( RAtom __far *src, RAtom __far *dst,
+        RAtom __far *mid1, RAtom __far *mid2,
+!       short dist, unsigned char units, int monmode )
+  {
+      register Monitor **prev;
+      register Monitor *ptr;
+***************
+*** 587,593 ****
+  {
+      register Long dx, dy, dz;
+      register Long dist;
+!     unsigned short temp;
+   
+      dx = src->xorg - dst->xorg + src->fxorg - dst->fxorg;
+      dy = src->yorg - dst->yorg + src->fyorg - dst->fyorg;
+--- 587,593 ----
+  {
+      register Long dx, dy, dz;
+      register Long dist;
+!     short temp;
+   
+      dx = src->xorg - dst->xorg + src->fxorg - dst->fxorg;
+      dy = src->yorg - dst->yorg + src->fyorg - dst->fyorg;
+***************
+*** 595,601 ****
+  
+      /* ptr->dist = 100.0*CalcDistance(src,dst) */
+      dist = isqrt( dx*dx + dy*dy + dz*dz );
+!     temp = (unsigned short)((dist<<1)/5);
+  
+      AddMonitors2(src, dst, 
+        (RAtom __far *)NULL, (RAtom __far *)NULL, temp, 127, PickDist);
+--- 595,601 ----
+  
+      /* ptr->dist = 100.0*CalcDistance(src,dst) */
+      dist = isqrt( dx*dx + dy*dy + dz*dz );
+!     temp = rint(100.0*CalcDistance(src,dst));
+  
+      AddMonitors2(src, dst, 
+        (RAtom __far *)NULL, (RAtom __far *)NULL, temp, 127, PickDist);
+*** render.c	2004/12/28 00:50:08	1.5
+--- render.c	2005/01/12 15:56:41
+***************
+*** 2023,2029 ****
+  {
+      register AtomRef *ptr;
+      register Label *label;
+!     register float temp;
+      register char *str;
+      register size_t len;
+  
+--- 2023,2029 ----
+  {
+      register AtomRef *ptr;
+      register Label *label;
+!     register double temp;
+      register char *str;
+      register size_t len;
+  
+***************
+*** 2244,2264 ****
+  	    if ( PickMode != PickMonit )
+  	        DeleteMonitors();
+  	    if( PickMode == PickDist )
+!             {   temp = (float)CalcDistance(PickHist[0].atm,
+                                             PickHist[1].atm);
+  
+                  WriteString("Distance ");
+                  DescribeAtom(PickHist,False);
+                  WriteChar('-');
+                  DescribeAtom(PickHist+1,False);
+!                 sprintf(buffer,": %.3f\n\n",temp);
+                  WriteString(buffer);
+  		/* [GSG 11/21/95] */
+  		AddMonitors(PickHist[0].atm, QAtom);
+  	        ReDrawFlag |= RFRefresh;
+  
+              } else if( PickMode == PickAngle )
+!             {   temp = (float)CalcAngle(PickHist[0].atm,
+                                          PickHist[1].atm,
+                                          PickHist[2].atm);
+  
+--- 2244,2264 ----
+  	    if ( PickMode != PickMonit )
+  	        DeleteMonitors();
+  	    if( PickMode == PickDist )
+!             {   temp = (double)CalcDistance(PickHist[0].atm,
+                                             PickHist[1].atm);
+  
+                  WriteString("Distance ");
+                  DescribeAtom(PickHist,False);
+                  WriteChar('-');
+                  DescribeAtom(PickHist+1,False);
+!                 sprintf(buffer,": %.2f\n\n",temp);
+                  WriteString(buffer);
+  		/* [GSG 11/21/95] */
+  		AddMonitors(PickHist[0].atm, QAtom);
+  		ReDrawFlag |= RFRefresh;
+  
+              } else if( PickMode == PickAngle )
+!             {   temp = (double)CalcAngle(PickHist[0].atm,
+                                          PickHist[1].atm,
+                                          PickHist[2].atm);
+  
+***************
+*** 2268,2285 ****
+                  DescribeAtom(PickHist+1,False);
+                  WriteChar('-');
+                  DescribeAtom(PickHist+2,False);
+!                 sprintf(buffer,": %.1f\n\n",temp);
+                  WriteString(buffer);
+  
+  		/* [GSG 11/21/95] */
+  		AddMonitors2(PickHist[0].atm, PickHist[2].atm,
+                    PickHist[1].atm, (RAtom __far *)NULL,
+! 		  (unsigned short) (temp*100), 128, PickAngle);
+  		ReDrawFlag |= RFRefresh;
+  
+  
+              } else /* PickMode == PickTorsn */
+!             {   temp = (float)CalcTorsion(PickHist[0].atm,
+                                            PickHist[1].atm,
+                                            PickHist[2].atm,
+                                            PickHist[3].atm);
+--- 2268,2285 ----
+                  DescribeAtom(PickHist+1,False);
+                  WriteChar('-');
+                  DescribeAtom(PickHist+2,False);
+!                 sprintf(buffer,": %.2f\n\n",temp);
+                  WriteString(buffer);
+  
+  		/* [GSG 11/21/95] */
+  		AddMonitors2(PickHist[0].atm, PickHist[2].atm,
+                    PickHist[1].atm, (RAtom __far *)NULL,
+! 		  (short) (rint(temp*100)), 128, PickAngle);
+  		ReDrawFlag |= RFRefresh;
+  
+  
+              } else /* PickMode == PickTorsn */
+!             {   temp = (double)CalcTorsion(PickHist[0].atm,
+                                            PickHist[1].atm,
+                                            PickHist[2].atm,
+                                            PickHist[3].atm);
+***************
+*** 2292,2305 ****
+                  DescribeAtom(PickHist+2,False);
+                  WriteChar('-');
+                  DescribeAtom(PickHist+3,False);
+!                 sprintf(buffer,": %.1f\n\n",temp);
+                  WriteString(buffer);
+                  WriteString(buffer);
+  
+  		/* [GSG 11/21/95] */
+  	        AddMonitors2(PickHist[0].atm, PickHist[3].atm,
+                    PickHist[1].atm, PickHist[2].atm,
+! 			     (unsigned short) (temp*100), 128, PickTorsn);
+  		ReDrawFlag |= RFRefresh;
+              }
+          }
+--- 2292,2305 ----
+                  DescribeAtom(PickHist+2,False);
+                  WriteChar('-');
+                  DescribeAtom(PickHist+3,False);
+!                 sprintf(buffer,": %.2f\n\n",temp);
+                  WriteString(buffer);
+                  WriteString(buffer);
+  
+  		/* [GSG 11/21/95] */
+  	        AddMonitors2(PickHist[0].atm, PickHist[3].atm,
+                    PickHist[1].atm, PickHist[2].atm,
+! 		     (short) (rint(temp*100)), 128, PickTorsn);
+  		ReDrawFlag |= RFRefresh;
+              }
+          }
+*** repres.h	2004/11/02 03:20:24	1.2
+--- repres.h	2005/01/12 15:56:53
+***************
+*** 180,186 ****
+  void DeleteMonitors( void );
+  void AddMonitors2( RAtom __far*, RAtom __far*,
+    RAtom __far*, RAtom __far*, 
+!   unsigned short, unsigned char, int );
+  void AddMonitors( RAtom __far*, RAtom __far* );
+  void CreateMonitor( Long, Long );
+  void DisplayMonitors( void );
+--- 180,186 ----
+  void DeleteMonitors( void );
+  void AddMonitors2( RAtom __far*, RAtom __far*,
+    RAtom __far*, RAtom __far*, 
+!   short, unsigned char, int );
+  void AddMonitors( RAtom __far*, RAtom __far* );
+  void CreateMonitor( Long, Long );
+  void DisplayMonitors( void );
