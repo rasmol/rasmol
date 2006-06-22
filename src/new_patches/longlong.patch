@@ -1,0 +1,60 @@
+*** build_all.sh	Mon Apr 25 16:47:58 2005
+--- build_all.sh	Thu Jun  1 12:28:50 2006
+***************
+*** 26,37 ****
+  fi;
+  rm Imakefile
+  echo "#define PIXELDEPTH 32"|cat - Imakefile_save > Imakefile
+  xmkmf
+  mv Makefile Makefile_32BIT
+  if [ "$1" != "-nobuild" ]; then
+    make -f Makefile_32BIT clean
+    make -f Makefile_32BIT rasmol
+!   mv rasmol rasmol_32BIT
+  fi;
+  rm Imakefile
+  echo "#define PIXELDEPTH 8" > Imakefile
+--- 26,46 ----
+  fi;
+  rm Imakefile
+  echo "#define PIXELDEPTH 32"|cat - Imakefile_save > Imakefile
++ gcc checklong.c -o checklong
++ VAL=`(./checklong; echo $1)`
++ if [ $VAL -gt 4 ]; then
++   mv rasmol.h rasmol_amd64_save.h
++ echo "#define _LONGLONG"|cat - rasmol_amd64_save.h > rasmol.h
++ fi;
+  xmkmf
+  mv Makefile Makefile_32BIT
+  if [ "$1" != "-nobuild" ]; then
+    make -f Makefile_32BIT clean
+    make -f Makefile_32BIT rasmol
+!   mv rasmol rasmol_32BIT  
+!   if [ $VAL -gt 4 ]; then  
+!     mv rasmol_amd64_save.h rasmol.h
+!   fi;
+  fi;
+  rm Imakefile
+  echo "#define PIXELDEPTH 8" > Imakefile
+***************
+*** 56,66 ****
+--- 65,83 ----
+  rm Imakefile
+  echo "#define PIXELDEPTH 32" > Imakefile
+  echo "#define XFORMSLIB xx"|cat - Imakefile_save >> Imakefile
++ if [ $VAL -gt 4 ]; then
++   mv rasmol.h rasmol_amd64_save.h
++ echo "#define _LONGLONG"|cat - rasmol_amd64_save.h > rasmol.h
++ fi;
+  xmkmf
+  mv Makefile Makefile_32BIT
+  if [ "$1" != "-nobuild" ]; then
+    make -f Makefile_32BIT clean
+    make -f Makefile_32BIT rasmol
+    mv rasmol rasmol_XFORMS_32BIT
++   if [ $VAL -gt 4 ]; then  
++     mv rasmol_amd64_save.h rasmol.h
++   fi;
+  fi;
+  mv Imakefile_save Imakefile
++ rm checklong
