@@ -1,0 +1,18 @@
+#!/bin/csh
+if ( ! -Le index.html ) then
+  ln -s README.html index.html
+endif
+if ( ! -Le esrasmol27.html ) then
+  ln -s esrasmol2721.html esrasmol27.html
+endif
+if ( ! -Le itrasmol.hlp ) then
+  ln -s itrasmol2721.hlp itrasmol.hlp
+endif
+foreach file (*)
+  if ( -d $file ) then
+    if ( -e $file/.symlinks ) then
+      (cd $file; source .symlinks)
+    endif
+  endif
+end
+

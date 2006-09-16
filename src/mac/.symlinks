@@ -1,0 +1,21 @@
+#!/bin/csh
+foreach file ( rasmol.hlp rasmol.hlp.gz )
+  if ( ! -Le $file ) then
+    ln -s ../../doc/$file $file
+  endif
+end
+foreach file ( RasMac_68K_32BIT.bin.gz RasMac_68K_8BIT.bin.gz \
+RasMac_FAT_32BIT.bin.gz RasMac_FAT_8BIT.bin.gz \
+RasMac_PPC_32BIT.bin.gz RasMac_PPC_8BIT.bin.gz )
+  if ( ! -Le $file ) then
+    ln -s ../../../RasMol_2.7.3.1.MAC/$file $file
+  endif
+end
+foreach file (*)
+  if ( -d $file ) then
+    if ( -e $file/.symlinks ) then
+      (cd $file; source .symlinks)
+    endif
+  endif
+end
+

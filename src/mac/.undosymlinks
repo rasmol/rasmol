@@ -1,0 +1,15 @@
+#!/bin/csh
+foreach file ( rasmol.hlp rasmol.hlp.gz \
+RasMac_68K_32BIT.bin.gz RasMac_68K_8BIT.bin.gz \
+RasMac_FAT_32BIT.bin.gz RasMac_FAT_8BIT.bin.gz \
+RasMac_PPC_32BIT.bin.gz RasMac_PPC_8BIT.bin.gz )
+  rm -rf $file
+end
+foreach file (*)
+  if ( -d $file ) then
+    if ( -e $file/.undosymlinks ) then
+      (cd $file; source .undosymlinks)
+    endif
+  endif
+end
+

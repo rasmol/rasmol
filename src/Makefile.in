@@ -1,9 +1,9 @@
 ###########################################################################
-#                             RasMol 2.7.2.1                              #
+#                             RasMol 2.7.3.1                              #
 #                                                                         #
 #                                 RasMol                                  #
 #                 Molecular Graphics Visualisation Tool                   #
-#                              14 April 2001                              #
+#                              14 April 2006                              #
 #                                                                         #
 #                   Based on RasMol 2.6 by Roger Sayle                    #
 # Biomolecular Structures Group, Glaxo Wellcome Research & Development,   #
@@ -24,6 +24,9 @@
 #                   RasMol 2.7.1.1 Jan 01                                 #
 #                   RasMol 2.7.2   Aug 00                                 #
 #                   RasMol 2.7.2.1 Apr 01                                 #
+#                   RasMol 2.7.2.1.1 Jan 04                               #
+#                   RasMol 2.7.3   Feb 05                                 #
+#                   RasMol 2.7.3.1 Apr 06                                 #
 #                                                                         #
 #                    and Incorporating Translations by                    #
 #  Author                               Item                     Language #
@@ -75,7 +78,11 @@
 #
 # Version 2.6.9
 # Herbert J. Bernstein, March 1999
-# yaya@bernstein-plus-sons.com
+# yaya at bernstein-plus-sons dot com
+#
+# Version 2.7.3.1
+# Herbert J. Bernstein, Septemmber 2006
+# yaya at bernstein-plus-sons dot com
 
 # Simply edit CC and CFLAGS for your local compiler/system
 # For Sun OpenWindows, add "-I/usr/openwin/include" to CFLAGS
@@ -146,7 +153,9 @@ TXTINCS = $(INCS)
 TXTSRCS = rastxt.c $(SRCS)
 TXTOBJS = rastxt.to $(TOBJS)
 
-rasmol:		$(X11OBJS)
+all:		postdownload rasmol rastxt
+
+rasmol:		postdownload $(X11OBJS)
 		$(CC) -o rasmol $(LFLAGS) $(X11OBJS) $(X11LIBS)
 		chmod 755 rasmol
 
@@ -348,3 +357,16 @@ clean:
 		rm -f rastxt rastxt.o
 		rm -f $(OBJS)
 		rm -f $(TOBJS)
+
+distclean:	clean unpostdownload
+		../.undosymlinks
+
+unpostdownload:	postdowndownload
+		-@rm -f postdownload
+		touch unpostdownload
+
+postdownload:
+		touch postdownload
+		-@rm f unpostdownload
+		../.symlinks
+		
