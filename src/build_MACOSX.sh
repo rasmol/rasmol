@@ -47,8 +47,8 @@ if [ "$1" != "-nobuild" ]; then
 fi;
 rm Imakefile
 echo "#define PIXELDEPTH 8" > Imakefile
-echo "#define XFORMSLIB xx"|cat - Imakefile_save >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
+echo "#define XFORMSLIB xx"|cat - Imakefile_save >> Imakefile
 xmkmf
 mv Makefile Makefile_8BIT
 if [ "$1"  != "-nobuild" ]; then
