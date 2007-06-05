@@ -55,6 +55,9 @@
  ***************************************************************************/
 /* x11win.c
  $Log: not supported by cvs2svn $
+ Revision 1.2  2006/06/19 22:06:41  todorovg
+ Rasmol 2.7.3.1
+
  Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
  Initial Rasmol 2.7.3 Import
 
@@ -2701,7 +2704,11 @@ static int HandleMenuLoop( void )
                     if( (ptr->y>=0) && (ptr->y<=FontHigh+5) )
                     {   HandleMenuClick(ptr->x);
                     } else if( PopUpFlag )
-                    {   HandleItemClick(ptr->x,ptr->y);
+                    {         int xpos, ypos;
+                              Window win;
+                              XTranslateCoordinates(dpy,MenuWin,PopUpWin,ptr->x,ptr->y,
+                                &xpos,&ypos,&win);
+                              HandleItemClick(xpos,ypos);
                     } else done = True;
                 } break;
 
