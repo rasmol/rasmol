@@ -1407,7 +1407,7 @@ double CalcTorsion( RAtom __far *atm1, RAtom __far *atm2,
     ry = pz*qx - px*qz;
     rz = px*qy - py*qx;
 
-    if (ax*rx+ay*ry+az*rz > 0.) return -om;
+    if (bx*rx+by*ry+bz*rz > 0.) return -om;
 
     return om;
 }
