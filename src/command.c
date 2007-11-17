@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                              RasMol 2.7.3.1                             *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                              14 April 2006                              *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -27,6 +26,7 @@
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
  *                                                                         *
  *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
  *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
@@ -43,6 +43,7 @@
  *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
  *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  G. Pozhvanov                         2.7.3 menus and message   Russian *
  *                                                                         *
  *                             This Release by                             *
  * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
@@ -118,6 +119,7 @@
 #include "vector.h"
 #include "wbrotate.h"
 #include "langsel.h"
+#include "maps.h"
 
 #include <math.h>
 
@@ -485,7 +487,7 @@ int ProcessFile( int format, int info, FILE *fp )
     {   return False;
     } else if( !Database )
         return True;
-    ReviseTitle();
+    if (Interactive) ReviseTitle();
     if( info )
         DescribeMolecule();
     if (!DataFileFormat) DataFileFormat = format;
@@ -559,7 +561,9 @@ static int FetchFileOne( int format, int info, char *name )
 
     /* Try using a default file path! */
     if( !fp && done )
-    {   switch( format )
+    {   char* datadir;
+        datadir = "";
+        switch( format )
         {   case(FormatNMRPDB):
             case(FormatPDB):     src = (char*)getenv("RASMOLPDBPATH");  break;
             case(FormatMol2):    src = (char*)getenv("RASMOLMOL2PATH"); break;
@@ -570,9 +574,11 @@ static int FetchFileOne( int format, int info, char *name )
             case(FormatCIF):     src = (char*)getenv("RASMOLCIFPATH");  break;
             default:             src = NULL;
         }
-
-        if( src && *src )
-        {   
+        if (!src || !*src) {
+          src = (char*)getenv("RASMOLPATH");
+          datadir = "Data";
+        }
+        if( src && *src ) {    
 #ifdef VMS
             dst = buffer;
             while( *src ) *dst++ = *src++;
@@ -592,6 +598,12 @@ static int FetchFileOne( int format, int info, char *name )
                 if( dst != buffer )
                 {   if( *(dst-1) != DirChar )
                         *dst++ = DirChar;
+                    if (strcmp(datadir,"")) {
+                      tmp = datadir;
+                      while( (*dst = *tmp++)) dst++;
+                      if( *(dst-1) != DirChar )
+                        *dst++ = DirChar;
+                    }
                     tmp = DataFileName;
                     while( (*dst = *tmp++) ) dst++;
                     if( (fp = OpenDataFile(buffer,dst)) )
@@ -1725,6 +1737,13 @@ static void ExecuteLoadCommand( void )
         } else if( CurToken == DotsTok )
         {   format = FormatDots;
             FetchToken();
+        } else if (CurToken == MapTok) 
+        {   format = FormatMap;
+            if (!Database){
+              CommandError(MsgStrs[ErrBadMolDB]);
+              return;
+            }
+            FetchToken();
         }
     }
 
@@ -1755,7 +1774,7 @@ static void ExecuteLoadCommand( void )
         {      FetchFile(format,info,TokenIdent);
         } else FetchFile(format,info,TokenStart);
         DefaultRepresentation();
-    } else /* format == FormatDots */
+    } else /* format == FormatDots  || format == FormatMap */
     {   if( !Database )
         {   CommandError(MsgStrs[ErrBadMolDB]);
             return;
@@ -1771,10 +1790,21 @@ static void ExecuteLoadCommand( void )
             WriteString(DataFileName);
             WriteString("'!\n");
             return;
-        } else
-        {   LoadDotsFile(fp,info);
+        } else if (format == FormatDots) {
+            LoadDotsFile(fp,info);
             fclose(fp);
+        } 
+#ifdef USE_CBFLIB        
+          else { /* format == FormatMap */
+            if(LoadMapFile(fp,info, -1)) {
+            	CommandError( (char*)NULL );
+                WriteString(MsgStrs[StrErrFile]);
+                WriteString(DataFileName);
+                WriteString("'!\n");
+                return;
+            }
         }
+#endif
     }
     CurToken = 0;
 }
@@ -2122,6 +2152,15 @@ static void ExecuteSetCommand( void )
             {   UseOutLine = True;
             } else CommandError(MsgStrs[ErrBadOpt]);
             break;
+        
+        case(Raster3DTok):
+            FetchToken();
+            if( !CurToken || (CurToken==FalseTok) )
+            {   UseOutLine = False;
+            } else if( CurToken == TrueTok )
+            {   UseOutLine = True;
+            } else CommandError(MsgStrs[ErrBadOpt]);
+            break;
 
         case(KinemageTok):
             FetchToken();
@@ -2151,12 +2190,12 @@ static void ExecuteSetCommand( void )
                     FetchFloat(TokenValue,250);
                 }
 
-                if( TokenValue>750 )
+                if( TokenValue>1500 )
                 {   CommandError(MsgStrs[ErrBigNum]);
                 } else ProbeRadius = (int)TokenValue;
             } else if( CurToken=='.' )
             {   FetchFloat(0,250);
-                if( TokenValue>750 )
+                if( TokenValue>1500 )
                 {   CommandError(MsgStrs[ErrBigNum]);
                 } else ProbeRadius = (int)TokenValue;
 
@@ -2550,6 +2589,24 @@ static void ExecuteColourCommand( void )
             {      CommandError(MsgStrs[ErrColour]);
             } else CommandError(MsgStrs[ErrNoCol]);
             break;
+            
+    	case(MapTok):
+            FetchToken();
+            if( CurToken==PotentialTok )
+            {   ReDrawFlag |= RFColour;
+                MapFlag |= MapColourPot;
+                ApplyMapColour();
+            } else if( ParseColour() )
+            {   ReDrawFlag |= RFColour;
+                MapRGBCol[0] = RVal;
+                MapRGBCol[1] = GVal;
+                MapRGBCol[2] = BVal;
+                ApplyMapColour();
+            } else if( CurToken )
+            {      CommandError(MsgStrs[ErrColour]);
+            } else CommandError(MsgStrs[ErrNoCol]);
+            break;
+
 
         case(MonitorTok):
             FetchToken();
@@ -2797,6 +2854,10 @@ static void ExecuteShowCommand( void )
     {   case(InfoTok):
                 DescribeMolecule();
                 break;
+
+    	case(MapTok):
+    	        ApplyMapShow();
+    	        break;
 
         case(SequenceTok):
                 DescribeSequence();
@@ -3091,6 +3152,7 @@ void ZapDatabase( void )
     ResetRenderer();
     ResetRepres();
     ResetBondsSel();
+    DeleteMaps();
 
     ZoneBoth = True;
     HetaGroups = True;    
@@ -3127,7 +3189,7 @@ void ZapDatabase( void )
 }
 
 
-static void WriteImageFile( char *name, int type )
+static void WriteImageFile( char *name, int type, int subtype )
 {
     if( !type )
 #ifdef EIGHTBIT
@@ -3136,17 +3198,23 @@ static void WriteImageFile( char *name, int type )
         type = PPMTok;
 #endif
 
+    if ( (type != VRMLTok) && subtype ) {
+	  CommandError(MsgStrs[ErrSyntax]);
+	}
+	else
+
     switch( type )
-    {   case(GIFTok):     WriteGIFFile(name);             break;
-        case(BMPTok):     WriteBMPFile(name);             break;
-        case(PPMTok):     WritePPMFile(name,True);        break;
-        case(SUNTok):     WriteRastFile(name,False);      break;
-        case(SUNRLETok):  WriteRastFile(name,True);       break;
-        case(PICTTok):    WritePICTFile(name);            break;
-        case(IRISTok):    WriteIRISFile(name);            break;
-        case(EPSFTok):    WriteEPSFFile(name,True,True);  break;
-        case(MonoPSTok):  WriteEPSFFile(name,False,True); break;
-        case(VectPSTok):  WriteVectPSFile(name);          break;
+    {   case(GIFTok):      WriteGIFFile(name);             break;
+        case(BMPTok):      WriteBMPFile(name);             break;
+        case(PPMTok):      WritePPMFile(name,True);        break;
+        case(SUNTok):      WriteRastFile(name,False);      break;
+        case(SUNRLETok):   WriteRastFile(name,True);       break;
+        case(PICTTok):     WritePICTFile(name);            break;
+        case(IRISTok):     WriteIRISFile(name);            break;
+        case(EPSFTok):     WriteEPSFFile(name,True,True);  break;
+        case(MonoPSTok):   WriteEPSFFile(name,False,True); break;
+        case(VectPSTok):   WriteVectPSFile(name);          break;
+        case(Raster3DTok): WriteR3DFile(name);             break;
 
         case(RasMolTok):
         case(ScriptTok):     WriteScriptFile(name);       break;
@@ -3157,7 +3225,7 @@ static void WriteImageFile( char *name, int type )
         case(PhiPsiTok):     WritePhiPsiAngles(name, False); break;
         case(RamachanTok):   WritePhiPsiAngles(name, 1);  break;
         case(RamPrintTok):   WritePhiPsiAngles(name, -1); break;     
-        case(VRMLTok):       WriteVRMLFile(name);         break;
+        case(VRMLTok):       WriteVRMLFile(name, subtype); break;
     }
 }
 
@@ -3262,12 +3330,423 @@ static void ExecuteConnectCommand( void )
 }
 
 
+/* Select Maps 
+
+The format of a map command is
+  map {<map_selector>} subcommand parameters
+
+where the optional map_selector is one of the following:
+  m -- a map number m indicating a particular map for the currently active molecule
+  m1-m2 -- a range of map numbers indicating all maps for the current molecule 
+    with numbers between m1 and m2, inclusive.   If m1 is blank, m1 is assumed
+    to be the number of the first map.  If m2 is blank, m2 is assumed to be the 
+    number of the last map.
+  next -- the next map number after the highest number selected map in circular order.
+    If all maps are already selected or no maps are selected, the result will be selection
+    of the first map.  If there are no maps, next has the same effect as new
+  new (or none) -- no maps are selected, but if the subcommand changes any parameters 
+    or setting, they are changed for the next map to be created
+  all -- all maps are selected
+  a quoted string to be used as a map label, or one of the above followed by a
+  quoted string to be used as a map label
+  
+  SelectMaps parses map_selector tokens until it is positioned on the
+  token after the last token of the map selector, setting the MapMarkedFlag
+  for each selected map and, if it is to be applied to the next map,
+  the global map flag.  The MapSelectFlag is not changed at this stage.
+  The transfer will be done in a call to ApplyMapSelection, to allow the
+  processing to be aborted on errors in the subcommand or parameters
+  
+
+*/
+
+static void SelectMaps( void ) {
+
+  int lomap, himap, labfound, nextflag, newflag, j, nummaps;
+  int nomapselected;
+  int maxmapsel;
+  MapInfo *mapinfo;
+
+  lomap = -1;
+  himap = -1;
+  labfound = 0;
+  nextflag = 0;
+  newflag = 0;
+  nummaps = 0;
+  nomapselected=1;
+  
+  if (!MapInfoPtr) InitialiseMaps();
+
+  if (MapInfoPtr) nummaps = MapInfoPtr->size;
+  FetchToken();
+  if ( CurToken ) {
+    if (CurToken == NewTok || CurToken == NoneTok) {
+      nomapselected = 0;
+      newflag = 1;
+      FetchToken();
+      if (CurToken == StringTok) labfound = 1;
+    } else if (CurToken == NextTok)  {
+      nomapselected = 0;
+      nextflag = 1;
+      FetchToken();
+      if (CurToken == StringTok) labfound = 1;
+    } else if (CurToken == AllTok)  {
+      nomapselected = 0;
+      lomap = 1;
+      himap = nummaps;
+      FetchToken();
+      if (CurToken == StringTok) labfound = 1;
+    } else if (CurToken == NumberTok)  {
+      nomapselected = 0;
+      lomap = (int)TokenValue;
+      himap = lomap;
+      FetchToken();
+      if (CurToken == '-') {
+        himap = nummaps;
+        FetchToken();
+        if (CurToken == NumberTok) {
+          himap = (int)TokenValue;	
+        } else  {
+          if (CurToken == StringTok) labfound = 1;
+        }
+      } else  {
+        if (CurToken == StringTok) labfound = 1;
+      }
+    	
+    } else  {
+      lomap = 1;
+      if (CurToken == '-') {
+        nomapselected = 0;
+        himap = nummaps;
+        FetchToken();
+        if (CurToken == NumberTok) {
+          himap = (int)TokenValue;	
+        } else  {
+          if (CurToken == StringTok) labfound = 1;
+        }
+      } else  {
+        if (CurToken == StringTok) labfound = 1;
+      }
+    	
+    }
+  	
+  }
+  
+  if (labfound) {
+    if (MapLabel)  {
+      _ffree(MapLabel);
+    }
+    MapLabel = _fmalloc(strlen(TokenIdent)+1);
+    strcpy(MapLabel,TokenIdent);
+  }
+  
+  MapFlag &= ~(MapMarkedFlag|MapNoSelectFlag);
+  if (nomapselected) MapFlag |= MapNoSelectFlag;
+  if (MapInfoPtr)  {
+    maxmapsel = -1;
+    for (j=0; j < MapInfoPtr->size; j++) {
+      vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
+      mapinfo->flag &= (~MapMarkedFlag);
+      if (labfound){
+      	if (j+1 >= lomap && j+1 <=himap
+      	  && mapinfo->MapLabel 
+      	  && !strcasecmp(mapinfo->MapLabel,MapLabel)) {
+          maxmapsel = j;
+      	  mapinfo->flag |= MapMarkedFlag;
+        }
+      } else {
+        if (j+1 >= lomap && j+1 <=himap) {
+          maxmapsel = j;        	
+          mapinfo->flag |= MapMarkedFlag;
+        }
+      }
+    }
+    
+    if (nextflag) {
+      maxmapsel++;
+      if ( maxmapsel >= MapInfoPtr->size ) maxmapsel = 1;
+      for (j=0; j < MapInfoPtr->size; j++) {
+        vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
+        if (j != maxmapsel) mapinfo->flag &= (~MapMarkedFlag);
+        else mapinfo->flag |= MapMarkedFlag;
+      }
+}
+
+    if (newflag) MapFlag |= MapMarkedFlag;
+  	
+  }
+  
+  return;
+	
+}
+
+static void ApplyMapSelection( void ) {
+  int j;
+  MapInfo *mapinfo;
+  
+  if (MapFlag&MapNoSelectFlag) return;
+  MapFlag &= (~MapSelectFlag);
+  if (MapFlag&MapMarkedFlag) MapFlag |= MapSelectFlag;
+  
+  if (MapInfoPtr)  {
+    for (j=0; j < MapInfoPtr->size; j++) {
+      vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
+      mapinfo->flag &= (~MapSelectFlag);
+      if (mapinfo->flag&MapMarkedFlag) mapinfo->flag |= MapSelectFlag;
+    }
+  }
+  return;
+}
+
+void ApplyMapColour( void ) {
+  int i, j;
+  MapInfo *mapinfo;
+  
+  if (MapInfoPtr)  {
+    for (j=0; j < MapInfoPtr->size; j++) {
+      vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
+      if (mapinfo->flag&MapSelectFlag) {
+        mapinfo->flag &= ~MapColourPot;
+        mapinfo->flag |= (MapFlag&MapColourPot);
+        for (i=0;i<3;i++) mapinfo->MapRGBCol[i]=MapRGBCol[i];
+        if (mapinfo->flag&MapColourPot) ColourPointPotential(j);
+        else ColourPointAttrib(mapinfo->MapRGBCol[0],mapinfo->MapRGBCol[1],mapinfo->MapRGBCol[2],j);
+      }
+    }
+  }
+  return;
+}
+
+
+static void ApplyMapFlag( void ) {
+  int j, mapflag;
+  MapInfo *mapinfo;
+  
+  
+  mapflag = MapFlag&(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
+  
+  if (MapInfoPtr)  {
+    for (j=0; j < MapInfoPtr->size; j++) {
+      vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
+      if (mapinfo->flag&MapSelectFlag) {
+        mapinfo->flag |= mapflag;
+        DeleteMap(j,True);
+        if (mapinfo->flag&(MapPointFlag|MapMeshFlag|MapSurfFlag)) {
+           vector_create((GenericVec __far **)&mapinfo->MapPointsPtr,sizeof(MapPoint),1000);
+        if (mapinfo->flag&(MapMeshFlag))
+            vector_create((GenericVec __far **)&mapinfo->MapBondsPtr,sizeof(MapBond),1000);
+        if (mapinfo->flag&(MapSurfFlag))
+          vector_create((GenericVec __far **)&mapinfo->MapTanglePtr,sizeof(MapTangle),1000);
+        map_points(mapinfo->MapPtr, 
+          mapinfo->MapLevel+(MapFlag&MapMeanFlag)?mapinfo->MapPtr->mapdatamean:0, 
+          mapinfo->MapSpacing, mapinfo->MapPointsPtr,mapinfo->MapBondsPtr,mapinfo->MapTanglePtr,
+          mapinfo->MapRGBCol );
+        if (mapinfo->flag&MapColourPot) ColourPointPotential(j);
+        }
+      }
+    }
+  }
+  MapReRadius();
+  ReRadius();
+  ReDrawFlag |= RFInitial|RFColour;
+  return;
+}
+
+static void ApplyMapLevel( void ) {
+  int j, mapflag;
+  MapInfo *mapinfo;
+  
+  mapflag = MapFlag&MapMeanFlag;
+  
+  if (MapInfoPtr)  {
+    for (j=0; j < MapInfoPtr->size; j++) {
+      vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
+      if (mapinfo->flag&MapSelectFlag) {
+        mapinfo->flag &= ~MapMeanFlag;
+        mapinfo->flag |= mapflag;
+        mapinfo->MapLevel = MapLevel;      	
+      }
+    }
+  }
+  return;
+}
+
+
+static void ApplyMapSpread( void ) {
+  int j;
+  MapInfo *mapinfo;
+  
+  if (MapInfoPtr)  {
+    for (j=0; j < MapInfoPtr->size; j++) {
+      vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
+      if (mapinfo->flag&MapSelectFlag) {
+        mapinfo->MapSpread = MapSpread;
+      }
+    }
+  }
+  return;
+}
+
+
+static void ApplyMapSpacing( void ) {
+  int j;
+  MapInfo *mapinfo;
+  
+  if (MapInfoPtr)  {
+    for (j=0; j < MapInfoPtr->size; j++) {
+      vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
+      if (mapinfo->flag&MapSelectFlag) {
+        mapinfo->MapSpacing &= MapSpacing;
+      }
+    }
+  }
+  return;
+}
+
+static void ApplyMapZap( void ) {
+  int j;
+  MapInfo *mapinfo;
+  
+  if (MapInfoPtr)  {
+    for (j=0; j < MapInfoPtr->size; j++) {
+      vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
+      if (mapinfo->flag&MapSelectFlag) {
+        DeleteMap(j,False);
+      }
+    }
+  }
+  return;
+}
+
+static void ApplyMapRestriction( void ) {
+  int j;
+  MapInfo *mapinfo;
+  
+  if (MapInfoPtr)  {
+    for (j=0; j < MapInfoPtr->size; j++) {
+      vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
+      if (!mapinfo->flag&MapSelectFlag) {
+        DeleteMap(j,True);
+      }
+    }
+  }
+  return;
+}
+
+void ApplyMapShow( void ) {
+  int j;
+  MapInfo *mapinfo;
+  char buffer[1124];
+  
+  InvalidateCmndLine();
+  
+  if (MapInfoPtr)  {
+    for (j=0; j < MapInfoPtr->size; j++) {
+      vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
+      if (mapinfo->flag&MapSelectFlag) {
+        sprintf(buffer,"map %d %s %s %g spacing %g spread %g %s %s\n",j,
+            mapinfo->flag&MapSurfFlag?"Surface":(mapinfo->flag&MapMeshFlag?"Mesh":(
+              mapinfo->flag&MapPointFlag?"Dots":"unknown") ),
+              mapinfo->flag&MapMeanFlag?"Level MEAN ":"MEAN",mapinfo->MapLevel,
+              (double)mapinfo->MapSpacing/250., mapinfo->MapSpread,
+              mapinfo->MapFile?"file: ":"",
+              mapinfo->MapFile?mapinfo->MapFile:"");
+        WriteString(buffer); 
+        
+      }
+    }
+  }
+  return;
+}
+
+
+
+
+/* Generate a new map for the current molecule */
+
+static void ExecuteGenerateCommand( int mapflags ) {
+  int j;
+  MapInfo mapinfo;
+  MapInfo *omapinfo;
+
+  /* If there is no map info, create the vector */
+  
+  ApplyMapSelection();
+  if (MapSpacing <= 0) MapSpacing = 125L;
+  
+  /* Initialize a mapinfo struct */
+  
+  mapinfo.MapLevel = MapLevel;
+  mapinfo.MapSpacing = MapSpacing;
+  if (MapSpread < 0.1) MapSpread = 0.1;
+  mapinfo.MapSpread = MapSpread;
+  mapinfo.flag = SelectFlag|mapflags;
+  mapinfo.MapPointsPtr = NULL;
+  mapinfo.MapBondsPtr = NULL;
+  mapinfo.MapTanglePtr = NULL;
+  mapinfo.MapPtr = NULL;
+  mapinfo.MapMaskPtr = NULL;
+  mapinfo.MapFile = NULL;
+  mapinfo.MapSelection = NULL;
+  mapinfo.MapRGBCol[0] = MapRGBCol[0];
+  mapinfo.MapRGBCol[1] = MapRGBCol[1];
+  mapinfo.MapRGBCol[2] = MapRGBCol[2];
+  mapinfo.MapMeshRad = MapMeshRad;
+  mapinfo.MapLabel = MapLabel;
+  MapLabel = NULL;
+
+  if (mapinfo.flag&MapSurfFlag) {
+    generate_map(&mapinfo.MapPtr,mapinfo.MapSpacing/2, mapinfo.MapSpacing/2, mapinfo.MapSpacing/2, 0L, 0L, 0L,
+      (Long)(250.*(1.+mapinfo.MapSpread)+mapinfo.MapSpacing), 1./mapinfo.MapSpread );	  	
+  } else{
+  generate_map(&mapinfo.MapPtr,mapinfo.MapSpacing, mapinfo.MapSpacing, mapinfo.MapSpacing, 0L, 0L, 0L,
+     (Long)(250.*(1.+mapinfo.MapSpread)+mapinfo.MapSpacing), 1./mapinfo.MapSpread );
+  }
+  
+  if (mapinfo.flag&(MapPointFlag|MapMeshFlag|MapSurfFlag)) {
+  vector_create((GenericVec __far **)&mapinfo.MapPointsPtr,sizeof(MapPoint),1000);
+    if (mapinfo.flag&(MapMeshFlag))
+  vector_create((GenericVec __far **)&mapinfo.MapBondsPtr,sizeof(MapBond),1000);
+    if (mapinfo.flag&(MapSurfFlag))
+      vector_create((GenericVec __far **)&mapinfo.MapTanglePtr,sizeof(MapTangle),1000);
+  map_points(mapinfo.MapPtr, 
+      mapinfo.MapLevel+(MapFlag&MapMeanFlag)?mapinfo.MapPtr->mapdatamean:0, 
+      mapinfo.MapSpacing, mapinfo.MapPointsPtr,mapinfo.MapBondsPtr,mapinfo.MapTanglePtr,
+      mapinfo.MapRGBCol );
+    
+    if (MapFlag&MapNoSelectFlag) {
+  vector_add_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo);
+    } else {
+       if (MapFlag&MapSelectFlag) {
+       	 vector_add_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo);
+       } else {
+       	 for (j=0; j < MapInfoPtr->size; j++) {
+            vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&omapinfo,j );
+            if (omapinfo->flag&MapSelectFlag) {
+              DeleteMap(j, False);
+              vector_set_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,j);
+              break;
+            }
+         }
+
+       }
+       
+    }
+    
+  MapReRadius();
+  ReRadius();
+  ReDrawFlag |= RFInitial|RFColour;
+  }
+  return;
+}
+
 int ExecuteCommand( void )
 {
     register char *param;
     register int option;
     register int i,done;
     register Long temp;
+	int suboption;
     FILE *script;
 
     TokenPtr = CurLine;
@@ -3279,17 +3758,23 @@ int ExecuteCommand( void )
     switch( CurToken )
     {   case(AxesTok):       ExecuteAxesCommand();       break;
         case(BoundBoxTok):   ExecuteBoundBoxCommand();   break;
+        case(BulgarianTok):  SwitchLang(Bulgarian);      break;
         case(CentreTok):     ExecuteCentreCommand();     break;
+        case(ChineseTok):    SwitchLang(Chinese);        break;
         case(ClipboardTok):  ExecuteClipboardCommand();  break;
         case(ColourTok):     ExecuteColourCommand();     break;
         case(ConnectTok):    ExecuteConnectCommand();    break;
         case(EnglishTok):    SwitchLang(English);        break;
         case(FrenchTok):     SwitchLang(French);         break;
+    	case(GenerateTok):   ExecuteGenerateCommand(MapMeshFlag);
+    	                                                 break;
         case(ItalianTok):    SwitchLang(Italian);        break;
+        case(JapaneseTok):   SwitchLang(Japanese);       break;
         case(LoadTok):       ExecuteLoadCommand();       break;
         case(WaitTok):       ExecutePauseCommand();      break;
         case(PickingTok):    ExecutePickingCommand();    break;
         case(PrintTok):      ExecutePrintCommand();      break;
+    	case(RussianTok):    SwitchLang(Russian);        break;
         case(SetTok):        ExecuteSetCommand();        break;
         case(ShowTok):       ExecuteShowCommand();       break;
         case(SpanishTok):    SwitchLang(Spanish);        break;
@@ -3297,8 +3782,15 @@ int ExecuteCommand( void )
         case(UnitCellTok):   ExecuteUnitCellCommand();   break;
 
         case(RefreshTok):    RefreshScreen();            break;
-        case(ZapTok):        ZapDatabase();              break;
- 
+        
+        
+        case(ZapTok):        FetchToken();
+                             if ( CurToken == MapTok )  {
+                               DeleteMaps(); break;	
+                             } else if (!CurToken) {
+                               ZapDatabase(); break;
+                             } else CommandError(MsgStrs[ErrBadArg]);
+                             break;
 
 
         case(BondTok):    FetchToken();
@@ -3426,7 +3918,361 @@ int ExecuteCommand( void )
                           break;
 
 
+        case(MapTok):
+                          SelectMaps();
+                          if (CurToken) {
+                            switch (CurToken) {
+                              int mapflags, j;
+                              FILE *fp;
+                            
+                              case(DotsTok):
+                                FetchToken();
+                                if (CurToken==FalseTok) {
+                                  MapFlag &= ~MapPointFlag;
+                                } else if( (CurToken==TrueTok) || !CurToken ) {
+                                  MapFlag &= ~(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
+                                  MapFlag |= MapPointFlag;
+                                } else if( CurToken==NumberTok && TokenValue >=0)
+                                { if( *TokenPtr=='.' )
+                                  { TokenPtr++;
+                                    FetchFloat(TokenValue,250);
+                                  }
 
+                                  if( TokenValue<=500 )
+                                  { if (TokenValue !=0) {
+                                      MapFlag &= ~(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
+                                      MapFlag |= MapPointFlag;
+                                      MapPointRad = TokenValue;
+                                    } else {
+                                      MapFlag &= ~MapPointFlag;
+                                    }
+                                  } else { CommandError(MsgStrs[ErrBigNum]); break;}
+                                } else if( CurToken=='.' ) {
+                                  FetchFloat(0,250);
+                                  if( TokenValue<=500 ) {
+                                    MapFlag &= ~(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
+                                    MapFlag |= MapPointFlag;
+                                    MapPointRad = TokenValue;
+                                  } else { CommandError(MsgStrs[ErrBigNum]); break;}
+                                } else if (!CurToken) {
+                                  MapFlag &= ~(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
+                                MapFlag |= MapPointFlag;
+                               	  MapPointRad = 0;
+                                } else { CommandError(MsgStrs[ErrBadArg]); break; }
+                                ApplyMapSelection();
+                                ApplyMapFlag();
+                                ReDrawFlag |= RFRefresh;
+                                break;
+
+                              case(WireframeTok):
+                                FetchToken();
+                                if (CurToken==FalseTok) {
+                                  MapFlag &= ~MapMeshDashFlag;
+                                } else if( (CurToken==TrueTok) || !CurToken ) {
+                                  MapFlag &= ~(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
+                                  MapFlag |= MapPointFlag|MapMeshFlag;
+                                } else if( CurToken==DashTok )
+                                { MapFlag &= ~(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
+                                  MapFlag |= MapPointFlag|MapMeshDashFlag;
+                                } else if( CurToken==NumberTok && TokenValue >=0)
+                                { if( *TokenPtr=='.' )
+                                  { TokenPtr++;
+                                    FetchFloat(TokenValue,250);
+                                  }
+
+                                  if( TokenValue<=500 )
+                                  { if (TokenValue !=0) {
+                                      MapFlag &= ~(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
+                                      MapFlag |= MapPointFlag|MapMeshFlag;
+                                      MapMeshRad = TokenValue;
+                                    } else {
+                                      MapFlag &= ~MapMeshDashFlag;
+                                    }
+                                  } else { CommandError(MsgStrs[ErrBigNum]); break;}
+                                } else if( CurToken=='.' ) {
+                                  FetchFloat(0,250);
+                                  if( TokenValue<=500 ) {
+                                    MapFlag &= ~(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
+                                    MapFlag |= MapPointFlag|MapMeshFlag;
+                                    MapMeshRad = TokenValue;
+                                  } else { CommandError(MsgStrs[ErrBigNum]); break;}
+                                } else if (!CurToken) {
+                                  MapFlag &= ~(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
+                                MapFlag |= MapPointFlag|MapMeshFlag;
+                               	  MapMeshRad = 0;
+                                } else { CommandError(MsgStrs[ErrBadArg]); break; }
+                                ApplyMapSelection();
+                                ApplyMapFlag();
+                                ReDrawFlag |= RFRefresh;
+                                break;
+
+                              case(SurfaceTok):
+                                MapFlag &= ~(MapPointFlag|MapMeshFlag|MapSurfFlag);
+                                MapFlag |= MapSurfFlag;
+                                FetchToken();
+                                if (CurToken)  CommandError(MsgStrs[ErrBadArg]);
+                                else {
+                                  ApplyMapSelection();
+                                  ApplyMapFlag();
+                                }
+                                ReDrawFlag |= RFRefresh;
+                                break;
+                                
+                              case(GenerateTok):
+                                mapflags = MapFlag;
+                                FetchToken();
+                                if ( CurToken==DotsTok) {
+                                  mapflags &= ~(MapPointFlag|MapMeshFlag|MapSurfFlag);
+                                  mapflags |= MapPointFlag;
+                                } else if (CurToken==WireframeTok) {
+                                  mapflags &= ~(MapPointFlag|MapMeshFlag|MapSurfFlag);
+                                  mapflags |= MapPointFlag|MapMeshFlag;
+                                } else if (CurToken==SurfaceTok) {
+                                  mapflags &= ~(MapPointFlag|MapMeshFlag|MapSurfFlag);
+                                  mapflags |= MapSurfFlag;
+                                } else if (CurToken) { 
+                                  CommandError(MsgStrs[ErrBadArg]);
+                                  break;
+                                }
+                                if (!(mapflags &(MapPointFlag|MapMeshFlag|MapSurfFlag)))
+                                  mapflags |= MapPointFlag;
+                                ExecuteGenerateCommand(mapflags);  
+                                break;
+                                
+                              case(LoadTok):
+                                FetchToken();
+                                if( !Database ) { 
+                                  CommandError(MsgStrs[ErrBadMolDB]);
+                                  break;
+                                }
+
+                                if( CurToken==StringTok ) {
+                                  ProcessFileName(TokenIdent);
+                                } else ProcessFileName(TokenStart);
+                                
+                                if( !(fp=fopen(DataFileName,"rb")) ) {
+                                  CommandError( (char*)NULL );
+                                  WriteString(MsgStrs[StrDFile]);
+                                  WriteString(DataFileName);
+                                  WriteString("'!\n");
+                                  break;
+                                } 
+#ifdef USE_CBFLIB        
+                                else {
+                                  int mapno;
+                                  MapInfo *omapinfo;
+                                  if (MapFlag&MapNoSelectFlag) mapno=-1;
+                                  else {
+                                  	ApplyMapSelection();
+                                  	if (MapFlag&MapSelectFlag) {
+                                  	  mapno = -1;
+                                    } else {
+       	                              for (j=0; j < MapInfoPtr->size; j++) {
+                                        vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&omapinfo,j );
+                                        if (omapinfo->flag&MapSelectFlag) {
+                                          DeleteMap(j,False);
+                                          mapno=j;
+                                          break;
+                                        }
+                                      }
+                                    }
+                                  }
+                                  if(LoadMapFile(fp,(FileDepth == -1),mapno)) {
+            	                     CommandError( (char*)NULL );
+                                     WriteString(MsgStrs[StrErrFile]);
+                                     WriteString(DataFileName);
+                                     WriteString("'!\n");
+                                     break;
+                                  }
+                                }
+#else
+                                CommandError(MsgStrs[ErrBadArg]);
+#endif
+                                break;
+
+                                
+    	case(LevelTok):
+                                FetchToken();
+                                MapFlag &= ~MapMeanFlag;
+                                MapLevel = 1.;
+                                if ( CurToken==MeanTok) {
+                                  MapFlag |= MapMeanFlag;
+                          FetchToken();
+                                  MapLevel = 0.;
+                                }
+                          if ( CurToken==NumberTok && TokenValue >=0)
+                          {   if( *TokenPtr=='.' )
+                              {   TokenPtr++;
+                                  FetchFloat(TokenValue,1000);
+                              }
+                              if( TokenValue<=50000 )
+                                    {   if (TokenValue > 0 || MapFlag&MapMeanFlag)  {
+                                  MapLevel = ((Real)TokenValue)/1000.;                          
+                                          ApplyMapSelection();
+                                          ApplyMapLevel();
+                                  ReDrawFlag |= RFRefresh;
+                                          break;
+                                        }  else CommandError(MsgStrs[ErrBigNum]);
+                              } else CommandError(MsgStrs[ErrBigNum]);
+                                } else if( CurToken=='.' ) {   FetchFloat(0,1000);
+                              if( TokenValue<=50000 )
+                              {   MapLevel = ((Real)TokenValue)/1000.;
+                                        ApplyMapSelection();
+                                        ApplyMapLevel();
+                                  ReDrawFlag |= RFRefresh;
+                                        break;
+                              } else CommandError(MsgStrs[ErrBigNum]);
+                                } 
+                                if (!CurToken && (MapFlag&MapMeanFlag)) {
+                                  ApplyMapSelection();
+                                  ApplyMapLevel();
+                                	break;
+                                } else CommandError(MsgStrs[ErrBadArg]);
+                                break;
+
+    	                      case(ResolutionTok):
+                                FetchToken();
+                                if ( CurToken==NumberTok && TokenValue >=0)
+                                {   if( *TokenPtr=='.' )
+                                    {   TokenPtr++;
+                                        FetchFloat(TokenValue,1000);
+                                    }
+                                    if( TokenValue<=50000 )
+                                    {   if (TokenValue !=0)
+                                        MapSpacing = 250.*((Real)TokenValue)/1000.;
+                                        MapSpread = .6667*((Real)TokenValue)/1000.;
+                                        ApplyMapSelection();
+                                        ApplyMapSpacing();
+                                        ApplyMapSpread();
+                                        ReDrawFlag |= RFRefresh;
+                                    } else CommandError(MsgStrs[ErrBigNum]);
+                                } else if( CurToken=='.' )
+                                {   FetchFloat(0,1000);
+                                    if( TokenValue<=50000 )
+                                    {   MapSpacing = 250.*((Real)TokenValue)/1000.;
+                                        MapSpread = .6667*((Real)TokenValue)/1000.;
+                                        ApplyMapSelection();
+                                        ApplyMapSpacing();
+                                        ApplyMapSpread();
+                                        ReDrawFlag |= RFRefresh;
+                                    } else CommandError(MsgStrs[ErrBigNum]);
+                          } else CommandError(MsgStrs[ErrBadArg]);
+                          break;
+
+
+
+    	case(SpreadTok):
+                          FetchToken();
+                          if ( CurToken==NumberTok && TokenValue >=0)
+                          {   if( *TokenPtr=='.' )
+                              {   TokenPtr++;
+                                  FetchFloat(TokenValue,1000);
+                              }
+                              if( TokenValue<=50000 )
+                              {   if (TokenValue !=0)
+                                  MapSpread = ((Real)TokenValue)/1000.;                          
+                                        ApplyMapSelection();
+                                        ApplyMapSpread();
+                                  ReDrawFlag |= RFRefresh;
+                              } else CommandError(MsgStrs[ErrBigNum]);
+                          } else if( CurToken=='.' )
+                          {   FetchFloat(0,1000);
+                              if( TokenValue<=50000 )
+                              {   MapSpread = ((Real)TokenValue)/1000.;
+                                        ApplyMapSelection();
+                                        ApplyMapSpread();
+                                  ReDrawFlag |= RFRefresh;
+                              } else CommandError(MsgStrs[ErrBigNum]);
+                          } else CommandError(MsgStrs[ErrBadArg]);
+                          break;
+
+     	case(SpacingTok):
+                          FetchToken();
+                          if ( CurToken==NumberTok && TokenValue >=0)
+                          {   if( *TokenPtr=='.' )
+                              {   TokenPtr++;
+                                  FetchFloat(TokenValue,250);
+                              }
+                              if( TokenValue<=50000 )
+                              {   if (TokenValue !=0)
+                                  MapSpacing = TokenValue;                          
+                                        ApplyMapSelection();
+                                        ApplyMapSpacing();
+                                  ReDrawFlag |= RFRefresh;
+                              } else CommandError(MsgStrs[ErrBigNum]);
+                          } else if( CurToken=='.' )
+                          {   FetchFloat(0,250);
+                              if( TokenValue<=50000 )
+                              {   MapSpacing = TokenValue;
+                                        ApplyMapSelection();
+                                        ApplyMapSpacing();
+                                  ReDrawFlag |= RFRefresh;
+                              } else CommandError(MsgStrs[ErrBigNum]);
+                          } else CommandError(MsgStrs[ErrBadArg]);
+                                break;
+                                
+                              case(ColourTok):
+                                FetchToken();
+                                if( CurToken==PotentialTok )
+                                {   ReDrawFlag |= RFColour;
+                                    MapFlag |= MapColourPot;
+                                } else if( ParseColour() )
+                                {   ReDrawFlag |= RFColour;
+                                    MapRGBCol[0] = RVal;
+                                    MapRGBCol[1] = GVal;
+                                    MapRGBCol[2] = BVal;
+                                    MapFlag &= ~MapColourPot;
+                                } else if( CurToken )
+                                {      CommandError(MsgStrs[ErrColour]);
+                                } else CommandError(MsgStrs[ErrNoCol]);
+                                ApplyMapSelection();
+                                ApplyMapColour();
+                                break;
+                                
+                              case(ZapTok):
+                                FetchToken();
+                                if (!CurToken) {
+                                  ApplyMapSelection();
+                                  ApplyMapZap();
+                                }
+                                else CommandError(MsgStrs[ErrSyntax]);
+                                break;
+
+                              case(SelectTok):
+                                FetchToken();
+                                if (!CurToken) {
+                                  ApplyMapSelection();
+                                }
+                                else CommandError(MsgStrs[ErrSyntax]);
+                                break;
+ 
+                              case(RestrictTok):
+                                FetchToken();
+                                if (!CurToken) {
+                                  ApplyMapSelection();
+                                  ApplyMapRestriction();
+                                }
+                                else CommandError(MsgStrs[ErrSyntax]);
+                                break;
+                                
+                              case(ShowTok):
+                                FetchToken();
+                                if (!CurToken) {
+                                  ApplyMapSelection();
+                                  ApplyMapShow();
+                                }
+                                else CommandError(MsgStrs[ErrSyntax]);
+                                break;
+
+                                
+                              default:  CommandError(MsgStrs[ErrBadArg]); break;
+
+                            }
+                          } else CommandError(MsgStrs[ErrSyntax]);
+                          break;
+
+
+ 
         case(WireframeTok):
                           FetchToken();
                           if( CurToken==FalseTok )
@@ -3513,7 +4359,7 @@ int ExecuteCommand( void )
                                   FetchFloat(TokenValue,250);
                               }
 
-                              if( TokenValue<=750 )
+                              if( TokenValue<=3000 )
                               {   SetRadiusValue(MaxFun((int)TokenValue,1),
                                     SphereFlag);
                                     DrawSurf = False;
@@ -3521,7 +4367,7 @@ int ExecuteCommand( void )
                               } else CommandError(MsgStrs[ErrBigNum]);
                           } else if( CurToken=='.' )
                           {   FetchFloat(0,250);
-                              if( TokenValue<=750 )
+                              if( TokenValue<=3000 )
                               {   SetRadiusValue(MaxFun((int)TokenValue,1),
                                     SphereFlag);
                                     DrawSurf = False;
@@ -3555,7 +4401,7 @@ int ExecuteCommand( void )
                               {   TokenPtr++;
                                   FetchFloat(TokenValue,250);   
                               }
-                              if( TokenValue<=750 )
+                              if( TokenValue<=3000 )
                               {   ProbeRadius = (int)TokenValue;
                                   DrawSurf = True;
                                   ReDrawFlag |= RFRefresh;
@@ -3573,11 +4419,33 @@ int ExecuteCommand( void )
                               {   TokenPtr++;
                                   FetchFloat(TokenValue,250);
                               }
-                            if( TokenValue<=750 )
+                            if( TokenValue<=3000 )
                               {   ProbeRadius = (int)TokenValue;
                                   DrawSurf = True;
                                   ReDrawFlag |= RFRefresh;
+                                  FetchToken();
+                                  if (!CurToken)
                                   SetVanWaalRadius( SphereFlag | TouchFlag );
+                                  else if( CurToken==NumberTok ) {
+                                    if( *TokenPtr=='.' ) {
+                                      TokenPtr++; 
+                                      FetchFloat(TokenValue,250);
+                                    }
+                                    if( TokenValue<=3000 ) {
+                                       SetRadiusValue(MaxFun((int)TokenValue,1),
+                                         SphereFlag | TouchFlag);
+                                    } else CommandError(MsgStrs[ErrBigNum]);
+                                  } else if( CurToken=='.' ) {
+                                    FetchFloat(0,250);
+                                    if( TokenValue<=3000 ) {
+                                      SetRadiusValue(MaxFun((int)TokenValue,1),
+                                        SphereFlag | TouchFlag);
+                                    } else CommandError(MsgStrs[ErrBigNum]);
+                                  } else if( CurToken==UserTok ) {
+                                    UserMaskAttrib(MaskRadiusFlag);
+                                  } else if( CurToken==TemperatureTok ) {
+                                    ReDrawFlag |= RFRefresh;
+                                  } else CommandError(MsgStrs[ErrBadArg]);
                                   /* if( MainAtomCount+HetaAtomCount > 255 ) */
                                       CreateSurfaceBonds();
                               } else CommandError(MsgStrs[ErrBigNum]);
@@ -3597,7 +4465,7 @@ int ExecuteCommand( void )
                                   FetchFloat(TokenValue,250);
                               }
 
-                              if( TokenValue<=750 )
+                              if( TokenValue<=1500 )
                               {   SetRadiusValue(MaxFun((int)TokenValue,1),
                                     SphereFlag);
                                     DrawSurf = True;
@@ -3605,7 +4473,7 @@ int ExecuteCommand( void )
                               } else CommandError(MsgStrs[ErrBigNum]);
                           } else if( CurToken=='.' )
                           {   FetchFloat(0,250);
-                              if( TokenValue<=750 )
+                              if( TokenValue<=1500 )
                               {   SetRadiusValue(MaxFun((int)TokenValue,1),
                                     SphereFlag);
 			          DrawSurf = True;
@@ -4288,11 +5156,17 @@ int ExecuteCommand( void )
                               }
 
                           option = FetchToken();
+                          suboption = 0;
                           if( (option==RasMolTok) || (option==ScriptTok)
                               || (IsMoleculeToken(option))
                               || (IsImageToken(option)) )
                           {   if( !*TokenPtr || *TokenPtr==' ' )
-                                  FetchToken();
+                                  suboption = FetchToken();
+                                  if (suboption == MirrorTok || suboption == RotateTok) 
+                                  {  if (!*TokenPtr || *TokenPtr==' ')
+                                       FetchToken();
+                                  }
+                                  else suboption = 0;
                           } else if( i==SaveTok )
                           {   option = PDBTok;
                           } else option = 0;
@@ -4308,7 +5182,7 @@ int ExecuteCommand( void )
 
                           if( !IsMoleculeToken(option) )
                           {   if( ReDrawFlag ) RefreshScreen();
-                              WriteImageFile( param, option );
+                              WriteImageFile( param, option, suboption );
 
                           } else switch(option)
                           {   case(NMRPDBTok):

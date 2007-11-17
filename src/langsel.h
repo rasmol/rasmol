@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                              RasMol 2.7.3.1                             *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                              14 April 2006                              *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -27,6 +26,7 @@
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
  *                                                                         *
  *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
  *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
@@ -43,6 +43,7 @@
  *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
  *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  G. Pozhvanov                         2.7.3 menus and message   Russian *
  *                                                                         *
  *                             This Release by                             *
  * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
@@ -62,8 +63,14 @@ typedef enum {
        French      =    1,
        German      =    2,
        Italian     =    3,
-       Spanish     =    4
+       Spanish     =    4,
+       Russian     =    5,
+       Chinese     =    6,
+       Japanese    =    7,
+       Bulgarian   =    8
 } language;
+
+#define NUMLANGS 9
 
 typedef enum {
        ErrSyntax   =    0,
@@ -188,54 +195,68 @@ typedef enum {
        StrMRMol    =  127,
        StrMRAll    =  128,
 
-       StrMGIF     =  129,
-       StrMPostscr =  130,
-       StrMPPM     =  131,
-       StrMIRGB    =  132,
+       StrMBMP     =  129,
+       StrMGIF     =  130,
+       StrMIRGB    =  131,
+       StrMPPM     =  132,
        StrMSRast   =  133,
-       StrMBMP     =  134,
+       StrMPostscr =  134,
        StrMPICT    =  135,
+       StrMVECPS   =  136,
+       StrMMSCR    =  137,
+       StrMKine    =  138,
+       StrMPOVRAY  =  139,
+       StrMVRML    =  140,
+       StrMRPP     =  141,
+       StrMR3D     =  142,
+       StrMSCR     =  143,
 
-       StrMAbout   =  136,
-       StrMUserM   =  137,
+
+       StrMAbout   =  144,
+       StrMUserM   =  145,
        
-       StrMUndo    =  138,
-       StrMCut     =  139,
-       StrMCopy    =  140,
-       StrMPaste   =  141,
+       StrMUndo    =  146,
+       StrMCut     =  147,
+       StrMCopy    =  148,
+       StrMPaste   =  149,
 #ifdef APPLEMAC
-       StrMClear   =  142,
+       StrMClear   =  150,
 #else
-       StrMDelete  =  142,
+       StrMDelete  =  150,
 #endif
-       StrMSelAll  =  143,
+       StrMSelAll  =  151,
 
-       StrMFile    =  144,
-       StrMEdit    =  145,
-       StrMDisplay =  146,
-       StrMColour  =  147,
-       StrMOpt     =  148,
-       StrMSettings=  149,
-       StrMExport  =  150,
+       StrMFile    =  152,
+       StrMEdit    =  153,
+       StrMDisplay =  154,
+       StrMColour  =  155,
+       StrMOpt     =  156,
+       StrMSettings=  157,
+       StrMExport  =  158,
 #ifdef APPLEMAC
-       StrMWindow  =  151,
-       StrMHelp    =  152,
-       StrMMainWin =  153,
-       StrMCmndLin =  154,
+       StrMWindow  =  159,
+       StrMHelp    =  160,
+       StrMMainWin =  161,
+       StrMCmndLin =  162,
 #else
-       StrMHelp    =  151,
+       StrMHelp    =  159,
 #endif
 
-       StrPrmtPDB  =  155,
-       StrPrmtImg  =  156,
-       StrPrmtMol  =  157,
-       StrWarn     =  158,
-       StrChain    =  159
+       StrPrmtPDB  =  163,
+       StrPrmtImg  =  164,
+       StrPrmtMol  =  165,
+       StrWarn     =  166,
+       StrChain    =  167,
+       
+       StrRegister =  168,
+       StrDonate   =  169,
+       StrWarranty =  170,
+       StrNoShow   =  171
 
 
 } strflag;
 
-#define MaxStrFlag     160
+#define MaxStrFlag     172
 typedef struct {
       char *    msg;
       strflag   msgno;
@@ -243,19 +264,36 @@ typedef struct {
       int       aux;
 } langstr;
 
+typedef struct {
+      char *   menufontvar;
+#ifdef MSWIN
+      BYTE     menucharset;
+#endif
+      char *   menufontlist;
+      language lang;	
+} langfont;
+
 
 #ifdef LANGSEL
 
 char * MsgStrs[MaxStrFlag];
 int    MsgLens[MaxStrFlag];
 int    MsgAuxl[MaxStrFlag];
+language     Language;
+language    TermLanguage;
 
 #else
 
 extern char * MsgStrs[MaxStrFlag];
 extern int    MsgLens[MaxStrFlag];
 extern int    MsgAuxl[MaxStrFlag];
+extern language   Language;
+extern language   TermLanguage;
+extern langfont langfonts[NUMLANGS];
 
 #endif
 
 void SwitchLang( language );
+language str2lang ( const char * );
+const char * lang2str ( language lang);
+void UpdateLanguage ( void );

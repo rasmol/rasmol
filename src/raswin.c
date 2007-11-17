@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                              RasMol 2.7.3.1                             *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                              14 April 2006                              *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -27,6 +26,7 @@
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
  *                                                                         *
  *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
  *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
@@ -43,6 +43,8 @@
  *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
  *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  G. Pozhvanov                         2.7.3 menus and message   Russian *
+ *                                                                         *
  *                                                                         *
  *                             This Release by                             *
  * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
@@ -55,6 +57,58 @@
  ***************************************************************************/
 /* raswin.c
  $Log: not supported by cvs2svn $
+ Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.13  2006/12/24 16:12:53  yaya
+ Fix typos in raswin.c introduced in the prior patch. -- HJB
+
+ Revision 1.10  2006/12/03 02:53:10  yaya
+ Clean up compilation warnings in outfile.c
+ Mods for about screen under Linux -- HJB
+
+ Revision 1.9  2006/11/28 03:12:48  yaya
+ Changes for Russian and About dialog in unix
+ This is a variant tried under Mac OS X.  Changes
+ for Linux still needed.  note that more work is
+ needed on font selection. -- HJB
+
+ Revision 1.8  2006/11/01 03:23:51  yaya
+ Update NSIS windows installer for more script types and to fix
+ misplaced script instructions for data files; add document and
+ script icons directly in raswin.exe; add credit line to
+ G. A. Pozhvanov in comments for Russian translations. -- HJB
+
+ Revision 1.7  2006/10/30 15:18:12  yaya
+ Add NSIS installer, make language sticky for windows and mac
+ Set up RASMOLPATH environment variable on install -- HJB
+
+ Revision 1.6  2006/10/21 18:22:00  yaya
+ Correct logic for missing intermediate directories
+ Change from RASWIN to RasWin -- HJB
+
+ Revision 1.5  2006/10/20 13:53:02  yaya
+ Move about dialog flag file RASWIN.FLG to APPDATA style directories
+ Translate three "not founds" that had been missed before -- HJB
+
+ Revision 1.4  2006/10/02 21:24:49  yaya
+ Changes to allow disabling of about dialog using RASWIN.FLG flag file,
+ Restore windows Help menu adding register and donate menu items
+ Enable language support for about dialog -- HJB
+
+ Revision 1.3  2006/09/18 00:30:31  yaya
+ Add hooks for registration and donation and update icon -- HJB
+
+ Revision 1.2  2006/09/17 10:53:56  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:45:58  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
+ Initial Rasmol 2.7.3 Import
+
  Revision 1.1  2004/05/07 19:46:16  yaya
  Initial revision
 
@@ -95,6 +149,7 @@
 #include <commdlg.h>
 #include <direct.h>
 #include <dde.h>
+#include <process.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -115,6 +170,7 @@
 #include "repres.h"
 #include "outfile.h"
 #include "multiple.h"
+#include "tokens.h"
 #include "vector.h"
 #include "wbrotate.h"
 #include "langsel.h"
@@ -173,6 +229,7 @@ static DDEConv DDEConvData[MaxDDEConvNum];
 static int RasWinDDEReady;
 static int DDEAdviseCount;
 static int DDEConvCount;
+static int firstpass=1;
 
 
 #ifdef SOCKETS
@@ -254,14 +311,18 @@ static int InitX,InitY;
 static int HeldButton;
 static int FileFormat;
 
-static char snamebuf[128];
-static char fnamebuf[128];
-static char ifilters[512];
-static char ofilters[512];
+static char snamebuf[1024];
+static char fnamebuf[1048];
+static char fpnamebuf[1048];
+static char ifilters[1024];
+static char ofilters[2048];
 static OPENFILENAME ofn1;
 static OPENFILENAME ofn2;
 static HINSTANCE hInstance;
 static char Text[256];
+static char filaid [1025];
+static char macaid [1025];
+static char fillang [81];
 
 
 #ifdef _WIN32
@@ -388,6 +449,17 @@ static void LoadInitFile( void )
 	initrc = fopen(fname,"rb");
     }
 
+    if( !initrc && (src=(char*)getenv("RASMOLPATH")) )
+    {   dst = fnamebuf; 
+	while( *src )
+	    *dst++ = *src++;
+	*dst++ = '\\';
+
+	src = fname; fname = fnamebuf;
+	while( *dst++ = *src++ );
+	initrc = fopen(fname,"rb");
+    }
+
     if( initrc )
 	LoadScriptFile(initrc,fname);
 }
@@ -495,22 +567,33 @@ static int InitTerminal( HANDLE instance )
     long style;
     RECT rect;
     HDC hDC;
+    int ii;
     
-    LogFont.lfHeight     = 12;
-    LogFont.lfWidth      = 8;
+    LogFont.lfHeight     = 14;
+    LogFont.lfWidth      = 0;
     LogFont.lfEscapement = 0;
-    LogFont.lfWeight     = 0;
+    LogFont.lfWeight     = 500;
     LogFont.lfItalic     = 0;
     LogFont.lfUnderline  = 0;
     LogFont.lfStrikeOut  = 0;
     
     LogFont.lfCharSet        = ANSI_CHARSET;
+    setlocale(LC_ALL,"English");
+    
+    for (ii=0; ii < NUMLANGS; ii++) {
+      if (Language == langfonts[ii].lang) {
+        setlocale(LC_ALL,lang2str(Language));
+        LogFont.lfCharSet = langfonts[ii].menucharset;
+        break;
+      }
+    }
     LogFont.lfOutPrecision   = OUT_DEFAULT_PRECIS;
     LogFont.lfClipPrecision  = CLIP_DEFAULT_PRECIS;
-    LogFont.lfQuality        = PROOF_QUALITY;
-    LogFont.lfPitchAndFamily = FIXED_PITCH | FF_SWISS;
+    LogFont.lfQuality        = DEFAULT_QUALITY;
+    LogFont.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
     LogFont.lfFaceName[0]    = '\0';
     TermFont = CreateFontIndirect(&LogFont);
+	TermLanguage = Language;
 
     /* TermFont = GetStockObject(ANSI_FIXED_FONT); */
 
@@ -534,7 +617,7 @@ static int InitTerminal( HANDLE instance )
 
     rect.top  = 0;   rect.bottom = TermRows*CharHigh;
     rect.left = 0;   rect.right  = TermCols*CharWide;
-    style = WS_OVERLAPPEDWINDOW | WS_VSCROLL;
+    style = WS_OVERLAPPEDWINDOW | WS_VSCROLL | WS_HSCROLL | WS_SIZEBOX;
     
     AdjustWindowRect(&rect,style,False);
 #ifdef WS_EX_CLIENTEDGE
@@ -565,11 +648,42 @@ static void PaintScreen( void )
     register char __far *ptr;
     register int row,len;
     register int x,y;
+    int ii;
     
     PAINTSTRUCT ps;
     HFONT font;
     RECT rect;
     HDC hDC;
+    
+	LOGFONT LogFont;
+	
+    if (Language != TermLanguage) {
+	DeleteObject(TermFont);
+	    
+    LogFont.lfHeight     = 14;
+    LogFont.lfWidth      = 0;
+    LogFont.lfEscapement = 0;
+    LogFont.lfWeight     = 500;
+    LogFont.lfItalic     = 0;
+    LogFont.lfUnderline  = 0;
+    LogFont.lfStrikeOut  = 0;
+    
+    LogFont.lfCharSet        = ANSI_CHARSET;
+    for (ii=0; ii < NUMLANGS; ii++) {
+      if (Language == langfonts[ii].lang) {
+        LogFont.lfCharSet = langfonts[ii].menucharset;
+        break;
+      }
+    }
+    LogFont.lfOutPrecision   = OUT_DEFAULT_PRECIS;
+    LogFont.lfClipPrecision  = CLIP_DEFAULT_PRECIS;
+    LogFont.lfQuality        = DEFAULT_QUALITY;
+    LogFont.lfPitchAndFamily = FIXED_PITCH | FF_DONTCARE;
+    LogFont.lfFaceName[0]    = '\0';
+    TermFont = CreateFontIndirect(&LogFont);
+	TermLanguage = Language;
+	}
+
     
     hDC = BeginPaint(CmndWin,&ps);
     font = SelectObject(hDC,TermFont);
@@ -651,6 +765,276 @@ static void PaintScreen( void )
     }    
 }
 
+/* EnsurePath 
+
+   When possible, ensure the the path for the given file has been
+   created.  The path must be in a mutable array, since the
+   check is done by progressively changing backshlashes into
+   nulls, checking the partial path and then restoring the backslash.
+*/
+
+static void EnsurePath(char * path) {
+
+  char * ptr;
+  
+  int quoted;
+  int depth;
+  
+  quoted = 0;
+  depth = 0;
+  ptr = path;
+  
+  while (*ptr)  {
+    if (*ptr== '"') quoted = 1-quoted;
+    if (*ptr == '\\' && !quoted) {
+      *ptr = '\0';
+      depth++;
+      if ((depth > 1 || (ptr-path > 0 && *(ptr-1)!=':')) && ! CreateDirectory(path, NULL)) {
+        if (GetLastError() == ERROR_PATH_NOT_FOUND) {
+          WriteString(MsgStrs[StrErrFile]);
+          WriteString(path);
+          WriteString(MsgStrs[StrNotFnd]);
+          *ptr = '\\';
+          WriteString("in ");
+          WriteString(path);
+          WriteString("\n");
+          break;
+        }
+      }
+      *ptr = '\\';
+    }
+    ptr++;
+  }	
+  return;
+}
+
+
+/* Determine where the RasMol Application is loaded 
+
+   If the environment variable RASMOLPATH is set, that is used
+   Otherwise, if the enviroment variable PROGRAMFILES is set,
+   the string %PROGRAMFILES%\RasWin is returned.
+   Otherwise, if the symbol RASMOLDIR is defined, that is returned.
+   Finally, if none of these are set, the current working directory
+   is returned.
+*/
+
+static size_t DetermineRasMolPath( char * rpath, size_t maxlen) {
+
+  char * src, * dst;
+  
+  dst = rpath;
+  
+  if (src = (char*)(getenv("RASMOLPATH"))) { 
+    while(*src && dst-rpath < maxlen-1) { *dst++ = *src++; }
+    *dst++ = '\0';
+    return dst-rpath-1;	
+  }
+  
+  if (src = (char*)(getenv("PROGRAMFILES"))) { 
+    while(*src && dst-rpath < maxlen-1) { *dst++ = *src++; }
+    src = "\\RasWin";
+    while(*src && dst-rpath < maxlen-1) { *dst++ = *src++; }
+    *dst++ = '\0';
+    return dst-rpath-1;	
+  }
+  
+#ifdef RASMOLDIR
+
+  src = RASMOLDIR;
+  while(*src && dst-rpath < maxlen-1) { *dst++ = *src++; }
+  *dst++ = '\0';
+  return dst-rpath-1;	
+  
+#endif
+
+  if ( getcwd(rpath,maxlen-2)) {
+  
+    dst = rpath;
+    while (*dst) dst++;
+    if( dst !=rpath && *(dst -1) != '\\' ) {
+      *dst++ = '\\';
+    }
+    *dst++ = '\0';
+    return dst-rpath-1;
+  	
+  } else {
+  
+    return 0;
+  	
+  }
+	
+}
+
+/* Determine where the RasWin.flg file is located
+
+   If the environment variable RASMOLFLAGPATH is set, that is used
+   Otherwise, if the environment variable APPDATA is set, then
+   the string %APPDATA%\RasWin\RasWin.flg is used
+   Othewise, if the environment variable USERNAME is set then
+     if the environment variable WINDIR is defined
+     return %WINDIR%\Profiles\%USERNAME%\Application Data\RasWin\RasWin.flg
+     or C:\Windows\Profiles\%USERNAME%\Application Data\RasWin\RasWin.flg
+   If the environment variable USERNAME is not defined,
+     return %WINDIR%\Profiles\Application Data\RasWin\RasWin.flg
+     or C:\Windows\Profiles\Application Data\RasWin\RasWin.flg
+
+*/
+
+
+static size_t DetermineRasMolFlagPath( char *rfpath, size_t maxlen ) {
+
+  char * src, * dst, *windir;
+    
+  size_t rfplen;
+  
+  dst = rfpath;
+  
+  if (src = (char*)(getenv("RASMOLFLAGPATH"))) { 
+    while(*src && dst-rfpath < maxlen-1) { *dst++ = *src++; }
+    *dst++ = '\0';
+    return dst-rfpath-1;	
+  }
+
+  if (src = (char*)(getenv("APPDATA"))) { 
+    while(*src && dst-rfpath < maxlen-1) { *dst++ = *src++; }
+    src = "\\RasWin\\RasWin.flg";
+    while(*src && dst-rfpath < maxlen-1) { *dst++ = *src++; }
+    *dst++ = '\0';
+    return dst-rfpath-1;
+  }
+	
+
+  if (!(windir=getenv("WINDIR"))) {	windir = "C:\\Windows"; }
+
+  if (src = (char*)(getenv("USERNAME"))) { 
+    while(*windir && dst-rfpath < maxlen-1) { *dst++ = *windir++; }
+    windir = "\\Profiles\\";
+    while(*windir && dst-rfpath < maxlen-1) { *dst++ = *windir++; }
+    while(*src && dst-rfpath < maxlen-1) { *dst++ = *src++; }
+    src = "\\Application Data\\RasWin\\RasWin.flg";
+    while(*src && dst-rfpath < maxlen-1) { *dst++ = *src++; }
+    *dst++ = '\0';
+    return dst-rfpath-1;	
+  } else {  	
+    while(*windir && dst-rfpath < maxlen-1) { *dst++ = *windir++; }
+    src = "\\Prtofiles\\Application\\RasWin\\RasWin.flg";
+    while(*src && dst-rfpath < maxlen-1) { *dst++ = *src++; }
+    *dst++ = '\0';
+    return dst-rfpath-1;	
+  }	
+}
+
+static size_t DetermineApplicationIdentifier( char * aid, size_t maxlen ) {
+
+  TCHAR macname[1025];
+  DWORD bufsiz;
+  
+  char *src, *dst;
+  size_t curlen;
+  
+  dst = aid;
+  curlen = 0;
+  
+  src = "RasWin_";
+  while (*src && curlen < maxlen-1 ) {*dst++ = *src++; curlen++;}
+  src = VERSION;
+  while (*src && curlen < maxlen-1 ) {*dst++ = *src++; curlen++;}
+  
+  if (curlen < maxlen-1) {*dst++ = '_'; curlen++;}
+  
+  bufsiz = 1025;
+  if (GetComputerName(macname,&bufsiz)) {
+    src = macname;
+  	while (*src && curlen < maxlen-1 ) {*dst++ = *src++; curlen++;}
+  }
+  
+  if (curlen >= maxlen) return 0;
+  *dst++ = '\0';
+  
+  return dst-aid;
+	
+}
+
+static int getraid ( char * aid, size_t maxlen, char * langstr, size_t maxlstr) {
+
+  HANDLE hraid;
+  DWORD lenread;
+  size_t count, ncount;
+
+  if (DetermineRasMolFlagPath(fpnamebuf,1047)) {
+    
+    EnsurePath(fpnamebuf);
+    hraid = CreateFile(fpnamebuf,FILE_READ_DATA,FILE_SHARE_READ,
+      NULL,OPEN_EXISTING,0,NULL);
+    
+    if (hraid != INVALID_HANDLE_VALUE
+      && ReadFile(hraid,aid,maxlen,&lenread,NULL)) {
+      count = 0;
+      while (*aid && count<maxlen-1 && count < lenread) {
+        if (*aid=='\n' || *aid=='\r') break;
+      	count++;
+      	aid++;
+      }
+      if (count < lenread && (*aid == '\n' || *aid == '\r')) {
+        *aid++ = '\0';
+        count++;
+        ncount = 0;
+        if (count < maxlen-1 && count < lenread && *aid=='\n') {
+          aid++;
+          count++;
+        }
+        while(*aid && count < maxlen-1 && ncount < maxlstr-1 && count < lenread) {
+          if(*aid == '\n' || *aid == '\r') break;
+          *langstr++ = *aid++;
+          count++;
+          ncount++;
+        }
+        *langstr++ = '\0';
+      } else  {
+      	*aid++ = '\0';
+      }
+      
+      CloseHandle(hraid);
+      return count;
+    }
+
+    if (hraid != INVALID_HANDLE_VALUE ) CloseHandle(hraid);
+    *aid = '\0';
+    return 0;
+  	
+  }
+	
+}
+
+static int setraid ( const char * aid, const char * langstr ) {
+
+  HANDLE hraid;
+  DWORD lenwritten;
+  
+  if (DetermineRasMolFlagPath(fpnamebuf,1047)) {
+
+      EnsurePath(fpnamebuf);
+  
+  
+    hraid = CreateFile(fpnamebuf,GENERIC_WRITE,0,
+      NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_HIDDEN,NULL);
+    
+    if (hraid != INVALID_HANDLE_VALUE
+      && WriteFile(hraid,aid,strlen(aid),&lenwritten,NULL)
+      && WriteFile(hraid,"\r\n",2,&lenwritten,NULL)
+      && WriteFile(hraid,langstr,strlen(langstr)+1,&lenwritten,NULL)) {
+      SetEndOfFile(hraid);
+      CloseHandle(hraid);
+      return lenwritten;
+    }
+
+    if (hraid != INVALID_HANDLE_VALUE) CloseHandle(hraid);
+    return 0;
+  	
+  }
+
+}
 
 static void DetermineHostInfo( void )
 {
@@ -786,12 +1170,26 @@ BOOL CALLBACK AboutCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 BOOL FAR PASCAL AboutCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 #endif
 {
+
     UnusedArgument(lArg);
 
     switch(uMsg)
     {   case(WM_INITDIALOG):  
                 DetermineHostInfo();
                 SetDlgItemText(hWin,IDD_HARDWARE,Text);         
+                SetDlgItemText(hWin,IDM_REGISTER,MsgStrs[StrRegister]);         
+                SetDlgItemText(hWin,IDM_DONATE,MsgStrs[StrDonate]);         
+                SetDlgItemText(hWin,IDD_WARRANTY,MsgStrs[StrWarranty]);         
+                SetDlgItemText(hWin,IDD_NOSHOW,MsgStrs[StrNoShow]);
+                if (getraid(filaid, 1025, fillang, 81)
+                  && DetermineApplicationIdentifier(macaid, 1025)
+                  && !strncasecmp(filaid,macaid,1024)) {
+                  CheckDlgButton(hWin,IDD_NOSHOW,BST_CHECKED);
+                }
+                else { 
+                  CheckDlgButton(hWin,IDD_NOSHOW,BST_UNCHECKED);
+                }
+                         
                 return TRUE;
     
         case(WM_COMMAND):     
@@ -800,10 +1198,50 @@ BOOL FAR PASCAL AboutCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 #else
                 if( wArg == IDOK )
 #endif
-                {   EndDialog(hWin,TRUE);
+                {   if (BST_CHECKED==IsDlgButtonChecked(hWin,IDD_NOSHOW)
+                     && DetermineApplicationIdentifier(macaid, 1025)){
+                	  setraid(macaid,lang2str(Language));
+                     } else {
+                      setraid("",lang2str(Language));
+                    }
+                    EndDialog(hWin,TRUE);
                     return TRUE;
+                } else {
+#ifdef _WIN32
+                  if( LOWORD(wArg) == IDM_REGISTER )
+#else
+                  if( wArg == IDM_REGISTER )
+#endif
+                  { _spawnlp(_P_DETACH, "explorer", "explorer", 
+                      "http://www.rasmol.org/register.shtml", NULL);
+                    /* EndDialog(hWin,TRUE); */
+                    return TRUE;
+                  } else {
+#ifdef _WIN32
+                    if( LOWORD(wArg) == IDM_DONATE )
+#else
+                    if( wArg == IDM_DONATE )
+#endif
+                    { _spawnlp(_P_DETACH, "explorer", "explorer", 
+                        "http://www.rasmol.org/donate.shtml", NULL);
+                      /* EndDialog(hWin,TRUE); */
+                      return TRUE;
+                    }
+                    
+                  }
+                	
                 }
                 break;
+                
+    	case(WM_CLOSE):
+    	        if (BST_CHECKED==IsDlgButtonChecked(hWin,IDD_NOSHOW)
+                  && DetermineApplicationIdentifier(macaid, 1025)){
+                  setraid(macaid,lang2str(Language));
+                } else {
+                  setraid("",lang2str(Language));
+                }
+     	        EndDialog(hWin,TRUE);
+                    return TRUE;
     }
     return 0;
 }
@@ -1727,10 +2165,11 @@ LONG FAR PASCAL CmndCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 
 
 
-static void LoadInputFile( int format )
+static int LoadInputFile( int format )
 {
     register char *ext;
     register int num;
+	static FILE *script;
 
     switch( format )
     {   case(FormatPDB):      ext = "PDB";  num = 1;  break;
@@ -1741,6 +2180,7 @@ static void LoadInputFile( int format )
 	case(FormatCharmm):   ext = "CHM";  num = 6;  break;
 	case(FormatMOPAC):    ext = "MOP";  num = 7;  break;
 	case(FormatCIF):      ext = "CIF";  num = 8;  break;
+    case(FormatSCR):      ext = "SCR";  num = 9;  break;
     }
 
     ofn1.nFilterIndex = num;
@@ -1757,9 +2197,21 @@ static void LoadInputFile( int format )
 	    case(6): FetchFile(FormatCharmm,False,fnamebuf);  break;
 	    case(7): FetchFile(FormatMOPAC,False,fnamebuf);   break;
 	    case(8): FetchFile(FormatCIF,False,fnamebuf);     break;
+		case(9): 
+		         strcpy(CurLine,"script ");
+		         CurLine[MAXBUFFLEN-1]='\0';
+		         strncpy(CurLine+7,fnamebuf,MAXBUFFLEN-8);
+		         return 1;
+		
+		         /* script = fopen(fnamebuf,"rb");
+		         DataFileName[1023] = '\0';
+		         strncpy(DataFileName,fnamebuf,1023);
+		         if (script) LoadScriptFile(script,DataFileName); */       
+				                                          break;
 	}
         DefaultRepresentation();
     }
+    return 0;
 }
 
 
@@ -1769,11 +2221,22 @@ static void SaveOutputFile( int format )
     register int num;
 
     switch( format )
-    {	case(IDM_BMP):   ext="BMP";  num=1;   break;
+    {	
+	case(IDM_BMP):   ext="BMP";  num=1;   break;
 	case(IDM_GIF):   ext="GIF";  num=2;   break;
-	case(IDM_EPSF):  ext="PS";   num=3;   break;
+	case(IDM_IRIS):  ext="RGB";  num=9;   break;
 	case(IDM_PPM):   ext="PPM";  num=6;   break;
 	case(IDM_RAST):  ext="RAS";  num=10;  break;
+	case(IDM_EPSF):  ext="PS";   num=3;   break;
+	case(IDM_PICT):  ext="PIC";  num=8;   break;
+	case(IDM_VECPS): ext="PS";   num=5;   break;
+	case(IDM_MOLSCRIPT): ext="MIN"; num=12; break;
+	case(IDM_KINEMAGE): ext="KIN"; num=13; break;
+	case(IDM_POVRAY): ext="POV", num=14;  break;
+	case(IDM_VRML):  ext="WRL",  num=15;  break;
+	case(IDM_RPP):   ext="RPP",  num=16;  break;
+	case(IDM_R3D):   ext="R3D",  num=17;  break;
+	case(IDM_SCR):   ext="SCR",  num=18;  break;
     }
 
     ofn2.nFilterIndex = num;
@@ -1793,13 +2256,20 @@ static void SaveOutputFile( int format )
 	    case(2):  WriteGIFFile(fnamebuf);             break;
 	    case(3):  WriteEPSFFile(fnamebuf,True,True);  break;
 	    case(4):  WriteEPSFFile(fnamebuf,False,True); break;
-            case(5):  WriteVectPSFile(fnamebuf);          break;
+		case(5):  WriteVectPSFile(fnamebuf);          break;
 	    case(6):  WritePPMFile(fnamebuf,True);        break;
 	    case(7):  WritePPMFile(fnamebuf,False);       break;
-            case(8):  WritePICTFile(fnamebuf);            break;
-            case(9):  WriteIRISFile(fnamebuf);            break;
+		case(8):  WritePICTFile(fnamebuf);            break;
+		case(9):  WriteIRISFile(fnamebuf);            break;
 	    case(10): WriteRastFile(fnamebuf,True);       break;
 	    case(11): WriteRastFile(fnamebuf,False);      break;
+		case(12): WriteMolScriptFile(fnamebuf);       break;
+		case(13): WriteKinemageFile(fnamebuf);        break;
+		case(14): WritePOVRay3File(fnamebuf);         break;
+		case(15): WriteVRMLFile(fnamebuf,0);          break;
+		case(16): WritePhiPsiAngles(fnamebuf,-1);     break;
+		case(17): WriteR3DFile(fnamebuf);             break;
+		case(18): WriteScriptFile(fnamebuf);          break;
 	}
 }
 
@@ -1830,8 +2300,8 @@ static BOOL HandleMenu( WPARAM option )
    
     switch(option)
     {   /* File Menu */
-	case(IDM_OPEN):   if( NumMolecules < MAX_MOLECULES )
-			      LoadInputFile(FormatPDB);
+	case(IDM_OPEN): 
+			      if (LoadInputFile(FormatPDB)) ExecuteCommand();
 			  break;
 			  
 	case(IDM_INFO):
@@ -1886,7 +2356,7 @@ static BOOL HandleMenu( WPARAM option )
 			  break;
 	
 	/* Help Menu */
-	case(IDM_ABOUT):  
+	case(IDM_SPLASH):  
 #ifdef _WIN32
                           DialogBox(hInstance,"AboutBox",CanvWin,AboutCallB);
 #else
@@ -1896,7 +2366,7 @@ static BOOL HandleMenu( WPARAM option )
 #endif
 			  break;
 
-	case(IDM_HELP):   if( getcwd(fnamebuf,100) )
+	case(IDM_RMANUAL):   if( DetermineRasMolPath(fnamebuf,1037) )
 			  {   dst = fnamebuf;
 			      while( *dst ) dst++;
 			      if( *(dst-1) != '\\' ) 
@@ -1907,6 +2377,17 @@ static BOOL HandleMenu( WPARAM option )
 			      WinHelp(CanvWin,fnamebuf,HELP_INDEX,0L);
 			  }
 			  break;
+			  
+    case(IDM_REGISTER):
+              _spawnlp(_P_DETACH, "explorer", "explorer", 
+                      "http://www.rasmol.org/register.shtml", NULL);
+              break;  
+
+    case(IDM_DONATE):
+              _spawnlp(_P_DETACH, "explorer", "explorer", 
+                      "http://www.rasmol.org/donate.shtml", NULL);
+			  break;
+       
        
 	/* Display Menu */
 	case(IDM_WIREFRAME):  DisableSpacefill();
@@ -2099,9 +2580,22 @@ static BOOL HandleMenu( WPARAM option )
 
 
 	/* Save Menu */
-	case(IDM_BMP):   case(IDM_GIF):
-	case(IDM_EPSF):  case(IDM_PPM):
-	case(IDM_RAST):    SaveOutputFile( option ); 
+	    case(IDM_BMP):
+	    case(IDM_GIF):
+	    case(IDM_IRIS):
+	    case(IDM_PPM):
+	    case(IDM_RAST):
+	    case(IDM_EPSF):
+	    case(IDM_PICT):
+	    case(IDM_VECPS):
+	    case(IDM_MOLSCRIPT):
+	    case(IDM_KINEMAGE):
+	    case(IDM_POVRAY):
+	    case(IDM_VRML):
+        case(IDM_RPP):
+        case(IDM_R3D):
+        case(IDM_SCR):
+                             SaveOutputFile( option ); 
 			   break;
 	
 	default:  return FALSE;
@@ -2503,6 +2997,8 @@ LONG FAR PASCAL MainCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
     
     CanvWin = hWin;
     
+
+    
     switch(uMsg)
     {   case(WM_DROPFILES):   /* Disable Drag & Drop */
                               if( IsPaused ) break;
@@ -2525,6 +3021,20 @@ LONG FAR PASCAL MainCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 			      break;
 
 	case(WM_ACTIVATE):
+                   if (firstpass)   {
+                              firstpass=0;
+                      if (!(getraid(filaid, 1025, fillang, 81)
+                        && DetermineApplicationIdentifier(macaid, 1025)
+                        && !strncasecmp(filaid,macaid,1024)) ){
+#ifdef _WIN32
+                              DialogBox(hInstance,"AboutBox",CanvWin,AboutCallB);
+#else
+                              lpProc = MakeProcInstance(AboutCallB,hInstance);
+                              DialogBox(hInstance,"AboutBox",CanvWin,lpProc);
+                              FreeProcInstance(lpProc);
+#endif
+                        }
+                   }
 #ifdef _WIN32
                               if( !LOWORD(wArg) || HIWORD(lArg) ) break;
 #else
@@ -2851,6 +3361,7 @@ static void InitFileDialogBoxes( void )
     dst = RegisterFormat(dst,"CHARMm File Format","*.CHM");
     dst = RegisterFormat(dst,"MOPAC File Format","*.MOP");
     dst = RegisterFormat(dst,"CIF File Format","*.CIF");
+    dst = RegisterFormat(dst,"RasMol Script","*.SCR;*.SPT");
     *dst = '\0';
 
     /* Load File Common Dialog Box */
@@ -2867,17 +3378,24 @@ static void InitFileDialogBoxes( void )
     ofn1.hwndOwner = NULL;
 
     dst = ofilters;
-    dst = RegisterFormat(dst,"Microsoft Bitmap","*.BMP");
-    dst = RegisterFormat(dst,"CompuServe GIF","*.GIF");
-    dst = RegisterFormat(dst,"Colour PostScript","*.PS;*.EPS");
-    dst = RegisterFormat(dst,"Mono PostScript","*.PS;*.EPS");
-    dst = RegisterFormat(dst,"Vector PostScript","*.PS;*.EPS");
-    dst = RegisterFormat(dst,"Raw Portable Pixmap","*.PPM");
-    dst = RegisterFormat(dst,"ASCII Portable Pixmap","*.PPM");
-    dst = RegisterFormat(dst,"Apple Macintosh PICT","*.PIC");
-    dst = RegisterFormat(dst,"Silicon Graphics RGB","*.RGB");
-    dst = RegisterFormat(dst,"RLE Sun Rasterfile","*.RAS;*.IM8");
-    dst = RegisterFormat(dst,"Sun Rasterfile","*.RAS");
+    dst = RegisterFormat(dst,"Microsoft Bitmap","*.BMP");         //  1
+    dst = RegisterFormat(dst,"CompuServe GIF","*.GIF");           //  2
+    dst = RegisterFormat(dst,"Colour PostScript","*.PS;*.EPS");   //  3
+    dst = RegisterFormat(dst,"Mono PostScript","*.PS;*.EPS");     //  4
+    dst = RegisterFormat(dst,"Vector PostScript","*.PS;*.EPS");   //  5
+    dst = RegisterFormat(dst,"Raw Portable Pixmap","*.PPM");      //  6
+    dst = RegisterFormat(dst,"ASCII Portable Pixmap","*.PPM");    //  7
+    dst = RegisterFormat(dst,"Apple Macintosh PICT","*.PIC");     //  8
+    dst = RegisterFormat(dst,"Silicon Graphics RGB","*.RGB");     //  9
+    dst = RegisterFormat(dst,"RLE Sun Rasterfile","*.RAS;*.IM8"); // 10
+    dst = RegisterFormat(dst,"Sun Rasterfile","*.RAS");           // 11
+	dst = RegisterFormat(dst,"Molscript","*.MIN");                // 12
+	dst = RegisterFormat(dst,"Kinemage","*.KIN");                 // 13
+	dst = RegisterFormat(dst,"POVRay 3","*.POV");                 // 14
+	dst = RegisterFormat(dst,"VMRL 1.0","*.WRL");                 // 15
+	dst = RegisterFormat(dst,"Ramachandran Prt Plot","*.RPP");    // 16
+	dst = RegisterFormat(dst,"Raster3D","*.R3D");                 // 17
+	dst = RegisterFormat(dst,"RasMol Script","*.SCR;*.SPT");      // 18
     *dst = '\0';
 
     /* Save File Common Dialog Box */
@@ -2970,13 +3488,27 @@ static struct {
 static int ProcessOptions( char __far *ptr )
 {
     register char *dst;
-    register int i;
+    register int i, argok;
+	register int quotemark;
+    register language klang;
 
     while( *ptr )
     {   if( (*ptr==' ') || (*ptr=='=') )
 	{   ptr++;
 	} else if( (*ptr=='/') || (*ptr=='-') )
 	{   ptr++;
+            if (*ptr=='-') {
+              argok = False;
+              for (klang=(language)0; klang < NUMLANGS; klang++) {
+                if (!strcasecmp(ptr+1,lang2str(klang))) {
+                  Language = klang;
+                  ptr += (1+strlen(lang2str(klang)));
+                  while( *ptr && (*ptr==' ') )
+		          ptr++; argok = True; break;	
+                }
+              }
+              if (argok) continue;
+            }
             for( i=0; i<FORMATOPTMAX; i++ )
 	        if( !strncasecmp(ptr,FormatOpt[i].ident,FormatOpt[i].len) )
                     break;
@@ -3003,10 +3535,24 @@ static int ProcessOptions( char __far *ptr )
 
 		if( *ptr )
 		{   dst = snamebuf;
-		    while( *ptr && (*ptr!=' ') )
-			*dst++ = *ptr++;
-		    *dst = '\0';
-		} else return False;
+		            quotemark = ' ';
+		            while( *ptr && (*ptr!=quotemark) ) {
+		              if (quotemark==' ' && dst==snamebuf && (*ptr == '\'' || *ptr == '"') ){
+			          quotemark = *ptr++;
+				      continue;
+			        }
+			        *dst++ = *ptr++;
+			    }
+			    if (quotemark != ' ') {
+			      if (*ptr == quotemark) {
+			      ptr++;
+			    } else {
+			      return False;
+			    }
+		        *dst = '\0';
+		       }
+		       else return False;
+		   }
 
 #ifdef SOCKETS
             } else if( !strncasecmp(ptr,"port",4) )
@@ -3036,12 +3582,16 @@ static int ProcessOptions( char __far *ptr )
   
         } else if( !*fnamebuf )
         {   dst = fnamebuf;
-            if( *ptr == '"' )
-            {   ptr++;
-                while( *ptr && (*ptr!='"') )
+		    quotemark = ' ';
+            if( *ptr == '"' || *ptr == '\'')
+            {   quotemark = *ptr++;
+                while( *ptr && (*ptr!=quotemark) )
                     *dst++ = *ptr++;
-                if( *ptr=='"' ) 
+                if( *ptr==quotemark ) {
                     ptr++;
+				} else {
+				  return False;
+				}
             } else /* Unquoted! */
             {   while( *ptr && (*ptr!=' ') )
                     *dst++ = *ptr++;
@@ -3050,6 +3600,87 @@ static int ProcessOptions( char __far *ptr )
         } else return False;
     }
     return True;
+}
+
+language bestlang( void ) 
+{
+
+    static char lud[5],lsd[5];
+    language mylang;
+    char * lpd, * endptr;
+    
+    
+    int lsdlen;
+    int ludlen;
+    
+    long langcode;
+
+    mylang = English;
+    
+    if (getraid(filaid, 1025, fillang, 81) &&
+      strlen(fillang) > 0 ) {
+      return str2lang(fillang);
+    }
+	
+    lsdlen = GetLocaleInfo(LOCALE_SYSTEM_DEFAULT,LOCALE_ILANGUAGE,lsd,5);
+    ludlen = GetLocaleInfo(LOCALE_USER_DEFAULT,LOCALE_ILANGUAGE,lud,5);
+    
+    lpd = (ludlen>0) ? lud:lsd;
+
+    langcode = strtol((const char *)lpd, &endptr, 16);
+    
+    switch (langcode)  {
+    
+    	case (0x080c):  /* fr-BE */
+    	case (0x0c0c):  /* fr-CA */
+    	case (0x040c):  /* fr-FR */
+    	case (0x140c):  /* fr-LU */
+    	case (0x180c):  /* fr-MC */
+    	case (0x100c):  /* fr-CH */
+    	case (0x0462):  /* fy-NL */	
+    	  mylang = French; break;
+    	  
+    	case (0x0410):  /* it-IT */
+    	case (0x0810):  /* it-CH */
+    	  mylang = Italian; break;
+    	
+    	case (0x2c0a):  /* es-AR */
+    	case (0x400a):  /* es-BO */
+    	case (0x340a):  /* es-CL */
+    	case (0x240a):  /* es-CO */
+     	case (0x140a):  /* es-CR */
+     	case (0x1c0a):  /* es-DO */
+     	case (0x300a):  /* es-EC */
+     	case (0x440a):  /* es-SV */
+     	case (0x100a):  /* es-GT */
+     	case (0x480a):  /* es-HN */
+     	case (0x080a):  /* es-MX */
+     	case (0x4c0a):  /* es-NI */
+     	case (0x180a):  /* es-PA */
+     	case (0x3c0a):  /* es-PY */
+     	case (0x280a):  /* es-PE */
+     	case (0x040a):  /* es- */
+     	case (0x500a):  /* es-PR */
+     	case (0x0c0a):  /* es-ES */
+     	case (0x540a):  /* es-US */
+     	case (0x380a):  /* es-UV */
+     	case (0x200a):  /* es-VE */
+    	  mylang = Spanish; break;
+
+    	case (0x0419):  /* ru-RU */
+    	  mylang = Russian; break;
+
+    }
+
+    
+    return mylang;
+    
+}
+
+void UpdateLanguage( void ) {
+
+    getraid(filaid, 1025, fillang, 81);
+    setraid(filaid,lang2str(Language));
 }
 
 
@@ -3064,9 +3695,15 @@ int PASCAL WinMain( HINSTANCE hCurrent, HINSTANCE hPrevious,
     register FILE *fp;
     MSG event;
     static char VersionStr[255];
+    int ii;
+
+ 
+    firstpass = 1;
 
     Interactive = False;
-    SwitchLang (English);
+    
+    
+    SwitchLang (bestlang());
 
     sprintf (VersionStr,"%s\nVersion %s %s\n%s\n", 
              MAIN_COPYRIGHT, VERSION, 
@@ -3081,6 +3718,13 @@ int PASCAL WinMain( HINSTANCE hCurrent, HINSTANCE hPrevious,
     InitFileDialogBoxes();
     InitWindowsProfiles();
     ProcessOptions(lpCmdLine);
+    
+    for (ii=0; ii < NUMLANGS; ii++) {
+      if (Language == langfonts[ii].lang) {
+        setlocale(LC_ALL,lang2str(Language));
+        break;
+      }
+    }
 
     /* Avoid Windows NT problems! */
     ReDrawFlag = RFInitial;
@@ -3090,7 +3734,7 @@ int PASCAL WinMain( HINSTANCE hCurrent, HINSTANCE hPrevious,
 	!OpenDisplay(hInstance,nCmdShow) )
        return False;
 
-    SwitchLang (English);
+    SwitchLang(Language);
 
     WriteString("RasMol Molecular Renderer\n");
     WriteString("Roger Sayle, August 1995\n");
@@ -3119,14 +3763,15 @@ int PASCAL WinMain( HINSTANCE hCurrent, HINSTANCE hPrevious,
         DefaultRepresentation();
     ResetCommandLine(1);
 
+
     LoadInitFile();
     if( *snamebuf )
     {   if( !(fp=fopen(snamebuf,"rb")) )
 	{   if( CommandActive )
 		WriteChar('\n');
-	    WriteString("Error: File '");
+	    WriteString(MsgStrs[StrErrFile]);
 	    WriteString(snamebuf);
-	    WriteString("' not found!\n");
+	    WriteString(MsgStrs[StrNotFnd]);
 	    CommandActive = False;
 	} else LoadScriptFile(fp,snamebuf);
     }
@@ -3136,6 +3781,8 @@ int PASCAL WinMain( HINSTANCE hCurrent, HINSTANCE hPrevious,
 	ResetCommandLine(0);
 
     DragAcceptFiles(CanvWin,TRUE);
+
+
     while( GetMessage(&event,NULL,0,0) )
     {   TranslateMessage(&event);
 	DispatchMessage(&event);

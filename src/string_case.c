@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                              RasMol 2.7.3.1                             *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                              14 April 2006                              *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -27,6 +26,7 @@
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
  *                                                                         *
  *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
  *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
@@ -43,6 +43,7 @@
  *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
  *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  G. Pozhvanov                         2.7.3 menus and message   Russian *
  *                                                                         *
  *                             This Release by                             *
  * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
@@ -80,7 +81,7 @@ int strcasecmp(const char __far * str1, const char __far * str2)
 	
 	while (*p1 && *p2 && (ToUpper(*p1) == ToUpper(*p2)))
 	  {p1++; p2++;}
-	return (*p1 - *p2);
+	return (ToUpper(*p1) - ToUpper(*p2));
 }
 
 int strncasecmp(const char __far * str1, const char __far * str2, size_t n)
@@ -97,6 +98,66 @@ int strncasecmp(const char __far * str1, const char __far * str2, size_t n)
 	for (i = 0; i < n && (*p1 && *p2 && (ToUpper(*p1) == ToUpper(*p2))); i++)
 	  {p1++; p2++;}
 
-	return (( i == n )?0:*p1 - *p2);
+	return (( i == n )?0:ToUpper(*p1) - ToUpper(*p2));
 
 }
+
+
+/* str255casecmp
+
+     compares two case insensitive pascal strings in lexicographic order returning
+     0 for a match
+     
+     */
+     
+int str255casecmp(const unsigned char __far * str1, const unsigned char __far * str2 )
+{
+	unsigned char __far *p1;
+	unsigned char __far *p2;
+	int i, n1, n2;
+	
+	
+	p1 = (unsigned char __far *)str1 + 1 ;
+	p2 = (unsigned char __far *)str2 + 1 ;
+	n1 = str1[0];
+	n2 = str2[0];
+	
+	for (i = 0; i < n1 && i < n2 && (ToUpper(*p1) == ToUpper(*p2)); i++)
+	  {p1++; p2++;}
+
+    if (n1 == n2 && i == n1) return 0;
+    if (n1 < n2 && i == n1) return -1;
+    if (n1 > n2 && i == n2) return 1;
+    return (ToUpper(*p1) - ToUpper(*p2));
+
+}
+
+/* strcasestr
+
+  searches for the first occurance of the string little in big
+  or NULL if no match
+  
+  */
+  
+
+char * strcasestr(const char __far *big, const char __far *little)
+{
+    unsigned char __far *p1;
+	unsigned char __far *p2;
+    char __far *p3;
+	unsigned char __far *p4;
+	
+	p1 = (unsigned char __far *) big;
+	while (*p1){
+	  p2 = (unsigned char __far *) little;
+	  p3 = (char __far *)p1;
+	  while (*p1 && *p2 && (ToUpper(*p1) == ToUpper(*p2)))
+	    {p1++; p2++;}
+	  if (!(*p2) ) return p3;
+	  p1 = (unsigned char __far *)p3;
+	  p1++;
+	}
+    return NULL;
+}
+
+

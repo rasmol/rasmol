@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                              RasMol 2.7.3.1                             *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                              14 April 2006                              *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -27,6 +26,7 @@
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
  *                                                                         *
  *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
  *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
@@ -43,6 +43,7 @@
  *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
  *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  G. Pozhvanov                         2.7.3 menus and message   Russian *
  *                                                                         *
  *                             This Release by                             *
  * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
@@ -55,6 +56,33 @@
  ***************************************************************************/
 /* infile.c
  $Log: not supported by cvs2svn $
+ Revision 1.3  2007/11/06 04:53:52  yaya
+ Patches for window builds with CodeWarrior
+ Fix error in surface normal calculation -- HJB
+
+ Revision 1.2  2007/10/23 02:27:55  yaya
+ Preliminary mods for revised PDB format derived from Rutgers mods.
+ Partial changes for map tangles -- HJB
+
+ Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.3  2006/11/01 03:23:50  yaya
+ Update NSIS windows installer for more script types and to fix
+ misplaced script instructions for data files; add document and
+ script icons directly in raswin.exe; add credit line to
+ G. A. Pozhvanov in comments for Russian translations. -- HJB
+
+ Revision 1.2  2006/09/17 10:53:55  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:45:46  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.2  2006/06/19 22:06:41  todorovg
+ Rasmol 2.7.3.1
+
  Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
  Initial Rasmol 2.7.3 Import
 
@@ -633,7 +661,8 @@ static void ProcessPDBGroup( int heta, int serno )
 }
  
 
-static void ProcessPDBAtom( int heta )
+
+static void ProcessPDBAtom( int heta, double pdb_version )
 {
     register Bond __far *bptr;
     register RAtom __far *ptr;
@@ -723,7 +752,10 @@ static void ProcessPDBAtom( int heta )
     ptr->ztrl =  (short) (10*(-dz-4*ptr->zorg));
  
     if( heta ) ptr->flag |= HeteroFlag;
-    ProcessAtom( ptr );
+    if (pdb_version < 3.)
+      ProcessAtomType( ptr, "  ");
+    else 
+      ProcessAtomType( ptr, Record+76);
  
     /* Create biopolymer Backbone */
     if( IsAlphaCarbon(ptr->refno) && IsProtein(CurGroup->refno) )
@@ -861,6 +893,7 @@ int LoadPDBMolecule( FILE *fp,  int flag )
 {
     register FeatEntry __far *ptr;
     register int ignore, notCIF;
+    double pdb_version;
  
     if (UseCIF)  return (LoadCIFMolecule (fp));
       
@@ -870,6 +903,7 @@ int LoadPDBMolecule( FILE *fp,  int flag )
     FeatList = (void __far*)0;
     DataFile = fp;
     NMRModel = 0;
+    pdb_version = 0.;
  
     while( FetchRecord(DataFile,Record) )
       { if(!notCIF) {
@@ -890,8 +924,9 @@ int LoadPDBMolecule( FILE *fp,  int flag )
 	   }          
         }
         if( *Record == 'A' )
-        {   if( !ignore && !strncmp("ATOM",Record,4) )
-                ProcessPDBAtom( False );
+        {   if( !ignore && !strncmp("ATOM",Record,4) ) {
+                ProcessPDBAtom( False, pdb_version );
+            }
 
         } else switch(*Record)
         {   case('C'):    if( !strncmp("CONE",Record,4) )
@@ -937,7 +972,9 @@ int LoadPDBMolecule( FILE *fp,  int flag )
                           break;
 
             case('H'):    if( !strncmp("HETA",Record,4) )
-                          {   if( !ignore ) ProcessPDBAtom(True);
+                          {   if( !ignore ) {
+                                ProcessPDBAtom( True, pdb_version );
+                              }
                           } else if( !strncmp("HELI",Record,4) )
                           {   if( ignore ) continue;
  
@@ -962,6 +999,14 @@ int LoadPDBMolecule( FILE *fp,  int flag )
                               NMRModel = (int)ReadValue(10,5);
                               flag = True;
                           break;
+
+        	case('R'):    if( !strncmp(Record, "REMARK   4", 10) 
+        	                && strcasestr(Record,"FORMAT V.")){
+        	                char * fmt;
+        	                fmt = strcasestr(Record, "FORMAT V.");
+        	                fmt += 9;
+                            sscanf(fmt, "%lf", &pdb_version);
+        	              }
  
             case('S'):    if( !strncmp("SHEE",Record,4) )
                           {   if( ignore ) break;

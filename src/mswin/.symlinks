@@ -9,6 +9,11 @@ foreach file ( raswin.exe raswin.exe.gz raswin.exe.gz.txt )
     ln -s ../../../RasMol_2.7.3.1.MSWIN/$file $file
   endif
 end
+foreach file ( raswin.idm )
+  if ( ! -Le $file ) then
+    ln -s ../$file $file
+  endif
+end
 foreach file (*)
   if ( -d $file ) then
     if ( -e $file/.symlinks ) then

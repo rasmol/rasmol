@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                              RasMol 2.7.3.1                             *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                              14 April 2006                              *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -27,6 +26,7 @@
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
  *                                                                         *
  *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
  *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
@@ -43,6 +43,7 @@
  *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
  *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  G. Pozhvanov                         2.7.3 menus and message   Russian *
  *                                                                         *
  *                             This Release by                             *
  * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
@@ -298,23 +299,12 @@ void DeAllocateExpr( Expr *expr )
 }
 
 
-int GetElemNumber( Group __far *group, RAtom __far *aptr )
-{
+int GetElemDescNumber (char etype[2]) {
+
     register char ch1,ch2;
-    register char *ptr;
-
-    ptr = ElemDesc[aptr->refno];
-    if( IsCoenzyme(group->refno) )
-    {   /* Exceptions to PDB Atom Naming! */
-        ch1 = ' ';
-    } else 
-    {   ch1 = ToUpper(ptr[0]);
-        /* Handle HG, HD etc.. in Amino Acids! */
-        if( (ch1=='H') && IsProtein(group->refno) )
-            return 1;
-    }
-    ch2 = ToUpper(ptr[1]);
-
+  
+  ch1 = ToUpper(etype[0]);
+  ch2 = ToUpper(etype[1]);
     switch( ch1 )
     {   case(' '):  switch( ch2 )
                     {   case('B'):  return(  5 );
@@ -572,6 +562,26 @@ int GetElemNumber( Group __far *group, RAtom __far *aptr )
         case('Y'):  return( 39 );
     }
     return 0;
+	
+}
+
+int GetElemNumber( Group __far *group, RAtom __far *aptr )
+{
+    register char ch1;
+    register char *ptr;
+
+    ptr = ElemDesc[aptr->refno];
+    if( IsCoenzyme(group->refno) )
+    {   /* Exceptions to PDB Atom Naming! */
+        ch1 = ' ';
+    } else 
+    {   ch1 = ToUpper(ptr[0]);
+        /* Handle HG, HD etc.. in Amino Acids! */
+        if( (ch1=='H') && IsProtein(group->refno) )
+            return 1;
+    }
+    
+    return (GetElemDescNumber(ptr));
 }
 
 
@@ -1502,7 +1512,7 @@ char *DescribeObj( AtomRef *ptr, Selection select )
   static char buffer[BS];
   int strucflag=' ';
   
-  /* needs to be initialised with whiteespaces, expect the last one */
+  /* needs to be initialised with whitespaces, expect the last one */
   memset(buffer, ' ', bs * sizeof (char));
 
   /* identification of 'chain' */

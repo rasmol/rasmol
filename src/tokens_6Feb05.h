@@ -56,6 +56,16 @@
 
 /* tokens.h
  $Log: not supported by cvs2svn $
+ Revision 1.1.1.1  2007/03/01 01:16:32  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.1.1.1  2006/09/16 18:46:01  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
+ Initial Rasmol 2.7.3 Import
+
  Revision 1.2  2004/09/29 22:39:14  chigboc
  *** empty log message ***
 

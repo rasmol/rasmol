@@ -416,6 +416,16 @@
 - 
   /* applemac.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -429,6 +439,16 @@
    ***************************************************************************/
   /* applemac.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** bitmaps.h	2004/05/07 19:46:16	1.1
 --- bitmaps.h	2005/04/25 12:22:13
@@ -1820,6 +1840,16 @@
 - 
   /* command.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -1833,6 +1863,16 @@
    ***************************************************************************/
   /* command.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** font.h	2004/05/07 19:46:16	1.1
 --- font.h	2005/04/25 12:22:14
@@ -1928,6 +1968,16 @@
 - 
   /* font.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.1  2004/05/07 19:46:16  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -1941,6 +1991,16 @@
    ***************************************************************************/
   /* font.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.1  2004/05/07 19:46:16  yaya
 *** graphics.h	2005/04/25 12:20:52	1.2
 --- graphics.h	2005/04/25 12:22:14
@@ -2144,6 +2204,16 @@
 - 
   /* infile.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -2157,6 +2227,16 @@
    ***************************************************************************/
   /* infile.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** infile.h	2004/05/07 19:46:16	1.1
 --- infile.h	2005/04/25 12:22:15
@@ -2252,6 +2332,16 @@
 - 
   /* infile.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.1  2004/05/07 19:46:16  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -2265,6 +2355,16 @@
    ***************************************************************************/
   /* infile.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.1  2004/05/07 19:46:16  yaya
 *** langsel.c	2005/04/25 12:20:52	1.2
 --- langsel.c	2005/04/25 12:22:10
@@ -2684,6 +2784,16 @@
 - 
   /* molecule.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -2697,6 +2807,16 @@
    ***************************************************************************/
   /* molecule.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** molecule.h	2005/04/25 12:20:52	1.2
 --- molecule.h	2005/04/25 12:22:15
@@ -2792,6 +2912,16 @@
 - 
   /* molecule.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -2805,6 +2935,16 @@
    ***************************************************************************/
   /* molecule.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** mswin31.c	2005/04/25 12:20:52	1.2
 --- mswin31.c	2005/04/25 12:22:10
@@ -2900,6 +3040,16 @@
 - 
   /* mswin31.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -2913,6 +3063,16 @@
    ***************************************************************************/
   /* mswin31.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** multiple.c	2005/04/25 12:20:52	1.2
 --- multiple.c	2005/04/25 12:22:11
@@ -3008,6 +3168,16 @@
 - 
   /* multiple.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -3021,6 +3191,16 @@
    ***************************************************************************/
   /* multiple.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** multiple.h	2004/05/07 19:46:16	1.1
 --- multiple.h	2005/04/25 12:22:15
@@ -3116,6 +3296,16 @@
 - 
   /* multiple.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.1  2004/05/07 19:46:16  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -3129,6 +3319,16 @@
    ***************************************************************************/
   /* multiple.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.1  2004/05/07 19:46:16  yaya
 *** outfile.c	2004/05/07 19:46:16	1.1
 --- outfile.c	2005/04/25 12:22:11
@@ -3224,6 +3424,16 @@
 - 
   /* outfile.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.1  2004/05/07 19:46:16  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -3237,6 +3447,16 @@
    ***************************************************************************/
   /* outfile.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.1  2004/05/07 19:46:16  yaya
 *** outfile.h	2004/05/07 19:46:16	1.1
 --- outfile.h	2005/04/25 12:22:15
@@ -3440,6 +3660,16 @@
 - 
   /* pixutils.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -3453,6 +3683,16 @@
    ***************************************************************************/
   /* pixutils.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** pixutils.h	2005/04/25 12:20:52	1.2
 --- pixutils.h	2005/04/25 12:22:15
@@ -3548,6 +3788,16 @@
 - 
   /* pixutils.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -3561,6 +3811,16 @@
    ***************************************************************************/
   /* pixutils.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** rasmac.c	2005/04/25 12:20:52	1.2
 --- rasmac.c	2005/04/25 12:22:11
@@ -3656,6 +3916,16 @@
 - 
   /* rasmac.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -3669,6 +3939,16 @@
    ***************************************************************************/
   /* rasmac.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** rasmac.h	2004/05/07 19:46:16	1.1
 --- rasmac.h	2005/04/25 12:22:15
@@ -3872,6 +4152,16 @@
 - 
   /* rasmol.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -3885,6 +4175,16 @@
    ***************************************************************************/
   /* rasmol.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** rasmol.h	2004/05/07 19:46:16	1.1
 --- rasmol.h	2005/04/25 12:22:15
@@ -4196,6 +4496,16 @@
 - 
   /* raswin.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -4209,6 +4519,16 @@
    ***************************************************************************/
   /* raswin.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** render.c	2005/04/25 12:20:52	1.2
 --- render.c	2005/04/25 12:22:11
@@ -4304,6 +4624,16 @@
 - 
   /* render.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -4317,6 +4647,16 @@
    ***************************************************************************/
   /* render.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** render.h	2005/04/25 12:20:52	1.2
 --- render.h	2005/04/25 12:22:16
@@ -4412,6 +4752,16 @@
 - 
   /* render.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -4425,6 +4775,16 @@
    ***************************************************************************/
   /* render.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** repres.c	2005/04/25 12:20:52	1.2
 --- repres.c	2005/04/25 12:22:12
@@ -4520,6 +4880,16 @@
 - 
   /* repres.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -4533,6 +4903,16 @@
    ***************************************************************************/
   /* repres.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** repres.h	2005/04/25 12:20:52	1.2
 --- repres.h	2005/04/25 12:22:16
@@ -4628,6 +5008,16 @@
 - 
   /* repres.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -4641,6 +5031,16 @@
    ***************************************************************************/
   /* repres.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** script.c	2005/04/25 12:20:52	1.2
 --- script.c	2005/04/25 12:22:12
@@ -4736,6 +5136,16 @@
 - 
   /* script.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -4749,6 +5159,16 @@
    ***************************************************************************/
   /* script.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** script.h	2004/05/07 19:46:16	1.1
 --- script.h	2005/04/25 12:22:16
@@ -5168,6 +5588,16 @@
 - 
   /* tokens.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -5181,6 +5611,16 @@
    ***************************************************************************/
   /* tokens.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** tokens.h	2005/04/25 12:20:52	1.2
 --- tokens.h	2005/04/25 12:22:16
@@ -5277,6 +5717,16 @@
   
   /* tokens.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
 --- 47,58 ----
    *                             This Release by                             *
    * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
@@ -5290,6 +5740,16 @@
   
   /* tokens.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
 *** transfor.c	2005/04/25 12:20:52	1.2
 --- transfor.c	2005/04/25 12:22:12
 ***************
@@ -5384,6 +5844,16 @@
 - 
   /* transfor.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -5397,6 +5867,16 @@
    ***************************************************************************/
   /* transfor.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** transfor.h	2005/04/25 12:20:52	1.2
 --- transfor.h	2005/04/25 12:22:17
@@ -5492,6 +5972,16 @@
 - 
   /* transfor.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -5505,6 +5995,16 @@
    ***************************************************************************/
   /* transfor.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** vector.c	2005/04/25 12:20:52	1.2
 --- vector.c	2005/04/25 12:22:13
@@ -5601,6 +6101,16 @@
 - 
   /* vector.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -5614,6 +6124,16 @@
    ***************************************************************************/
   /* vector.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 *** vector.h	2004/05/07 19:46:16	1.1
 --- vector.h	2005/04/25 12:22:17
@@ -5709,6 +6229,16 @@
 - 
   /* vector.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.1  2004/05/07 19:46:16  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -5722,6 +6252,16 @@
    ***************************************************************************/
   /* vector.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.1  2004/05/07 19:46:16  yaya
 *** wbrotate.c	2004/05/07 19:46:16	1.1
 --- wbrotate.c	2005/04/25 12:22:13
@@ -5820,6 +6360,16 @@
 - 
   /* wbrotate.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.1  2004/05/07 19:46:16  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -5833,6 +6383,16 @@
    ***************************************************************************/
   /* wbrotate.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.1  2004/05/07 19:46:16  yaya
 *** wbrotate.h	2004/05/07 19:46:16	1.1
 --- wbrotate.h	2005/04/25 12:22:17
@@ -5928,6 +6488,16 @@
 - 
   /* wbrotate.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.1  2004/05/07 19:46:16  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -5941,6 +6511,16 @@
    ***************************************************************************/
   /* wbrotate.h
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.1  2004/05/07 19:46:16  yaya
 *** x11win.c	2005/04/25 12:20:52	1.2
 --- x11win.c	2005/04/25 12:22:13
@@ -6036,6 +6616,16 @@
 - 
   /* x11win.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya
 --- 47,58 ----
    *                             This Release by                             *
@@ -6049,4 +6639,14 @@
    ***************************************************************************/
   /* x11win.c
    $Log: not supported by cvs2svn $
+   Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+   Chinese working versio from rasmol_ru initial import
+
+   Revision 1.1.1.1  2006/09/16 18:46:13  yaya
+   Start of RasMol Russian Translation Project based on translations
+   by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+   Revision 1.1.1.1  2006/06/19 22:05:15  todorovg
+   Initial Rasmol 2.7.3 Import
+
    Revision 1.2  2005/04/25 12:20:52  yaya

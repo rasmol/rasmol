@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                              RasMol 2.7.3.1                             *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                              14 April 2006                              *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -27,6 +26,7 @@
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
  *                                                                         *
  *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
  *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
@@ -43,6 +43,7 @@
  *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
  *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  G. Pozhvanov                         2.7.3 menus and message   Russian *
  *                                                                         *
  *                             This Release by                             *
  * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
@@ -55,6 +56,35 @@
  ***************************************************************************/
 /* transfor.c
  $Log: not supported by cvs2svn $
+ Revision 1.4  2007/11/16 22:48:31  yaya
+ Remove use of MapNumber if favor of size of vector
+ Clean up selection logic; start on script writing code -- HJB
+
+ Revision 1.3  2007/11/13 03:22:17  yaya
+ Changes to support map selectors.  Needs more work. -- HJB
+
+ Revision 1.2  2007/09/06 12:11:26  yaya
+ Changes for map resolution -- HJB
+
+ Revision 1.1.1.1  2007/03/01 01:16:32  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.3  2006/11/01 03:23:51  yaya
+ Update NSIS windows installer for more script types and to fix
+ misplaced script instructions for data files; add document and
+ script icons directly in raswin.exe; add credit line to
+ G. A. Pozhvanov in comments for Russian translations. -- HJB
+
+ Revision 1.2  2006/09/17 10:53:56  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:46:02  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
+ Initial Rasmol 2.7.3 Import
+
  Revision 1.3  2004/09/29 22:39:14  chigboc
  *** empty log message ***
 
@@ -130,6 +160,7 @@
 #include "vector.h"   /* [GSG 11/14/95] */
 #include "wbrotate.h" /* [GSG 11/14/95] */
 #include "langsel.h"
+#include "maps.h"
 
 #define CPKMAX  16
 static ShadeRef CPKShade[] = {
@@ -2171,7 +2202,108 @@ void ColourDotsPotential( void )
                 Shade[ref->shade].refcount++;
                 ptr->col[i] = ref->col;
             }
+            }
     }
+
+void ColourPointAttrib( int r, int g, int b, int mapno )
+{
+    register int i,shade,nshade,result;
+    register Long x, y, z;
+    
+    MapPointVec __far *MapPointsPtr;
+    MapInfo mapinfo;
+
+	MapRGBCol[0] = r;
+	MapRGBCol[1] = g;
+	MapRGBCol[2] = b;
+	UseDotColPot = False;
+    
+    nshade = DefineShade(r,g,b);
+    
+    if (MapInfoPtr)
+      if (mapno >= 0 && mapno < MapInfoPtr->size) {
+      	vector_get_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,mapno );
+      	MapPointsPtr = mapinfo.MapPointsPtr;
+      	
+        if (MapPointsPtr)
+        for (i=0; i<MapPointsPtr->size; i++) {
+          if (!(MapPointsPtr->array[i]).flag&SelectFlag) continue;
+          x = (MapPointsPtr->array[i]).xpos;
+          y = (MapPointsPtr->array[i]).ypos;
+          z = (MapPointsPtr->array[i]).zpos;
+        	
+          shade = Colour2Shade((MapPointsPtr->array[i]).col);
+          Shade[shade].refcount--;
+        	
+          result = CalculatePotential( x, y, z );
+        	
+          Shade[nshade].refcount++;
+          (MapPointsPtr->array[i]).col = Shade2Colour(nshade);
+              
+        }
+
+      }
+}
+
+
+
+void ColourPointPotential( int mapno )
+{
+    register int i,shade,result;
+    register ShadeRef *ref;
+    
+    MapPointVec __far *MapPointsPtr;
+    MapInfo mapinfo;
+    Long x, y, z;
+
+	UseDotColPot = True;
+
+    if (MapInfoPtr)
+      if (mapno >= 0 && mapno < MapInfoPtr->size) {
+      	vector_get_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,mapno );
+      	MapPointsPtr = mapinfo.MapPointsPtr;
+      	
+        if (MapPointsPtr)
+        for (i=0; i<MapPointsPtr->size; i++) {
+          if (!(MapPointsPtr->array[i]).flag&SelectFlag) continue;
+          x = (MapPointsPtr->array[i]).xpos;
+          y = (MapPointsPtr->array[i]).ypos;
+          z = (MapPointsPtr->array[i]).zpos;
+        	
+          shade = Colour2Shade((MapPointsPtr->array[i]).col);
+          Shade[shade].refcount--;
+        	
+          result = CalculatePotential( x, y, z );
+        	
+          /* Determine Colour Bucket */
+          if( result >= 0 ) {
+            if( result > 10 ) {
+              if( result > 24 ) {
+                 ref = PotentialShade + 0;
+              } else ref = PotentialShade + 1;
+            } else if( result > 3 ) {
+              ref = PotentialShade + 2;
+            } else ref = PotentialShade + 3;
+          } else if( result > -10 ) {
+            if( result > -3 ) {
+              ref = PotentialShade + 4;
+            } else ref = PotentialShade + 5;
+          } else if( result > -24 ) {
+            ref = PotentialShade + 6;
+          } else ref = PotentialShade + 7;
+
+          if( !ref->col ) {
+            ref->shade = DefineShade( ref->r, ref->g, ref->b );
+            ref->col = Shade2Colour(ref->shade);
+          }
+          Shade[ref->shade].refcount++;
+          (MapPointsPtr->array[i]).col = ref->col;
+              
+        }
+        
+      }
+
+
 }
 
 

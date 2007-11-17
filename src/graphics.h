@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                              RasMol 2.7.3.1                             *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                              14 April 2006                              *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -27,6 +26,7 @@
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
  *                                                                         *
  *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
  *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
@@ -43,6 +43,7 @@
  *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
  *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  G. Pozhvanov                         2.7.3 menus and message   Russian *
  *                                                                         *
  *                             This Release by                             *
  * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
@@ -111,6 +112,35 @@
 #define DialBClip   8
 #define DialBRot    9
 
+#ifdef X11WIN
+#define DLGScale        ((FontHigh+8)/9)
+typedef struct _DLGItem {
+    int DLGtype;         /* type of the dialog item */
+    char ** text;        /* text for the dialog item */
+    int  Identifier;     /* identifier of the field */
+    int x, y, width, height, status;
+} DLGItem;
+
+#include "raswin.idm"
+#define IDD_OK 0
+
+#define DLGCTEXT        1
+#define DLGLTEXT        2
+#define DLGPUSHBUTTON   3
+#define DLGCHECKBOX     4
+#define DLGICON         5
+
+#define AboutDLGXpos  20
+#define AboutDLGWidth 260
+#define AboutDLGHeight 116
+#define AboutDLGMItem  MenuBarMax
+#define AboutDLGCount  13
+/*  WARNING:  The IDD_NOSHOW checkbox must be last */
+#define AboutDLGNOSHOWindex AboutDLGCount-1
+
+#endif
+
+
 
 
 #ifdef GRAPHICS
@@ -174,8 +204,58 @@ Window MainWin;
 Window CanvWin;
 Window MenuWin;
 Window RootWin;
+char filaid [1025];
+char macaid [1025];
+char fillang [81];
+
 
 #endif
+
+#ifdef X11WIN
+static char * EMPTY = "";
+static char * RMG = "RasMol Molecular Graphics";
+static char * RURL = "http://www.rasmol.org/";
+static char * RVERS  = "X11 Version 2.7.3.1";
+static char * RCOP = "Copyright (C) R.Sayle 1992-1999";
+static char * RCOP2 = "Copyright (C) H. Bernstein 1998-2006";
+static char * REMAIL = "yaya@bernstein-plus-sons.com";
+static char * ROK = "OK";
+
+#ifdef USE_UNAME
+#include <sys/utsname.h>
+
+struct utsname AboutDLGUNAME;
+char _unamebuffer[81];
+static char * unamebuffer=_unamebuffer;
+#endif
+
+
+/* WARNING:  Change the definition of  AboutDLGCount if this array chnges */
+DLGItem AboutDLG[AboutDLGCount] = {
+  { DLGICON,  &EMPTY,                      -1,           16,  45,  45, 45, 0 },
+  { DLGCTEXT, &RMG,                        -1,           80,   5, 100,  8, 0 },
+  { DLGCTEXT, &RURL,                       -1,           80,  14, 100,  8, 0 },
+  { DLGCTEXT, &RCOP,                       -1,           80,  25, 100,  8, 0 },
+  { DLGCTEXT, &RVERS,                      -1,           80,  34, 100,  8, 0 },
+  { DLGCTEXT, &RCOP2,                      -1,           80,  43, 100,  8, 0 },
+  { DLGCTEXT, &REMAIL,                     -1,           60,  52, 140,  8, 0 },
+  { DLGCTEXT,
+#ifdef USE_UNAME
+  &unamebuffer,
+#else 
+  &EMPTY,
+#endif
+                                           IDD_HARDWARE, 40,  70, 180,  8, 0 },
+  { DLGCTEXT, &MsgStrs[StrWarranty],       IDD_WARRANTY,  0,  79, 260,  8, 0 },
+  { DLGPUSHBUTTON, &ROK,                   IDD_OK,      115,  95,  30, 14, 0 },
+  { DLGPUSHBUTTON, &MsgStrs[StrRegister],  IDM_REGISTER, 32,  95,  81, 14, 0 },
+  { DLGPUSHBUTTON, &MsgStrs[StrDonate],    IDM_DONATE,  147,  95,  81, 14, 0 },
+/*  WARNING:  The IDD_NOSHOW checkbox must be last */
+  { DLGCHECKBOX, &MsgStrs[StrNoShow],      IDD_NOSHOW,   32, 104, 180,  8, 0 }	
+};
+
+#endif /* X11WIN */
+
 
 #else /* GRAPHICS */
 extern double DialValue[10];
@@ -223,6 +303,16 @@ extern Handle FBufHandle;
 extern Handle DBufHandle;
 extern Handle CBufHandle;
 #endif /* APPLEMAC */
+
+#ifdef X11WIN
+extern DLGItem AboutDLG[AboutDLGCount];
+extern char filaid [1025];
+extern char macaid [1025];
+extern char fillang [81];
+
+#endif /* X11WIN */
+
+
 #endif
 
 int CreateImage( void );
@@ -251,9 +341,17 @@ int OpenDisplay( int, int );
 
 #if !defined(IBMPC) && !defined(APPLEMAC)
 int FetchEvent( int );
+void DisplayAboutDLG( void );
+void UnDisplayAboutDLG( void );
+void DrawAboutDLG( void );
 #endif
 
 #ifdef X11WIN
 void FatalGraphicsError( char *ptr );
+int getraid ( char *, size_t, char *, size_t);
+int setraid ( const char *, const char * );
+size_t DetermineApplicationIdentifier( char *, size_t );
+
+
 #endif
 

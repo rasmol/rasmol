@@ -8,6 +8,15 @@ endif
 if ( ! -Le itrasmol.hlp ) then
   ln -s itrasmol2721.hlp itrasmol.hlp
 endif
+if ( ! -Le GPL.txt ) then
+  ln -s ../GPL GPL.txt
+endif
+if ( ! -Le NOTICE.txt ) then
+  ln -s ../NOTICE NOTICE.txt
+endif
+if ( ! -Le RASLIC.txt ) then
+  ln -s ../RASLIC RASLIC.txt
+endif
 foreach file (*)
   if ( -d $file ) then
     if ( -e $file/.symlinks ) then

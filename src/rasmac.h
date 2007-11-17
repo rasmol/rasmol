@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                              RasMol 2.7.3.1                             *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                              14 April 2006                              *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -27,6 +26,7 @@
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
  *                                                                         *
  *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
  *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
@@ -85,3 +85,44 @@
 #ifndef gestaltPPC604e
 #define gestaltPPC604e      0x0109
 #endif
+#ifndef gestaltPPC604ev
+#define gestaltPPC604ev     0x010A
+#endif
+#ifndef gestaltG4
+#define gestaltG4           0x010C
+#endif
+#ifndef gestaltG4x
+#define gestaltG4x          0x0113
+#endif
+
+
+
+/* Define Dialog numbers                */
+
+#define DLG_ABOUT           170
+
+/* Define item numbers for About Dialog */
+
+#define DLG_ABOUT_OK        1
+#define DLG_ABOUT_REGISTER  2
+#define DLG_ABOUT_DONATE    3
+#define DLG_ABOUT_NOSHOW    4
+#define DLG_ABOUT_WARRANTY  5
+#define DLG_ABOUT_MACTYPE   6
+#define DLG_ABOUT_CPUTYPE   7
+
+/* Define Rasmol Application ID resource info */
+
+#define RASMOL_LANG_ID 397
+#define RASMOL_AID_UID 398
+#define RASMOL_AID_ID 399
+#define RASMOL_AID_IND 99
+
+unsigned char * ReWriteStr255(unsigned char buffer[255], char* str);
+unsigned char * tostr255(unsigned char buffer[255], const char * str);
+int GetPreferenceString (Str255 buffer, int sid, int sind);
+int FindPreferenceString (Str255 buffer, int sid);
+int SetPreferenceString (Str255 buffer, int sid, int sind);
+int GetMacName( Str255 buffer );
+int GetUserName (Str255 buffer);
+int LaunchBrowserWithURL(const char * URL);

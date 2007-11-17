@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                              RasMol 2.7.3.1                             *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                              14 April 2006                              *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -27,6 +26,7 @@
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
  *                                                                         *
  *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
  *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
@@ -43,6 +43,7 @@
  *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
  *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  G. Pozhvanov                         2.7.3 menus and message   Russian *
  *                                                                         *
  *                             This Release by                             *
  * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
@@ -120,22 +121,35 @@
 
 
 #define IDM_BMP        1080
-#define IDM_PCX        1081
-#define IDM_GIF        1082
-#define IDM_EPSF       1083
-#define IDM_PPM        1084
-#define IDM_RAST       1085
+#define IDM_GIF        1081
+#define IDM_IRIS       1082
+#define IDM_PPM        1083
+#define IDM_RAST       1084
+#define IDM_EPSF       1085
 #define IDM_PICT       1086
-#define IDM_IRIS       1087
+#define IDM_VECPS      1087
+#define IDM_MOLSCRIPT  1088
+#define IDM_KINEMAGE   1089
+#define IDM_POVRAY     1090
+#define IDM_VRML       1091
+#define IDM_RPP        1092
+#define IDM_R3D        1093
+#define IDM_SCR        1094
 
-#define IDM_ABOUT      1090
-#define IDM_HELP       1091
+#define IDM_SPLASH     1095
+#define IDM_RMANUAL    1096
+
+#define IDM_REGISTER   1100
+#define IDM_DONATE     1101
 
 #define IDD_HARDWARE   200
 #define IDD_FILETEXT   201
 #define IDD_FILELIST   202
 #define IDD_DIRTEXT    203
 #define IDD_DIRLIST    204
+#define IDD_INITSPLASH 205
+#define IDD_WARRANTY   206
+#define IDD_NOSHOW     207
 
 
 #define IDD_INFOTEXT   210

@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                              RasMol 2.7.3.1                             *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                              14 April 2006                              *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -27,6 +26,7 @@
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
  *                                                                         *
  *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
  *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
@@ -55,6 +55,61 @@
  ***************************************************************************/
 /* x11win.c
  $Log: not supported by cvs2svn $
+ Revision 1.4  2007/03/13 21:48:19  todorovg
+ Fixed a few typo errors that were causing xforms to crash
+
+ Revision 1.3  2007/03/13 21:09:28  todorovg
+ fixed bug when you run rasmol in chinese and japanese; added catch for fontset to print an error and not give segfault
+
+ Revision 1.2  2007/03/05 22:27:26  todorovg
+ Fixed japanese
+
+ Revision 1.10  2007/02/26 18:40:31  todorovg
+ fixed menu click bug
+
+ Revision 1.9  2006/12/29 04:07:37  yaya
+ Update x11win.c and rasmol.c to add links to list of browsers
+ and to kill About dialog when the menu bar is selected
+ Update rasmol_install.sh to allow recompilation of fonts
+ on install to handle openwin and other old systems that
+ can't handle byte-swapped bdf files, and add enviroment
+ variable RASMOL_NOSPAWN to suppress spawn in intermediate
+ xterm from rasmol_run.sh. -- HJB
+
+ Revision 1.8  2006/12/24 03:48:28  yaya
+ Clean up conditionals for MITSHM if it is not defined
+ Fix choice of license files for install -- HJB
+
+ Revision 1.7  2006/12/23 23:18:01  yaya
+ Detect remote X server that does not share memory
+ Add new rasmol_install.sh and rasmol_run.sh scripts -- HJB
+
+ Revision 1.6  2006/12/11 02:45:39  yaya
+ Migrate some of the language switching tables to mac and mswin version
+ and update the icons for mswin and X11 versions. -- HJB
+
+ Revision 1.5  2006/12/10 03:32:45  yaya
+ Additional updates for linux build with Russian, cleaning
+ up X11 font selection for CP1251 and recovering when fonts
+ are missing. -- HJB
+
+ Revision 1.4  2006/12/03 02:53:10  yaya
+ Clean up compilation warnings in outfile.c
+ Mods for about screen under Linux -- HJB
+
+ Revision 1.3  2006/11/28 03:12:48  yaya
+ Changes for Russian and About dialog in unix
+ This is a variant tried under Mac OS X.  Changes
+ for Linux still needed.  note that more work is
+ needed on font selection. -- HJB
+
+ Revision 1.2  2006/09/17 10:53:56  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:46:03  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
  Revision 1.2  2006/06/19 22:06:41  todorovg
  Rasmol 2.7.3.1
 
@@ -102,6 +157,7 @@
 
  */
 
+
 #ifndef sun386
 #include <stdlib.h>
 #endif
@@ -122,7 +178,6 @@
 
 #define GRAPHICS
 #include "rasmol.h"
-#include "graphics.h"
 #include "bitmaps.h"
 #include "command.h"
 #include "cmndline.h"
@@ -134,6 +189,8 @@
 #include "vector.h"
 #include "wbrotate.h"
 #include "langsel.h"
+#include "graphics.h"
+#include <locale.h>
 
 
 /* Menu Definitions */
@@ -265,27 +322,48 @@ static MenuItem SetMenu[13] = {
     { &MsgStrs[StrMRAll]   /* "Rotate All"   */,     0x13,  &MsgAuxl[StrMRAll],
         &MsgLens[StrMRAll],   &RotMode,      RotAll     } };
 
-static MenuItem ExpMenu[7] = {
-    { &MsgStrs[StrMGIF]     /* "GIF..."       */,    0x11,  &MsgAuxl[StrMGIF],
-        &MsgLens[StrMGIF],  NULL, 0 },
-    { &MsgStrs[StrMPostscr] /* "PostScript..."*/,    0x11,  &MsgAuxl[StrMPostscr],
+static MenuItem ExpMenu[15] = {
+    { &MsgStrs[StrMBMP]     /* "BMP..."           */,    0x11,  &MsgAuxl[StrMBMP],
+        &MsgLens[StrMBMP],     NULL, 0 },
+    { &MsgStrs[StrMGIF]     /* "GIF..."           */,    0x11,  &MsgAuxl[StrMGIF],
+        &MsgLens[StrMGIF],     NULL, 0 },
+    { &MsgStrs[StrMIRGB]    /* "IRIS RGB..."      */,    0x11,  &MsgAuxl[StrMIRGB],
+        &MsgLens[StrMIRGB],    NULL, 0 },
+    { &MsgStrs[StrMPPM]     /* "PPM..."           */,    0x11,  &MsgAuxl[StrMPPM],
+        &MsgLens[StrMPPM],     NULL, 0 },
+    { &MsgStrs[StrMSRast]   /* "Sun Raster..."    */,    0x11,  &MsgAuxl[StrMSRast],
+        &MsgLens[StrMSRast],   NULL, 0 },
+    { &MsgStrs[StrMPostscr] /* "PostScript..."    */,    0x11,  &MsgAuxl[StrMPostscr],
         &MsgLens[StrMPostscr], NULL, 0 },
-    { &MsgStrs[StrMPPM]     /* "PPM..."       */,    0x11,  &MsgAuxl[StrMPPM],
-        &MsgLens[StrMPPM],   NULL, 0 },
-    { &MsgStrs[StrMIRGB]    /* "IRIS RGB..."  */,    0x11,  &MsgAuxl[StrMIRGB],
-        &MsgLens[StrMIRGB],  NULL, 0 },
-    { &MsgStrs[StrMSRast]   /* "Sun Raster..."*/,    0x11,  &MsgAuxl[StrMSRast],
-        &MsgLens[StrMSRast], NULL, 0 },
-    { &MsgStrs[StrMBMP]     /* "BMP..."       */,    0x11,  &MsgAuxl[StrMBMP],
-        &MsgLens[StrMBMP],   NULL, 0 },
-    { &MsgStrs[StrMPICT]    /* "PICT..."      */,    0x11,  &MsgAuxl[StrMPICT],
-        &MsgLens[StrMPICT],  NULL, 0 } };
+    { &MsgStrs[StrMPICT]    /* "PICT..."          */,    0x11,  &MsgAuxl[StrMPICT],
+        &MsgLens[StrMPICT], NULL, 0 },
+    { &MsgStrs[StrMVECPS]    /* "Vector PS ..."   */,    0x11,  &MsgAuxl[StrMVECPS],
+        &MsgLens[StrMVECPS],   NULL, 0 },
+    { &MsgStrs[StrMMSCR]    /* "Molscript ..."    */,    0x11,  &MsgAuxl[StrMMSCR],
+        &MsgLens[StrMMSCR],    NULL, 0 },
+    { &MsgStrs[StrMKine]    /* "Kinemage ..."     */,    0x11,  &MsgAuxl[StrMKine],
+        &MsgLens[StrMKine],    NULL, 0 },
+    { &MsgStrs[StrMPOVRAY]  /*"POVRay 3 ..."      */,    0x11,  &MsgAuxl[StrMPOVRAY],
+        &MsgLens[StrMPOVRAY],  NULL, 0 },
+    { &MsgStrs[StrMVRML]    /* "VRML ..."         */,    0x11,  &MsgAuxl[StrMVRML],
+        &MsgLens[StrMVRML],    NULL, 0 },
+    { &MsgStrs[StrMRPP]     /* "Ramachandran ..." */,    0x11,  &MsgAuxl[StrMRPP],
+        &MsgLens[StrMRPP],     NULL, 0 },
+    { &MsgStrs[StrMR3D]     /* "Raster3D ..."     */,    0x11,  &MsgAuxl[StrMR3D],
+        &MsgLens[StrMR3D],     NULL, 0 },
+    { &MsgStrs[StrMSCR]     /* "RasMol Script ..."*/,    0x11,  &MsgAuxl[StrMSCR],
+        &MsgLens[StrMSCR],     NULL, 0 } };
 
-static MenuItem HelMenu[2] = {
-    { &MsgStrs[StrMAbout]   /* "About RasMol..."*/,  0x10,  &MsgAuxl[StrMAbout],
+static MenuItem HelMenu[4] = {
+    { &MsgStrs[StrMAbout]   /* "About RasMol..."*/,  0x11,  &MsgAuxl[StrMAbout],
         &MsgLens[StrMAbout], NULL, 0 },
-    { &MsgStrs[StrMUserM]   /* "User Manual..." */,  0x10,  &MsgAuxl[StrMUserM],
-        &MsgLens[StrMUserM], NULL, 0 } };
+    { &MsgStrs[StrMUserM]   /* "User Manual..." */,  0x11,  &MsgAuxl[StrMUserM],
+        &MsgLens[StrMUserM], NULL, 0 },
+    { &MsgStrs[StrRegister] /* "Register ..."*/,     0x11,  &MsgAuxl[StrRegister],
+        &MsgLens[StrRegister], NULL, 0 },
+    { &MsgStrs[StrDonate]   /* "Donate..."*/,        0x11,  &MsgAuxl[StrDonate],
+        &MsgLens[StrDonate], NULL, 0 }
+};
 
 
 typedef struct _BarItem {
@@ -310,10 +388,14 @@ static BarItem MenuBar[MenuBarMax] = {
         &MsgLens[StrMOpt], NULL },
     { SetMenu, &MsgStrs[StrMSettings] /* "Settings" */, 13, 0x01,&MsgAuxl[StrMSettings],
         &MsgLens[StrMSettings], NULL },
-    { ExpMenu,  &MsgStrs[StrMExport]  /* "Export"   */,  7, 0x01,&MsgAuxl[StrMExport],
+    { ExpMenu,  &MsgStrs[StrMExport]  /* "Export"   */, 15, 0x01,&MsgAuxl[StrMExport],
         &MsgLens[StrMExport], NULL },
-    { HelMenu,  &MsgStrs[StrMHelp]    /* "Help"     */,  2, 0x01,&MsgAuxl[StrMHelp],
-        &MsgLens[StrMHelp], NULL } };
+    { HelMenu,  &MsgStrs[StrMHelp]    /* "Help"     */,  4, 0x01,&MsgAuxl[StrMHelp],
+        &MsgLens[StrMHelp], NULL } 
+};
+
+
+
 
 static int MenuFocus;
 static int ItemFocus;
@@ -370,7 +452,8 @@ typedef union {
 
 static int MenuHigh;
 static int FontHigh;
-
+XFontSet fontset;
+static char* lastlocale;
 static Cursor cross;
 static Cursor arrow;
 static Cursor hglass;
@@ -378,7 +461,7 @@ static Pixmap Scrl;
 static Pixmap tilepix;
 static Pixmap uppix, dnpix;
 static Pixmap lfpix, rgpix;
-static XFontStruct *MenuFont;
+static XFontStruct *MenuFont=NULL;
 static XSetWindowAttributes attr;
 static Window XScrlWin, YScrlWin;
 static XWMHints hints;
@@ -424,6 +507,10 @@ static Atom CommAtom;
   
 extern int ProcessCommand( void );
 static int HandleMenuLoop( void );
+static int HandleIPCError( Display *dpy, XErrorEvent *ptr );
+#ifdef MITSHM
+static int HandleShmError( Display *dpy, XErrorEvent *ptr );
+#endif
 
 
 
@@ -553,25 +640,118 @@ static void OpenCanvas( int x, int y )
 }
 
 
-static void OpenFonts( void )
+static int RasOpenFonts( void )
 {
-    static char *fontname[] = { "-*-helvetica-bold-o-normal-*-14-*",
-                                     "-*-serf-bold-o-normal-*-14-*",
-                                        "-*-*-bold-o-normal-*-14-*" };
+    static char fontname [255];
     register int i;
+    char **missing_charsets; 
+    int num_missing_charsets; 
+    char *default_string;
+    XRectangle dummy;
+    XRectangle bound;
 
-    cross = XCreateFontCursor(dpy,XC_tcross);
-    arrow = XCreateFontCursor(dpy,XC_top_left_arrow);
+	if ( Language != TermLanguage ) 
+	{
+	  if ( MenuFont && MenuFont->fid )  XUnloadFont(dpy,MenuFont->fid); 
+	  MenuFont = 0;
+	} 
+	
+	if (!MenuFont || !(MenuFont->fid ) ) {
+	
+	
+	for (i=0; i < NUMLANGS; i++) {
+	
+	  if (langfonts[i].lang == Language) {
+	    char *menufonts;
+	    int kl;
+	    if((menufonts = getenv(langfonts[i].menufontvar)) ) {
+	      char * strend;
+	      while ((strend = strchr(menufonts,':'))) {
+	        strncpy(fontname,menufonts,strend-menufonts<255?strend-menufonts:254);
+	        fontname[strend-menufonts<255?strend-menufonts:254]='\0';
+	        menufonts=strend+1;
+	        if( (MenuFont=XLoadQueryFont(dpy,fontname)) ) break;
+	      }
+	      if (!MenuFont && (kl=strlen(menufonts)> 0 ) ) {
+	      	strncpy(fontname,menufonts,kl<255?kl:254);
+	        fontname[kl<255?kl:254] = '\0';
+	        if( (MenuFont=XLoadQueryFont(dpy,fontname)) ) break;
+	      }
+	      if (MenuFont) break;
+	    	
+	    }
+	    if ((menufonts = langfonts[i].menufontlist) ) {
+	      char * strend;
+	      while ((strend = strchr(menufonts,':')) ) {
+	        strncpy(fontname,menufonts,strend-menufonts<255?strend-menufonts:254);
+	        fontname[strend-menufonts<255?strend-menufonts:254]='\0';
+	        menufonts=strend+1;
+	        if( (MenuFont=XLoadQueryFont(dpy,fontname)) ) break;
+	      }
+	      if (!MenuFont && (kl=strlen(menufonts)> 0)) {
+	      	strncpy(fontname,menufonts,kl<255?kl:254);
+	        fontname[kl<255?kl:254] = '\0';
+	        if( (MenuFont=XLoadQueryFont(dpy,fontname)) ) break;
+	      }
+	      if (MenuFont) break;
+	    }	  	
+	  }
+		
+	}
+	}
+	
+    if (!cross) cross = XCreateFontCursor(dpy,XC_tcross);
+    if (!arrow) arrow = XCreateFontCursor(dpy,XC_top_left_arrow);
+    MenuItem *ptr;
 
-    for( i=0; i<3; i++ )
-        if( (MenuFont=XLoadQueryFont(dpy,fontname[i])) ) 
-            break;
+      if (Language == Chinese){
 
-    if( !MenuFont )
-        FatalGraphicsError("Unable to find suitable font");
-    FontHigh = MenuFont->max_bounds.descent +
+        setlocale(LC_ALL, "zh_CN.GB2312");
+	lastlocale = "chinese";
+        fontset = XCreateFontSet(dpy,
+        "*-16-*-gb2312.1980-0,-*-helvetica-bold-o-normal-*-14-*-iso8859-1",
+        &missing_charsets, &num_missing_charsets, &default_string);
+	if ( !fontset ) return 1;
+        XmbTextExtents( fontset, MsgStrs[StrWarranty], strlen(MsgStrs[StrWarranty]), &dummy, &bound );
+        FontHigh = bound.height;
+      }else if (Language == Japanese){
+
+        setlocale(LC_ALL, "ja_JP.eucjp");
+	lastlocale = "japanese";
+        fontset = XCreateFontSet(dpy,
+        "*-r-*-14-*-jisx0208.1983-0,*-r-*-24-*-jisx0201.1976-0,-*-helvetica-bold-o-normal-*-14-*-iso8859-1",
+        &missing_charsets, &num_missing_charsets, &default_string);
+        if ( !fontset ) return 1;
+	XmbTextExtents( fontset, MsgStrs[StrWarranty], strlen(MsgStrs[StrWarranty]), &dummy, &bound );
+        FontHigh = bound.height;
+      }else{
+	if (Language == English ){
+           setlocale(LC_ALL, "en_US");
+	   lastlocale = "english";
+        }else if ( Language == Spanish ){
+           setlocale(LC_ALL, "es_ES");
+	   lastlocale = "spanish";
+	}else if ( Language == Italian ){
+           setlocale(LC_ALL, "it_IT");
+	   lastlocale = "italian";
+	}else if ( Language == French ){
+           setlocale(LC_ALL, "fr_FR");
+	   lastlocale = "french";
+	}else if ( Language == Russian ){
+           setlocale(LC_ALL, "ru_RU");
+	   lastlocale = "russian";
+	}else if ( Language == Bulgarian ){
+           setlocale(LC_ALL, "bg_BG");
+	   lastlocale = "bulgarian";
+	}
+
+        if( !MenuFont ) return 1;
+
+        FontHigh = MenuFont->max_bounds.descent +
                MenuFont->max_bounds.ascent + 1;
+      }
     MenuHigh = FontHigh+6;
+	return 0;
 }
 
 
@@ -785,6 +965,93 @@ static void OpenIPCComms( void )
 }
 
 
+
+static void DrawUpCircle( Drawable wdw, int x1, int y1, int x2, int y2 )
+{
+    int width, height;
+    
+    width = x2-x1+1; height = y2-y1+1;
+
+/*    XSetForeground(dpy,gcon,(unsigned long)Lut[2]);
+    XFillArc(dpy,wdw,gcon,x1-1,y1-1,width+2,height+2,0,360*64);
+
+    XSetForeground(dpy,gcon,(unsigned long)Lut[3]);
+    XFillArc(dpy,wdw,gcon,x1,y1,width,height,-45*64,180*64);
+    XFillArc(dpy,wdw,gcon,x1+1,y1+1,width-2,height-2,-45*64,180*64);
+
+    XSetForeground(dpy,gcon,(unsigned long)Lut[1]);
+    XFillArc(dpy,wdw,gcon,x1,y1,width,height,135*64,180*64);
+    XFillArc(dpy,wdw,gcon,x1+1,y1+1,width-2,height-2,135*64,180*64);
+    
+    XSetForeground(dpy,gcon,(unsigned long)Lut[3]);
+    XFillArc(dpy,wdw,gcon,x1+2,y1+2,width-4,height-4,0,360*64);
+    */
+
+    XSetForeground(dpy,gcon,(unsigned long)Lut[2]);
+    XFillArc(dpy,wdw,gcon,x1-1,y1-1,width+2,height+2,0,360*64);
+
+    XSetForeground(dpy,gcon,(unsigned long)Lut[1]);
+    XFillArc(dpy,wdw,gcon,x1,y1,width,height,135*64,360*64);
+    
+    XSetForeground(dpy,gcon,(unsigned long)Lut[2]);
+    XFillArc(dpy,wdw,gcon,x1+width/10,y1,width-width/10,height-height/10,135*64,360*64);
+    
+    XSetForeground(dpy,gcon,(unsigned long)Lut[3]);
+    XFillArc(dpy,wdw,gcon,x1+width/9,y1,width-width/9,height-height/9,135*64,360*64);
+
+
+}
+
+static void DrawUpPieSlice( Drawable wdw, int x1, int y1, int x2, int y2 )
+{
+    int width, height;
+    
+    width = x2-x1+1; height = y2-y1+1;
+
+/*    XSetForeground(dpy,gcon,(unsigned long)Lut[2]);
+    XFillArc(dpy,wdw,gcon,x1-1,y1-1,width+2,height+2,135*64,90*64);
+
+    XSetForeground(dpy,gcon,(unsigned long)Lut[1]);
+    XFillArc(dpy,wdw,gcon,x1,y1,width,height,135*64,90*64);
+    XFillArc(dpy,wdw,gcon,x1+1,y1+1,width-2,height-2,135*64,90*64);
+    
+    XSetForeground(dpy,gcon,(unsigned long)Lut[3]);
+    XFillArc(dpy,wdw,gcon,x1+2,y1+2,width-4,height-4,135*64,90*64);
+ */
+    
+    XSetForeground(dpy,gcon,(unsigned long)Lut[2]);
+    XFillArc(dpy,wdw,gcon,x1-1,y1-1,width+2,height+2,155*64,50*64);
+
+    XSetForeground(dpy,gcon,(unsigned long)Lut[1]);
+    XFillArc(dpy,wdw,gcon,x1,y1,width,height,155*64,50*64);
+    
+    XSetForeground(dpy,gcon,(unsigned long)Lut[2]);
+    XFillArc(dpy,wdw,gcon,x1+width/10,y1,width-width/10,height-height/10,150*64,60*64);
+    
+    XSetForeground(dpy,gcon,(unsigned long)Lut[3]);
+    XFillArc(dpy,wdw,gcon,x1+width/9,y1,width-width/9,height-height/9,145*64,70*64);
+
+}
+
+
+static void DrawUpLine( Drawable wdw, int x1, int y1, int x2, int y2, int wid )
+{
+    XGCValues lineattr[4];
+    
+    XGetGCValues(dpy,gcon,GCLineWidth|GCLineStyle|GCCapStyle|GCJoinStyle,lineattr);
+    XSetLineAttributes(dpy,gcon,wid,LineSolid,CapRound,JoinRound);
+    XSetForeground(dpy,gcon,(unsigned long)Lut[1]);
+    XDrawLine(dpy,wdw,gcon,x1,y1,x2,y2);    
+    XSetLineAttributes(dpy,gcon,wid-1,LineSolid,CapRound,JoinRound);
+    XSetForeground(dpy,gcon,(unsigned long)Lut[3]);
+    XDrawLine(dpy,wdw,gcon,x1+1,y1-1,x2+1,y2-1);    
+    XSetLineAttributes(dpy,gcon,wid-2,LineSolid,CapRound,JoinRound);
+    XSetForeground(dpy,gcon,(unsigned long)Lut[2]);
+    XDrawLine(dpy,wdw,gcon,x1,y1,x2,y2);    
+    XChangeGC(dpy,gcon,GCLineWidth|GCLineStyle|GCCapStyle|GCJoinStyle,lineattr);
+}
+
+
 static void DrawUpBox( Drawable wdw, int x1, int y1, int x2, int y2 )
 {
     register int lx,ly,ux,uy;
@@ -793,16 +1060,16 @@ static void DrawUpBox( Drawable wdw, int x1, int y1, int x2, int y2 )
     ux = x2-1;  uy = y2-1;
 
     XSetForeground(dpy,gcon,(unsigned long)Lut[3]);
-    XDrawLine(dpy,wdw,gcon,x1,y1,x2,y1);
-    XDrawLine(dpy,wdw,gcon,x1,y1,x1,y2);
-    XDrawLine(dpy,wdw,gcon,lx,ly,ux,ly);
-    XDrawLine(dpy,wdw,gcon,lx,ly,lx,uy);
+    XDrawLine(dpy,wdw,gcon,x1,y1,x2,y1); /* top bar */
+    XDrawLine(dpy,wdw,gcon,lx,ly,ux,ly); /* top bar */
+    XDrawLine(dpy,wdw,gcon,x2,y1,x2,y2); /* right bar */
+    XDrawLine(dpy,wdw,gcon,ux,ly,ux,uy); /* right bar */
 
     XSetForeground(dpy,gcon,(unsigned long)Lut[1]);
-    XDrawLine(dpy,wdw,gcon,x2,y1,x2,y2);
-    XDrawLine(dpy,wdw,gcon,x1,y2,x2,y2);
-    XDrawLine(dpy,wdw,gcon,ux,ly,ux,uy);
-    XDrawLine(dpy,wdw,gcon,lx,uy,ux,uy);
+    XDrawLine(dpy,wdw,gcon,x1,y2,x2,y2); /* bottom bar */
+    XDrawLine(dpy,wdw,gcon,lx,uy,ux,uy); /* bottom bar */
+    XDrawLine(dpy,wdw,gcon,x1,y1,x1,y2); /* left bar */
+    XDrawLine(dpy,wdw,gcon,lx,ly,lx,uy); /* left bar */
 }
 
 
@@ -814,16 +1081,16 @@ static void DrawDnBox(  Drawable wdw, int x1, int y1, int x2, int y2 )
     ux = x2-1;  uy = y2-1;
 
     XSetForeground(dpy,gcon,(unsigned long)Lut[1]);
-    XDrawLine(dpy,wdw,gcon,x1,y1,x2,y1);
-    XDrawLine(dpy,wdw,gcon,x1,y1,x1,y2);
-    XDrawLine(dpy,wdw,gcon,lx,ly,ux,ly);
-    XDrawLine(dpy,wdw,gcon,lx,ly,lx,uy);
+    XDrawLine(dpy,wdw,gcon,x1,y1,x2,y1); /* top bar */
+    XDrawLine(dpy,wdw,gcon,lx,ly,ux,ly); /* top bar */
+    XDrawLine(dpy,wdw,gcon,x2,y1,x2,y2); /* right bar */
+    XDrawLine(dpy,wdw,gcon,ux,ly,ux,uy); /* right bar */
 
     XSetForeground(dpy,gcon,(unsigned long)Lut[3]);
-    XDrawLine(dpy,wdw,gcon,x2,y1,x2,y2);
-    XDrawLine(dpy,wdw,gcon,x1,y2,x2,y2);
-    XDrawLine(dpy,wdw,gcon,ux,ly,ux,uy);
-    XDrawLine(dpy,wdw,gcon,lx,uy,ux,uy);
+    XDrawLine(dpy,wdw,gcon,x1,y2,x2,y2); /* bottom bar */
+    XDrawLine(dpy,wdw,gcon,lx,uy,ux,uy); /* bottom bar */
+    XDrawLine(dpy,wdw,gcon,x1,y1,x1,y2); /* left bar */
+    XDrawLine(dpy,wdw,gcon,lx,ly,lx,uy); /* left bar */
 }
 
 
@@ -860,7 +1127,7 @@ static void OpenMenuBar( void )
     /* Create Unmapped PopUp Window! */
     mask = CWEventMask;
     attr.event_mask = ExposureMask | ButtonPressMask | ButtonReleaseMask | 
-                      KeyPressMask;
+                      KeyPressMask | VisibilityChangeMask ;
     attr.background_pixel = Lut[2];     mask |= CWBackPixel;
     attr.border_pixel = Lut[2];         mask |= CWBorderPixel;
     attr.override_redirect = True;      mask |= CWOverrideRedirect;
@@ -1193,28 +1460,37 @@ static void DrawMainWin( void )
 static void DisplayMenuBarText( BarItem *ptr, int x, int y )
 {
     register unsigned long col;
-    register int under, pos, i, index, wide;
+    register int under, pos, wide;
+    int slen;
 
     if( ptr->flags&mbEnable && !DisableMenu )
     {      col = Lut[0];
     } else col = Lut[1];
     XSetForeground( dpy, gcon, col );
 
-    XDrawString( dpy, MainWin, gcon, x, y, *(ptr->text), *(ptr->len) );
-
-    under = y + MenuFont->descent;
+    if (ptr->len) {
+      slen = *(ptr->len);
+    } else {
+      slen = strlen(*(ptr->text));
+    }
+    if (!strcmp (lastlocale , "chinese") || !strcmp( lastlocale, "japanese" ) ) {
+        XmbDrawString( dpy, MainWin, fontset, gcon, x, y+5, *(ptr->text), slen );
+    }else{
+        XDrawString( dpy, MainWin, gcon, x, y, *(ptr->text), slen );
+    }
+        under = y + MenuFont->descent;
 
     pos = x;
-    for( i=0; i<*(ptr->pos); i++)
-    {   index = (*(ptr->text))[i] - MenuFont->min_char_or_byte2;
-        pos += MenuFont->per_char[index].width;
-    }
+    if (*(ptr->pos)>0) pos += XTextWidth( MenuFont, *(ptr->text), *(ptr->pos) );
+              
+    wide = - XTextWidth( MenuFont, *(ptr->text)+*(ptr->pos)+1, slen-*(ptr->pos)-1 )
+           + XTextWidth( MenuFont, *(ptr->text)+*(ptr->pos), slen-*(ptr->pos) );
 
-    index = (*(ptr->text))[*(ptr->pos)] - MenuFont->min_char_or_byte2;
-    wide = pos+MenuFont->per_char[index].rbearing;
-    pos += MenuFont->per_char[index].lbearing;
+    if (wide > 3) wide--;
+    if (wide > 6) wide--;
 
-    XDrawLine( dpy, MainWin, gcon, pos, under, wide, under );
+    XDrawLine( dpy, MainWin, gcon, pos, under, pos+wide, under );
+
 }
 
 
@@ -1224,19 +1500,31 @@ static void DrawMenuBar( void )
     register int wide;
     register int x,y;
     register int i;
+    XRectangle bound;
+    XRectangle dummy;
+	if (Language != TermLanguage ) {
+	  if (RasOpenFonts()) {
+	    Language = TermLanguage;
+		RasOpenFonts();
+	  }
+	  TermLanguage = Language;
+	}
 
     x = 6; y = MenuFont->ascent+4;
     XSetFont( dpy, gcon, MenuFont->fid );
 
     for( i=0; i<MenuBarMax; i++ )
     {   ptr = MenuBar+i;
-        wide = XTextWidth( MenuFont, *(ptr->text), *(ptr->len) );
+        if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
+           wide = XmbTextExtents( fontset, *(ptr->text), *(ptr->len), &dummy, &bound );
+	}else{
+	    wide = XTextWidth(MenuFont, *(ptr->text), *(ptr->len));
+	}
         if( x+wide+24 > MainWide ) break;
 
         /* Right Justify "Help" */
         if( i == MenuBarMax-1 )
             x = MainWide - (wide+24);
-
         DisplayMenuBarText( ptr, x+8, y );
 
         if( MenuFocus && (i==MenuBarSelect) )
@@ -1245,7 +1533,6 @@ static void DrawMenuBar( void )
         x += wide+24;
     }
     MenuBarCount = i;
-    /* XSync(dpy,False); */
     XFlush(dpy);
 }
 
@@ -1253,46 +1540,57 @@ static void DrawMenuBar( void )
 /*=======================*/
 /*  Pop-up Menu Display  */
 /*=======================*/
-
 static void DisplayPopUpText( MenuItem *ptr, int x, int y )
 {
     register unsigned long col;
     register int pos, wide;
-    register int i,under;
-    register int index;
+    register int under;
     int slen;
 
     col = (ptr->flags&mbEnable)? Lut[0] : Lut[1];
     XSetForeground( dpy, gcon, col );
 
     if (ptr->enable && (*(ptr->enable) == ptr->value)) {
-        XDrawLine( dpy, PopUpWin, gcon, x-9, y+MenuFont->descent-FontHigh/2, 
-              x-7, y+MenuFont->descent-2);
-        XDrawLine( dpy, PopUpWin, gcon, x-7, y+MenuFont->descent-2, 
-              x-3, y+MenuFont->descent-FontHigh+2);
+       if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
+           XDrawLine( dpy, PopUpWin, gcon, x-9, y-FontHigh/32, 
+                 x-7, y+FontHigh-10);
+           XDrawLine( dpy, PopUpWin, gcon, x-7, y+FontHigh-10, 
+                 x-3, y-FontHigh/3);
+       }else{
+           XDrawLine( dpy, PopUpWin, gcon, x-9, y+MenuFont->descent-FontHigh/2, 
+                 x-7, y+MenuFont->descent-2);
+           XDrawLine( dpy, PopUpWin, gcon, x-7, y+MenuFont->descent-2, 
+                 x-3, y+MenuFont->descent-FontHigh+2);
+        }
     }
     if (ptr->len) {
       slen = *(ptr->len);
     } else {
       slen = strlen(*(ptr->text));
     }
-    XDrawString( dpy, PopUpWin, gcon, x, y, *(ptr->text), slen );
-
-    if( ptr->flags & mbAccel )
-    {   under = y + MenuFont->descent;
+    if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
+        XmbDrawString( dpy, PopUpWin, fontset, gcon, x, y+5, *(ptr->text), slen );
+    }else{
+        XDrawString( dpy, PopUpWin, gcon, x, y, *(ptr->text), slen );
+      if( ptr->flags & mbAccel )
+      {   under = y + MenuFont->descent;
 
         pos = x;
-        for( i=0; i<*(ptr->pos); i++ )
-        {   index = (*(ptr->text))[i] - MenuFont->min_char_or_byte2;
-            pos += MenuFont->per_char[index].width;
-        }
+        if (*(ptr->pos)>0) pos += XTextWidth( MenuFont, *(ptr->text), *(ptr->pos) );
+        
+        
+        wide = - XTextWidth( MenuFont, *(ptr->text)+*(ptr->pos)+1, slen-*(ptr->pos)-1 )
+              + XTextWidth( MenuFont, *(ptr->text)+*(ptr->pos), slen-*(ptr->pos) );
+              
+        if (wide > 3) wide--;
+        if (wide > 6) wide--;
 
-        index = (*(ptr->text))[*(ptr->pos)] - MenuFont->min_char_or_byte2;
-        wide = pos+MenuFont->per_char[index].rbearing;
-        pos += MenuFont->per_char[index].lbearing;
-
-        XDrawLine( dpy, PopUpWin, gcon, pos, under, wide, under );
+        XDrawLine( dpy, PopUpWin, gcon, pos, under, pos+wide, under );
+      }
     }
+
+    
+
 }
 
 
@@ -1304,6 +1602,9 @@ static void DrawPopUpMenu( void )
     register int i;
 
     DrawUpBox(PopUpWin,0,0,PopUpWide,PopUpHigh);
+
+    if (MenuBarSelect < 0 ) MenuBarSelect = 0;
+    if (MenuBarSelect >= MenuBarMax) MenuBarSelect = MenuBarMax-1;
 
     ptr = MenuBar[MenuBarSelect].menu;
     count = MenuBar[MenuBarSelect].count;
@@ -1342,8 +1643,13 @@ static void DisplayPopUpMenu( int i, int x )
     register MenuItem *ptr;
     static int xpos, ypos;
     static Window win;
+    XRectangle bound; 
+    XRectangle dummy;
 
 
+    if (PopUpFlag && MenuBarSelect == AboutDLGMItem) {
+    	UnDisplayAboutDLG();
+    }
     MenuBarSelect = i;
     DrawMenuBar();
 
@@ -1357,13 +1663,17 @@ static void DisplayPopUpMenu( int i, int x )
     PopUpWide = 8;
     for( i=0; i<count; i++ )
     {   if( !(ptr->flags&mbSepBar) )
-        {   wide = XTextWidth(MenuFont,*(ptr->text),*(ptr->len));
+        {   
+	    if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
+               wide = XmbTextExtents( fontset, *(ptr->text), *(ptr->len), &dummy, &bound );
+	    }else{
+	        wide = XTextWidth(MenuFont, *(ptr->text), *(ptr->len));
+	    }
             if( wide+28 > PopUpWide ) PopUpWide = wide+28;
-            PopUpHigh += FontHigh+4;
+                PopUpHigh += FontHigh+4;
         } else PopUpHigh += 2;
         ptr++;
     }
-
     /* Determine pop-up menu position! */
     XTranslateCoordinates(dpy,MainWin,RootWin,x,FontHigh+6,
                           &xpos, &ypos, &win );
@@ -1383,102 +1693,439 @@ static void DisplayPopUpMenu( int i, int x )
 }
 
 
+static void DisplayAboutDLGText( DLGItem *ptr, int x, int y, int center )
+{
+    register unsigned long col;
+    register int wide;
+    int slen;
+
+    col =  Lut[0];
+    XSetForeground( dpy, gcon, col );
+
+    slen = strlen(*(ptr->text) );
+    
+    if (center) {
+    	 
+      if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
+	  XRectangle bound;
+	  XRectangle dummy;
+
+          wide = XmbTextExtents(fontset,*(ptr->text),slen, &dummy, &bound);
+
+          XmbDrawString( dpy, PopUpWin, fontset,gcon, 
+            x+(ptr->x+(ptr->width)/2)*DLGScale-wide/2, 
+            y+(ptr->y)*DLGScale, *(ptr->text), slen );
+      }else{
+	  wide = XTextWidth(MenuFont, *(ptr->text), slen);
+
+          XDrawString( dpy, PopUpWin,gcon, 
+            x+(ptr->x+(ptr->width)/2)*DLGScale-wide/2, 
+            y+(ptr->y)*DLGScale, *(ptr->text), slen );
+      }
+        
+    } else  {
+       
+      if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
+          XmbDrawString( dpy, PopUpWin, fontset, gcon, 
+            x+(ptr->x)*DLGScale, 
+            y+(ptr->y)*DLGScale, *(ptr->text), slen );
+      }else{
+          XDrawString( dpy, PopUpWin, gcon,
+            x+(ptr->x)*DLGScale,
+            y+(ptr->y)*DLGScale, *(ptr->text), slen );
+      }
+    }
+
+}
+
+
+void DrawAboutDLG( void )
+{
+    register DLGItem *ptr;
+    register int count;
+    register int x,y;
+    register int i;
+    
+    DrawUpBox(PopUpWin,0,0,PopUpWide,PopUpHigh);
+
+    ptr = AboutDLG;
+    count = AboutDLGCount;
+
+    y = 2+FontHigh;  x = 2;
+    for( i=0; i<count; i++ ) {
+       switch (ptr->DLGtype){
+       
+       	case DLGICON: {
+
+            int box1[4], box2[4], box3[4];
+            
+            DrawUpBox(PopUpWin,x+(ptr->x)*DLGScale-4,
+                               y+(ptr->y)*DLGScale-4-(ptr->height)*DLGScale,
+                               x+(ptr->x)*DLGScale+4+(ptr->width)*DLGScale,
+                               y+(ptr->y)*DLGScale+4);
+            
+            box1[0] = x+(ptr->x)*DLGScale;
+            box1[1] = box2[1] = y+(ptr->y)*DLGScale-(ptr->height)*9*DLGScale/200;
+            box1[2] = box2[2] = box3[2] = (ptr->width/2-1)*DLGScale;
+            box1[3] = box2[3] = box3[3] = (ptr->height/2-1)*DLGScale-(ptr->height)*9*DLGScale/200;
+            
+            box2[0] = x+(ptr->x)*DLGScale+(ptr->width)*DLGScale - box2[2];
+            box3[0] = x+(box1[0] + box2[0]-1)/2;
+            box3[1] = box1[1] - 178*(box2[0]-box1[0]+1)/200-(ptr->height)*9*DLGScale/200;
+       	
+         	DrawUpCircle(PopUpWin,box2[0], box2[1] - box2[3],
+       	      box2[0] + box2[2], box2[1]);
+
+       	    DrawUpLine (PopUpWin,box2[0]+box2[2]/2 
+       	                         + (box3[0]-box2[0])/4,
+       	                         box2[1]-box2[2]/2 
+       	                         + (box3[1]-box2[1])/4,
+       	                         box2[0]+box2[2]/2 
+       	                         + 3*(box3[0]-box2[0])/4,
+       	                         box2[1]-box2[3]/2 
+       	                         + 3*(box3[1]-box2[1])/4,6);
+
+     	    DrawUpCircle(PopUpWin,box3[0], box3[1] - box3[3],
+       	      box3[0] + box3[2], box3[1]);
+       	      
+       	    DrawUpLine (PopUpWin,box3[0]+box3[2]/2 
+       	                         + (box1[0]-box3[0])/4,
+       	                         box3[1]-box3[2]/2 
+       	                         + (box1[1]-box3[1])/4,
+       	                         box3[0]+box3[2]/2 
+       	                         + 3*(box1[0]-box3[0])/4,
+       	                         box3[1]-box3[3]/2 
+       	                         + 3*(box1[1]-box3[1])/4,6);
+
+       	    DrawUpCircle(PopUpWin,box1[0], box1[1] - box1[3],
+       	      box1[0] + box1[2], box1[1]);
+       	      
+       	    DrawUpLine (PopUpWin,box1[0]+box1[2]/2 
+       	                         + (box2[0]-box1[0])/4,
+       	                         box1[1]-box1[2]/2 
+       	                         + (box2[1]-box1[1])/4,
+       	                         box1[0]+box1[2]/2 
+       	                         + 3*(box2[0]-box1[0])/4,
+       	                         box1[1]-box1[3]/2 
+       	                         + 3*(box2[1]-box1[1])/4,6);
+         	DrawUpPieSlice(PopUpWin,box2[0], box2[1] - box2[3],
+       	      box2[0] + box2[2], box2[1]);
+
+
+       	    break;
+       	}
+       	case DLGCTEXT:
+#ifdef USE_UNAME
+            if (ptr->Identifier == IDD_HARDWARE  && 
+              !uname(&AboutDLGUNAME) ) {
+              int klen;
+              
+              klen = 0;
+              strncpy(unamebuffer,AboutDLGUNAME.sysname,81);
+              unamebuffer[80] = '\0';
+              klen = strlen(unamebuffer);
+              if (79-klen > strlen(AboutDLGUNAME.nodename)) {
+              	unamebuffer[klen] = ' ';
+              	strncpy(unamebuffer+klen+1,AboutDLGUNAME.nodename,81-klen);
+                unamebuffer[80] = '\0';
+                klen = strlen(unamebuffer);
+              }
+              /* if (79-klen > strlen(AboutDLGUNAME.release)) {
+              	unamebuffer[klen] = ' ';
+              	strncpy(unamebuffer+klen+1,AboutDLGUNAME.release,81-klen);
+                unamebuffer[80] = '\0';
+                klen = strlen(unamebuffer);
+              } */
+               if (79-klen > strlen(AboutDLGUNAME.version)) {
+              	unamebuffer[klen] = ' ';
+              	strncpy(unamebuffer+klen+1,AboutDLGUNAME.version,81-klen);
+                unamebuffer[80] = '\0';
+                klen = strlen(unamebuffer);
+              }
+               if (79-klen > strlen(AboutDLGUNAME.machine)) {
+              	unamebuffer[klen] = ' ';
+              	strncpy(unamebuffer+klen+1,AboutDLGUNAME.machine,81-klen);
+                unamebuffer[80] = '\0';
+                klen = strlen(unamebuffer);
+              }
+            }
+#endif   	    
+       	    DisplayAboutDLGText(ptr,x,y,True);
+       	    /* WriteString("\n");WriteString(*(ptr->text) ); */
+       	    break;
+       	case DLGPUSHBUTTON:
+       	    DisplayAboutDLGText(ptr,x,y-((ptr->height)*DLGScale+4-FontHigh)/2,True);
+            if (ptr->status) {
+         	  DrawDnBox(PopUpWin,x+(ptr->x)*DLGScale,
+         	    y+(ptr->y)*DLGScale-((ptr->height)*DLGScale),
+         	    x+(ptr->x)*DLGScale+(ptr->width)*DLGScale,
+         	    y+(ptr->y)*DLGScale);
+       	      break;
+            } else {
+         	  DrawUpBox(PopUpWin,x+(ptr->x)*DLGScale,
+         	    y+(ptr->y)*DLGScale-((ptr->height)*DLGScale),
+         	    x+(ptr->x)*DLGScale+(ptr->width)*DLGScale,
+         	    y+(ptr->y)*DLGScale);
+       	      break;
+       	    }
+       	case DLGCHECKBOX:
+       	    DisplayAboutDLGText(ptr,x+(ptr->height)*DLGScale+2,y,False);
+       	    if (ptr->status) {
+       	      DrawDnBox(PopUpWin,x+(ptr->x)*DLGScale,
+       	        y+(ptr->y)*DLGScale-(ptr->height)*DLGScale,
+       	        x+(ptr->x)*DLGScale+(ptr->height)*DLGScale,
+       	        y+(ptr->y)*DLGScale);
+       	      break;
+       	    } else {
+       	      DrawUpBox(PopUpWin,x+(ptr->x)*DLGScale,
+       	        y+(ptr->y)*DLGScale-(ptr->height)*DLGScale,
+       	        x+(ptr->x)*DLGScale+(ptr->height)*DLGScale,
+       	        y+(ptr->y)*DLGScale);
+       	      break;
+       	    }
+       }
+     ptr++;
+    	
+    }
+    /* WriteString("\n\n"); */
+    XFlush(dpy);
+}
+
+
+void DisplayAboutDLG( void ) {
+
+    static int xpos, ypos;
+    static Window win;
+
+    MenuBarSelect = AboutDLGMItem;
+    DrawMenuBar();
+    
+    if (AboutDLG[AboutDLGNOSHOWindex].DLGtype==DLGCHECKBOX
+      &&  AboutDLG[AboutDLGNOSHOWindex].Identifier==IDD_NOSHOW) {
+      if (getraid(filaid, 1025, fillang, 81)
+        && DetermineApplicationIdentifier(macaid, 1025)
+        && !strncasecmp(filaid,macaid,1024)) {
+        AboutDLG[AboutDLGNOSHOWindex].status=1;
+      } else { 
+        AboutDLG[AboutDLGNOSHOWindex].status=0;
+      }
+    }
+
+    ItemFlag = False;
+
+    PopUpHigh = AboutDLGHeight*DLGScale+4;
+    PopUpWide = AboutDLGWidth*DLGScale+4;    
+    /* Determine pop-up menu position! */
+    XTranslateCoordinates(dpy,MainWin,RootWin,AboutDLGXpos,FontHigh+6,
+                          &xpos, &ypos, &win );
+                          
+    if( ypos+PopUpHigh > MaxHeight )
+        ypos -= (PopUpHigh+FontHigh+6);
+    if( xpos+PopUpWide > MaxWidth )
+        xpos = MaxWidth-PopUpWide;
+    if( xpos < 0 ) xpos = 0;
+
+    XUnmapWindow(dpy,PopUpWin);
+    XMoveResizeWindow(dpy,PopUpWin,xpos,ypos,PopUpWide+1,PopUpHigh+1);
+    XRaiseWindow(dpy,PopUpWin);
+    XMapWindow(dpy,PopUpWin);
+    PopUpFlag = True;
+    DrawAboutDLG();
+    ItemFocus = True;	
+}
+
+
+void UnDisplayAboutDLG( void ) {
+
+    MenuBarSelect = 0;
+    DrawMenuBar();
+    
+    ItemFlag = False;
+
+    if (AboutDLG[AboutDLGNOSHOWindex].DLGtype==DLGCHECKBOX
+      &&  AboutDLG[AboutDLGNOSHOWindex].Identifier==IDD_NOSHOW) {
+      if (AboutDLG[AboutDLGNOSHOWindex].status &&
+        DetermineApplicationIdentifier(macaid, 1025)) {
+        setraid(macaid,lang2str(Language));
+      } else {
+        setraid("",lang2str(Language));
+      }
+    } else {
+      FatalGraphicsError("Improperly structured AboutDLG in graphics.h");
+    }
+
+    XUnmapWindow(dpy,PopUpWin);
+    PopUpFlag = False;
+}
+
 
 /*==============================*/
 /*  Pop-Up Menu Event Handling  */
 /*==============================*/
 
-static void HandleItemClick( int x, int y )
+static void HandleItemClick( int xpos, int ypos )
 {
     register MenuItem *ptr;
+    register DLGItem *qtr;
     register int count,i;
-
-    static int xpos, ypos;
-    static Window win;
-
-    XTranslateCoordinates(dpy,MenuWin,PopUpWin,x,y,
-                          &xpos,&ypos,&win);
+    register int xo, yo;
 
     /* Ignore by not setting ItemFocus! */
     if( (xpos<0) || (xpos>PopUpWide) ) return;
     if( (ypos<0) || (ypos>PopUpHigh) ) return;
     ItemFocus = True;
 
-    ptr = MenuBar[MenuBarSelect].menu;
-    count = MenuBar[MenuBarSelect].count;
-    if ( MenuBar[MenuBarSelect].increment && 
-      *(MenuBar[MenuBarSelect].increment)) {
-      count += 1+*(MenuBar[MenuBarSelect].increment);
-    }
+    if (MenuBarSelect == AboutDLGMItem) {
+      MenuItemSelect = -1;
+      qtr = AboutDLG;
+      count = AboutDLGCount;
+      yo = 2+FontHigh;
+      xo = 2;
+      for (i = 0; i < count; i++)  {
+        if ( qtr->DLGtype == DLGPUSHBUTTON ) {
+        	if ( xpos >= xo+(qtr->x)*DLGScale 
+        	  && xpos <= xo+(qtr->x)*DLGScale+(qtr->width)*DLGScale
+        	  && ypos >= yo+(qtr->y)*DLGScale-(qtr->height)*DLGScale
+       	      && ypos <= yo+(qtr->y)*DLGScale) {
+       	        MenuItemSelect = i;
+       	        ItemFlag = True;
+       	        return;
+        	}
+        } else if ( qtr->DLGtype == DLGCHECKBOX ) {
+        	if ( xpos >= xo+(qtr->x)*DLGScale 
+        	  && xpos <= xo+(qtr->x)*DLGScale+(qtr->height)*DLGScale
+        	  && ypos >= yo+(qtr->y)*DLGScale-(qtr->height)*DLGScale
+       	      && ypos <= yo+(qtr->y)*DLGScale) {
+       	        MenuItemSelect = i;
+       	        ItemFlag = True;
+       	        return;
+        	}
+        }
+        qtr++;
+      }
+      ItemFlag = False;
+      return;
+    	
+    } else {
 
-    y = 2;
-    for( i=0; i<count; i++ )
-    {   if( !(ptr->flags&mbSepBar) )
-        {   if( (ypos>=y) && (ypos<=y+FontHigh+3) )
-            {   if( ptr->flags & mbEnable )
-                {   if( !ItemFlag || (MenuItemSelect!=i) )
-                    {   /* Avoid Flickering */
-                        MenuItemSelect = i;
-                        ItemFlag = True;
-                        DrawPopUpMenu();
-                    }
-                    return;
-                } else break;
-            }
-            y += FontHigh+4;
-        } else y += 2;
-        ptr++;
+      ptr = MenuBar[MenuBarSelect].menu;
+      count = MenuBar[MenuBarSelect].count;
+      if ( MenuBar[MenuBarSelect].increment && 
+        *(MenuBar[MenuBarSelect].increment)) {
+        count += 1+*(MenuBar[MenuBarSelect].increment);
+      }
+
+      yo = 2;
+      for( i=0; i<count; i++ )
+      {   if( !(ptr->flags&mbSepBar) )
+          {   if( (ypos>=yo) && (ypos<=yo+FontHigh+3) )
+              {   if( ptr->flags & mbEnable )
+                  {   if( !ItemFlag || (MenuItemSelect!=i) )
+                      {   /* Avoid Flickering */
+                          MenuItemSelect = i;
+                          ItemFlag = True;
+                          DrawPopUpMenu();
+                      }
+                      return;
+                  } else break;
+              }
+              yo += FontHigh+4;
+          } else yo += 2;
+          ptr++;
+      }
     }
 
     if( ItemFlag )
     {   ItemFlag = False;
-        DrawPopUpMenu();
+        if (MenuBarSelect == AboutDLGMItem) {
+          DrawAboutDLG();
+        } else {
+          DrawPopUpMenu();
+        }
     }
 }
 
 
-static void HandleItemMove( int x, int y )
+static void HandleItemMove( int xpos, int ypos )
 {
     register MenuItem *ptr;
+    register DLGItem *qtr;
     register int count,i;
 
-    static int xpos, ypos;
-    static Window win;
+    static int xo, yo;
 
-    XTranslateCoordinates(dpy,MenuWin,PopUpWin,x,y,
-                          &xpos,&ypos,&win);
+    if (MenuBarSelect == AboutDLGMItem) {
+      if ((xpos>=0) && (xpos<=PopUpWide) 
+        && (ypos>=0) && (ypos <= PopUpHigh)) {
+        qtr = AboutDLG;
+        count = AboutDLGCount;
+        yo = 2+FontHigh;
+        xo = 2;
+        for (i = 0; i < count; i++)  {
+          if ( qtr->DLGtype == DLGPUSHBUTTON ) {
+        	if ( xpos >= xo+(qtr->x)*DLGScale 
+        	  && xpos <= xo+(qtr->x)*DLGScale+(qtr->width)*DLGScale
+        	  && ypos >= yo+(qtr->y)*DLGScale-(qtr->height)*DLGScale
+       	      && ypos <= yo+(qtr->y)*DLGScale) {
+       	        MenuItemSelect = i;
+       	        ItemFlag = True;
+       	        return;
+        	}
+          } else if ( qtr->DLGtype == DLGCHECKBOX ) {
+        	if ( xpos >= xo+(qtr->x)*DLGScale 
+        	  && xpos <= xo+(qtr->x)*DLGScale+(qtr->height)*DLGScale
+        	  && ypos >= yo+(qtr->y)*DLGScale-(qtr->height)*DLGScale
+       	      && ypos <= yo+(qtr->y)*DLGScale) {
+       	        MenuItemSelect = i;
+       	        ItemFlag = True;
+       	        return;
+        	}
+          }
 
-    if( (xpos>=0) && (xpos<=PopUpWide) )
-    {   ptr = MenuBar[MenuBarSelect].menu;
-        count = MenuBar[MenuBarSelect].count;
-        if ( MenuBar[MenuBarSelect].increment && 
-          *(MenuBar[MenuBarSelect].increment)) {
-          count += 1+*(MenuBar[MenuBarSelect].increment);
+          qtr++;
         }
+      }
+    	
+    } else {
+    	
 
-        y = 2;
-        for( i=0; i<count; i++ )
-        {   if( !(ptr->flags&mbSepBar) )
-            {   if( (ypos>=y) && (ypos<=y+FontHigh+3) )
-                {   if( !ItemFlag || (MenuItemSelect!=i) )
-                    {   /* Avoid Flicker! */
-                        MenuItemSelect = i;
-                        ItemFlag = True;
-                        DrawPopUpMenu();
-                    }
-                    ItemFocus = True;
-                    return;
-                }
-                y += FontHigh+4;
-            } else y += 2;
-            ptr++;
-        }
+      if( (xpos>=0) && (xpos<=PopUpWide) )
+      {   ptr = MenuBar[MenuBarSelect].menu;
+          count = MenuBar[MenuBarSelect].count;
+          if ( MenuBar[MenuBarSelect].increment && 
+            *(MenuBar[MenuBarSelect].increment)) {
+            count += 1+*(MenuBar[MenuBarSelect].increment);
+          }
+
+          yo = 2;
+          for( i=0; i<count; i++ )
+          {   if( !(ptr->flags&mbSepBar) )
+              {   if( (ypos>=yo) && (ypos<=yo+FontHigh+3) )
+                  {   if( !ItemFlag || (MenuItemSelect!=i) )
+                      {   /* Avoid Flicker! */
+                          MenuItemSelect = i;
+                          ItemFlag = True;
+                          DrawPopUpMenu();
+                      }
+                      ItemFocus = True;
+                      return;
+                  }
+                  yo += FontHigh+4;
+              } else yo += 2;
+              ptr++;
+          }
+      }
+    
     }
 
     if( ItemFlag )
     {   /* Avoid Flicker! */
         ItemFlag = False;
-        DrawPopUpMenu();
+        if (MenuBarSelect == AboutDLGMItem) {
+          DrawAboutDLG();
+        } else {
+          DrawPopUpMenu();
+        }
     }
 }
 
@@ -1551,7 +2198,7 @@ static void SelectPrevItem( void )
     register int item;
     register int i;
 
-    if( !ItemFlag )
+    if( !ItemFlag || MenuBarSelect == AboutDLGMItem )
         return;
 
     item = MenuItemSelect;
@@ -1580,7 +2227,7 @@ static void SelectNextItem( void )
     register int item;
     register int i;
 
-    if( !ItemFlag )
+    if( !ItemFlag || MenuBarSelect == AboutDLGMItem )
         return;
 
     item = MenuItemSelect;
@@ -1613,6 +2260,8 @@ static void SelectMenu( int menu )
     register int wide;
     register int i,x;
 
+XRectangle bound;
+XRectangle dummy;
     if( !PopUpFlag )
     {   MenuBarSelect = menu;
         DrawMenuBar();
@@ -1623,18 +2272,26 @@ static void SelectMenu( int menu )
     {   x = 6;
         for( i=0; i<menu; i++ )
         {   ptr = MenuBar+i;
-            wide = XTextWidth(MenuFont,*(ptr->text),*(ptr->len));
+	   if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
+            wide = XmbTextExtents(fontset,*(ptr->text),*(ptr->len), &dummy, &bound);
+	   }else{
+	    wide = XTextWidth(MenuFont, *(ptr->text), *(ptr->len));
+           }
             x += wide+24;
         }
     } else 
     {   ptr = MenuBar+menu;
-        wide = XTextWidth(MenuFont,*(ptr->text),*(ptr->len));
+          if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
+            wide = XmbTextExtents(fontset,*(ptr->text),*(ptr->len), &dummy, &bound);
+	   }else{
+	    wide = XTextWidth(MenuFont, *(ptr->text), *(ptr->len));
+           }
         x = MainWide - (wide+24);
     }
 
     SelectFirstItem( menu );
     DisplayPopUpMenu( menu, x );
-    ItemFocus = False;
+	ItemFocus = False;
 }
 
 
@@ -1644,10 +2301,18 @@ static int HandleMenuClick( int pos )
     register int wide;
     register int x,i;
 
+    XRectangle bound;
+    XRectangle dummy;
+
+    if (PopUpFlag && MenuBarSelect == AboutDLGMItem) UnDisplayAboutDLG();
     x = 6;
     for( i=0; i<MenuBarCount; i++ )
     {   ptr = MenuBar+i;
-        wide = XTextWidth( MenuFont, *(ptr->text), *(ptr->len) );
+        if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
+            wide = XmbTextExtents(fontset,*(ptr->text),*(ptr->len), &dummy, &bound);
+	   }else{
+	    wide = XTextWidth(MenuFont, *(ptr->text), *(ptr->len));
+           }
         if( i == MenuBarMax-1 ) x = MainWide - (wide+24);
 
         if( (pos>=x) && (pos<=x+wide+16) )
@@ -1673,7 +2338,10 @@ static int HandleMenuKey( char key )
     key = ToUpper(key);
     for( i=0; i<MenuBarCount; i++ )
         if( ToUpper((*(MenuBar[i].text))[*(MenuBar[i].pos)]) == key )
-        {   if( !PopUpFlag || (MenuBarSelect!=i) )
+        {   if (PopUpFlag && MenuBarSelect == AboutDLGMItem) {
+    	      UnDisplayAboutDLG();
+            }
+            if( !PopUpFlag || (MenuBarSelect!=i) )
             {   PopUpFlag = True;
                 SelectMenu( i );
             }
@@ -1686,8 +2354,14 @@ static int HandleMenuKey( char key )
 void EnableMenus( int flag )
 {
     DisableMenu = !flag;
-    if( Interactive )
-        DrawMenuBar();
+    if( Interactive ) 
+    {  DrawMenuBar();
+        if (PopUpFlag && MenuBarSelect == AboutDLGMItem) {
+          XRaiseWindow(dpy,PopUpWin);	
+          DrawAboutDLG();
+        }
+    } 
+
 }
 
 
@@ -1726,6 +2400,23 @@ static void ReSizeWindow( int wide, int high )
     DrawYScroll();
     DrawMainWin();
     DrawMenuBar();
+    if (PopUpFlag && MenuBarSelect == AboutDLGMItem) {
+        int xpos, ypos;
+        Window win;
+        
+        XTranslateCoordinates(dpy,MainWin,RootWin,AboutDLGXpos,FontHigh+6,
+                          &xpos, &ypos, &win );
+
+        if( ypos+PopUpHigh > MaxHeight )
+          ypos -= (PopUpHigh+FontHigh+6);
+        if( xpos+PopUpWide > MaxWidth )
+          xpos = MaxWidth-PopUpWide;
+        if( xpos < 0 ) xpos = 0;
+        XMoveResizeWindow(dpy,PopUpWin,xpos,ypos,PopUpWide+1,PopUpHigh+1);
+        XClearWindow( dpy, PopUpWin); 
+        XRaiseWindow(dpy,PopUpWin);
+    	DrawAboutDLG();
+    }
 
     ReDrawFlag |= RFReSize;
     XSync(dpy,True);
@@ -1848,7 +2539,16 @@ int OpenDisplay( int x, int y )
         WhiteCol = (Pixel)(WhitePixel(dpy,num)&1);
     }
 
-    OpenFonts();
+    if ( RasOpenFonts() ) {
+	  if ( Language != Russian ) {
+	    SwitchLang(English);
+		if ( RasOpenFonts () ) 
+	      FatalGraphicsError("Unable to find suitable font");
+	  } else {
+		FatalGraphicsError("Unable to find suitable font");
+	  }
+    }
+
     OpenColourMap();
 
     MaxHeight = DisplayHeight(dpy,num);  MinHeight = MenuHigh+101;
@@ -1932,12 +2632,26 @@ int OpenDisplay( int x, int y )
     return( num );
 }
 
+#ifdef MITSHM
+static int HandleShmError( Display *dpy, XErrorEvent *ptr )
+{
+    /* Avoid Compiler Warnings! */
+    UnusedArgument(dpy);
+    UnusedArgument(ptr);
+    SharedMemOption = False;
+    return 0;
+}
+#endif
+
 
 int CreateImage( void )
 {
     register long size, temp;
     register int format;
     register Pixel *ptr;
+#ifdef MITSHM
+    register int (*handler)();
+#endif
 
     if( !Interactive )
     {   if( FBuffer ) free(FBuffer);
@@ -1992,9 +2706,11 @@ int CreateImage( void )
                     if( !Monochrome )
                         FBuffer = (Pixel*)image->data;
                     xshminfo.readOnly = True;
-
+                    handler = XSetErrorHandler ( HandleShmError );
                     SharedMemFlag = XShmAttach( dpy, &xshminfo );
                     XSync(dpy,False);
+                    XSetErrorHandler (handler);
+                    if (!SharedMemOption) SharedMemFlag = False;
                 }
                 /* Always Destroy Shared Memory Ident */
                 shmctl( xshminfo.shmid, IPC_RMID, 0 );
@@ -2010,6 +2726,7 @@ int CreateImage( void )
             } else 
             {   XDestroyImage( image );
                 image = (XImage*)NULL;
+                SharedMemOption = False;
             }
         }
     }
@@ -2170,7 +2887,6 @@ void SetCanvasTitle( char *ptr )
       XStoreName(dpy,MainWin,ptr);
     }
 }
-
 
 
 static int HandleIPCError( Display *dpy, XErrorEvent *ptr )
@@ -2411,6 +3127,7 @@ static int ProcessEvent(  XEvent *event )
     register int stat;
 
     result = 0;
+
     switch( event->type )
     {   case(ButtonPress):
             {   XButtonPressedEvent *ptr;
@@ -2486,7 +3203,9 @@ static int ProcessEvent(  XEvent *event )
             {   XMotionEvent *ptr;
 
                 ptr = (XMotionEvent*)event;
-                if( ptr->window==CanvWin )
+                if( ptr->window==PopUpWin && MenuBarSelect == AboutDLGMItem) {
+                    HandleItemMove(ptr->x,ptr->y);
+                } else if( ptr->window==CanvWin )
                 {   stat = GetStatus(ptr->state);
                     ProcessMouseMove(ptr->x,ptr->y,stat);
                 } else if( XHeldButton == -1 )
@@ -2499,7 +3218,30 @@ static int ProcessEvent(  XEvent *event )
                     }
                 }
             } break;
-             
+
+        case(CirculateNotify):
+            {   XCirculateEvent *ptr;
+
+                ptr = (XCirculateEvent*)event;
+                if( ptr->window==MainWin && ptr->place==PlaceOnTop
+                  && PopUpFlag && MenuBarSelect == AboutDLGMItem) {
+                	XRaiseWindow(dpy,PopUpWin);
+                	DrawAboutDLG();
+                }
+            } break;
+            
+    	case(VisibilityNotify):
+             {   XVisibilityEvent *ptr;
+
+                ptr = (XVisibilityEvent*)event;
+                if( ptr->window==PopUpWin && ptr->state != VisibilityUnobscured
+                  && PopUpFlag && MenuBarSelect == AboutDLGMItem) {
+                	XRaiseWindow(dpy,PopUpWin);
+                	DrawAboutDLG();
+                }
+            } break;
+   	
+            
         case(ButtonRelease):
             {   XButtonReleasedEvent *ptr;
 
@@ -2509,6 +3251,12 @@ static int ProcessEvent(  XEvent *event )
                 }
 
                 ptr = (XButtonReleasedEvent*)event;
+ 
+                if( ptr->window==PopUpWin && MenuBarSelect == AboutDLGMItem) {
+                    HandleItemClick(ptr->x,ptr->y);
+                    result = (MenuBarSelect<<8) +
+                                         MenuItemSelect+1;
+                } else if( ptr->window==CanvWin )                
                 if( ptr->window==CanvWin )
                 {   stat = GetStatus(ptr->state);
                     ProcessMouseUp(ptr->x,ptr->y,stat);
@@ -2560,7 +3308,7 @@ static int ProcessEvent(  XEvent *event )
 
         case(Expose):
             {   XExposeEvent *ptr;
-
+ 
                 ptr = (XExposeEvent*)event;
                 if( ptr->window==CanvWin )
                 {   if( image ) {
@@ -2576,14 +3324,19 @@ static int ProcessEvent(  XEvent *event )
                                    ptr->x, ptr->y, ptr->x, ptr->y,
                                    ptr->width, ptr->height );
                     } else XClearWindow( dpy, CanvWin );
-		    
                 } else if( ptr->window==MainWin )
                 {   DrawMainWin();
                     DrawMenuBar();
                 } else if( ptr->window==XScrlWin )
                 {   DrawXScroll();
                 } else if( ptr->window==YScrlWin )
-                    DrawYScroll();
+                {   DrawYScroll();
+                }
+                if (PopUpFlag
+                   && MenuBarSelect == AboutDLGMItem)  {
+                   XRaiseWindow(dpy,PopUpWin);
+                   DrawAboutDLG();
+                }
                 XFlush(dpy);
             } break;
 
@@ -2617,11 +3370,32 @@ static int ProcessEvent(  XEvent *event )
                 register int wide,high;
 
                 ptr = (XConfigureEvent*)event;
-                high = CropRange(ptr->height,MinHeight,MaxHeight);
-                wide = CropRange(ptr->width, MinWidth, MaxWidth );
+                if (ptr->window==MainWin) 
+                { high = CropRange(ptr->height,MinHeight,MaxHeight);
+                  wide = CropRange(ptr->width, MinWidth, MaxWidth );
 
-                if( (wide!=MainWide) || (high!=MainHigh) )
+                  if( (wide!=MainWide) || (high!=MainHigh) )
                     ReSizeWindow(wide,high);
+                  XFlush(dpy);
+                }
+                if (PopUpFlag && MenuBarSelect == AboutDLGMItem) {
+                  int xpos, ypos;
+                  Window win;
+               
+                  XTranslateCoordinates(dpy,MainWin,RootWin,AboutDLGXpos,FontHigh+6,
+                          &xpos, &ypos, &win );
+                          
+                  if( ypos+PopUpHigh > MaxHeight )
+                    ypos -= (PopUpHigh+FontHigh+6);
+                  if( xpos+PopUpWide > MaxWidth )
+                    xpos = MaxWidth-PopUpWide;
+                  if( xpos < 0 ) xpos = 0;
+                  
+                  XMoveWindow(dpy,PopUpWin,xpos,ypos);
+                  XRaiseWindow(dpy,PopUpWin);
+                  DrawAboutDLG();
+                  XFlush(dpy);
+                }
             } break;
 
         case(ClientMessage):
@@ -2647,6 +3421,10 @@ static int ProcessEvent(  XEvent *event )
             DrawYScroll();
             DrawMainWin();
             DrawMenuBar();
+            if (PopUpFlag && MenuBarSelect == AboutDLGMItem) {
+            	XRaiseWindow(dpy,PopUpWin);
+                DrawAboutDLG();
+            }
             break;
 
         default:  
@@ -2681,6 +3459,10 @@ static int HandleMenuLoop( void )
     XHeldButton = -1;
     MenuFocus = True;
     DrawMenuBar();
+    if (PopUpFlag && MenuBarSelect == AboutDLGMItem) {
+      XRaiseWindow(dpy,PopUpWin);
+      DrawAboutDLG();
+    }
 
     result = 0;
     done = False;
@@ -2692,9 +3474,12 @@ static int HandleMenuLoop( void )
 
                     ptr = (XExposeEvent*)&event;
                     if( ptr->window==PopUpWin )
-                    {   DrawPopUpMenu();
+                    { if (MenuBarSelect == AboutDLGMItem)
+                      DrawAboutDLG(); else
+                      DrawPopUpMenu();
                     } else ProcessEvent(&event);
                 } break;
+
 
             case(ButtonPress): 
                 {   XButtonPressedEvent *ptr;
@@ -2720,8 +3505,13 @@ static int HandleMenuLoop( void )
                         /* All Events Relative to MenuWin */
                         if( (ptr->y>=0) && (ptr->y<=FontHigh+5) )
                         {   HandleMenuClick( ptr->x );
-                        } else if( PopUpFlag )
-                            HandleItemMove(ptr->x,ptr->y);
+                        } else if( PopUpFlag ) {
+                            int xpos, ypos;
+                            Window win;
+                            XTranslateCoordinates(dpy,MenuWin,PopUpWin,ptr->x,ptr->y,
+                               &xpos,&ypos,&win);
+                            HandleItemMove(xpos,ypos);
+                        }
                     } break;
 
             case(ButtonRelease):
@@ -2735,8 +3525,13 @@ static int HandleMenuLoop( void )
                                 DrawPopUpMenu();
                             } else done = True;
                         } else if( PopUpFlag )
-                        {   if( ItemFocus )
-                                HandleItemClick(ptr->x,ptr->y);
+                        {   if( ItemFocus || MenuBarSelect == AboutDLGMItem) {
+                              int xpos, ypos;
+                              Window win;
+                              XTranslateCoordinates(dpy,MenuWin,PopUpWin,ptr->x,ptr->y,
+                                &xpos,&ypos,&win);
+                              HandleItemClick(xpos,ypos);
+                            }
                             if( ItemFlag )
                                 result = (MenuBarSelect<<8) +
                                          MenuItemSelect+1;
@@ -2757,7 +3552,7 @@ static int HandleMenuLoop( void )
                     index = XLookupString(ptr,&keychar,1,&symbol,NULL);
                     switch( symbol )
                     {   case(XK_Right): index = MenuBarSelect+1;
-                                        if( index != MenuBarCount )
+                                        if( index < MenuBarCount )
                                         {   SelectMenu( index );
                                         } else SelectMenu( 0 );
                                         break;
@@ -2798,15 +3593,15 @@ static int HandleMenuLoop( void )
                     }
                 } break;
 
-
-            case(ConfigureNotify):  /* done = True; */
             default:                ProcessEvent(&event);
         }
     }
 
     /* Passive Grab Release */
     XUngrabPointer(dpy,CurrentTime);
-
+    if (PopUpFlag && MenuBarSelect == AboutDLGMItem) {
+      UnDisplayAboutDLG();
+    }
     XUnmapWindow(dpy,PopUpWin);
     PopUpFlag = False;
     MenuFocus = False;

@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                              RasMol 2.7.3.1                             *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                              14 April 2006                              *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -27,6 +26,7 @@
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
  *                                                                         *
  *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
  *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
@@ -43,6 +43,7 @@
  *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
  *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  G. Pozhvanov                         2.7.3 menus and message   Russian *
  *                                                                         *
  *                             This Release by                             *
  * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
@@ -55,6 +56,32 @@
  ***************************************************************************/
 /* repres.h
  $Log: not supported by cvs2svn $
+ Revision 1.3  2007/10/23 02:27:55  yaya
+ Preliminary mods for revised PDB format derived from Rutgers mods.
+ Partial changes for map tangles -- HJB
+
+ Revision 1.2  2007/07/02 12:44:39  yaya
+ Partial preliminary map code -- HJB
+
+ Revision 1.1.1.1  2007/03/01 01:16:32  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.3  2006/11/01 03:23:51  yaya
+ Update NSIS windows installer for more script types and to fix
+ misplaced script instructions for data files; add document and
+ script icons directly in raswin.exe; add credit line to
+ G. A. Pozhvanov in comments for Russian translations. -- HJB
+
+ Revision 1.2  2006/09/17 10:53:56  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:45:59  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.2  2006/06/19 22:06:41  todorovg
+ Rasmol 2.7.3.1
+
  Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
  Initial Rasmol 2.7.3 Import
 
@@ -83,6 +110,23 @@
  Rough cut with ucb
 
 */
+
+#ifndef KNOT_DEFINED
+typedef struct {
+        int px, py, pz;      /* Spline Control Co-ordinate */
+        int tx, ty, tz;      /* Spline Direction Vector    */
+        int hnx, hny, hnz;   /* Horizontal Normal Vector   */
+        int vnx, vny, vnz;   /* Vertical Normal Vector     */
+        int dx, dy, dz;      /* Ribbon Height Vector       */
+        int wx, wy, wz;      /* Ribbon Width Vector        */
+        char hinten;         /* Horizontal Intensity       */
+        char vinten;         /* Vertical Intensity         */
+        short hsize;         /* Horizontal Vector Length   */
+        short vsize;         /* Vertical Vector Length     */
+        short wide;          /* Ribbon Width               */
+    } Knot;
+#define KNOT_DEFINED
+#endif
 
 #define DotMax    100
 typedef struct _DotStruct {
@@ -173,8 +217,13 @@ void DisplayMonitors( void );
 void DeleteSurface( void );
 void CalculateSurface( int );
 void DisplaySurface( void );
+void DisplayMapPoints( void );
+void DisplayMapBonds( void );
+void DisplayMapTangles( void );
 
 /* Ribbons & Cartoons */
+void CalculateVInten( Knot *);
+void CalculateHInten( Knot *);
 void DisplayRibbon( Chain __far* );
 
 void ResetRepres( void );

@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                              RasMol 2.7.3.1                             *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                              14 April 2006                              *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -27,6 +26,7 @@
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
  *                                                                         *
  *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
  *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
@@ -55,6 +55,46 @@
  ***************************************************************************/
 /* rasmac.c
  $Log: not supported by cvs2svn $
+ Revision 1.4  2007/07/07 21:54:31  yaya
+ Next round of preliminary updates for maps, allowing multiple maps,
+ code to set the contour level and some fixes to the languages files -- HJB
+
+ Revision 1.3  2007/07/02 12:44:39  yaya
+ Partial preliminary map code -- HJB
+
+ Revision 1.2  2007/03/14 03:26:29  yaya
+ Update langsel_mac.c with latest translations (Bulgarian, Chinese, Japanese)
+ and setup rasmac.c for font size adjustments. -- HJB
+
+ Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.6  2006/12/11 02:45:38  yaya
+ Migrate some of the language switching tables to mac and mswin version
+ and update the icons for mswin and X11 versions. -- HJB
+
+ Revision 1.5  2006/12/03 02:53:10  yaya
+ Clean up compilation warnings in outfile.c
+ Mods for about screen under Linux -- HJB
+
+ Revision 1.4  2006/10/30 15:18:12  yaya
+ Add NSIS installer, make language sticky for windows and mac
+ Set up RASMOLPATH environment variable on install -- HJB
+
+ Revision 1.3  2006/10/14 21:05:51  yaya
+ Changes for build of Mac Classic versions with Russian
+ and with new About and Help dialogs -- HJB
+
+ Revision 1.2  2006/09/17 10:53:56  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:45:56  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
+ Initial Rasmol 2.7.3 Import
+
  Revision 1.1  2004/05/07 19:46:16  yaya
  Initial revision
 
@@ -154,6 +194,7 @@
 #include "vector.h"   /* [GSG 11/13/95] */
 #include "wbrotate.h" /* [GSG 11/14/95] */
 #include "langsel.h"
+#include "maps.h"
 
 #include "rasmac.h"
 
@@ -165,7 +206,7 @@ pascal OSErr SetDialogDefaultItem( DialogPtr theDialog,
 
 #define ScrlMax    80
 #define CmndRows   160
-#define CmndCols   80
+#define CmndCols   132
 #define CmndSize   (CmndRows*CmndCols)
 
 #define ClipCaret  (CaretX<CmndWin->portRect.right-15)
@@ -188,6 +229,10 @@ static ControlHandle CmndScroll;
 static short RasMolResFile;
 static char Filename[1024];
 static int DialogFormat;
+
+/* About Dialog Variables */
+
+static int ShowAbout = 0;
 
 
 #ifdef __CONDITIONALMACROS__
@@ -215,6 +260,7 @@ DlgHookYDUPP SaveDlgHookPtr;
 /*=======================*/
 
 static void PaintScreen( void );
+static void ReSizeCmndWin( void );
 
 
 
@@ -227,6 +273,7 @@ void RasMolExit( void )
     if( FBuffer ) _ffree( FBuffer );
     if( DBuffer ) _ffree( DBuffer );
     if( DotPtr ) DeleteSurface();
+    if( MapInfoPtr ) DeleteAllMaps();
     PurgeDatabase();
     CloseDisplay();
     ExitToShell();
@@ -284,6 +331,7 @@ void RasMolFatalExit( char *msg )
     if( FBuffer ) _ffree( FBuffer );
     if( DBuffer ) _ffree( DBuffer );
     if( DotPtr ) DeleteSurface();
+    if( MapInfoPtr ) DeleteAllMaps();
     PurgeDatabase();
     CloseDisplay();
     ExitToShell();
@@ -439,6 +487,51 @@ void WriteChar( int ch )
     register int i;
     
     GrafPtr savePort;
+    FontInfo finfo;
+    Str255 fnamebuf;
+    short fontid;
+    int x, y, cols, rows;
+    int ii;
+    
+      if ( TermLanguage != Language) {
+        for (ii=0; ii < NUMLANGS; ii++) {
+        if (Language == langfonts[ii].lang) {
+          strcpy((char *)(fnamebuf+1),langfonts[ii].menufontlist);
+          fnamebuf[0] = strlen(langfonts[ii].menufontlist);
+          break;
+        }
+      }
+
+      fontid = 0;
+      GetFNum(fnamebuf,&fontid);
+      if (fontid == 0) {
+        SwitchLang(English);
+        TermLanguage = English;
+        strncpy((char *)(fnamebuf+1),"Monaco",7);
+        fnamebuf[0] = 6;
+        GetFNum(fnamebuf,&fontid);
+      }
+      GetPort(&savePort);
+      SetPort(CmndWin);
+      TextFont(fontid);
+      if (Language == Russian || Language == Bulgarian ) TextSize(14);
+      else if (Language == Chinese || Language == Japanese ) TextSize(16);
+      else TextSize(10);
+      TextFace(0);
+      CharExtra(0);
+      
+      GetFontInfo(&finfo);
+      CharSkip = finfo.ascent + finfo.descent + finfo.leading;
+      CharHigh = finfo.ascent;
+      CharWide = finfo.widMax;
+      if (Language == Russian || Language == Bulgarian) CharWide-=2;
+      SetPort(savePort);
+      TermLanguage = Language;
+          
+      ReSizeCmndWin();
+      
+    }
+
     
     /* Scroll to bottom! */
     if( ScrlStart )
@@ -576,7 +669,7 @@ static void InitTerminal( void )
 #endif
 #endif
 #endif
-    TextSize(9);
+    TextSize(10);
     TextFace(0);
     
     GetFontInfo(&finfo);
@@ -836,23 +929,190 @@ static void HelpScreen()
 #endif
 }
 
+void WriteNumberString(int i) {
+  char buffer[80];
+  sprintf(buffer," %x ",i);
+  WriteString(buffer);
+  return;
+}
+
+static void Register( void ) {
+  if (LaunchBrowserWithURL("http://www.rasmol.org/register.shtml"))
+     HelpScreen();
+  return;
+}
+
+static void Donate( void ) {
+  if (LaunchBrowserWithURL("http://www.rasmol.org/donate.shtml"))
+     HelpScreen();
+  return;
+}
+
+
+static size_t DetermineApplicationIdentifier( char * aid, size_t maxlen ) {
+
+
+  Str255 macname;
+  char * src, * dst;
+    
+  dst = aid;
+  if (!GetMacName(macname) ) { 	
+    src = 1+(char *)macname;
+    while(macname[0]) {*dst++ = *src++; macname[0]--;}
+    *dst = '\0';
+  }
+  
+  return dst-aid;
+	
+}
+
+
+static int getraid ( char * aid, size_t maxlen, char * langstr, size_t maxlstr ) {
+  Str255 buffer;
+  Str255 username;
+  char * src, *dst;
+  int charlen;
+  int sind;
+  
+  
+  if (!GetUserName(username)) {
+     if (!(sind = FindPreferenceString(username,RASMOL_AID_UID))) {
+       if (!(sind = SetPreferenceString(username,RASMOL_AID_UID,0))) {
+       	  sind = RASMOL_AID_IND;
+       }
+  	 }
+  }
+  
+  *langstr = '\0';
+  if (GetPreferenceString(buffer,RASMOL_LANG_ID,sind)) {
+    src = ((char *)buffer)+1;
+    dst = langstr;
+    charlen = buffer[0];
+    if (charlen >= maxlstr) charlen = maxlstr-1;
+    while( charlen > 0 )  {
+      *dst++ = *src++;
+      charlen--;
+    }
+    *dst = '\0';
+  }
+
+  if (GetPreferenceString(buffer,RASMOL_AID_ID,sind)) {
+    src = ((char *)buffer)+1;
+    dst = aid;
+    charlen = buffer[0];
+    if (charlen >= maxlen) charlen = maxlen-1;
+    while( charlen > 0 )  {
+      *dst++ = *src++;
+      charlen--;
+    }
+    *dst = '\0';
+    return dst-aid+strlen(langstr);
+  }
+  *aid = '\0';
+  return 0;
+  	
+}
+
+static int setraid ( const char * aid, const char * langstr ) {
+  Str255 buffer;
+  Str255 username;
+  int sind;
+  
+  if (!GetUserName(username)) {
+     if (!(sind = FindPreferenceString(username,RASMOL_AID_UID))) {
+       if (!(sind = SetPreferenceString(username,RASMOL_AID_UID,0))) {
+       	  sind = RASMOL_AID_IND;
+       }
+  	 }
+  }
+  if (SetPreferenceString(tostr255(buffer,aid),RASMOL_AID_ID,sind)
+    && SetPreferenceString(tostr255(buffer,langstr),RASMOL_LANG_ID,sind)){
+    return strlen(aid) + strlen(langstr);
+  }	else {
+    return 0;
+  }
+
+}
+
+void UpdateLanguage( void ) {
+
+  char filaid[255];
+  char fillang[81];
+
+  if (getraid(filaid, 255, fillang, 81))
+    setraid(filaid,lang2str(Language));
+}
+
+
+static char filaid[1025];
+static char macaid[1025];
+
 static void HandleAboutDialog( void )
 {
     register char *fpu;
     register char *src;
     register char *dst;
     register int len;
+    char fillang[81];
     
     Str255 temp;
     Str255 buffer;
     DialogPtr dlg;
     Handle hand;
     long reply;
-    short item;
+    short item, jtem;
     Rect rect;
     
-    dlg = GetNewDialog(170,(Ptr)0,(WindowPtr)-1);
+    dlg = GetNewDialog(DLG_ABOUT,(Ptr)0,(WindowPtr)-1);
     SetDialogDefaultItem(dlg,1);
+
+    
+    /* Fix dialog localized text */
+    
+#ifdef USEOLDROUTINENAMES
+    GetDItem(dlg,DLG_ABOUT_REGISTER,&item,&hand,&rect);
+    SetCTitle((ControlHandle)hand,tostr255(buffer,MsgStrs[StrRegister]); 
+#else
+    GetDialogItem(dlg,DLG_ABOUT_REGISTER,&item,&hand,&rect);
+    SetControlTitle((ControlRef)hand,tostr255(buffer,MsgStrs[StrRegister])); 
+#endif
+#ifdef USEOLDROUTINENAMES
+    GetDItem(dlg,DLG_ABOUT_DONATE,&item,&hand,&rect);
+    SetCTitle((ControlHandle)hand,tostr255(buffer,MsgStrs[StrDonate]));
+#else
+    GetDialogItem(dlg,DLG_ABOUT_DONATE,&item,&hand,&rect);
+    SetControlTitle((ControlRef)hand,tostr255(buffer,MsgStrs[StrDonate]));
+#endif
+#ifdef USEOLDROUTINENAMES
+    GetDItem(dlg,DLG_ABOUT_NOSHOW,&item,&hand,&rect);
+    SetCTitle((ControlHandle)hand,tostr255(buffer,MsgStrs[StrNoShow]);
+#else
+    GetDialogItem(dlg,DLG_ABOUT_NOSHOW,&item,&hand,&rect);
+    SetControlTitle((ControlRef)hand,tostr255(buffer,MsgStrs[StrNoShow]));
+#endif
+    
+    /* See if noshow button should be checked */
+    if (getraid(filaid, 1025, fillang, 81)
+      && DetermineApplicationIdentifier(macaid, 1025)
+      && !strncmp(filaid,macaid,1024)) {
+#ifdef USEOLDROUTINENAMES
+      SetCtlValue((ControlRef)hand,1);
+#else
+      SetControlValue((ControlRef)hand,1);
+#endif
+    }
+
+
+#ifdef USEOLDROUTINENAMES
+    GetDItem(dlg,DLG_ABOUT_WARRANTY,&item,&hand,&rect);
+    SetIText(hand,tostr255(buffer,MsgStrs[StrWarranty]));
+#else
+    GetDialogItem(dlg,DLG_ABOUT_WARRANTY,&item,&hand,&rect);
+    SetDialogItemText(hand,tostr255(buffer,MsgStrs[StrWarranty]));
+#endif
+
+
+
     
     /* System Information! */
     dst = (char*)&buffer[1];
@@ -884,10 +1144,10 @@ static void HandleAboutDialog( void )
     len = dst - (char*)&buffer[1];
     buffer[0] = (unsigned char)len;
 #ifdef USEOLDROUTINENAMES    
-    GetDItem(dlg,6,&item,&hand,&rect);
+    GetDItem(dlg,DLG_ABOUT_MACTYPE,&item,&hand,&rect);
     SetIText(hand,buffer);
 #else
-    GetDialogItem(dlg,6,&item,&hand,&rect);
+    GetDialogItem(dlg,DLG_ABOUT_MACTYPE,&item,&hand,&rect);
     SetDialogItemText(hand,buffer);
 #endif
     
@@ -916,6 +1176,8 @@ static void HandleAboutDialog( void )
             case(gestaltPPC603e):   src = "PPC603e";  break;
             case(gestaltPPC603ev):  src = "PPC603ev"; break;
             case(gestaltG3):        src = "G3";       break;
+            case(gestaltG4):
+        	case(gestaltG4x):       src = "G4";       break;
             case(gestaltPPC604e):   src = "PPC604e";  break;
             default:   sprintf((char*)temp,"Unkown processor (0x%04x)",reply);
                        src = (char*)temp;
@@ -947,13 +1209,12 @@ static void HandleAboutDialog( void )
     len = dst - (char*)&buffer[1];
     buffer[0] = (unsigned char)len;
 #ifdef USEOLDROUTINENAMES
-    GetDItem(dlg,7,&item,&hand,&rect);
+    GetDItem(dlg,DLG_ABOUT_CPUTYPE,&item,&hand,&rect);
     SetIText(hand,buffer);
 #else
-    GetDialogItem(dlg,7,&item,&hand,&rect);
+    GetDialogItem(dlg,DLG_ABOUT_CPUTYPE,&item,&hand,&rect);
     SetDialogItemText(hand,buffer);
 #endif
-
     /* Display Dialog Box! */    
     ShowWindow(dlg);
     do {
@@ -962,12 +1223,48 @@ static void HandleAboutDialog( void )
 #else
         ModalDialog((ProcPtr)0,&item);
 #endif
-    } while( item != 1 );
+        if ( item == DLG_ABOUT_NOSHOW ) {
+#ifdef USEOLDROUTINENAMES
+    GetDItem(dlg,DLG_ABOUT_NOSHOW,&item,&hand,&rect);
+    SetCtlValue((ControlHandle)hand,1-GetCtlValue((ControlHandle)hand));
+#else
+    GetDialogItem(dlg,DLG_ABOUT_NOSHOW,&item,&hand,&rect);
+    SetControlValue((ControlHandle)hand,1-GetControlValue((ControlHandle)hand));
+#endif
+        }
+    } while( item != DLG_ABOUT_OK 
+      && item != DLG_ABOUT_DONATE
+      && item != DLG_ABOUT_REGISTER);
+    
+    /* Get final noshow status */
+    
+#ifdef USEOLDROUTINENAMES
+    GetDItem(dlg,DLG_ABOUT_NOSHOW,&jtem,&hand,&rect);
+    if ( GetCtlValue((ControlHandle)hand)) {
+#else
+    GetDialogItem(dlg,DLG_ABOUT_NOSHOW,&jtem,&hand,&rect);
+    if ( GetControlValue((ControlHandle)hand)) {
+#endif
+      DetermineApplicationIdentifier(macaid, 1025);
+    } else {
+      strcpy(macaid,"SHOWME");	
+    }
+    setraid(macaid,lang2str(Language));
+    
 #ifdef USEOLDROUTINENAMES
     DisposDialog(dlg);
 #else
     DisposeDialog(dlg);
 #endif
+
+    if (item == DLG_ABOUT_DONATE) {
+       Donate();
+       ShowAbout = 1;
+    }
+    if (item == DLG_ABOUT_REGISTER) {
+       Register();
+       ShowAbout = 1;
+    }
 }
 
 
@@ -1065,7 +1362,7 @@ pascal short SaveDlgHook( short item, DialogPtr dialog, void *data )
 }
 
 
-static void HandleFileOpen( void )
+static int HandleFileOpen( void )
 {
     register int format;
     StandardFileReply reply;
@@ -1076,10 +1373,13 @@ static void HandleFileOpen( void )
     types[0]='TEXT';
     types[1]='RSML';
     types[2]='mMOL';
+    types[3]='????';
 
     DialogFormat = 1;
     pnt.v = pnt.h = -1;
-    CustomGetFile( NULL, 3, types, &reply, 172, pnt,
+/*  CustomGetFile( NULL, 4, types, &reply, 172, pnt,   */
+/*    For use in Mac OS X's Classic, remove the filter */
+    CustomGetFile( NULL, -1, types, &reply, 172, pnt,
 #ifdef __CONDITIONALMACROS__
                    OpenDlgHookPtr,
 #else
@@ -1098,11 +1398,19 @@ static void HandleFileOpen( void )
             case(6):  format = FormatCharmm;   break;
             case(7):  format = FormatMOPAC;    break;
             case(8):  format = FormatCIF;      break;
+            case(9):      
+                      strcpy(CurLine,"script ");
+		              CurLine[MAXBUFFLEN-1]='\0';
+		              strncpy(CurLine+7,Filename,MAXBUFFLEN-8);
+		              /* WriteString(CurLine); */
+		              return 1;
+                      break;
         }
         
         FetchFile(format,True,Filename);
         DefaultRepresentation();
     }
+    return 0;
 }
 
 
@@ -1142,17 +1450,27 @@ static void HandleExportMenu( int item )
     Point pnt;
     
     switch( item )
-    {   case(1):  resid=0;   ptr="\pSave GIF Image:";          break;
-        case(2):  resid=174; ptr="\pSave PostScript File:";    break;
-        case(3):  resid=175; ptr="\pSave Portable PixMap:";    break;
-        case(4):  resid=176; ptr="\pSave SUN Rasterfile:";     break;
-        case(5):  resid=0;   ptr="\pSave Microsoft BMP File:"; break;
-        case(6):  resid=0;   ptr="\pSave PICT Image:";         break;
+    {   case(1):  resid=0;   ptr="\pSave Microsoft BMP File:"; break;
+        case(2):  resid=0;   ptr="\pSave GIF Image:";          break;
+		case(3):  resid=0;   ptr="\pSave IRIS RGB:";           break;
+        case(4):  resid=175; ptr="\pSave Portable PixMap:";    break;
+        case(5):  resid=176; ptr="\pSave SUN Rasterfile:";     break;
+        case(6):  resid=174; ptr="\pSave PostScript File:";    break;
+        case(7):  resid=0;   ptr="\pSave PICT Image:";         break;
+        case(8):  resid=174; ptr="\pSave Vector PS File:";     break;
+        case(9):  resid=0;   ptr="\pSave Molscript File:";     break;
+        case(10):  resid=0;   ptr="\pSave Kinemage File:";     break;
+        case(11):  resid=0;   ptr="\pSave POVRay 3 File:";     break;
+        case(12):  resid=0;   ptr="\pSave VRML File:";         break;
+        case(13):  resid=0;   ptr="\pSave Ramachandran PP:";   break;
+        case(14):  resid=0;   ptr="\pSave Raster3D script:";   break;
+        case(15):  resid=0;   ptr="\pSave RasMol Script:";     break;
         default:  return;
     }
     
     if( resid )
     {   DialogFormat = 1;
+        if (item == 8) DialogFormat = 3;
         pnt.v = pnt.h = -1;
         CustomPutFile( ptr, "\p", &reply, resid, pnt,
 #ifdef __CONDITIONALMACROS__
@@ -1166,19 +1484,37 @@ static void HandleExportMenu( int item )
     
     ConvertFilename( &reply.sfFile );
     switch( item )
-    {   case(1):  WriteGIFFile(Filename);  break;
-        case(2):  if( DialogFormat == 1 )
+    {   case(1):  WriteBMPFile(Filename);             break;
+        case(2):  WriteGIFFile(Filename);             break;
+        case(3):  WriteIRISFile(Filename);            break;
+        case(4):  
+                  if( DialogFormat == 1)
+                  {  WritePPMFile(Filename,True);
+                  } else 
+                     WritePPMFile(Filename,False);    break;
+        case(5):  
+                  if( DialogFormat == 1)
+                  {  WriteRastFile(Filename,True);
+                  } else 
+                     WriteRastFile(Filename,False);   break;
+        case(6):
+        case(8):  if( DialogFormat == 1 )
                   {   WriteEPSFFile(Filename,True,True);
                   } else if( DialogFormat == 2 )
                   {   WriteEPSFFile(Filename,False,True); 
                   } else /* DialogFormat == 3 */
                       WriteVectPSFile(Filename);
                   break;
-                  
-        case(3):  WritePPMFile(Filename,(DialogFormat==1));  break;
-        case(4):  WriteRastFile(Filename,(DialogFormat==1)); break;
-        case(5):  WriteBMPFile(Filename);  break;
-        case(6):  WritePICTFile(Filename); break;
+        case(7):  WritePICTFile(Filename);            break;
+                 
+		case(9):  WriteMolScriptFile(Filename);       break;
+		case(10): WriteKinemageFile(Filename);        break;
+		case(11): WritePOVRay3File(Filename);         break;
+		case(12): WriteVRMLFile(Filename,0);          break;
+		case(13): WritePhiPsiAngles(Filename,-1);     break;
+		case(14): WriteR3DFile(Filename);             break;
+		case(15): WriteScriptFile(Filename);          break;
+
     }
 }
 
@@ -1210,16 +1546,17 @@ static void HandleMenu( long hand )
     {   item = LoWord(hand);
         switch( menu )
         {   case(140):  /* Apple Menu */
-                        if( item == 1 )
-                        {   HandleAboutDialog();
-                        } else {
-                          if (item ==2 ) {
-                            HelpScreen();
-                          } else {
-                            if( item > 3 ) {
-                            HandleAppleMenu(item);
-                            }
-                          }
+        
+                        switch( item ) {
+                          case(1):  /* About */
+                            HandleAboutDialog(); break;
+                          case(2):  /* Help  */
+                            HelpScreen(); break;
+                          case(3):  /* Register */
+                            Register(); break;
+                          case(4):  /* Donate */
+                            Donate(); break;
+                          default: HandleAppleMenu(item);
                         }
                         break;
                       
@@ -1227,7 +1564,7 @@ static void HandleMenu( long hand )
                         switch( item )
                         {   case(1):  /* Open */
 			              if( NumMolecules < MAX_MOLECULES )
-                                          HandleFileOpen();
+                                          if (HandleFileOpen()) ExecuteCommand();
                                       break;
                             case(2):  /* Save As */
                                       if( Database )
@@ -2289,6 +2626,10 @@ static void HandleEvents( void )
         RefreshScreen();
     if( !CommandActive )
         ResetCommandLine(0);
+    if( ShowAbout ) {
+      ShowAbout = 0;
+      HandleAboutDialog();
+    }
 }
 
 
@@ -2480,21 +2821,36 @@ static void InitDefaultValues( void )
 int main( void )
 {
     static char VersionStr[255];
+    char fillang[81];
 
     Interactive = False;
-    SwitchLang(English);
+    InitialiseApplication();
+    InitDefaultValues();
+    OpenDisplay(DefaultWide,DefaultHigh);
+    InitTerminal();
+
+    fillang[0]='\0';
+    if (getraid(filaid, 1025, fillang, 81)
+      && DetermineApplicationIdentifier(macaid, 1025)
+      && !strncmp(filaid,macaid,1024)) {
+      ShowAbout = 0;
+    } else {
+      ShowAbout = 1;
+    }
+    if (strlen(fillang) > 0) {
+    	SwitchLang(str2lang(fillang));
+    	TermLanguage = Language;
+    } else {
+    	SwitchLang(English);
+    	TermLanguage = English;
+    }
 
     sprintf (VersionStr,"%s\nVersion %s %s\n%s\n", 
              MAIN_COPYRIGHT, VERSION, 
              VER_DATE, VER_COPYRIGHT);
     
-    InitialiseApplication();
-    InitDefaultValues();
 
-    OpenDisplay(DefaultWide,DefaultHigh);
-    InitTerminal();
 
-    SwitchLang(English);
     
     WriteString("RasMol Molecular Renderer\n");
     WriteString("Roger Sayle, August 1995\n");
@@ -2532,6 +2888,8 @@ int main( void )
     
     ResetCommandLine(1);
     RefreshScreen();
+    
+
         
     while( True )
         HandleEvents();

@@ -1,9 +1,9 @@
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                              RasMol 2.7.3.1                             *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                              14 April 2006                              *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -26,12 +26,19 @@
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                                                                         *
+ *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
+ *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
+ *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
+ *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
+ *of Energy.                                                               *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                      Language*
- *  Isabel Serván Martínez,                                                *
- *  José Miguel Fernández Fernández      2.6   Manual              Spanish *
- *  José Miguel Fernández Fernández      2.7.1 Manual              Spanish *
+ *  Isabel Servan Martinez,                                                *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
  *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
  *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
@@ -40,11 +47,12 @@
  *                             This Release by                             *
  * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2001               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2005               *
  *                                                                         *
- *                READ THE FILE NOTICES FOR RASMOL LICENSES                *
+ *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
+ *Please read the file NOTICE for important notices which apply to this    *
+ *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
-
 /* rasmol.h
  */
 
@@ -81,6 +89,7 @@
 #endif
 
 /* #define XPROCARCH    */
+
 
 /*========================*/
 /*  Default User Options! */
@@ -143,9 +152,9 @@
 /*==============================*/
 
 #define MAIN_COPYRIGHT "Copyright (C) Roger Sayle 1992-1999"
-#define VERSION "2.7.3"
-#define VER_COPYRIGHT "Copyright (C) Herbert J. Bernstein 1998-2005"
-#define VER_DATE "February 2005"
+#define VERSION "2.7.3.1"
+#define VER_COPYRIGHT "Copyright (C) Herbert J. Bernstein 1998-2006"
+#define VER_DATE "April 2006"
 
 #ifndef True
 #define True  1

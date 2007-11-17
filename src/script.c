@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                              RasMol 2.7.3.1                             *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                              14 April 2006                              *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -27,6 +26,7 @@
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
  *                                                                         *
  *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
  *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
@@ -43,6 +43,7 @@
  *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
  *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  G. Pozhvanov                         2.7.3 menus and message   Russian *
  *                                                                         *
  *                             This Release by                             *
  * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
@@ -55,6 +56,29 @@
  ***************************************************************************/
 /* script.c
  $Log: not supported by cvs2svn $
+ Revision 1.2  2007/11/16 22:48:31  yaya
+ Remove use of MapNumber if favor of size of vector
+ Clean up selection logic; start on script writing code -- HJB
+
+ Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.3  2006/11/01 03:23:51  yaya
+ Update NSIS windows installer for more script types and to fix
+ misplaced script instructions for data files; add document and
+ script icons directly in raswin.exe; add credit line to
+ G. A. Pozhvanov in comments for Russian translations. -- HJB
+
+ Revision 1.2  2006/09/17 10:53:56  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:46:00  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.2  2006/06/19 22:06:41  todorovg
+ Rasmol 2.7.3.1
+
  Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
  Initial Rasmol 2.7.3 Import
 
@@ -124,6 +148,8 @@
 #include "pixutils.h"
 #include "vector.h"
 #include "wbrotate.h"
+#include "tokens.h"
+#include "maps.h"
 
 #ifdef INVERT
 #define InvertY(y) (y)
@@ -195,6 +221,9 @@ static RAtom __far *MagePrev;
 static char *MageCol;
 static FILE *OutFile;
 static int SelectAll;
+
+static int vrml_mirror;
+static int vrml_rotate;
 
 
 
@@ -1104,6 +1133,45 @@ static void WriteScriptMonitors( void )
             }
 }
 
+static void WriteScriptMaps()
+{   int j;
+    MapInfo *mapinfo;
+    
+    if (MapInfoPtr) {
+      for (j=0; j < MapInfoPtr->size; j++) {
+        vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
+        if (mapinfo->MapPtr) {
+          if (mapinfo->flag&MapPointFlag)fprintf(OutFile,"map new dots %-.2lf\n",
+              ((double)mapinfo->MapPointRad/250.) );
+          if (mapinfo->flag&MapMeshFlag){
+            if ((mapinfo->flag&MapMeshDashFlag) == MapMeshDashFlag) {
+              fprintf(OutFile,"map new dash \n");
+            } else {
+              fprintf(OutFile,"map new mesh %-.2lf\n",((double)mapinfo->MapMeshRad/250.) );
+            }
+          }
+          if (mapinfo->flag&MapSurfFlag)fprintf(OutFile,"map new surface\n");
+          if (mapinfo->flag&MapColourPot) fprintf(OutFile,"map new colour potential\n" );
+          else fprintf(OutFile,"map new colour [%d,%d,%d]\n",
+            mapinfo->MapRGBCol[0],mapinfo->MapRGBCol[1],mapinfo->MapRGBCol[2]);
+          if (mapinfo->flag&MapMeanFlag) fprintf(OutFile,"map new level MEAN %g\n",mapinfo->MapLevel );
+          else fprintf(OutFile,"map new level %g\n",mapinfo->MapLevel );
+          if (fabs(((double)mapinfo->MapSpacing/250.)*.6667-mapinfo->MapSpread) < .01) {
+            fprintf(OutFile,"map new resolution %-.2lf\n",((double)mapinfo->MapSpacing/250.) );          	
+          } else  {
+            fprintf(OutFile,"map new spacing %-.2lf\n",((double)mapinfo->MapSpacing/250.) );
+            fprintf(OutFile,"map new spread %-.2lf\n",mapinfo->MapSpread);	
+          }
+          if (mapinfo->MapFile) {
+            fprintf(OutFile,"map new load \"%s\"\n",mapinfo->MapFile);
+          } else {
+          	fprintf(OutFile,"map new generate\n");
+          }
+        }
+      }
+    }
+}
+
 
 int WriteScriptFile( char *name )
 {
@@ -1293,6 +1361,7 @@ int WriteScriptFile( char *name )
     WriteScriptHBonds("ssbonds",Database->slist);
     WriteScriptHBonds("hbonds",Database->hlist);
     WriteScriptAll();
+    WriteScriptMaps();
 
     fclose(OutFile);
 #ifdef APPLEMAC
@@ -1930,7 +1999,16 @@ static void WriteVRMLAtoms( void )
                       - (double)(aptr->ztrl)/10000.;
 
                     fputs("    Translation { translation ",OutFile);
-                    WriteVRMLTriple(x-ox,RestoreY(y-oy),z-oz);
+
+                    if ( vrml_mirror ) {
+                      WriteVRMLTriple(-(x-ox),-(RestoreY(y-oy)),-(z-oz));
+                    } else {
+                      if (vrml_rotate) {
+                        WriteVRMLTriple(x-ox,-(RestoreY(y-oy)),-(z-oz));
+                      } else {
+                        WriteVRMLTriple(x-ox,RestoreY(y-oy),z-oz);
+                      }
+                    }
                     ox = x;  oy = y;  oz = z;
                     fputs(" }\n",OutFile);
 
@@ -1995,7 +2073,15 @@ static void WriteVRMLWireframe( void )
                   - (double)(src->ztrl)/10000.;
 
                 fputs("        ",OutFile);
-                WriteVRMLTriple(x,RestoreY(y),z);
+                if (vrml_mirror) {
+                  WriteVRMLTriple(-x,-(RestoreY(y)),-z);
+                } else {
+                  if (vrml_rotate) {
+                    WriteVRMLTriple(x,-(RestoreY(y)),-z);
+                  } else {
+                    WriteVRMLTriple(x,RestoreY(y),z);
+                  }
+                }
                 fputs(",\n",OutFile);
                 src->mbox = ++i;
             }
@@ -2009,7 +2095,15 @@ static void WriteVRMLWireframe( void )
                   - (double)(dst->ztrl)/10000.;
 
                 fputs("        ",OutFile);
-                WriteVRMLTriple(x,RestoreY(y),z);
+                if (vrml_mirror) {
+                  WriteVRMLTriple(-x,-(RestoreY(y)),-z);
+                } else {
+                  if (vrml_rotate) {
+                    WriteVRMLTriple(x,-(RestoreY(y)),-z);
+                  } else {
+                    WriteVRMLTriple(x,RestoreY(y),z);
+                  }
+                }
                 fputs(",\n",OutFile);
                 dst->mbox = ++i;
             }
@@ -2026,7 +2120,15 @@ static void WriteVRMLWireframe( void )
                       -(double)(src->ztrl + dst->ztrl)/20000.;
                 
                 fputs("        ",OutFile);
+                if (vrml_mirror) {
+                  WriteVRMLTriple(-x,-(RestoreY(y)),-z);
+                } else {
+                  if (vrml_rotate) {
+                    WriteVRMLTriple(x,-(RestoreY(y)),-z);
+                  } else {
                 WriteVRMLTriple(x,RestoreY(y),z);
+                  }
+                }
                 fputs(",\n",OutFile);
                 i++;
             }
@@ -2103,7 +2205,15 @@ static void WriteVRMLDots( void )
                         z = -(double)ptr->zpos[j]/250.0;
 
                         fputs("        ",OutFile);
+                        if (vrml_mirror) {
+                          WriteVRMLTriple(-x,-(RestoreY(y)),-z);
+                        } else {
+                          if (vrml_rotate) {
+                          	WriteVRMLTriple(x,-(RestoreY(y)),-z);
+                          } else {
                         WriteVRMLTriple(x,RestoreY(y),z);
+                          }
+                        }
                         fputs(",\n",OutFile);
                         count++;
                     }
@@ -2130,7 +2240,7 @@ static void WriteVRMLDots( void )
 }
 
 
-int WriteVRMLFile( char *name )
+int WriteVRMLFile( char *name, int subtype )
 {
     if( !Database )
         return True;
@@ -2140,6 +2250,11 @@ int WriteVRMLFile( char *name )
     {   FatalScriptError(name);
         return False;
     }
+    
+    vrml_mirror = False;
+    vrml_rotate = False;
+    if ( subtype == MirrorTok ) vrml_mirror = True;
+    if ( subtype == RotateTok ) vrml_rotate = True;
 
     fputs("#VRML V1.0 ascii\n",OutFile);
     fprintf(OutFile,"#Created by RasMol v%s\n\n",VERSION);
