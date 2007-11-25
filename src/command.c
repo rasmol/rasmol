@@ -1,9 +1,9 @@
 /***************************************************************************
- *                              RasMol 2.7.3.1                             *
+ *                               RasMol 2.7.4                              *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                              14 April 2006                              *
+ *                            19 November 2007                             *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -20,35 +20,44 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
  *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                   RasMol 2.7.4   Nov 07                                 *
  *                                                                         *
- *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
- *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
- *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
- *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
- *of Energy.                                                               *
+ * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
+ * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
+ * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
+ * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
+ * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
+ * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
+ * Institute of General Medical Sciences (NIGMS). The content is solely    *
+ * the responsibility of the authors and does not necessarily represent    * 
+ * the official views of the funding organizations.                        *
  *                                                                         *
  *                    and Incorporating Translations by                    *
- *  Author                               Item                      Language*
+ *  Author                               Item                     Language *
  *  Isabel Servan Martinez,                                                *
- *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
- *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
- *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
- *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages French   *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
- *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
- *  G. Pozhvanov                         2.7.3 menus and message   Russian *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  *
+ *  G. Pozhvanov                         2.7.3 menus and messages Russian  *
+ *  G. Todorov                           2.7.3 menus and messages Bulgarian*
+ *  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  *
+ *  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese *
  *                                                                         *
  *                             This Release by                             *
- * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2007               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
@@ -244,7 +253,7 @@ static int PrefixString( char __far*, char __far* );
 static char __far * xfgets( char __far*, int, FILE __far *);
 static int FetchToken( void );
 
-static void CommandError( char *error )
+void CommandError( char *error )
 {
     register char *ptr;
     char buffer[40];
@@ -1803,6 +1812,7 @@ static void ExecuteLoadCommand( void )
                 WriteString("'!\n");
                 return;
             }
+            ReDrawFlag |= RFInitial|RFColour;
         }
 #endif
     }
@@ -3498,6 +3508,7 @@ static void ApplyMapSelection( void ) {
   return;
 }
 
+
 void ApplyMapColour( void ) {
   int i, j;
   MapInfo *mapinfo;
@@ -3540,7 +3551,7 @@ static void ApplyMapFlag( void ) {
         map_points(mapinfo->MapPtr, 
           mapinfo->MapLevel+(MapFlag&MapMeanFlag)?mapinfo->MapPtr->mapdatamean:0, 
           mapinfo->MapSpacing, mapinfo->MapPointsPtr,mapinfo->MapBondsPtr,mapinfo->MapTanglePtr,
-          mapinfo->MapRGBCol );
+          mapinfo->MapMaskPtr, mapinfo->MapRGBCol );
         if (mapinfo->flag&MapColourPot) ColourPointPotential(j);
         }
       }
@@ -3640,19 +3651,58 @@ void ApplyMapShow( void ) {
   
   InvalidateCmndLine();
   
+  if (MapFlag & MapSelectFlag) {
+    sprintf(buffer,"map new %s %s %#lg spacing %#lg spread %#lg\n",
+    MapFlag&MapSurfFlag?"surface":(MapFlag&MapMeshFlag?"mesh":(
+      MapFlag&MapPointFlag?"dots":"unknown") ),
+      MapFlag&MapMeanFlag?"Level MEAN ":"MEAN",(double)MapLevel,
+      (double)MapSpacing/250., (double)MapSpread);
+    WriteString(buffer); 
+    if (MapMaskPtr) {
+      sprintf(buffer,"mask: mean %#g, esd %#g, min %#g, max %#g\n", 
+        MapMaskPtr->mapdatamean,
+        MapMaskPtr->mapdataesd,
+        MapMaskPtr->mapdatamin,
+        MapMaskPtr->mapdatamax );
+      WriteString(buffer);         
+    }
+  }
+  
   if (MapInfoPtr)  {
     for (j=0; j < MapInfoPtr->size; j++) {
       vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
       if (mapinfo->flag&MapSelectFlag) {
-        sprintf(buffer,"map %d %s %s %g spacing %g spread %g %s %s\n",j,
+        sprintf(buffer,"map %d: %s %s %lg spacing %#lg spread %#lg %s %s\n",j+1,
             mapinfo->flag&MapSurfFlag?"Surface":(mapinfo->flag&MapMeshFlag?"Mesh":(
               mapinfo->flag&MapPointFlag?"Dots":"unknown") ),
-              mapinfo->flag&MapMeanFlag?"Level MEAN ":"MEAN",mapinfo->MapLevel,
-              (double)mapinfo->MapSpacing/250., mapinfo->MapSpread,
+              mapinfo->flag&MapMeanFlag?"level MEAN ":"MEAN",(double)mapinfo->MapLevel,
+              (double)mapinfo->MapSpacing/250., (double)mapinfo->MapSpread,
               mapinfo->MapFile?"file: ":"",
               mapinfo->MapFile?mapinfo->MapFile:"");
+        WriteString(buffer);
+        if (mapinfo->MapLabel) {
+          WriteString("label: ");
+          WriteString(mapinfo->MapLabel);
+          WriteString("\n");
+        }
+        if (mapinfo->MapPtr) {
+          sprintf(buffer,"map:    mean %#g, esd %#g, min %#g, max %#g\n", 
+            mapinfo->MapPtr->mapdatamean,
+            mapinfo->MapPtr->mapdataesd,
+            mapinfo->MapPtr->mapdatamin,
+            mapinfo->MapPtr->mapdatamax );
         WriteString(buffer); 
-        
+        } else {
+          WriteString("map: NONE\n");
+        }
+        if (mapinfo->MapMaskPtr) {
+          sprintf(buffer,"mask:   mean %#g, esd %#g, min %#g, max %#g\n", 
+            mapinfo->MapMaskPtr->mapdatamean,
+            mapinfo->MapMaskPtr->mapdataesd,
+            mapinfo->MapMaskPtr->mapdatamin,
+            mapinfo->MapMaskPtr->mapdatamax );
+          WriteString(buffer);         
+        }
       }
     }
   }
@@ -3660,16 +3710,163 @@ void ApplyMapShow( void ) {
 }
 
 
+int ApplyMapMask(int mapno ) {
+  int i,j;
+  MapInfo *mapinfo, *omapinfo;
+  MapStruct __far *mapmaskptr;
+  MapAtmSelVec __far *mapmaskgensel;
+  register Long xel, yel, zel;
+  Long flag;
 
+  ApplyMapSelection();
+  if (MapSpacing <= 0) MapSpacing = 125L;
+
+  if (MapInfoPtr)  {
+    if (mapno != -1 && mapno > MapInfoPtr->size)  {
+      CommandError(MsgStrs[ErrBadArg]);
+      return 1;
+    }
+    if (mapno > 0) {
+      vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,mapno-1);
+      if (!mapinfo || !mapinfo->MapPtr) {
+        CommandError(MsgStrs[ErrBadArg]);
+        return 1;
+      }
+    }
+    for (j=-1; j==-1 || j < MapInfoPtr->size; j++) {
+      mapmaskgensel = NULL;
+      mapmaskptr = NULL;
+
+      if (j >=0 ) {
+        vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
+        flag = mapinfo->flag;
+      } else  {
+      	flag=MapFlag;
+      }
+
+      if (flag&MapSelectFlag) {
+        if (mapno == 0) {
+      	
+          if (MapSpread < 0.1) MapSpread = 0.1;
+  
+          if (flag&MapSurfFlag) {
+            if(generate_map(&mapmaskptr,MapSpacing/2, 
+              MapSpacing/2, MapSpacing/2, 0L, 0L, 0L,
+              (Long)(250.*(1.+MapSpread)+MapSpacing), 
+              1./MapSpread )){
+                CommandError(MsgStrs[StrMalloc]);
+           	    return 1;
+            }
+          } else{
+            if(generate_map(&mapmaskptr,MapSpacing,
+              MapSpacing, MapSpacing, 0L, 0L, 0L,
+              (Long)(250.*(1.+MapSpread)+MapSpacing),
+              1./MapSpread ) ) {
+                CommandError(MsgStrs[StrMalloc]);
+           	    return 1;
+            }
+          }
+
+          vector_create((GenericVec __far **)&mapmaskgensel,sizeof(MapAtmSel),10);
+          WriteMapAtoms(mapmaskgensel);
+        } else if (mapno > 0) {
+          if ( mapno <= MapInfoPtr->size ) {
+            vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&omapinfo,mapno-1 );
+            if (omapinfo && omapinfo->MapPtr) {
+              mapmaskptr = _fmalloc(sizeof(MapStruct));
+              if(!mapmaskptr) {
+                CommandError(MsgStrs[StrMalloc]);
+                return 1;	
+              }
+              mapmaskptr->mapdata = (double *)_fmalloc(sizeof(double)*
+                ((omapinfo->MapPtr)->xhigh-(omapinfo->MapPtr)->xlow+1)*
+                ((omapinfo->MapPtr)->yhigh-(omapinfo->MapPtr)->ylow+1)*
+                ((omapinfo->MapPtr)->zhigh-(omapinfo->MapPtr)->zlow+1));
+              if(!mapmaskptr->mapdata) {
+                _ffree(mapmaskptr);
+           	    CommandError(MsgStrs[StrMalloc]);
+           	    return 1;
+              }
+              mapmaskptr->xint=omapinfo->MapPtr->xint;
+              mapmaskptr->yint=omapinfo->MapPtr->yint;
+              mapmaskptr->zint=omapinfo->MapPtr->zint;
+              mapmaskptr->xorig=omapinfo->MapPtr->xorig;
+              mapmaskptr->yorig=omapinfo->MapPtr->yorig;
+              mapmaskptr->zorig=omapinfo->MapPtr->zorig;
+              mapmaskptr->xlow=omapinfo->MapPtr->xlow;
+              mapmaskptr->ylow=omapinfo->MapPtr->ylow;
+              mapmaskptr->zlow=omapinfo->MapPtr->zlow;
+              mapmaskptr->xhigh=omapinfo->MapPtr->xhigh;
+              mapmaskptr->yhigh=omapinfo->MapPtr->yhigh;
+              mapmaskptr->zhigh=omapinfo->MapPtr->zhigh;
+              mapmaskptr->mapdatamin=omapinfo->MapPtr->mapdatamin;
+              mapmaskptr->mapdatamax=omapinfo->MapPtr->mapdatamax;
+              mapmaskptr->mapdatamean=omapinfo->MapPtr->mapdatamean;
+              mapmaskptr->mapdataesd=omapinfo->MapPtr->mapdataesd;
+              for (i=0; i<9; i++) {
+                mapmaskptr->mapm2r[i]=omapinfo->MapPtr->mapm2r[i];
+                mapmaskptr->mapr2m[i]=omapinfo->MapPtr->mapr2m[i];
+              }
+              for (i=0; i<3; i++) {
+                mapmaskptr->mapxlate[i]=omapinfo->MapPtr->mapxlate[i];
+              }
+              for (xel=(mapmaskptr)->xlow; xel<=(mapmaskptr)->xhigh; xel++ )
+                for (yel=(mapmaskptr)->ylow; yel<=(mapmaskptr)->yhigh; yel++  )
+                  for (zel=(mapmaskptr)->zlow; zel<=(mapmaskptr)->zhigh; zel++ )
+                    MapEl(mapmaskptr,xel,yel,zel)=MapEl(omapinfo->MapPtr,xel,yel,zel);
+              if (omapinfo->MapGenSel) {
+                MapAtmSel *mapatmsel;
+                vector_create((GenericVec __far **)&mapmaskgensel,sizeof(MapAtmSel),10);
+                for (i = 0; i < omapinfo->MapGenSel->size; i++) {
+                  vector_get_elementptr((GenericVec __far *)omapinfo->MapGenSel,(void __far * __far *)&mapatmsel,i );
+                	vector_set_element((GenericVec __far *)mapmaskgensel,mapatmsel,i);
+                }
+              }
+            }
+          }
+        }
+        if (j < 0 )  {
+          if (MapMaskPtr)  {
+            if (MapMaskPtr->mapdata)_ffree((void __far *)MapMaskPtr->mapdata);
+            _ffree((void __far *)MapMaskPtr);            	
+          }
+          MapMaskPtr = mapmaskptr;
+        } else {
+          if (mapinfo->MapMaskPtr) {
+            if (mapinfo->MapMaskPtr->mapdata)_ffree((void __far *)mapinfo->MapMaskPtr->mapdata);
+            _ffree((void __far *)mapinfo->MapMaskPtr);
+          }
+          mapinfo->MapMaskPtr = mapmaskptr;
+        }
+        if (j < 0 )  {
+          if (MapMaskGenSel)  {
+            vector_free((GenericVec __far * __far *)&(MapMaskGenSel ) );
+          }
+          MapMaskGenSel=mapmaskgensel;
+        } else {
+          if (mapinfo->MapMaskGenSel) {
+            vector_free((GenericVec __far * __far *)&(mapinfo->MapMaskGenSel ) );
+          }
+          mapinfo->MapMaskGenSel=mapmaskgensel;
+        }
+      }        
+    }
+  }
+  MapReRadius();
+  ReRadius();
+  ReDrawFlag |= RFInitial|RFColour;
+  return 0;
+}
 
 /* Generate a new map for the current molecule */
 
-static void ExecuteGenerateCommand( int mapflags ) {
-  int j;
+static int ExecuteGenerateCommand( int mapflags ) {
+  int i, j;
   MapInfo mapinfo;
   MapInfo *omapinfo;
-
-  /* If there is no map info, create the vector */
+  MapStruct __far *mapmaskptr;
+  MapAtmSelVec __far *mapmaskgensel;
+  register Long xel, yel, zel;
   
   ApplyMapSelection();
   if (MapSpacing <= 0) MapSpacing = 125L;
@@ -3678,7 +3875,7 @@ static void ExecuteGenerateCommand( int mapflags ) {
   
   mapinfo.MapLevel = MapLevel;
   mapinfo.MapSpacing = MapSpacing;
-  if (MapSpread < 0.1) MapSpread = 0.1;
+  if (MapSpread < 0.1) MapSpread = 2.*((double)(MapSpacing))/750.;
   mapinfo.MapSpread = MapSpread;
   mapinfo.flag = SelectFlag|mapflags;
   mapinfo.MapPointsPtr = NULL;
@@ -3687,13 +3884,68 @@ static void ExecuteGenerateCommand( int mapflags ) {
   mapinfo.MapPtr = NULL;
   mapinfo.MapMaskPtr = NULL;
   mapinfo.MapFile = NULL;
-  mapinfo.MapSelection = NULL;
+  mapinfo.MapGenSel = NULL;
+  mapinfo.MapMaskGenSel = NULL;
   mapinfo.MapRGBCol[0] = MapRGBCol[0];
   mapinfo.MapRGBCol[1] = MapRGBCol[1];
   mapinfo.MapRGBCol[2] = MapRGBCol[2];
   mapinfo.MapMeshRad = MapMeshRad;
+  mapinfo.MapPointRad = MapPointRad;
   mapinfo.MapLabel = MapLabel;
   MapLabel = NULL;
+  if (MapMaskPtr) {
+    mapmaskptr = _fmalloc(sizeof(MapStruct));
+    if(!mapmaskptr) {
+      CommandError(MsgStrs[StrMalloc]);
+      return 1;	
+    }
+    mapmaskptr->mapdata = (double *)_fmalloc(sizeof(double)*
+      ((MapMaskPtr)->xhigh-(MapMaskPtr)->xlow+1)*
+      ((MapMaskPtr)->yhigh-(MapMaskPtr)->ylow+1)*
+      ((MapMaskPtr)->zhigh-(MapMaskPtr)->zlow+1));
+    if(!mapmaskptr->mapdata) {
+      _ffree(mapmaskptr);
+      CommandError(MsgStrs[StrMalloc]);
+      return 1;
+    }
+    mapmaskptr->xint=MapMaskPtr->xint;
+    mapmaskptr->yint=MapMaskPtr->yint;
+    mapmaskptr->zint=MapMaskPtr->zint;
+    mapmaskptr->xorig=MapMaskPtr->xorig;
+    mapmaskptr->yorig=MapMaskPtr->yorig;
+    mapmaskptr->zorig=MapMaskPtr->zorig;
+    mapmaskptr->xlow=MapMaskPtr->xlow;
+    mapmaskptr->ylow=MapMaskPtr->ylow;
+    mapmaskptr->zlow=MapMaskPtr->zlow;
+    mapmaskptr->xhigh=MapMaskPtr->xhigh;
+    mapmaskptr->yhigh=MapMaskPtr->yhigh;
+    mapmaskptr->zhigh=MapMaskPtr->zhigh;
+    mapmaskptr->mapdatamin=MapMaskPtr->mapdatamin;
+    mapmaskptr->mapdatamax=MapMaskPtr->mapdatamax;
+    mapmaskptr->mapdatamean=MapMaskPtr->mapdatamean;
+    mapmaskptr->mapdataesd=MapMaskPtr->mapdataesd;
+    for (i=0; i<9; i++) {
+      mapmaskptr->mapm2r[i]=MapMaskPtr->mapm2r[i];
+      mapmaskptr->mapr2m[i]=MapMaskPtr->mapr2m[i];
+    }
+    for (i=0; i<3; i++) {
+      mapmaskptr->mapxlate[i]=MapMaskPtr->mapxlate[i];
+    }
+    for (xel=(mapmaskptr)->xlow; xel<=(mapmaskptr)->xhigh; xel++ )
+      for (yel=(mapmaskptr)->ylow; yel<=(mapmaskptr)->yhigh; yel++  )
+        for (zel=(mapmaskptr)->zlow; zel<=(mapmaskptr)->zhigh; zel++ )
+          MapEl(mapmaskptr,xel,yel,zel)=MapEl(MapMaskPtr,xel,yel,zel);
+    mapinfo.MapMaskPtr = mapmaskptr;
+  }
+  if (MapMaskGenSel) {
+     MapAtmSel *mapatmsel;
+     vector_create((GenericVec __far **)&mapmaskgensel,sizeof(MapAtmSel),10);
+     for (i = 0; i < MapMaskGenSel->size; i++) {
+       vector_get_elementptr((GenericVec __far *)MapMaskGenSel,(void __far * __far *)&mapatmsel,i );
+       vector_set_element((GenericVec __far *)mapmaskgensel,mapatmsel,i);
+     }
+     mapinfo.MapMaskGenSel = mapmaskgensel;
+  }
 
   if (mapinfo.flag&MapSurfFlag) {
     generate_map(&mapinfo.MapPtr,mapinfo.MapSpacing/2, mapinfo.MapSpacing/2, mapinfo.MapSpacing/2, 0L, 0L, 0L,
@@ -3703,6 +3955,10 @@ static void ExecuteGenerateCommand( int mapflags ) {
      (Long)(250.*(1.+mapinfo.MapSpread)+mapinfo.MapSpacing), 1./mapinfo.MapSpread );
   }
   
+  vector_create((GenericVec __far **)&mapinfo.MapGenSel,sizeof(MapAtmSel),10);
+  WriteMapAtoms(mapinfo.MapGenSel);
+
+
   if (mapinfo.flag&(MapPointFlag|MapMeshFlag|MapSurfFlag)) {
   vector_create((GenericVec __far **)&mapinfo.MapPointsPtr,sizeof(MapPoint),1000);
     if (mapinfo.flag&(MapMeshFlag))
@@ -3712,7 +3968,7 @@ static void ExecuteGenerateCommand( int mapflags ) {
   map_points(mapinfo.MapPtr, 
       mapinfo.MapLevel+(MapFlag&MapMeanFlag)?mapinfo.MapPtr->mapdatamean:0, 
       mapinfo.MapSpacing, mapinfo.MapPointsPtr,mapinfo.MapBondsPtr,mapinfo.MapTanglePtr,
-      mapinfo.MapRGBCol );
+      mapinfo.MapMaskPtr, mapinfo.MapRGBCol );
     
     if (MapFlag&MapNoSelectFlag) {
   vector_add_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo);
@@ -3737,7 +3993,7 @@ static void ExecuteGenerateCommand( int mapflags ) {
   ReRadius();
   ReDrawFlag |= RFInitial|RFColour;
   }
-  return;
+  return 0;
 }
 
 int ExecuteCommand( void )
@@ -3970,10 +4226,10 @@ int ExecuteCommand( void )
                                   MapFlag &= ~MapMeshDashFlag;
                                 } else if( (CurToken==TrueTok) || !CurToken ) {
                                   MapFlag &= ~(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
-                                  MapFlag |= MapPointFlag|MapMeshFlag;
+                                  MapFlag |= MapMeshFlag;
                                 } else if( CurToken==DashTok )
                                 { MapFlag &= ~(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
-                                  MapFlag |= MapPointFlag|MapMeshDashFlag;
+                                  MapFlag |= MapMeshDashFlag;
                                 } else if( CurToken==NumberTok && TokenValue >=0)
                                 { if( *TokenPtr=='.' )
                                   { TokenPtr++;
@@ -3981,24 +4237,20 @@ int ExecuteCommand( void )
                                   }
 
                                   if( TokenValue<=500 )
-                                  { if (TokenValue !=0) {
-                                      MapFlag &= ~(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
-                                      MapFlag |= MapPointFlag|MapMeshFlag;
+                                  { MapFlag &= ~(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
+                                    MapFlag |= MapMeshFlag;
                                       MapMeshRad = TokenValue;
-                                    } else {
-                                      MapFlag &= ~MapMeshDashFlag;
-                                    }
                                   } else { CommandError(MsgStrs[ErrBigNum]); break;}
                                 } else if( CurToken=='.' ) {
                                   FetchFloat(0,250);
                                   if( TokenValue<=500 ) {
                                     MapFlag &= ~(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
-                                    MapFlag |= MapPointFlag|MapMeshFlag;
+                                    MapFlag |= MapMeshFlag;
                                     MapMeshRad = TokenValue;
                                   } else { CommandError(MsgStrs[ErrBigNum]); break;}
                                 } else if (!CurToken) {
                                   MapFlag &= ~(MapPointFlag|MapMeshDashFlag|MapSurfFlag);
-                                MapFlag |= MapPointFlag|MapMeshFlag;
+                                  MapFlag |= MapMeshFlag;
                                	  MapMeshRad = 0;
                                 } else { CommandError(MsgStrs[ErrBadArg]); break; }
                                 ApplyMapSelection();
@@ -4026,7 +4278,7 @@ int ExecuteCommand( void )
                                   mapflags |= MapPointFlag;
                                 } else if (CurToken==WireframeTok) {
                                   mapflags &= ~(MapPointFlag|MapMeshFlag|MapSurfFlag);
-                                  mapflags |= MapPointFlag|MapMeshFlag;
+                                  mapflags |= MapMeshFlag;
                                 } else if (CurToken==SurfaceTok) {
                                   mapflags &= ~(MapPointFlag|MapMeshFlag|MapSurfFlag);
                                   mapflags |= MapSurfFlag;
@@ -4084,6 +4336,8 @@ int ExecuteCommand( void )
                                      WriteString("'!\n");
                                      break;
                                   }
+                                  CurToken = 0;
+                                  ReDrawFlag |= RFInitial|RFColour;
                                 }
 #else
                                 CommandError(MsgStrs[ErrBadArg]);
@@ -4100,7 +4354,7 @@ int ExecuteCommand( void )
                           FetchToken();
                                   MapLevel = 0.;
                                 }
-                          if ( CurToken==NumberTok && TokenValue >=0)
+                                if ( CurToken==NumberTok)
                           {   if( *TokenPtr=='.' )
                               {   TokenPtr++;
                                   FetchFloat(TokenValue,1000);
@@ -4128,6 +4382,18 @@ int ExecuteCommand( void )
                                   ApplyMapLevel();
                                 	break;
                                 } else CommandError(MsgStrs[ErrBadArg]);
+                                break;
+                                
+                              case(MaskTok):
+                                FetchToken();
+                                if (CurToken == SelectedTok) {
+                                  ApplyMapMask(0);
+                                } else if (CurToken==NumberTok && TokenValue>0) {
+                                  ApplyMapMask(TokenValue);
+                                } else if (CurToken==NoneTok) {
+                                  ApplyMapMask(-1);
+                                }
+                                else CommandError(MsgStrs[ErrBadArg]);
                                 break;
 
     	                      case(ResolutionTok):

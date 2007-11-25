@@ -1,9 +1,9 @@
 /***************************************************************************
- *                              RasMol 2.7.3.1                             *
+ *                               RasMol 2.7.4                              *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                              14 April 2006                              *
+ *                            19 November 2007                             *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -20,35 +20,44 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
  *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                   RasMol 2.7.4   Nov 07                                 *
  *                                                                         *
- *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
- *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
- *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
- *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
- *of Energy.                                                               *
+ * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
+ * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
+ * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
+ * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
+ * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
+ * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
+ * Institute of General Medical Sciences (NIGMS). The content is solely    *
+ * the responsibility of the authors and does not necessarily represent    * 
+ * the official views of the funding organizations.                        *
  *                                                                         *
  *                    and Incorporating Translations by                    *
- *  Author                               Item                      Language*
+ *  Author                               Item                     Language *
  *  Isabel Servan Martinez,                                                *
- *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
- *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
- *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
- *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages French   *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
- *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
- *  G. Pozhvanov                         2.7.3 menus and message   Russian *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  *
+ *  G. Pozhvanov                         2.7.3 menus and messages Russian  *
+ *  G. Todorov                           2.7.3 menus and messages Bulgarian*
+ *  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  *
+ *  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese *
  *                                                                         *
  *                             This Release by                             *
- * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2007               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
@@ -56,9 +65,13 @@
  ***************************************************************************/
 /* script.c
  $Log: not supported by cvs2svn $
- Revision 1.2  2007/11/16 22:48:31  yaya
- Remove use of MapNumber if favor of size of vector
- Clean up selection logic; start on script writing code -- HJB
+ Revision 1.4  2007/11/19 03:28:40  yaya
+ Update to credits for 2.7.4 in manual and headers
+ Mask code added -- HJB
+
+ Revision 1.3  2007/11/18 03:22:57  yaya
+ Update map scripting to keep track of selections for map generate
+ -- HJB
 
  Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
  Chinese working versio from rasmol_ru initial import
@@ -647,6 +660,69 @@ int WriteMolScriptFile( char *name )
     return True;
 }
 
+/*============================*/
+/* Map Generation Scripts     */
+/*============================*/
+
+
+/* Load the vector MapAtmSelVec with the information to select
+   the atoms used for the current map generation */
+
+void WriteMapAtoms( MapAtmSelVec __far * MapGenSel )
+{
+    register Chain __far *chain;
+    register Group __far *group;
+    register RAtom __far *aptr;
+    register Long first=0,last=0;
+    register int currad, newrad;
+    register int init,selectall;
+    MapAtmSel mas;
+    
+    init = False;
+    selectall = True;
+    mas.loserno= -1;
+    mas.hiserno=-2;
+    mas.radius=ProbeRadius;
+    vector_add_element((GenericVec __far *)MapGenSel,(void __far *)&mas);
+    currad = 0;
+    
+    ForEachAtom {
+      if (aptr->flag&SelectFlag) {
+        if (!init) {
+          currad = aptr->radius;
+          if (currad < 10 || currad == ElemVDWRadius( aptr->elemno )) currad = 0;
+          init = True;
+          first = last = aptr->serno;
+        }
+        newrad = aptr->radius;
+        if (newrad < 10 || newrad == ElemVDWRadius( aptr->elemno )) newrad = 0;
+        if (currad == newrad) {
+          last = aptr->serno;
+        } else {
+          mas.loserno=first;
+          mas.hiserno=last;
+          mas.radius=currad;
+          currad=newrad;
+          first=last=aptr->serno;
+          selectall = False;
+        }
+      } else {
+        selectall = False;
+      }	
+    }
+    if (init) {
+      if (selectall) {
+        mas.loserno = mas.hiserno = 0;
+      } else {
+      	mas.loserno = first;
+      	mas.hiserno = last;
+      }
+      mas.radius = currad;
+      vector_add_element((GenericVec __far *)MapGenSel,(void __far *)&mas);
+    }
+    return;
+}
+
 
 
 /*============================*/
@@ -1136,18 +1212,27 @@ static void WriteScriptMonitors( void )
 static void WriteScriptMaps()
 {   int j;
     MapInfo *mapinfo;
+    MapAtmSel *mas;
     
     if (MapInfoPtr) {
       for (j=0; j < MapInfoPtr->size; j++) {
         vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
         if (mapinfo->MapPtr) {
+          if (!MapPointRad)  {
+            if (mapinfo->flag&MapPointFlag)fprintf(OutFile,"map new dots\n");          	
+          } else  {
           if (mapinfo->flag&MapPointFlag)fprintf(OutFile,"map new dots %-.2lf\n",
               ((double)mapinfo->MapPointRad/250.) );
+          }
           if (mapinfo->flag&MapMeshFlag){
-            if ((mapinfo->flag&MapMeshDashFlag) == MapMeshDashFlag) {
+            if ((mapinfo->flag&MapMeshDashFlag) != MapMeshDashFlag) {
               fprintf(OutFile,"map new dash \n");
             } else {
+              if (!MapMeshRad) {
+                fprintf(OutFile,"map new mesh\n" );
+              } else {
               fprintf(OutFile,"map new mesh %-.2lf\n",((double)mapinfo->MapMeshRad/250.) );
+              }
             }
           }
           if (mapinfo->flag&MapSurfFlag)fprintf(OutFile,"map new surface\n");
@@ -1165,6 +1250,54 @@ static void WriteScriptMaps()
           if (mapinfo->MapFile) {
             fprintf(OutFile,"map new load \"%s\"\n",mapinfo->MapFile);
           } else {
+            if (mapinfo->MapGenSel) {
+              int selectall;
+              int selcount;
+              selectall=True;
+              selcount = 0;
+              for (j=0;j< mapinfo->MapGenSel->size; j++) {
+              	vector_get_elementptr((GenericVec __far *)mapinfo->MapGenSel,
+              	  (void __far **)&mas,j);
+              	if (mas->loserno==-1 && mas->hiserno==-2) {
+              	  fprintf(OutFile,"set radius %#lg\n",((double)ProbeRadius)/250.);
+              	} else {
+              	  if (mas->loserno==0 && mas->hiserno==0) {
+              	    fprintf(OutFile,"select all\n");
+              	  } else {
+              	    selectall=False;
+              	    selcount++;
+              	    if (mas->loserno==mas->hiserno) {
+              	      fprintf(OutFile,"select atomno=%ld\n",mas->loserno);
+              	    } else {
+              	      fprintf(OutFile,"select atomno>=%ld and atomno>=%ld \n",
+              	        mas->loserno,mas->hiserno);
+              	    }
+              	  }
+              	  if (mas->radius) {
+              	    fprintf(OutFile,"spacefill %#lg\n",((double)mas->radius)/250.);
+              	  } else {
+              	  	fprintf(OutFile,"spacefill true\n" );
+              	  }
+              		
+              	}
+              }
+              if (selcount||selectall) fprintf(OutFile,"spacefill off\n" );
+              if (selcount>1) {
+              	fprintf(OutFile,"select none\n" );
+                for (j=0;j< mapinfo->MapGenSel->size; j++) {
+              	  vector_get_elementptr((GenericVec __far *)mapinfo->MapGenSel,
+              	    (void __far **)&mas,j);
+              	  if (mas->loserno>0 && mas->hiserno>0) {
+              	    if (mas->loserno==mas->hiserno) {
+              	      fprintf(OutFile,"select selected or atomno=%ld\n",mas->loserno);
+              	    } else {
+              	      fprintf(OutFile,"select selected or (atomno>=%ld and atomno>=%ld) \n",
+              	        mas->loserno,mas->hiserno);
+              	    }              	  	
+              	  }
+                }
+              }
+            }
           	fprintf(OutFile,"map new generate\n");
           }
         }
@@ -1216,6 +1349,10 @@ int WriteScriptFile( char *name )
     } else {
       fprintf(OutFile,"load %s \"%s\"\n",ptr,Info.filename);
     }
+
+    /* Maps */
+    WriteScriptMaps();
+
 
     /* Colour Details */
     fprintf(OutFile,"background [%d,%d,%d]\n",BackR,BackG,BackB);
@@ -1361,7 +1498,6 @@ int WriteScriptFile( char *name )
     WriteScriptHBonds("ssbonds",Database->slist);
     WriteScriptHBonds("hbonds",Database->hlist);
     WriteScriptAll();
-    WriteScriptMaps();
 
     fclose(OutFile);
 #ifdef APPLEMAC

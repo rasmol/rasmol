@@ -1,58 +1,63 @@
-%% RasMol V2.7.3 Manual
+%% RasMol V2.7.4 Manual
+%%                                RasMol 2.7.4
 %%
-%%                                 RasMol
-%%                    Molecular Graphics Visualisation Tool
-%%                              6 February 2005
+%%                                  RasMol
+%%                  Molecular Graphics Visualisation Tool
+%%                             19 November 2007
 %%
-%%                     Based on RasMol 2.6 by Roger Sayle
-%%    Biomolecular Structures Group, Glaxo Wellcome Research & Development,
-%%                        Stevenage, Hertfordshire, UK
-%%           Version 2.6, August 1995, Version 2.6.4, December 1998
+%%                    Based on RasMol 2.6 by Roger Sayle
+%%  Biomolecular Structures Group, Glaxo Wellcome Research & Development,
+%%                       Stevenage, Hertfordshire, UK
+%%          Version 2.6, August 1995, Version 2.6.4, December 1998
 %%                    Copyright (C) Roger Sayle 1992-1999
 %%
-%%                            and Based on Mods by
-%%
+%%                           and Based on Mods by
 %% Author             Version, Date             Copyright
+%% Arne Mueller       RasMol 2.6x1   May 98     (C) Arne Mueller 1998
+%% Gary Grossman and  RasMol 2.5-ucb Nov 95     (C) UC Regents/ModularCHEM
+%% Marco Molinaro     RasMol 2.6-ucb Nov 96         Consortium 1995, 1996
 %%
-%% Arne Mueller       RasMol 2.6x1     May 98   (C) Arne Mueller 1998
+%% Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000
 %%
-%% Gary Grossman and  RasMol 2.5-ucb   Nov 95   (C) UC Regents/ModularCHEM
-%% Marco Molinaro     RasMol 2.5-ucb   Nov 96       Consortium 1995, 1996
-%%
-%% Philippe Valadon   RasTop 1.3       Aug 00   (C) Philippe Valadon 2000
-%%
-%% Herbert J.         RasMol 2.7.0     Mar 99   (C) Herbert J. Bernstein
-%% Bernstein          RasMol 2.7.1     Jun 99       1998-2005
-%%                    RasMol 2.7.1.1   Jan 01
-%%                    RasMol 2.7.2     Aug 00
-%%                    RasMol 2.7.2.1   Apr 01
+%% Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein
+%% Bernstein          RasMol 2.7.1   Jun 99         1998-2007
+%%                    RasMol 2.7.1.1 Jan 01
+%%                    RasMol 2.7.2   Aug 00
+%%                    RasMol 2.7.2.1 Apr 01
 %%                    RasMol 2.7.2.1.1 Jan 04
-%%                    RasMol 2.7.3     Feb 05
+%%                    RasMol 2.7.3   Feb 05
+%%                    RasMol 2.7.3.1 Apr 06
+%%                    RasMol 2.7.4   Nov 07
 %%
-%% with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,
-%% and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
-%% grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
-%% Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department
-%% of Energy.
+%%  RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,
+%%  and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
+%%  grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
+%%  Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department
+%%  of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,
+%%  N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol
+%%  2.7.4 supported in part by grant 1R15GM078077-01 from the National
+%%  Institute of General Medical Sciences (NIGMS). The content is solely
+%%  the responsibility of the authors and does not necessarily represent
+%%  the official views of the funding organizations.
 %%
 %%                     and Incorporating Translations by
-%%                     
-%% Author                               Item                     Language
-%%
-%% Isabel Servan Martinez,              2.6 Manual               Spanish
-%% Jose Miguel Fernández Fernandez
-%% Jose Miguel Fernández Fernandez      2.7.1 Manual             Spanish
-%% Fernando Gabriel Ranea               2.7.1 menus and messages Spanish
-%%
-%% Jean-Pierre Demailly                 2.7.1 menus and messages French
-%%
-%% Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages Italian
-%% A. Davassi, M. Masullo, C. Liotto    2.7.1 help file
+%%   Author                               Item                     Language
+%%   Isabel Servan Martinez,
+%%   Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish
+%%   Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish
+%%   Fernando Gabriel Ranea               2.7.1 menus and messages Spanish
+%%   Jean-Pierre Demailly                 2.7.1 menus and messages French
+%%   Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages
+%%   A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian
+%%   G. Pozhvanov                         2.7.3 menus and messages Russian
+%%   G. Todorov                           2.7.3 menus and messages Bulgarian
+%%   Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese
+%%   Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese
 %%
 %%                              This Release by
 %%   Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA
 %%                        yaya@bernstein-plus-sons.com
-%%                Copyright (C) Herbert J. Bernstein 1998-2001
+%%                Copyright (C) Herbert J. Bernstein 1998-2007
 %%
 %% The original RasMol manual was created by Roger Sayle.  In July 1996,
 %% Dr. Margaret Wong of the Chemistry Department, Swinburne University
@@ -67,8 +72,9 @@
 %% version 2.6.4 as the primary source. Changes were made in August 2000 for
 %% RasMol version 2.7.2, January 2001 for RasMol version 2.7.1.1, April 2001
 %% for RasMol version 2.7.2.1 and February 2005 for RasMol version 2.7.3.
+%% 
 %%
-%%                Documentation Last Updated 19 April 2005
+%%                Documentation Last Updated 19 November 2007
 %%          Edited by Herbert J. Bernstein and Frances C. Bernstein
 %%
 %% Please read the file NOTICE for important notices which apply to this
@@ -78,7 +84,7 @@
 %% Initial screen for help file
 %%
 
-PTRasMol 2.7.3 is a molecular graphics program intended for the visualisation
+PTRasMol 2.7.4 is a molecular graphics program intended for the visualisation
 PTof proteins, nucleic acids and small molecules, based on Roger Sayles'
 PTRasMol_2.6. The program is aimed at display, teaching and generation of
 PTpublication quality images. RasMol runs on Microsoft Windows, Apple
@@ -102,60 +108,64 @@ PP
 %% ASCII Text Headers
 %%
 
-TR                        R a s M o l   v 2 . 7 . 3
+TR                        R a s M o l   v 2 . 7 . 4
 TR                        =========================
 TR                    Molecular Graphics Visualisation Tool
-TR                             6 February 2005
+TR                             19 November 2007
 TR
-TR                     Based on RasMol 2.6 by Roger Sayle
-TR    Biomolecular Structures Group, Glaxo Wellcome Research & Development,
-TR                        Stevenage, Hertfordshire, UK
-TR           Version 2.6, August 1995, Version 2.6.4, December 1998
+TR                    Based on RasMol 2.6 by Roger Sayle
+TR  Biomolecular Structures Group, Glaxo Wellcome Research & Development,
+TR                       Stevenage, Hertfordshire, UK
+TR          Version 2.6, August 1995, Version 2.6.4, December 1998
 TR                    Copyright (C) Roger Sayle 1992-1999
 TR
-TR                            and Based on Mods by
-TR
+TR                           and Based on Mods by
 TR Author             Version, Date             Copyright
+TR Arne Mueller       RasMol 2.6x1   May 98     (C) Arne Mueller 1998
+TR Gary Grossman and  RasMol 2.5-ucb Nov 95     (C) UC Regents/ModularCHEM
+TR Marco Molinaro     RasMol 2.6-ucb Nov 96         Consortium 1995, 1996
 TR
-TR Arne Mueller       RasMol 2.6x1     May 98   (C) Arne Mueller 1998
+TR Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000
 TR
-TR Gary Grossman and  RasMol 2.5-ucb   Nov 95   (C) UC Regents/ModularCHEM
-TR Marco Molinaro     RasMol 2.5-ucb   Nov 96       Consortium 1995, 1996
-TR
-TR Philippe Valadon   RasTop 1.3       Aug 00   (C) Philippe Valadon 2000
-TR
-TR Herbert J.         RasMol 2.7.0     Mar 99   (C) Herbert J. Bernstein
-TR Bernstein          RasMol 2.7.1     Jun 99       1998-2005
-TR                    RasMol 2.7.1.1   Jan 01
-TR                    RasMol 2.7.2     Aug 00
-TR                    RasMol 2.7.2.1   Apr 01
+TR Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein
+TR Bernstein          RasMol 2.7.1   Jun 99         1998-2007
+TR                    RasMol 2.7.1.1 Jan 01
+TR                    RasMol 2.7.2   Aug 00
+TR                    RasMol 2.7.2.1 Apr 01
 TR                    RasMol 2.7.2.1.1 Jan 04
-TR                    RasMol 2.7.3     Feb 05
+TR                    RasMol 2.7.3   Feb 05
+TR                    RasMol 2.7.3.1 Apr 06
+TR                    RasMol 2.7.4   Nov 07
 TR
-TR with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,
-TR and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
-TR grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
-TR Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department
-TR of Energy.
+TR  RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,
+TR  and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
+TR  grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
+TR  Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department
+TR  of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,
+TR  N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol
+TR  2.7.4 supported in part by grant 1R15GM078077-01 from the National
+TR  Institute of General Medical Sciences (NIGMS). The content is solely
+TR  the responsibility of the authors and does not necessarily represent
+TR  the official views of the funding organizations.
 TR
 TR                     and Incorporating Translations by
-TR                     
-TR Author                               Item                     Language
-TR
-TR Isabel Servan Martinez,              2.6 Manual               Spanish
-TR Jose Miguel Fernandez Fernandez
-TR Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish
-TR Fernando Gabriel Ranea               2.7.1 menus and messages Spanish
-TR
-TR Jean-Pierre Demailly                 2.7.1 menus and messages French
-TR
-TR Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages Italian
-TR A. Davassi, M. Masullo, C. Liotto    2.7.1 help file
+TR   Author                               Item                     Language
+TR   Isabel Servan Martinez,
+TR   Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish
+TR   Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish
+TR   Fernando Gabriel Ranea               2.7.1 menus and messages Spanish
+TR   Jean-Pierre Demailly                 2.7.1 menus and messages French
+TR   Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages
+TR   A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian
+TR   G. Pozhvanov                         2.7.3 menus and messages Russian
+TR   G. Todorov                           2.7.3 menus and messages Bulgarian
+TR   Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese
+TR   Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese
 TR
 TR                              This Release by
 TR   Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA
 TR                        yaya@bernstein-plus-sons.com
-TR                Copyright (C) Herbert J. Bernstein 1998-2005
+TR                Copyright (C) Herbert J. Bernstein 1998-2007
 TR
 TR The original RasMol manual was created by Roger Sayle.  In July 1996,
 TR Dr. Margaret Wong of the Chemistry Department, Swinburne University
@@ -171,16 +181,19 @@ TR version 2.6.4 as the primary source. Changes were made in August 2000 for
 TR RasMol version 2.7.2, January 2001 for RasMol version 2.7.1.1, April 2001
 TR for RasMol version 2.7.2.1 and February 2005 for RasMol version 2.7.3.
 TR
-TR                Documentation Last Updated 19 April 2005
+TR
+TR                Documentation Last Updated 19 November 2007
 TR          Edited by Herbert J. Bernstein and Frances C. Bernstein
 TR
+TR Please read the file NOTICE for important notices which apply to this
+TR package and for license terms (GPL or RASLIC).
 %%
 %% UNIX man(1) Headers
 %%
 MR.PU
 MR.TH RASMOL 1 "February 2005"
 MR.SH NAME
-MRrasmol \- Molecular Graphics Visualisation Tool v2.7.3
+MRrasmol \- Molecular Graphics Visualisation Tool v2.7.4
 
 %%
 %% VMS Help Headers
@@ -198,10 +211,10 @@ RR\f2\fmodern Courier New;
 RR}\deff0\fs20
 
 RR#{\footnote rasmol}
-RR${\footnote RasMol V2.7.3}
+RR${\footnote RasMol V2.7.4}
 RR+{\footnote doc}
 
-RR{\fs8 \par }{\fs28\b RasMol V2.7.3}{\fs8 \line }
+RR{\fs8 \par }{\fs28\b RasMol V2.7.4}{\fs8 \line }
 RR{\fs24\b Molecular Graphics Visualisation Tool}\line\pard
 RP
 %%
@@ -257,13 +270,20 @@ RR{\fs16 \tab RasMol 2.7.1.1   \tab Jan 01 }\line
 RR{\fs16 \tab RasMol 2.7.2     \tab Aug 00 }\line
 RR{\fs16 \tab RasMol 2.7.2.1   \tab Apr 01 }\line
 RR{\fs16 \tab RasMol 2.7.2.1.1 \tab Jan 04 }\line
-RR{\fs16 \tab RasMol 2.7.3     \tab Feb 05 }
+RR{\fs16 \tab RasMol 2.7.3     \tab Feb 05 }\line
+RR{\fs16 \tab RasMol 2.7.3.1   \tab Apr 06 }\line
+RR{\fs16 \tab RasMol 2.7.4     \tab Nov 07 }
 RR{\fs8 \par\par }
-RR{\fs16 with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,}\line
+RR{\fs16 RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,}\line
 RR{\fs16 and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by}\line
 RR{\fs16 grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National}\line
 RR{\fs16 Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department}\line
-RR{\fs16 of Energy.}
+RR{\fs16 of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,}\line
+RR{\fs16 N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol}\line
+RR{\fs16 2.7.4 supported in part by grant 1R15GM078077-01 from the National}\line
+RR{\fs16 Institute of General Medical Sciences (NIGMS). The content is solely}\line
+RR{\fs16 the responsibility of the authors and does not necessarily represent}\line
+RR{\fs16 the official views of the funding organizations.}\line
 RR{\fs8 \par\par }
 RR{\fs16 and Incorporating Translations by}{\fs8 \par\par }}
 RR{\tx3400\tx6000\tx8000
@@ -273,8 +293,12 @@ RR{\fs16 Jos\'e9 Miguel Fern\'e1ndez Fern\'e1ndez\tab }\line
 RR{\fs16 Jos\'e9 Miguel Fern\'e1ndez Fern\'e1ndez \tab 2.7.1 Manual\tab Spanish }\line
 RR{\fs16 Fernando Gabriel Ranea \tab 2.7.1 menus and messages\tab Spanish }{\fs8 \par\par }
 RR{\fs16 Jean-Pierre Demailly \tab 2.7.1 menus and messages \tab French }{\fs8 \par\par }
-RR{\fs16 Giuseppe Martini, Giovanni Paolella \tab 2.7.1 menus and messages\tab Italian }\line
-RR{\fs16  A. Davassi, M. Masullo, C. Liotto\tab 2.7.1 help file }
+RR{\fs16 Giuseppe Martini, Giovanni Paolella \tab 2.7.1 menus and messages \tab}\line
+RR{\fs16 A. Davassi, M. Masullo, C. Liotto\tab 2.7.1 help file \tab Italian}\line
+RR{\fs16 G. Pozhvanov \tab 2.7.3 menus and messages \tab Russian}\line
+RR{\fs16 G. Todorov \tab 2.7.3 menus and messages \tab Bulgarian}\line
+RR{\fs16 Nan Jia, G. Todorov \tab 2.7.3 menus and messages \tab Chinese}\line
+RR{\fs16 Mamoru Yamanishi, Katajima Hajime \tab 2.7.3 menus and messages \tab Japanese}
 RR\par\pard}
 RP
 RR{\fs16
@@ -294,8 +318,11 @@ RTversion 2.7.1.1, April 2001 for RasMol version 2.7.2.1 and
 RTFebruary 2005 for RasMol version 2.7.3.
 RR}
 RP
-RR{\fs16 Documentation Last Updated 19 April 2005}\line
+RR{\fs16 Documentation Last Updated 19 November 2007}\line
 RR{\fs16 Edited by Herbert J. Bernstein and Frances C. Bernstein}
+RP
+RR{\fs16 Please read the file NOTICE for important notices which apply to this}\line
+RR{\fs16 package and for license terms (GPL or RASLIC).}
 RR\pard\par
 
 RP
@@ -306,7 +333,7 @@ RP
 HR<!doctype html public "-//IETF//DTD HTML 2.0//EN">
 HR<HTML>
 HR<HEAD>
-HR<title>RasMol V2.7.3 Manual</title>
+HR<title>RasMol V2.7.4 Manual</title>
 HR</HEAD>
 HR<BODY BACKGROUND="../html_graphics/rasmolwallpaper.jpg">
 HR<a href="http://www.iucr.org/iucr-top/welcome.html">
@@ -334,7 +361,7 @@ HR
 HR
 HR<font color="#0808A0">
 HR<H1 ALIGN=CENTER>Manual<BR>
-HRRasMol 2.7.3</H1>
+HRRasMol 2.7.4</H1>
 HR<center>
 HR<table border=0 callpadding=3 cellspacing=0>
 HR<tr>
@@ -488,7 +515,7 @@ HR</center>
 
 HR<H3 ALIGN=CENTER>
 HRMolecular Graphics Visualisation Tool<BR>
-HR6 February 2005<BR>
+HR6 November 2007<BR>
 HR</H3>
 HR</font><font color="#000000">
 HR<CENTER>
@@ -514,15 +541,21 @@ HR<tr><td valign="top">Herbert J. Bernstein<td>RasMol 2.7.0 March 1999<br>
 HRRasMol 2.7.1 June 1999<br>RasMol 2.7.1.1 January 2001<BR>
 HRRasMol 2.7.2 August 2000<br>RasMol 2.7.2.1 April 2001<BR>
 HRRasMol 2.7.2.1.1 January 2004<br>RasMol 2.7.3 February 2005<BR>
-HR<td valign="top">&#169 Herbert J. Bernstein 1998-2005
+HRRasMol 2.7.3.1 Apr 06<br>RasMol 2.7.4 November 2007<br>
+HR<td valign="top">&#169 Herbert J. Bernstein 1998-2007
 HR</table>
 HR</CENTER>
 HR<P>
-HRwith RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,
-HRand Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
-HRgrants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
-HRScience Foundation and grant DE-FG02-03ER63601 from the U.S. Department
-HRof Energy.
+HR RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,
+HR and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
+HR grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
+HR Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department
+HR of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,
+HR N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol 
+HR 2.7.4 supported in part by grant 1R15GM078077-01 from the National 
+HR Institute of General Medical Sciences (NIGMS). The content is solely 
+HR the responsibility of the authors and does not necessarily represent 
+HR the official views of the funding organizations.
 HR<P>
 HR<CENTER>
 HRand Incorporating Translations by
@@ -536,7 +569,13 @@ HR<tr><td>Jean-Pierre Demailly<td>2.7.1 menus and messages<td>French
 HR<tr><td>Giuseppe Martini, Giovanni Paolella,<br>A. Davassi, M. Masullo, C. Liotto
 HR<td valign="top">2.7.1 menus and messages<br>
 HR2.7.1 help file<td valign="top">Italian
-HR<tr border=3>
+HR<tr><td>G. Pozhvanov<td valign="top">2.7.3 menus and messages<td>Russian
+HR<tr><td>G. Todorov<td valign="top">2.7.3 menus and messages<td>Bulgarian
+HR<tr><td>Nan Jia, G. Todorov<td valign="top">2.7.3 menus and messages<td>Chinese
+HR<tr><td>Mamoru Yamanishi, Katajima Hajime<td valign="top">2.7.3 menus and messages<td>Japanese
+
+
+HR<tr>
 HR<tr>
 HR</table>
 HR</CENTER>
@@ -575,7 +614,7 @@ HRAugust 2000 for RasMol version 2.7.2, January 2001 for RasMol
 HRversion 2.7.1.1, April 2001 for RasMol version 2.7.2.1 and
 HRFebruary 2005 for RasMol version 2.7.3.
 HP
-HR<CENTER>Documentation Last Updated 19 April 2005<br>
+HR<CENTER>Documentation Last Updated 12 November 2007<br>
 HREdited by Herbert J. Bernstein and Frances C. Bernstein
 HR</CENTER>
 HR
@@ -612,7 +651,8 @@ HR<HR>
 
 HR<H2 ALIGN=CENTER>IMPORTANT</H2>
 HR<P>
-HRThis version is based in directly on RasMol version 2.7.2.1.1, 
+HRThis version is based directly on RasMol version 2.7.3.1,
+HRon RasMol vesion 2.7.3, on RasMol version 2.7.2.1.1, 
 HRon RasMol version 2.7.2, on RasMol version 2.7.1, on RasMol 
 HRversion 2.6_CIF.2, on RasMol version 2.6x1, on RasMol version 
 HR2.6.4, and RasMol 2.5-ucb and 2.6-ucb.
@@ -653,62 +693,67 @@ HR<table  BORDER CELLPADDING=2>
 HR<tr><td><a href="#backbone">Backbone</a>
 HR<td><a href="#background">Background</a>
 HR<td><a href="#bond">Bond</a>
+HR<td><a href="#bulgarian">Bulgarian</a>
 HR<td><a href="#cartoon">Cartoon</a>
 HR<td><a href="#centre">Centre</a>
+HR<td><a href="#chinese">Chinese</a>
 HR<td><a href="#clipboard">Clipboard</a>
-HR<td><a href="#colour">Colour</a>
-HR<td><a href="#connect">Connect</a>
 
-HR<tr><td><a href="#spacefill">CPK</a>
+HR<tr><td><a href="#colour">Colour</a>
+HR<td><a href="#connect">Connect</a>
+HR<td><a href="#spacefill">CPK</a>
 HR<td><a href="#cpknew">CPKnew</a>
 HR<td><a href="#define">Define</a>
 HR<td><a href="#depth">Depth</a>
 HR<td><a href="#dots">Dots</a>
 HR<td><a href="#echo">Echo</a>
-HR<td><a href="#english">English</a>
-HR<td><a href="#quit">Exit</a>
 
-HR<tr><td><a href="#french">French</a>
+HR<tr><td><a href="#english">English</a>
+HR<td><a href="#quit">Exit</a>
+HR<td><a href="#french">French</a>
 HR<td><a href="#hbonds">HBonds</a>
 HR<td><a href="#help">Help</a>
 HR<td><a href="#italian">Italian</a>
+HR<td><a href="#japanese">Japanese</a>
 HR<td><a href="#label">Label</a>
-HR<td><a href="#load">Load</a>
+
+HR<tr><td><a href="#load">Load</a>
+HR<td><a href="#map">Map</a>
 HR<td><a href="#molecule">Molecule</a>
 HR<td><a href="#monitor">Monitor</a>
-
-HR<tr><td><a href="#pause">Pause</a>
+HR<td><a href="#pause">Pause</a>
 HR<td><a href="#print">Print</a>
 HR<td><a href="#quit">Quit</a>
 HR<td><a href="#refresh">Refresh</a>
-HR<td><a href="#renumber">Renumber</a>
+
+HR<tr><td><a href="#renumber">Renumber</a>
 HR<td><a href="#reset">Reset</a>
 HR<td><a href="#restrict">Restrict</a>
 HR<td><a href="#ribbons">Ribbons</a>
-
-HR<tr><td><a href="#rotate">Rotate</a>
+HR<td><a href="#rotate">Rotate</a>
 HR<td><a href="#save">Save</a>
 HR<td><a href="#script">Script</a>
 HR<td><a href="#select">Select</a>
-HR<td><a href="#set">Set</a>
+
+HR<tr><td><a href="#set">Set</a>
 HR<td><a href="#show">Show</a>
 HR<td><a href="#slab">Slab</a>
 HR<td><a href="#script">Source</a>
-
-HR<tr><td><a href="#spacefill">Spacefill</a>
+HR<td><a href="#spacefill">Spacefill</a>
 HR<td><a href="#spanish">Spanish</a>
 HR<td><a href="#ssbonds">SSBonds</a>
 HR<td><a href="#star">Star</a>
-HR<td><a href="#stereo">Stereo</a>
+
+HR<tr><td><a href="#stereo">Stereo</a>
 HR<td><a href="#strands">Strands</a>
 HR<td><a href="#structure">Structure</a>
 HR<td><a href="#surface">Surface</a>
-
-HR<tr><td><a href="#trace">Trace</a>
+HR<td><a href="#trace">Trace</a>
 HR<td><a href="#translate">Translate</a>
 HR<td><a href="#unbond">UnBond</a>
 HR<td><a href="#wireframe">Wireframe</a>     
-HR<td><a href="#write">Write</a>
+
+HR<tr><td><a href="#write">Write</a>
 HR<td><a href="#zap">Zap</a>
 HR<td><a href="#zoom">Zoom</a>
 HR<td colspan=1>
@@ -773,24 +818,24 @@ NRVersion 2.6x1 Mods Copyright (C) Arne Mueller 1998
 NRVersions 2.5-ucb and 2.6-ucb Mods Copyright (C)
 NRUC Regents/ModularCHEM Consortium 1995, 1996
 NRRasTop 1.3 Copyright (C) Philippe Valadon 2000
-NRVersion 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3 Mods 
-NRCopyright (C) Herbert J. Bernstein 1998-2005
+NRVersion 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3, 2.7.4 Mods 
+NRCopyright (C) Herbert J. Bernstein 1998-2007
 NRrasmol@bernstein-plus-sons.com
 RTRasMol Copyright \'a9 Roger Sayle 1992-1999\par
 RTVersion 2.6x1 Mods Copyright \'a9 Arne Mueller 1998\par
 RTVersions 2.5-ucb and 2.6-ucb Mods Copyright \'a9\par
 RTUC Regents/ModularCHEM Consortium 1995, 1996\par
 RTRasTop 1.3 Copyright \'a9 Philippe Valadon 2000\par
-RTVersion 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3  Mods\par
-RTCopyright \'a9 Herbert J. Bernstein 1998-2005\par
+RTVersion 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3, 2.7.4  Mods\par
+RTCopyright \'a9 Herbert J. Bernstein 1998-2007\par
 RTrasmol@bernstein-plus-sons.com\par
 HR<P><BR>RasMol Copyright &#169; Roger Sayle 1992-1999
 HR<BR>Version 2.6x1 Mods Copyright &#169; Arne Mueller 1998
 HR<BR>Versions 2.5-ucb and 2.6-ucb Mods Copyright &#169;
 HRUC Regents/ModularCHEM Consortium 1995, 1996
 HR<BR>RasTop 1.3 Copyright &#169; Philippe Valadon 2000
-HR<BR>Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3 Mods
-HRCopyright &#169; Herbert J. Bernstein 1998-2005
+HR<BR>Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3, 2.7.4 Mods
+HRCopyright &#169; Herbert J. Bernstein 1998-2007
 HR<BR><address><a href="mailto:rasmol@rasmol.org">rasmol@rasmol.org</a></address>
 AP
 
@@ -931,9 +976,9 @@ AChelp oldnotice.
 AB
 
 NSCopyright
-NR                                RasMol 2.7.3
+NR                                RasMol 2.7.4
 NR                     Molecular Graphics Visualisation Tool
-NR                              6 February 2005
+NR                              12 November 2007
 NR
 NR                      Based on RasMol 2.6 by Roger Sayle
 NR       Biomolecular Structures Group,Glaxo Wellcome Research & Development
@@ -957,13 +1002,21 @@ NR Bernstein          RasMol 2.7.1     Jun 99       1998-2001
 NR                    RasMol 2.7.1.1   Jan 01
 NR                    RasMol 2.7.2     Aug 00
 NR                    RasMol 2.7.2.1.1 Jan 04
-NR                    RasMol 2.7.3     Apr 05
+NR                    RasMol 2.7.3     Feb 05
+NR                    RasMol 2.7.3.1   Apr 06
+NR                    RasMol 2.7.4     Nov 07
 NR
-NR with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,
+NR RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,
 NR and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
 NR grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
 NR Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department
-NR of Energy.
+NR of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,
+NR N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol 
+NR 2.7.4 supported in part by grant 1R15GM078077-01 from the National 
+NR Institute of General Medical Sciences (NGMS). The content is solely 
+NR the responsibility of the authors and does not necessarily represent 
+NR the official views of the funding organizations.
+NR
 NR
 NR                     and Incorporating Translations by
 NR                     
@@ -976,13 +1029,17 @@ NR Fernando Gabriel Ranea               2.7.1 menus and messages Spanish
 NR
 NR Jean-Pierre Demailly                 2.7.1 menus and messages French
 NR
-NR Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages Italian
-NR A. Davassi, M. Masullo, C. Liotto    2.7.1 help file
+NR Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages
+NR A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian
+NR
+NR G. Pozhvanov                         2.7.3 menus and messages Russian
+NR Nan Jia                              2.7.3 menus and messages Chinese
+NR 
 NR
 NR                              This Release by
 NR   Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA
 NR                        yaya@bernstein-plus-sons.com
-NR                Copyright (C) Herbert J. Bernstein 1998-2005
+NR                Copyright (C) Herbert J. Bernstein 1998-2007
 
 RB
 
@@ -1000,12 +1057,13 @@ MR.SH COPYING
 HR<a name="chcopying"><h2>Copying</h2></a>
 XR2 Copying
 AP
-ATThis version is based in large part on RasMol version 2.7.2.1.1,
+ATThis version is based directly on RasMol version 2.7.3.1,
+ATon RasMol vesion 2.7.3, on RasMol version 2.7.2.1.1, 
 ATRasmol version 2.7.2, RasMol version 2.7.1.1 and RasTop 
 ATversion 1.3 and indirectly on the RasMol 2.5-ucb and 2.6-ucb 
 ATversions and version 2.6_CIF.2, RasMol 2.6x1 and RasMol_2.6.4.
 AP
-ATRasMol 2.7.3 may be distributed under the terms of the GNU
+ATRasMol 2.7.4 may be distributed under the terms of the GNU
 ATGeneral Public License (the GPL), see
 AP 
 AT          http://www.gnu.org/licenses/gpl.txt
@@ -1013,7 +1071,7 @@ AP
 ATor the file GPL or type the command
 AXGPL help GPL
 AP
-ATor RasMol 2.7.3 may be distributed under the RASMOL license.
+ATor RasMol 2.7.4 may be distributed under the RASMOL license.
 ATSee the file NOTICE
 ATor type the command
 AXRASLIC help RASLIC
@@ -1697,8 +1755,9 @@ NRVersion 2.6x1 Mods Copyright (C) Arne Mueller 1998
 NRVersion 2.5-ucb, 2.6-ucb Mods 
 NR  Copyright (C) UC Regents/ModularCHEM Consortium 1995, 1996
 NRRasTop 1.3 Copyright (C) Philippe Valadon 2000
-NRVersion 2.7.0. 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3 Mods 
-NR  Copyright (C) Herbert J. Bernstein 1998-2005 
+NRVersion 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 
+NR        2.7.3, 2.7.3.1, 2.7.3.4 Mods 
+NR  Copyright (C) Herbert J. Bernstein 1998-2007 
 NR  (yaya@bernstein-plus-sons.com)
 AB
 
@@ -2322,17 +2381,18 @@ ATThe commands/keywords currently recognised by RasMol are given below.
 PRType "help <command>" for more information on each RasMol function.
 AP
 
-NR    backbone     background   bond         cartoon      centre
-NR    clipboard    colour       connect      cpk          cpknew
-NR    define       depth        dots         echo         english
-NR    exit         french       hbonds       help         italian
-NR    label        load         molecule     monitor      pause   
-NR    print        quit         refresh      renumber     reset
-NR    restrict     ribbons      rotate       save         script
-NR    select       set          show         slab         source
-NR    spacefill    spanish      ssbonds      star         stereo
-NR    strands      structure    surface      trace        translate
-NR    unbond       wireframe    write        zap          zoom
+NR    backbone     background   bond         bulgarian    cartoon
+NR    centre       chinese      clipboard    colour       connect
+NR    cpk          cpknew       define       depth        dots
+NR    echo         english      exit         french       hbonds
+NR    help         italian      japanese     label        load
+NR    map          molecule     monitor      pause        print
+NR    quit         refresh      renumber     reset        restrict
+NR    ribbons      rotate       save         script       select
+NR    set          show         slab         source       spacefill
+NR    spanish      ssbonds      star         stereo       strands
+NR    structure    surface      trace        translate    unbond
+NR    wireframe    write        zap          zoom
 NP
 
 HR<center>
@@ -2340,65 +2400,69 @@ HR<table BORDER CELLPADDING=2>
 HR<tr><td><a href="#backbone">Backbone</a>
 HR<td><a href="#background">Background</a>
 HR<td><a href="#bond">Bond</a>
+HR<td><a href="#bulgarian">Bulgarian</a>
 HR<td><a href="#cartoon">Cartoon</a>
 HR<td><a href="#centre">Centre</a>
+HR<td><a href="#chinese">Chinese</a>
 HR<td><a href="#clipboard">Clipboard</a>
-HR<td><a href="#colour">Colour</a>
-HR<td><a href="#connect">Connect</a>
 
-HR<tr><td><a href="#spacefill">CPK</a>
+HR<tr><td><a href="#colour">Colour</a>
+HR<td><a href="#connect">Connect</a>
+HR<td><a href="#spacefill">CPK</a>
 HR<td><a href="#cpknew">CPKnew</a>
 HR<td><a href="#define">Define</a>
 HR<td><a href="#depth">Depth</a>
 HR<td><a href="#dots">Dots</a>
 HR<td><a href="#echo">Echo</a>
-HR<td><a href="#english">English</a>
-HR<td><a href="#quit">Exit</a>
 
-HR<tr><td><a href="#french">French</a>
+HR<tr><td><a href="#english">English</a>
+HR<td><a href="#quit">Exit</a>
+HR<td><a href="#french">French</a>
 HR<td><a href="#hbonds">HBonds</a>
 HR<td><a href="#help">Help</a>
 HR<td><a href="#italian">Italian</a>
+HR<td><a href="#Japanese">Japanese</a>
 HR<td><a href="#label">Label</a>
-HR<td><a href="#load">Load</a>
+
+HR<tr><td><a href="#load">Load</a>
+HR<td><a href="#map">Map</a>
 HR<td><a href="#molecule">Molecule</a>
 HR<td><a href="#monitor">Monitor</a>
-
-HR<tr><td><a href="#pause">Pause</a>
+HR<td><a href="#pause">Pause</a>
 HR<td><a href="#print">Print</a>
 HR<td><a href="#quit">Quit</a>
 HR<td><a href="#refresh">Refresh</a>
-HR<td><a href="#renumber">Renumber</a>
+
+HR<tr><td><a href="#renumber">Renumber</a>
 HR<td><a href="#reset">Reset</a>
 HR<td><a href="#restrict">Restrict</a>
 HR<td><a href="#ribbons">Ribbons</a>
-
-HR<tr><td><a href="#rotate">Rotate</a>
+HR<td><a href="#rotate">Rotate</a>
 HR<td><a href="#save">Save</a>
 HR<td><a href="#script">Script</a>
 HR<td><a href="#select">Select</a>
-HR<td><a href="#set">Set</a>
+
+HR<tr><td><a href="#set">Set</a>
 HR<td><a href="#show">Show</a>
 HR<td><a href="#slab">Slab</a>
 HR<td><a href="#script">Source</a>
-
-HR<tr><td><a href="#spacefill">Spacefill</a>
+HR<td><a href="#spacefill">Spacefill</a>
 HR<td><a href="#spanish">Spanish</a>
 HR<td><a href="#ssbonds">SSBonds</a>
 HR<td><a href="#star">Star</a>
-HR<td><a href="#stereo">Stereo</a>
+
+HR<tr><td><a href="#stereo">Stereo</a>
 HR<td><a href="#strands">Strands</a>
 HR<td><a href="#structure">Structure</a>
 HR<td><a href="#surface">Surface</a>
-
-HR<tr><td><a href="#trace">Trace</a>
+HR<td><a href="#trace">Trace</a>
 HR<td><a href="#translate">Translate</a>
 HR<td><a href="#unbond">UnBond</a>
 HR<td><a href="#wireframe">Wireframe</a>     
-HR<td><a href="#write">Write</a>
+
+HR<tr><td><a href="#write">Write</a>
 HR<td><a href="#zap">Zap</a>
 HR<td><a href="#zoom">Zoom</a>
-HR<td colspan=1>
 HR</table>
 
 HR</center><hr>
@@ -2409,35 +2473,41 @@ RR\intbl
 RR{\uldb backbone}{\v backbone}\cell
 RR{\uldb background}{\v background}\cell
 RR{\uldb bond}{\v bond}\cell
-RR{\uldb cartoon}{\v cartoon}\cell
+RR{\uldb bulgarian}{\v bulgarian}\cell
 RR\row\intbl
 
+RR{\uldb cartoon}{\v cartoon}\cell
 RR{\uldb centre}{\v centre}\cell
+RR{\uldb chinese}{\v chinese}\cell
 RR{\uldb clipboard}{\v clipboard}\cell
+RR\row\intbl
+
 RR{\uldb colour}{\v colour}\cell
 RR{\uldb connect}{\v connect}\cell
-RR\row\intbl
-
 RR{\uldb cpk}{\v cpk}\cell
 RR{\uldb cpknew}{\v cpknew}\cell
+RR\row\intbl
+
 RR{\uldb define}{\v define}\cell
 RR{\uldb depth}{\v depth}\cell
-RR\row\intbl
-
 RR{\uldb dots}{\v dots}\cell
 RR{\uldb echo}{\v echo}\cell
+RR\row\intbl
+
 RR{\uldb english}{\v english}\cell
 RR{\uldb exit}{\v exit}\cell
-RR\row\intbl
-
 RR{\uldb french}{\v french}\cell
 RR{\uldb hbonds}{\v hbonds}\cell
-RR{\uldb help}{\v help}\cell
-RR{\uldb italian}{\v italian}\cell
 RR\row\intbl
 
+RR{\uldb help}{\v help}\cell
+RR{\uldb italian}{\v italian}\cell
+RR{\uldb japanese}{\v japanese}\cell
 RR{\uldb label}{\v label}\cell
+RR\row\intbl
+
 RR{\uldb load}{\v load}\cell
+RR{\uldb map}{\v map}\cell
 RR{\uldb molecule}{\v molecule}\cell
 RR{\uldb monitor}{\v pause}\cell
 RR\row\intbl
@@ -2614,6 +2684,38 @@ AB
 
 
 
+ASBulgarian
+NRSyntax:  Bulgarian
+NR
+HR<pre>
+HRSyntax:  Bulgarian
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRBulgarian \par
+RR}\pard\par
+
+ATThe RasMol
+ACBulgarian
+ATcommand sets the menus and messages to the Bulgarian versions.
+AP
+ATThis command may not work correctly unless appropriate fonts
+AThave been installed.  The commands
+AXbulgarian Bulgarian,
+AXchinese Chinese,
+AXenglish English,
+AXfrench French,
+AXitalian Italian,
+AXrussian Russian
+ATand
+AXspanish Spanish
+ATmay be used to select Bulgarian, Chinese, English, French, 
+ATItalian, Japanese, Russian and Spanish menus and messages if the
+ATappropriate fonts have been installed.
+AB
+
+
+
 ASCartoon
 NRSyntax:  cartoon {<number>}
 NR
@@ -2704,6 +2806,38 @@ ATwhich is placed at the centre of the canvas.  Starting with
 ATRasMol 2.7.2, the default is
 ATto center the new axis on the canvas.
 AB
+
+
+ASChinese
+NRSyntax:  Chinese
+NR
+HR<pre>
+HRSyntax:  Chinese
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRChinese \par
+RR}\pard\par
+
+ATThe RasMol
+ACChinese
+ATcommand sets the menus and messages to the Chinese versions.
+AP
+ATThis command may not work correctly unless appropriate fonts
+AThave been installed.  The commands
+AXbulgarian Bulgarian,
+AXchinese Chinese,
+AXenglish English,
+AXfrench French,
+AXitalian Italian,
+AXrussian Russian
+ATand
+AXspanish Spanish
+ATmay be used to select Bulgarian, Chinese, English, French, 
+ATItalian, Japanese, Russian and Spanish menus and messages if the
+ATappropriate fonts have been installed.
+AB
+
 
 
 ASClipboard
@@ -2965,12 +3099,20 @@ RR}\pard\par
 ATThe RasMol
 ACEnglish
 ATcommand sets the menus and messages to the English versions.
-ATThe commands
+AP
+ATThis command may not work correctly unless appropriate fonts
+AThave been installed.  The commands
+AXbulgarian Bulgarian,
+AXchinese Chinese,
+AXenglish English,
 AXfrench French,
-AXitalian Italian
+AXitalian Italian,
+AXrussian Russian
 ATand
 AXspanish Spanish
-ATmay be used to select French, Italian and Spanish menus and messages.
+ATmay be used to select Bulgarian, Chinese, English, French, 
+ATItalian, Japanese, Russian and Spanish menus and messages if the
+ATappropriate fonts have been installed.
 AB
 
 
@@ -2988,12 +3130,20 @@ RR}\pard\par
 ATThe RasMol
 ACFrench
 ATcommand sets the menus and messages to the French versions.
-ATThe commands
+AP
+ATThis command may not work correctly unless appropriate fonts
+AThave been installed.  The commands
+AXbulgarian Bulgarian,
+AXchinese Chinese,
 AXenglish English,
-AXitalian Italian
+AXfrench French,
+AXitalian Italian,
+AXrussian Russian
 ATand
 AXspanish Spanish
-ATmay be used to select English, Italian and Spanish menus and messages.
+ATmay be used to select Bulgarian, Chinese, English, French, 
+ATItalian, Japanese, Russian and Spanish menus and messages if the
+ATappropriate fonts have been installed.
 AB
 
 PR?hbond
@@ -3072,15 +3222,56 @@ RR{\f2\b Syntax:\tab
 RRItalian \par
 RR}\pard\par
 
+
 ATThe RasMol
 ACItalian
 ATcommand sets the menus and messages to the Italian versions.
-ATThe commands
+AP
+ATThis command may not work correctly unless appropriate fonts
+AThave been installed.  The commands
+AXbulgarian Bulgarian,
+AXchinese Chinese,
 AXenglish English,
-AXfrench French
+AXfrench French,
+AXitalian Italian,
+AXrussian Russian
 ATand
 AXspanish Spanish
-ATmay be used to select English, French and Spanish menus and messages.
+ATmay be used to select Bulgarian, Chinese, English, French, 
+ATItalian, Japanese, Russian and Spanish menus and messages if the
+ATappropriate fonts have been installed.
+AB
+
+
+ASJapanese
+NRSyntax:  Japanese
+NR
+HR<pre>
+HRSyntax:  Japanese
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRJapanese \par
+RR}\pard\par
+
+
+ATThe RasMol
+ACJapanese
+ATcommand sets the menus and messages to the Japanese versions.
+AP
+ATThis command may not work correctly unless appropriate fonts
+AThave been installed.  The commands
+AXbulgarian Bulgarian,
+AXchinese Chinese,
+AXenglish English,
+AXfrench French,
+AXitalian Italian,
+AXrussian Russian
+ATand
+AXspanish Spanish
+ATmay be used to select Bulgarian, Chinese, English, French, 
+ATItalian, Japanese, Russian and Spanish menus and messages if the
+ATappropriate fonts have been installed.
 AB
 
 
@@ -3265,6 +3456,135 @@ HTatomic coordinates in PDB, CIF or mmCIF file format.
 HTOne possible use is a standard RasMol script prefix that may be 
 HTconcatenated with an appropriate PDB file on-the-fly.
 AB
+
+ASMap
+NRSyntax:  map {<map_selector>} {<map_subcommand> <parameters>} 
+NR
+HR<pre>
+HRSyntax:  map {&lt;map_selector&gt;} {&lt;map_subcommand&gt; &lt;parameters&gt;}
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRmap \{<map_selector>\} \{<map_subcommand> <parameters>\}\par
+RR}\pard\par
+
+ATThe RasMol
+ACmap
+ATcommands manipulate electron density maps in coordination
+ATwith the display of molecules.  These commands are very
+ATmemory intensive and may not work on machines with
+ATlimited memory.  Each molecule may have as many maps
+ATas available memory permits.  Maps may be read from
+ATfiles or generated from Gaussian density distributions
+ATaround atoms.
+AP
+The map selector is a map number (m) or a range of map numbers
+(m-n) and an optional map label as a quotes string.  The keywords
+all, next and new (or none) may also be used as map selectors.
+AP
+The map subcommands are
+AXmap_generate map generate,
+ATto generate a map from selected atoms,
+AXmap_load map load,
+ATto load a map from a file,
+AXmap_select map select,
+ATto select one or more maps
+AXmap_restrict map restrict,
+ATto select one or more maps and to disable all others,
+AXmap_level map level,
+ATto set the contouring level for selected maps,
+AXmap_resolution map resolution,
+ATto set the resolution for contouring selected maps,
+AXmap_spacing map spacing,
+ATto set the spacing betwen contour lines of selected maps,
+AXmap_spread map spread,
+ATto set the variance of the Gaussians for map generation as a fraction
+ATof the atomic radius, and
+AXmap_mask map mask
+ATto designate a mask for the selected maps
+AB
+
+PR?map_generate
+RR#{\footnote map_generate}
+ASMap generate
+NRSyntax:  map {<map_selector>} generate dots
+NR         map {<map_selector>} generate mesh
+NR         map {<map_selector>} generate surface
+NR
+HR<pre>
+HRSyntax:  map {&lt;map_selector&gt;} generate dots
+HR         map {&lt;map_selector&gt;} generate mesh
+HR         map {&lt;map_selector&gt;} generate surface
+HR
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRmap \{<map_selector>\}  generate dots\line
+RR\tab map \{<map_selector>\} generate mesh\line
+RR\tab map \{<map_selector>\} generate surface
+RR}\pard\par
+
+ATATThe RasMol
+ACmap generate
+ATcommand generates a map from whatever atoms are currently selected,
+ATby summing electron densities approximated by Gaussian distributions.
+ATEach Gaussian has a height proportional to the atomic number of the
+ATelement type of the atom and a standard deviation determined by the
+ATmost recently specified spread or resolution.  If a spread has been
+ATgiven the radius of the atom is multiplied by the spread to find the
+ATstandard deviation.  The default is 1/6th of the radius.  If a resolution
+AThas been given, the spread is inferred as 2/3rds of the resolution.
+ATFor example, if the resolution is given as 1., and the atom in question
+ATis a Carbon with a van der Waals radius of 468 RasMol units (1.87 Angstroms),
+ATthe inferred spead is .6667, and the standard deviation of the Gaussian
+ATis taken as 1.25 Angstroms.
+AP
+ATIf no specific map was given by the map selector, the new map is
+ATgiven the next available map number.
+AP
+ATIf a specific map was given by the map selector, the new map replaces
+ATthat map.  If more than one map was given by the map selector, the
+ATnew map replaces the lowest numbered of the selected maps.  In any
+ATcase the new map becomes the currently selected map.
+AP
+ATThe map is displayed as dots, mesh or a surface.
+AB
+
+
+PR?map_load
+RR#{\footnote map_load}
+ASMap load
+NRSyntax:  map {<map_selector>} load <filename>
+NR
+HR<pre>
+HRSyntax:  map {&lt;map_selector&gt;} load &lt;filename&gt;
+HR
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRmap \{<map_selector>\}  load <filename>
+RR}\pard\par
+
+ATATThe RasMol
+ACmap load
+ATcommand loads a map file into RasMol.  The valid formats are
+ATCCP4 map format and imgCIF format.
+AP
+ATIf no specific map was given by the map selector, the new map is
+ATgiven the next available map number.
+AP
+ATIf a specific map was given by the map selector, the new map replaces
+ATthat map.  If more than one map was given by the map selector, the
+ATnew map replaces the lowest numbered of the selected maps.  In any
+ATcase the new map becomes the currently selected map.
+AP
+ATThe map is displayed as dots, mesh or a surface depending on the
+ATlast map rendering mode selected.
+AB
+
+
+
+
 
 ASMolecule
 NRSyntax:  molecule <number>
@@ -3650,6 +3970,38 @@ ATthe rotation of the molecule selected by the
 AXmolecule molecule n
 ATcommand.
 AB
+
+NRSyntax:  Russian
+NR
+HR<pre>
+HRSyntax:  Russian
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRRussian \par
+RR}\pard\par
+
+
+ATThe RasMol
+ACRussian
+ATcommand sets the menus and messages to the Russian versions.
+AP
+ATThis command may not work correctly unless appropriate fonts
+AThave been installed.  The commands
+AXbulgarian Bulgarian,
+AXchinese Chinese,
+AXenglish English,
+AXfrench French,
+AXitalian Italian,
+AXrussian Russian
+ATand
+AXspanish Spanish
+ATmay be used to select Bulgarian, Chinese, English, French, 
+ATItalian, Japanese, Russian and Spanish menus and messages if the
+ATappropriate fonts have been installed.
+AB
+
+
 
 ASSave
 NRSyntax:  save {pdb} <filename>
@@ -4071,12 +4423,20 @@ RR}\pard\par
 ATThe RasMol
 ACSpanish
 ATcommand sets the menus and messages to the Spanish versions.
-ATThe commands
+AP
+ATThis command may not work correctly unless appropriate fonts
+AThave been installed.  The commands
+AXbulgarian Bulgarian,
+AXchinese Chinese,
 AXenglish English,
-AXfrench French
+AXfrench French,
+AXitalian Italian,
+AXrussian Russian
 ATand
-AXitalian Italian
-ATmay be used to select English, French and Italian menus and messages.
+AXspanish Spanish
+ATmay be used to select Bulgarian, Chinese, English, French, 
+ATItalian, Japanese, Russian and Spanish menus and messages if the
+ATappropriate fonts have been installed.
 AB
 
 PR?ssbond

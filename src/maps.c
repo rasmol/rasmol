@@ -20,35 +20,44 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
  *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                   RasMol 2.7.4   Nov 07                                 *
  *                                                                         *
- *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
- *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
- *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
- *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
- *of Energy.                                                               *
+ * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
+ * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
+ * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
+ * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
+ * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
+ * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
+ * Institute of General Medical Sciences (NIGMS). The content is solely    *
+ * the responsibility of the authors and does not necessarily represent    * 
+ * the official views of the funding organizations.                        *
  *                                                                         *
  *                    and Incorporating Translations by                    *
- *  Author                               Item                      Language*
+ *  Author                               Item                     Language *
  *  Isabel Servan Martinez,                                                *
- *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
- *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
- *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
- *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages French   *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
- *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
- *  G. Pozhvanov                         2.7.3 menus and message   Russian *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  *
+ *  G. Pozhvanov                         2.7.3 menus and messages Russian  *
+ *  G. Todorov                           2.7.3 menus and messages Bulgarian*
+ *  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  *
+ *  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese *
  *                                                                         *
  *                             This Release by                             *
- * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2007               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
@@ -93,10 +102,6 @@
 #define ForEachAtom  for(chain=Database->clist;chain;chain=chain->cnext) \
                      for(group=chain->glist;group;group=group->gnext)    \
                      for(ptr=group->alist;ptr;ptr=ptr->anext)
-                     
-#define MapEl(map,ix,iy,iz)  (map)->mapdata[(ix)-((map)->xlow) +               \
-                   ((map)->xhigh-(map)->xlow+1)*((iy)-((map)->ylow)) +         \
-                   ((map)->xhigh-(map)->xlow+1)*((map)->yhigh-(map)->ylow+1)*((iz)-((map)->zlow))]
 
 
 /* #define LogMapVal(mapval)  mapval<=0.?-1.e30:log((mapval)) */
@@ -171,9 +176,14 @@ void DeleteMaps( void ) {
         mapinfo.MapFile=NULL;
       }
 
-      if (mapinfo.MapSelection) {
-        _ffree((void __far *)mapinfo.MapSelection);
-        mapinfo.MapSelection=NULL;
+      if (mapinfo.MapGenSel) {
+        vector_free((GenericVec __far * __far *)&(mapinfo.MapGenSel ) );
+        mapinfo.MapGenSel=NULL;
+      }
+
+      if (mapinfo.MapMaskGenSel) {
+        vector_free((GenericVec __far * __far *)&(mapinfo.MapMaskGenSel ) );
+        mapinfo.MapMaskGenSel=NULL;
       }
 
 
@@ -224,7 +234,7 @@ void DeleteMap( int map, int keepmap ) {
       }
       
       if (!keepmap && mapinfo->MapMaskPtr) {
-        if (mapinfo->MapMaskPtr->mapdata)_ffree((void __far *)mapinfo->MapPtr->mapdata);
+        if (mapinfo->MapMaskPtr->mapdata)_ffree((void __far *)mapinfo->MapMaskPtr->mapdata);
         _ffree((void __far *)mapinfo->MapMaskPtr);
         mapinfo->MapMaskPtr = NULL;
       }
@@ -239,9 +249,14 @@ void DeleteMap( int map, int keepmap ) {
         mapinfo->MapFile=NULL;
       }
 
-      if (!keepmap && mapinfo->MapSelection) {
-        _ffree((void __far *)mapinfo->MapSelection);
-        mapinfo->MapSelection=NULL;
+      if (!keepmap && mapinfo->MapGenSel) {
+        vector_free((GenericVec __far * __far *)&(mapinfo->MapGenSel ) );
+        mapinfo->MapGenSel=NULL;
+      }
+
+      if (!keepmap && mapinfo->MapMaskGenSel) {
+        vector_free((GenericVec __far * __far *)&(mapinfo->MapMaskGenSel ) );
+        mapinfo->MapMaskGenSel=NULL;
       }
 
 
@@ -315,7 +330,7 @@ int LoadMapFile( FILE *fp, int info, int mapno )
     int NCRS[3], MODE, 
         NCRSSTART[3],
         NXYZ[3],ID[3];
-    float X, Y, Z, alpha, beta, gamma;
+    float XYZ[3], alpha, beta, gamma;
     int MAP_CRS[3], AXIS_XYZ[3];
     float AMIN, AMAX, AMEAN;
     int ISPG, NSYMBT, LSKFLG;
@@ -327,11 +342,17 @@ int LoadMapFile( FILE *fp, int info, int mapno )
     float ARMS;
     int NLABL;
     char LABEL[800];
+
     double * mapdata;
+    double datasq;
     unsigned char * bytemapdata;
+    MapStruct __far *mapmaskptr;
+    MapAtmSelVec __far *mapmaskgensel;
+    register Long xel, yel, zel;
+
     
     cbf_file *mapfile;
-    int ii;
+    int i,ii;
     char buffer[80];
 
     if (!MapInfoPtr) InitialiseMaps();
@@ -342,20 +363,23 @@ int LoadMapFile( FILE *fp, int info, int mapno )
     mapinfo.MapLevel = MapLevel;
     mapinfo.MapLabel = NULL;          /* clear the map label */
     mapinfo.MapSpacing = MapSpacing;
-    if (MapSpread < 0.1) MapSpread = 0.1;
+    if (MapSpread < 0.1) MapSpread = 2.*((double)MapSpacing)/750.;
     mapinfo.MapSpread = MapSpread;
+    if (!(MapFlag & (MapPointFlag|MapMeshFlag|MapSurfFlag)) ) MapFlag |= MapPointFlag;
     mapinfo.flag = SelectFlag|MapFlag;
     mapinfo.MapPointsPtr = NULL;
     mapinfo.MapBondsPtr = NULL;
     mapinfo.MapTanglePtr = NULL;
     mapinfo.MapMaskPtr = NULL;
     mapinfo.MapFile = NULL;
-    mapinfo.MapSelection = NULL;
+    mapinfo.MapGenSel = NULL;
+    mapinfo.MapMaskGenSel = NULL;
     mapinfo.MapPtr =NULL;
     mapinfo.MapRGBCol[0] = MapRGBCol[0];
     mapinfo.MapRGBCol[1] = MapRGBCol[1];
     mapinfo.MapRGBCol[2] = MapRGBCol[2];
     mapinfo.MapMeshRad = MapMeshRad;
+    mapinfo.MapPointRad = MapPointRad;
     mapinfo.MapLabel = MapLabel;
     MapLabel=NULL;
 
@@ -371,9 +395,9 @@ int LoadMapFile( FILE *fp, int info, int mapno )
     cbf_failnez(cbf_get_integer(mapfile,&NXYZ[0],0,32))       /*   8 */
     cbf_failnez(cbf_get_integer(mapfile,&NXYZ[1],0,32))       /*   9 */
     cbf_failnez(cbf_get_integer(mapfile,&NXYZ[2],0,32))       /*  10 */
-    cbf_failnez(cbf_get_integer(mapfile,(int *)&X,0,32))      /*  11 */
-    cbf_failnez(cbf_get_integer(mapfile,(int *)&Y,0,32))      /*  12 */
-    cbf_failnez(cbf_get_integer(mapfile,(int *)&Z,0,32))      /*  13 */
+    cbf_failnez(cbf_get_integer(mapfile,(int *)&(XYZ[0]),0,32))/*  11 */
+    cbf_failnez(cbf_get_integer(mapfile,(int *)&(XYZ[1]),0,32))/*  12 */
+    cbf_failnez(cbf_get_integer(mapfile,(int *)&(XYZ[2]),0,32))/*  13 */
     cbf_failnez(cbf_get_integer(mapfile,(int *)&alpha,0,32))  /*  14 */
     cbf_failnez(cbf_get_integer(mapfile,(int *)&beta,0,32))   /*  15 */
     cbf_failnez(cbf_get_integer(mapfile,(int *)&gamma,0,32))  /*  16 */
@@ -428,12 +452,14 @@ int LoadMapFile( FILE *fp, int info, int mapno )
     AXIS_XYZ[MAP_CRS[1]-1] = 1;
     AXIS_XYZ[MAP_CRS[2]-1] = 2;
     
-    (map)->xint = mapinfo.MapSpacing;
-    (map)->yint = mapinfo.MapSpacing;
-    (map)->zint = mapinfo.MapSpacing;
-    (map)->xorig = NCRSSTART[AXIS_XYZ[0]]*mapinfo.MapSpacing;
-    (map)->yorig = NCRSSTART[AXIS_XYZ[1]]*mapinfo.MapSpacing;
-    (map)->zorig = NCRSSTART[AXIS_XYZ[2]]*mapinfo.MapSpacing;
+    (map)->xint = rint(250.*XYZ[AXIS_XYZ[0]]/NXYZ[AXIS_XYZ[0]]);
+    (map)->yint = rint(250.*XYZ[AXIS_XYZ[1]]/NXYZ[AXIS_XYZ[1]]);
+    (map)->zint = rint(250.*XYZ[AXIS_XYZ[2]]/NXYZ[AXIS_XYZ[2]]);
+    
+    
+    (map)->xorig = NCRSSTART[AXIS_XYZ[0]]*(map)->xint;
+    (map)->yorig = NCRSSTART[AXIS_XYZ[1]]*(map)->yint;
+    (map)->zorig = NCRSSTART[AXIS_XYZ[2]]*(map)->zint;
     (map)->xlow = 0;
     (map)->ylow = 0;
     (map)->zlow = 0;
@@ -443,6 +469,7 @@ int LoadMapFile( FILE *fp, int info, int mapno )
     (map)->mapdatamin = AMIN;
     (map)->mapdatamax = AMAX;
     (map)->mapdatamean = AMEAN;
+    (map)->mapdataesd = 0.;
     
     (map)->mapxlate[0] = 250.*Info.vecf2o[0]-OrigCX;
 #ifdef INVERT
@@ -453,72 +480,67 @@ int LoadMapFile( FILE *fp, int info, int mapno )
     (map)->mapxlate[2] = -(250.*Info.vecf2o[0])-OrigCZ;
     
 /* M2R[0,0] */
-    (map)->mapm2r[0] = 250.*Info.matf2o[0][0]/(MapSpacing*(double)NXYZ[0]);
-/* M2R[1,0] */
-#ifdef INVERT
-    (map)->mapm2r[1] = -(250.*Info.matf2o[1][0]/(MapSpacing*(double)NXYZ[0]));
-#else
-    (map)->mapm2r[1] = 250.*Info.matf2o[1][0]/(MapSpacing*(double)NXYZ[0]);
-#endif
-/* M2R[2,0] */
-    (map)->mapm2r[2] = -(250.*Info.matf2o[2][0]/(MapSpacing*(double)NXYZ[0]));
-    
+    (map)->mapm2r[0] = 250.*Info.matf2o[0][0]/((map)->xint*(double)NXYZ[0]);
 /* M2R[0,1] */
-    (map)->mapm2r[0+3] = -250.*Info.matf2o[0][1]/(MapSpacing*(double)NXYZ[1]);
-/* M2R[1,1] */
-#ifdef INVERT    
-    (map)->mapm2r[1+3] = -(250.*Info.matf2o[1][1]/(MapSpacing*(double)NXYZ[1]));
-#else
-    (map)->mapm2r[1+3] = 250.*Info.matf2o[1][1]/(MapSpacing*(double)NXYZ[1]);
-#endif
-/* M2R[2,1] */
-    (map)->mapm2r[2+3] = -(250.*Info.matf2o[2][1]/(MapSpacing*(double)NXYZ[1]));
-    
+    (map)->mapm2r[0+3] = 250.*Info.matf2o[0][1]/((map)->yint*(double)NXYZ[1]);
 /* M2R[0,2] */
-    (map)->mapm2r[0+6] = 250.*Info.matf2o[0][2]/(MapSpacing*(double)NXYZ[2]);
-/* M2R[1,2] */
+    (map)->mapm2r[0+6] = 250.*Info.matf2o[0][2]/((map)->zint*(double)NXYZ[2]);
+
 #ifdef INVERT
-    (map)->mapm2r[1+6] = -(250.*Info.matf2o[1][2]/(MapSpacing*(double)NXYZ[2]));
-#else    
-    (map)->mapm2r[1+6] = 250.*Info.matf2o[1][2]/(MapSpacing*(double)NXYZ[2]);
+/* M2R[1,0] */
+    (map)->mapm2r[1] = -(250.*Info.matf2o[1][0]/((map)->xint*(double)NXYZ[0]));
+/* M2R[1,1] */
+    (map)->mapm2r[1+3] = -(250.*Info.matf2o[1][1]/((map)->yint*(double)NXYZ[1]));
+/* M2R[1,2] */
+    (map)->mapm2r[1+6] = -(250.*Info.matf2o[1][2]/((map)->zint*(double)NXYZ[2]));
+#else
+/* M2R[1,0] */
+    (map)->mapm2r[1] = 250.*Info.matf2o[1][0]/((map)->xint*(double)NXYZ[0]);
+/* M2R[1,1] */
+    (map)->mapm2r[1+3] = 250.*Info.matf2o[1][1]/((map)->yint*(double)NXYZ[1]);
+/* M2R[1,2] */
+    (map)->mapm2r[1+6] = 250.*Info.matf2o[1][2]/((map)->zint*(double)NXYZ[2]);
 #endif
+
+/* M2R[2,0] */
+    (map)->mapm2r[2] = -(250.*Info.matf2o[2][0]/((map)->xint*(double)NXYZ[0]));
+/* M2R[2,1] */
+    (map)->mapm2r[2+3] = -(250.*Info.matf2o[2][1]/((map)->yint*(double)NXYZ[1]));
 /* M2R[2,2] */
-    (map)->mapm2r[2+6] = -(250.*Info.matf2o[2][2]/(MapSpacing*(double)NXYZ[2]));
+    (map)->mapm2r[2+6] = -(250.*Info.matf2o[2][2]/((map)->zint*(double)NXYZ[2]));
 
 /* R2M[0,0] */
-    (map)->mapr2m[0] = MapSpacing*(double)NXYZ[0]*Info.mato2f[0][0]/250.;
-/* R2M[0,1] */
-#ifdef INVERT
-    (map)->mapr2m[0+3] = -MapSpacing*(double)NXYZ[0]*Info.mato2f[0][1]/250.;
-#else
-    (map)->mapr2m[0+3] = MapSpacing*(double)NXYZ[0]*Info.mato2f[0][1]/250.;
-#endif
-/* R2M[0,2] */
-    (map)->mapr2m[0+6] = -MapSpacing*(double)NXYZ[0]*Info.mato2f[0][2]/250.;
-    
+    (map)->mapr2m[0] = (map)->xint*(double)NXYZ[0]*Info.mato2f[0][0]/250.;
 /* R2M[1,0] */
-    (map)->mapr2m[1] = -MapSpacing*(double)NXYZ[1]*Info.mato2f[1][0]/250.;
-/* R2M[1,1] */
-#ifdef INVERT    
-    (map)->mapr2m[1+3] = -MapSpacing*(double)NXYZ[1]*Info.mato2f[1][1]/250.;
-#else
-    (map)->mapr2m[1+3] = MapSpacing*(double)NXYZ[1]*Info.mato2f[1][1]/250.;
-#endif
-/* R2M[1,2] */
-    (map)->mapr2m[2+6] = -MapSpacing*(double)NXYZ[1]*Info.mato2f[2][1]/250.;
-
-
+    (map)->mapr2m[1] = (map)->yint*(double)NXYZ[1]*Info.mato2f[1][0]/250.;
 /* R2M[2,0] */
-    (map)->mapr2m[2] = -MapSpacing*(double)NXYZ[2]*Info.mato2f[2][0]/250.;
-/* R2M[2,1] */
+    (map)->mapr2m[2] = (map)->zint*(double)NXYZ[2]*Info.mato2f[2][0]/250.;
+
 #ifdef INVERT
-    (map)->mapr2m[2+3] = -MapSpacing*(double)NXYZ[2]*Info.mato2f[2][1]/250.;
-#else    
-    (map)->mapr2m[2+3] = MapSpacing*(double)NXYZ[2]*Info.mato2f[2][1]/250.;
+/* R2M[0,1] */
+    (map)->mapr2m[0+3] = -(map)->xint*(double)NXYZ[0]*Info.mato2f[0][1]/250.;
+/* R2M[1,1] */
+    (map)->mapr2m[1+3] = -(map)->yint*(double)NXYZ[1]*Info.mato2f[1][1]/250.;
+/* R2M[2,1] */
+    (map)->mapr2m[2+3] = -(map)->zint*(double)NXYZ[2]*Info.mato2f[2][1]/250.;
+#else
+/* R2M[0,1] */
+    (map)->mapr2m[0+3] = (map)->xint*(double)NXYZ[0]*Info.mato2f[0][1]/250.;
+/* R2M[1,1] */
+    (map)->mapr2m[1+3] = (map)->yint*(double)NXYZ[1]*Info.mato2f[1][1]/250.;
+/* R2M[2,1] */
+    (map)->mapr2m[2+3] = (map)->zint*(double)NXYZ[2]*Info.mato2f[2][1]/250.;
 #endif
+
+/* R2M[0,2] */
+    (map)->mapr2m[0+6] = -(map)->xint*(double)NXYZ[0]*Info.mato2f[0][2]/250.;
+/* R2M[1,2] */
+    (map)->mapr2m[2+6] = -(map)->yint*(double)NXYZ[1]*Info.mato2f[2][1]/250.;
 /* R2M[2,2] */
-    (map)->mapr2m[2+6] = -MapSpacing*(double)NXYZ[2]*Info.mato2f[2][2]/250.;
-   
+    (map)->mapr2m[2+6] = -(map)->zint*(double)NXYZ[2]*Info.mato2f[2][2]/250.;
+
+
+    datasq = 0;
 
     /* ** ALLOCATE AND MAP THE DATA ITSELF ** */
     
@@ -532,6 +554,7 @@ int LoadMapFile( FILE *fp, int info, int mapno )
             cbf_failnez(cbf_get_integer(mapfile,(int *)&temp,0,32))
             /* fprintf(stderr,"mapel[%d,%d,%d] = %f\n",ID[AXIS_XYZ[0]],ID[AXIS_XYZ[1]],ID[AXIS_XYZ[2]],temp); */
             MapEl(map,ID[AXIS_XYZ[0]],ID[AXIS_XYZ[1]],ID[AXIS_XYZ[2]]) = (double)temp;
+            datasq += ((double)temp)*((double)temp);
           }
       
     } else if (MODE == 0) 
@@ -544,13 +567,15 @@ int LoadMapFile( FILE *fp, int info, int mapno )
           for (ID[0] = 0; ID[0] < NCRS[0]; ID[0]++) {
             cbf_failnez(cbf_get_integer(mapfile,(int *)&bytetemp,0,8))
             MapEl(map,ID[AXIS_XYZ[0]],ID[AXIS_XYZ[1]],ID[AXIS_XYZ[2]]) = bytetemp;
+            datasq += (double)(bytetemp*bytetemp); 
       }    	
     }
 
+    datasq = datasq/((double)NCRS[0]*NCRS[1]*NCRS[2]);
+
+    (map)->mapdataesd= sqrt(datasq-AMEAN*AMEAN);
     
     cbf_failnez(cbf_free_file(&mapfile))
-
-    /* fclose(fp); */
 
     mapinfo.MapPtr = map;
     
@@ -559,11 +584,65 @@ int LoadMapFile( FILE *fp, int info, int mapno )
     vector_create((GenericVec __far **)&mapinfo.MapBondsPtr,sizeof(MapBond),1000);
     if (mapinfo.flag&(MapSurfFlag))
     vector_create((GenericVec __far **)&mapinfo.MapTanglePtr,sizeof(MapTangle),1000);
+    
+    if (MapMaskPtr) {
+      mapmaskptr = _fmalloc(sizeof(MapStruct));
+      if(!mapmaskptr) {
+        CommandError(MsgStrs[StrMalloc]);
+        return 1;	
+      }
+      mapmaskptr->mapdata = (double *)_fmalloc(sizeof(double)*
+       (MapMaskPtr->xhigh-MapMaskPtr->xlow+1)*
+       (MapMaskPtr->yhigh-MapMaskPtr->ylow+1)*
+       (MapMaskPtr->zhigh-MapMaskPtr->zlow+1));
+     if(!mapmaskptr->mapdata) {
+       _ffree(mapmaskptr);
+       CommandError(MsgStrs[StrMalloc]);
+       return 1;
+     }
+     mapmaskptr->xint=MapMaskPtr->xint;
+     mapmaskptr->yint=MapMaskPtr->yint;
+     mapmaskptr->zint=MapMaskPtr->zint;
+     mapmaskptr->xorig=MapMaskPtr->xorig;
+     mapmaskptr->yorig=MapMaskPtr->yorig;
+     mapmaskptr->zorig=MapMaskPtr->zorig;
+     mapmaskptr->xlow=MapMaskPtr->xlow;
+     mapmaskptr->ylow=MapMaskPtr->ylow;
+     mapmaskptr->zlow=MapMaskPtr->zlow;
+     mapmaskptr->xhigh=MapMaskPtr->xhigh;
+     mapmaskptr->yhigh=MapMaskPtr->yhigh;
+     mapmaskptr->zhigh=MapMaskPtr->zhigh;
+     mapmaskptr->mapdatamin=MapMaskPtr->mapdatamin;
+     mapmaskptr->mapdatamax=MapMaskPtr->mapdatamax;
+     mapmaskptr->mapdatamean=MapMaskPtr->mapdatamean;
+     mapmaskptr->mapdataesd=MapMaskPtr->mapdataesd;
+     for (i=0; i<9; i++) {
+       mapmaskptr->mapm2r[i]=MapMaskPtr->mapm2r[i];
+       mapmaskptr->mapr2m[i]=MapMaskPtr->mapr2m[i];
+     }
+     for (i=0; i<3; i++) {
+       mapmaskptr->mapxlate[i]=MapMaskPtr->mapxlate[i];
+     }
+     for (xel=(mapmaskptr)->xlow; xel<=(mapmaskptr)->xhigh; xel++ )
+       for (yel=(mapmaskptr)->ylow; yel<=(mapmaskptr)->yhigh; yel++  )
+         for (zel=(mapmaskptr)->zlow; zel<=(mapmaskptr)->zhigh; zel++ )
+           MapEl(mapmaskptr,xel,yel,zel)=MapEl(MapMaskPtr,xel,yel,zel);
+     mapinfo.MapMaskPtr=mapmaskptr;
+     if (MapMaskGenSel) {
+       MapAtmSel *mapatmsel;
+       vector_create((GenericVec __far **)&mapmaskgensel,sizeof(MapAtmSel),10);
+       for (i = 0; i < MapMaskGenSel->size; i++) {
+         vector_get_elementptr((GenericVec __far *)MapMaskGenSel,(void __far * __far *)&mapatmsel,i );
+         vector_set_element((GenericVec __far *)mapmaskgensel,mapatmsel,i);
+       }
+       mapinfo.MapGenSel=mapmaskgensel;
+     }	
+    }
 
     map_points(mapinfo.MapPtr, 
     mapinfo.MapLevel+((mapinfo.flag&MapMeanFlag)?mapinfo.MapPtr->mapdatamean:0), 
     mapinfo.MapSpacing, mapinfo.MapPointsPtr,mapinfo.MapBondsPtr,mapinfo.MapTanglePtr,
-    mapinfo.MapRGBCol );
+    mapinfo.MapMaskPtr, mapinfo.MapRGBCol );
 
     if (mapno < 0)
     vector_add_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo);
@@ -777,6 +856,7 @@ int generate_map(MapStruct **map,
     register RAtom __far *ptr;
     register Long xsellow,xselhigh,ysellow,yselhigh,zsellow,zselhigh;
     register Long xel, yel, zel;
+    register int radius;
     size_t mapcount;
     double test;
     int ii, jj;
@@ -815,20 +895,23 @@ int generate_map(MapStruct **map,
     ForEachAtom 
       if (ptr->flag&SelectFlag) {
 
+        radius = ptr->radius;
+        if (radius < 10) radius = Element[ptr->elemno].vdwrad;
+
       
-        if (ptr->xorg+ptr->fxorg-ptr->radius-ProbeRadius<xsellow)
-          xsellow = ptr->xorg+ptr->fxorg-ptr->radius-ProbeRadius;
-        if (ptr->yorg+ptr->fyorg-ptr->radius-ProbeRadius<ysellow)
-          ysellow = ptr->yorg+ptr->fyorg-ptr->radius-ProbeRadius;
-        if (ptr->zorg+ptr->fzorg-ptr->radius-ProbeRadius<zsellow)
-          zsellow = ptr->zorg+ptr->fzorg-ptr->radius-ProbeRadius;
+        if (ptr->xorg+ptr->fxorg-radius-ProbeRadius<xsellow)
+          xsellow = ptr->xorg+ptr->fxorg-radius-ProbeRadius;
+        if (ptr->yorg+ptr->fyorg-radius-ProbeRadius<ysellow)
+          ysellow = ptr->yorg+ptr->fyorg-radius-ProbeRadius;
+        if (ptr->zorg+ptr->fzorg-radius-ProbeRadius<zsellow)
+          zsellow = ptr->zorg+ptr->fzorg-radius-ProbeRadius;
         
-        if (ptr->xorg+ptr->fxorg+ptr->radius+ProbeRadius>xselhigh)
-          xselhigh = ptr->xorg+ptr->fxorg+ptr->radius+ProbeRadius;
-        if (ptr->yorg+ptr->fyorg+ptr->radius+ProbeRadius>yselhigh)
-          yselhigh = ptr->yorg+ptr->fyorg+ptr->radius+ProbeRadius;
-        if (ptr->zorg+ptr->fzorg+ptr->radius+ProbeRadius>zselhigh)
-          zselhigh = ptr->zorg+ptr->fzorg+ptr->radius+ProbeRadius;    	
+        if (ptr->xorg+ptr->fxorg+radius+ProbeRadius>xselhigh)
+          xselhigh = ptr->xorg+ptr->fxorg+radius+ProbeRadius;
+        if (ptr->yorg+ptr->fyorg+radius+ProbeRadius>yselhigh)
+          yselhigh = ptr->yorg+ptr->fyorg+radius+ProbeRadius;
+        if (ptr->zorg+ptr->fzorg+radius+ProbeRadius>zselhigh)
+          zselhigh = ptr->zorg+ptr->fzorg+radius+ProbeRadius;    	
       }
       
       xsellow -= buffer;
@@ -881,7 +964,7 @@ int generate_map(MapStruct **map,
        points in the map */
        
     ForEachAtom 
-      if (ptr->flag&SelectFlag && (ptr->radius + ProbeRadius > 0.) ){
+      if (ptr->flag&SelectFlag ){
       
         Long xpos, ypos, zpos;
         
@@ -891,7 +974,10 @@ int generate_map(MapStruct **map,
         
         double sig, coeff;
         
-        rad = ptr->radius + ProbeRadius;
+        radius = ptr->radius;
+        if (radius < 10) radius = Element[ptr->elemno].vdwrad;
+        
+        rad = radius + ProbeRadius;
         
         sig = ((double)rad)/sig_per_rad;
         
@@ -960,6 +1046,7 @@ int generate_map(MapStruct **map,
       (*map)->mapdatamin = 1.e30;
       (*map)->mapdatamax = -1.e30;
       (*map)->mapdatamean = 0.;
+      (*map)->mapdataesd = 0.;
       mapcount = 0;
       
       for (xel=(*map)->xlow; xel<=(*map)->xhigh; xel++ )
@@ -971,10 +1058,14 @@ int generate_map(MapStruct **map,
             if ((*map)->mapdatamin > test) (*map)->mapdatamin = test;
             if ((*map)->mapdatamax < test) (*map)->mapdatamax = test;
              (*map)->mapdatamean += test;
+              (*map)->mapdataesd += test*test;
           }
           }
       if (mapcount) {	
         (*map)->mapdatamean /= (double)mapcount;
+        (*map)->mapdataesd /= (double)mapcount;
+        (*map)->mapdataesd = (*map)->mapdataesd-((*map)->mapdatamean)*((*map)->mapdatamean);
+        (*map)->mapdataesd = sqrt((*map)->mapdataesd);
       } else {
         (*map)->mapdatamin = (*map)->mapdatamax = 0;
       }
@@ -982,7 +1073,7 @@ int generate_map(MapStruct **map,
       for (ii=0; ii< 3; ii++) {
         (*map)->mapxlate[ii] = 0;
         for (jj=0; jj< 3; jj++) {
-          MapM2R(*map,ii,jj) = MapR2M(*map,ii,jj)= ii==jj?1.:0.;
+          MapM2R(*map,ii,jj) = MapR2M(*map,ii,jj)= (ii==jj?1.:0.);
         }
       }
       return 0;
@@ -1013,14 +1104,16 @@ Long map_point_distance_sq(MapPointVec * PointVec,
 
 
 /* Interpolate a map value from map at position [xpos,ypos,zpos]
+   in map coordinates.
+   
    If uselog is nonzero, the interpolation is done against the
    logarithms of the map values and the value returned is the
-   logoarithm of the interpolated value.
+   logarithm of the interpolated value.
    
    The value is returned in value.  The function returns 0
    for success, -1 if the point is outside of the map.
    
-   if gradient is not NULL, as estimate of the gradient is returned
+   if gradient is not NULL, an estimate of the gradient is returned
    in {gradient[0], gradient[1], gradient[2]}
                                                               */
 
@@ -1187,7 +1280,7 @@ int interpolate_map_value(MapStruct __far *map,
     gradient[1] = (othery-mapest)/(double)(yppos[0]-ypos);
   } else {
     interpolate_map_value(map,xpos,yppos[7],zpos,uselog,&othery,NULL);
-    gradient[1] = (othery-mapest)/(double)(yppos[7]-xpos);
+      gradient[1] = (othery-mapest)/(double)(yppos[7]-ypos);
     }
   }
   if (zpos-delta >= zbase && zpos+delta <= ztop)  {
@@ -1209,6 +1302,37 @@ int interpolate_map_value(MapStruct __far *map,
 
 }
 
+/* Interpolate a map value from map at position [xpos,ypos,zpos]
+   in orthogonal coordinates.
+   
+   If uselog is nonzero, the interpolation is done against the
+   logarithms of the map values and the value returned is the
+   logarithm of the interpolated value.
+   
+   The value is returned in value.  The function returns 0
+   for success, -1 if the point is outside of the map.
+                                                              */
+
+int interpolate_oc_map_value(MapStruct __far *map, 
+                               Long xpos, Long ypos, Long zpos, 
+                               int uselog, double * value ) {
+    double pos[3],mpos[3];
+    int i;
+    
+    pos[0] = (double)(xpos-map->mapxlate[0]);
+    pos[1] = (double)(ypos-map->mapxlate[1]);
+    pos[2] = (double)(zpos-map->mapxlate[2]);
+    
+    for (i = 0; i < 3; i++) {
+      mpos[i] = rint(MapR2M(map,i,0)*pos[0]+MapR2M(map,i,1)*pos[1]+MapR2M(map,i,2)*pos[2]);
+    }
+    
+    return interpolate_map_value(map,(Long)mpos[0],(Long)mpos[1],(Long)mpos[2],
+      uselog, value, NULL);
+
+}
+
+
 /*  map_points --  Find the points in a map at a given level with a given
                    spacing and adds them to the PointVec list of points
                    
@@ -1228,7 +1352,7 @@ int interpolate_map_value(MapStruct __far *map,
  
 int map_points(MapStruct __far *map, double level, Long spacing,
       MapPointVec __far *PointVec, MapBondVec __far *BondVec,
-      MapTangleVec __far *TangleVec,
+      MapTangleVec __far *TangleVec, MapStruct __far *mapmask,
       int RGBCol[3] ) {
       
       Long xwid, ywid, zwid;
@@ -1241,6 +1365,8 @@ int map_points(MapStruct __far *map, double level, Long spacing,
       double valdist[8];
       double marked[8];
       double gradient[3];
+      double masklevel,maskmin;
+      double testlevel;
       double dummy;
       int ii, jj, kk;
       int zero = 0;
@@ -1274,6 +1400,12 @@ int map_points(MapStruct __far *map, double level, Long spacing,
       /* Will do the calculations in terms of logs */
       
       loglevel = LogMapVal(level);
+      masklevel = 0.;
+      maskmin = 0.;
+      if (mapmask) {      	
+        masklevel = LogMapVal(mapmask->mapdatamean);
+        maskmin   = LogMapVal(map->mapdatamin);
+      }
       
       /* Get the dimensions of the map */
       
@@ -1358,12 +1490,38 @@ int map_points(MapStruct __far *map, double level, Long spacing,
             havemapval[6]=!interpolate_map_value(map,xp[0],yp[7],zp[7],1,&(mapval[6]),NULL);
             havemapval[7]=!interpolate_map_value(map,xp[7],yp[7],zp[7],1,&(mapval[7]),NULL);
               	
+               
             xp[2] = xp[4] = xp[6] = xp[0];
             xp[1] = xp[3] = xp[5] = xp[7];
             yp[1] = yp[4] = yp[5] = yp[0];
             yp[2] = yp[3] = yp[6] = yp[7];
             zp[1] = zp[2] = zp[3] = zp[0];
             zp[4] = zp[5] = zp[6] = zp[7];
+              
+            if (mapmask) {
+              double oxpos[8],oypos[8],ozpos[8];
+              Mapm2o(map,xp[0],yp[0],zp[0],oxpos[0],oypos[0],ozpos[0]);
+              Mapm2o(map,xp[7],yp[7],zp[7],oxpos[7],oypos[7],ozpos[7]);
+              oxpos[2] = oxpos[4] = oxpos[6] = oxpos[0];
+              oxpos[1] = oxpos[3] = oxpos[5] = oxpos[7];
+              oypos[1] = oypos[4] = oypos[5] = oypos[0];
+              oypos[2] = oypos[3] = oypos[6] = oypos[7];
+              ozpos[1] = ozpos[2] = ozpos[3] = ozpos[0];
+              ozpos[4] = ozpos[5] = ozpos[6] = ozpos[7];
+           
+              for(ii=0; ii < 8; ii++) {
+                if (havemapval[ii]) {
+                  if(!interpolate_oc_map_value(mapmask,oxpos[ii],oypos[ii],ozpos[ii],1,&testlevel)){
+                    if (testlevel < masklevel) {
+                      mapval[ii] = maskmin;
+                    }
+                  } else {
+                  	havemapval[ii] = 0;
+                  }
+                }
+              }
+            }
+            
               
             for (ii=0; ii < 8; ii ++) if (havemapval[ii]) valdist[ii] = fabs(mapval[ii]-loglevel);
             for (ii=0; ii < 8; ii ++) marked[ii] = 0;
@@ -1392,6 +1550,12 @@ int map_points(MapStruct __far *map, double level, Long spacing,
                       mp.zpos = (zp[jj]+zp[kk])/2;
                       interpolate_map_value(map,mp.xpos,mp.ypos,mp.zpos,1,&dummy,gradient);
                       MapPointm2o(map,mp,gradient);
+                      if (mapmask) {
+                        if(!interpolate_oc_map_value(mapmask,mp.xpos,mp.ypos,mp.zpos,1,&testlevel)){
+                          if (testlevel < masklevel) continue;	
+                        }
+                        else continue;
+                      }
                       mp.col = Shade2Colour(shade);
                       Shade[shade].refcount++;
                       vector_add_element((GenericVec __far *) PointVec,(void __far *)&mp);
@@ -1409,6 +1573,12 @@ int map_points(MapStruct __far *map, double level, Long spacing,
                         mp.zpos = (zp[jj]*valdist[kk]+zp[kk]*valdist[jj])/(valdist[jj]+valdist[kk]);
                         interpolate_map_value(map,mp.xpos,mp.ypos,mp.zpos,1,&dummy,gradient);
                         MapPointm2o(map,mp,gradient);
+                        if (mapmask) {
+                          if(!interpolate_oc_map_value(mapmask,mp.xpos,mp.ypos,mp.zpos,1,&testlevel)){
+                            if (testlevel < masklevel) continue;	
+                          }
+                          else continue;
+                        }
                         mp.col = Shade2Colour(shade);
                         Shade[shade].refcount++;
                         vector_add_element((GenericVec __far *) PointVec,(void __far *)&mp);

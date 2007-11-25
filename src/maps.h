@@ -20,35 +20,44 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
  *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                   RasMol 2.7.4   Nov 07                                 *
  *                                                                         *
- *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
- *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
- *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
- *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
- *of Energy.                                                               *
+ * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
+ * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
+ * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
+ * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
+ * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
+ * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
+ * Institute of General Medical Sciences (NIGMS). The content is solely    *
+ * the responsibility of the authors and does not necessarily represent    * 
+ * the official views of the funding organizations.                        *
  *                                                                         *
  *                    and Incorporating Translations by                    *
- *  Author                               Item                      Language*
+ *  Author                               Item                     Language *
  *  Isabel Servan Martinez,                                                *
- *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
- *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
- *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
- *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages French   *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
- *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
- *  G. Pozhvanov                         2.7.3 menus and message   Russian *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  *
+ *  G. Pozhvanov                         2.7.3 menus and messages Russian  *
+ *  G. Todorov                           2.7.3 menus and messages Bulgarian*
+ *  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  *
+ *  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese *
  *                                                                         *
  *                             This Release by                             *
- * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2007               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
@@ -92,6 +101,7 @@ typedef struct {
   double mapdatamin;         /* The minimum value in the map              */
   double mapdatamax;         /* The maximum value in the map              */
   double mapdatamean;        /* The average value in the map              */
+  double mapdataesd;         /* The average value esd in the map          */
   double mapm2r[9];          /* The scale matrix from map units to rasmol units  */
   double mapr2m[9];          /* The inverse of the scale matrix           */
   double mapxlate[3];        /* post translation after scale              */
@@ -110,6 +120,23 @@ typedef struct {
         Long Un[3];        /* outward normal*4096        */
         int coordnum;
 } MapPoint;
+
+                     
+#define MapEl(map,ix,iy,iz)  (map)->mapdata[(ix)-((map)->xlow) +               \
+                   ((map)->xhigh-(map)->xlow+1)*((iy)-((map)->ylow)) +         \
+                   ((map)->xhigh-(map)->xlow+1)*((map)->yhigh-(map)->ylow+1)*((iz)-((map)->zlow))]
+
+#define Mapm2o(map,mxpos,mypos,mzpos,oxpos,oypos,ozpos) \
+     oxpos = (map)->mapxlate[0] + MapM2R(map,0,0)*(double)mxpos  \
+                                + MapM2R(map,0,1)*(double)mypos  \
+                                + MapM2R(map,0,2)*(double)mzpos; \
+     oypos = (map)->mapxlate[1] + MapM2R(map,1,0)*(double)mxpos  \
+                                + MapM2R(map,1,1)*(double)mypos  \
+                                + MapM2R(map,1,2)*(double)mzpos; \
+     ozpos = (map)->mapxlate[2] + MapM2R(map,2,0)*(double)mxpos  \
+                                + MapM2R(map,2,1)*(double)mypos  \
+                                + MapM2R(map,2,2)*(double)mzpos;
+
     
 #define MapPointm2o(map,mp,gradient) \
   {  double dxpos, dypos, dzpos, glen; \
@@ -186,6 +213,20 @@ typedef struct {
 } MapTangleVec;
 
 
+typedef struct {
+        Long   loserno;           /* start of selected range  */
+        Long   hiserno;           /* end of selected range    */
+        int    radius;            /* 0 for VWD or value       */
+} MapAtmSel;
+
+typedef struct {
+        size_t size;             /* size of the vector      */
+        size_t capacity;         /* capacity of the vector  */
+        size_t elementsize;      /* size of an element      */
+        MapAtmSel __far * array; /* the array of selections */
+} MapAtmSelVec;
+
+
 /* Map flags */
 #define MapSelectFlag   0x001    /* The indicated map is selected   */
 #define MapMarkedFlag   0x002    /* The indicated map is tentatively
@@ -209,13 +250,16 @@ typedef struct {
         int               MapRGBCol[3];/* map RGB color              */
         char*             MapLabel;    /* label for this map         */
         char*             MapFile;     /* path of map file loaded    */
-        char*             MapSelection;/* map generation selection   */
+        MapAtmSelVec __far
+                          *MapGenSel;  /* map generation selection   */
         MapTangleVec __far 
                           *MapTanglePtr;/* Data for the surface rep  */
         MapPointVec __far *MapPointsPtr;/* Data for the points rep   */
         MapBondVec  __far *MapBondsPtr;	/* Data for the mesh rep     */
         MapStruct   __far *MapPtr;      /* The map itself            */
         MapStruct   __far *MapMaskPtr;  /* Map to be used as a mask  */
+        MapAtmSelVec __far
+                          *MapMaskGenSel;  /* map mask generation selection   */
 } MapInfo;
 
 
@@ -240,6 +284,9 @@ int                MapRGBCol[3];       /* global map color     */
 Card               MapRadius;          /* global map radius    */
 char*              MapLabel;           /* global map label     */
 MapInfoVec  __far *MapInfoPtr;         /* vector of maps       */
+MapStruct   __far *MapMaskPtr;         /* Map to be used as a mask  */
+MapAtmSelVec __far
+                  *MapMaskGenSel;      /* map mask generation selection   */
 #else
 extern Real               MapLevel;    /* global map level     */
 extern Long               MapMeshRad;  /* global radius for 
@@ -253,6 +300,9 @@ extern int                MapRGBCol[3];/* global map color     */
 extern Card               MapRadius;   /* global map radius    */
 extern char*              MapLabel;    /* global map label     */
 extern MapInfoVec  __far *MapInfoPtr;  /* vector of maps       */
+extern MapStruct   __far *MapMaskPtr;  /* Map to be used as a mask  */
+extern MapAtmSelVec __far
+                      *MapMaskGenSel;  /* map mask generation selection   */
 #endif
 
 /* Initialise Maps */
@@ -340,6 +390,8 @@ int LoadMapFile( FILE *fp, int info, int mapno );
    sigmas per radius, with the Gaussian treated as zero
    at 4.5 sigma.  The Gaussian is scaled to the atomic number.
    
+   sig_per_rad is the reciprocal of the spread.
+   
    */
    
 int generate_map(MapStruct **map, 
@@ -364,6 +416,22 @@ int interpolate_map_value(MapStruct __far *map,
                                Long xpos, Long ypos, Long zpos, 
                                int uselog, double * value, double * gradient);
                                
+/* Interpolate a map value from map at position [xpos,ypos,zpos]
+   in orthogonal coordinates.
+   
+   If uselog is nonzero, the interpolation is done against the
+   logarithms of the map values and the value returned is the
+   logarithm of the interpolated value.
+   
+   The value is returned in value.  The function returns 0
+   for success, -1 if the point is outside of the map.
+                                                              */
+
+int interpolate_oc_map_value(MapStruct __far *map, 
+                               Long xpos, Long ypos, Long zpos, 
+                               int uselog, double * value );
+
+                               
 /*  map_points --  Find the points in a map at a given level with a given
                    spacing and adds them to the PointVec list of dots
                    
@@ -374,7 +442,7 @@ int interpolate_map_value(MapStruct __far *map,
  
 int map_points(MapStruct *map, double level, Long spacing, 
       MapPointVec __far *PointVec, MapBondVec __far *BondVec,
-      MapTangleVec __far *TangleVec,
+      MapTangleVec __far *TangleVec, MapStruct __far *mapmask,
       int RGBCol[3] ); 
 
 #endif
