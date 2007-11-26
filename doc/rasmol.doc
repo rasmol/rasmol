@@ -3483,29 +3483,45 @@ The map selector is a map number (m) or a range of map numbers
 all, next and new (or none) may also be used as map selectors.
 AP
 The map subcommands are
-AXmap_generate map generate,
+AXmapgenerate map generate,
 ATto generate a map from selected atoms,
-AXmap_load map load,
-ATto load a map from a file,
-AXmap_select map select,
-ATto select one or more maps
-AXmap_restrict map restrict,
-ATto select one or more maps and to disable all others,
-AXmap_level map level,
+AXmaplevel map level,
 ATto set the contouring level for selected maps,
-AXmap_resolution map resolution,
+AXmapload map load,
+ATto load a map from a file,
+AXmapmask map mask
+ATto designate a mask for the selected maps,
+AXmapresolution map resolution,
 ATto set the resolution for contouring selected maps,
-AXmap_spacing map spacing,
+AXmaprestrict map restrict,
+ATto select one or more maps and to disable all others,
+AXmapselect map select,
+ATto select one or more maps
+AXmapshow map show,
+ATto display information about one or more maps or about the
+ATparameters to be used in generating or loading the next map,
+AXmapspacing map spacing,
 ATto set the spacing betwen contour lines of selected maps,
-AXmap_spread map spread,
+AXmapspread map spread,
 ATto set the variance of the Gaussians for map generation as a fraction
 ATof the atomic radius, and
-AXmap_mask map mask
-ATto designate a mask for the selected maps
+ATmap_zap map zap
+ATto delete previously generated or loaded maps.
+AP
+ATThe effect of
+AXmapgenerate map generate
+ATand
+AXmapload map load
+ATcommands is modified by the
+AXmapmask map mask
+ATcommand which limits the portion of the display space
+ATthat can be considered for display of maps.
+
+
 AB
 
-PR?map_generate
-RR#{\footnote map_generate}
+PR?mapgenerate
+RR#{\footnote mapgenerate}
 ASMap generate
 NRSyntax:  map {<map_selector>} generate dots
 NR         map {<map_selector>} generate mesh
@@ -3524,7 +3540,7 @@ RR\tab map \{<map_selector>\} generate mesh\line
 RR\tab map \{<map_selector>\} generate surface
 RR}\pard\par
 
-ATATThe RasMol
+ATThe RasMol
 ACmap generate
 ATcommand generates a map from whatever atoms are currently selected,
 ATby summing electron densities approximated by Gaussian distributions.
@@ -3547,12 +3563,39 @@ ATthat map.  If more than one map was given by the map selector, the
 ATnew map replaces the lowest numbered of the selected maps.  In any
 ATcase the new map becomes the currently selected map.
 AP
-ATThe map is displayed as dots, mesh or a surface.
+ATThe map is displayed as dots, mesh or a surface, depending on the last
+ATmap rendering mode selected or the mode selected on the command itself.
+AB
+
+PR?maplevel
+RR#{\footnote maplevel}
+ASMap level
+NRSyntax:  map {<map_selector>} level {MEAN} <number>
+NR
+HR<pre>
+HRSyntax:  map {&lt;map_selector&gt;} level {MEAN} &lt;number&gt;
+HR
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRmap \{<map_selector>\} level \{MEAN\} <number>
+RR}\pard\par
+
+ATThe RasMol
+ACmap level
+ATcommand sets the contour level to be used in creating subsequent
+ATrepresentations of generated or loaded maps.  If the keyword MEAN 
+ATin used the level is relative to the mean of the map data.  Otherwise 
+ATthe level is absolute.
+AP
+ATIn general, a lower level results in a map containing more of the
+ATdisplayed volume, while a higher level results in a map containing
+ATless of the displayed volume.
 AB
 
 
-PR?map_load
-RR#{\footnote map_load}
+PR?mapload
+RR#{\footnote mapload}
 ASMap load
 NRSyntax:  map {<map_selector>} load <filename>
 NR
@@ -3565,7 +3608,7 @@ RR{\f2\b Syntax:\tab
 RRmap \{<map_selector>\}  load <filename>
 RR}\pard\par
 
-ATATThe RasMol
+ATThe RasMol
 ACmap load
 ATcommand loads a map file into RasMol.  The valid formats are
 ATCCP4 map format and imgCIF format.
@@ -3583,7 +3626,223 @@ ATlast map rendering mode selected.
 AB
 
 
+PR?mapmask
+RR#{\footnote mapmask}
+ASMap mask
+NRSyntax:  map {<map_selector>} mask selected
+NR         map {<map_selector>} mask <number>
+NR         map {<map_selector>} mask none
+NR
+HR<pre>
+HRSyntax:  map {&lt;map_selector&gt;} mask selected
+HR         map {&lt;map_selector&gt;} mask &lt;number&gt;
+HR         map {&lt;map_selector&gt;} mask none
+HR
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRmap \{<map_selector>\} mask selected\line
+RR\tab map \{<map_selector>\} mask <number>\line
+RR\tab map \{<map_selector>\} mask none
+RR}\pard\par
 
+ATThe RasMol
+ACmap mask
+ATcommand specifies a mask to be used to limit the display space
+ATto be used for making representations of other maps or removes
+ATan earlier mask specification.
+AP
+ATThe 'selected' option indicates that the mask is to be created
+ATfrom the currently selected atoms.  The '<number>' option indicates
+ATthat the mask is to be copied from the map of the number specified.
+ATThe 'none' option removes the previously specified mask, if any.
+AP
+ATThe map selector specifies the map or maps to which the specified mask
+ATwill the applied.  For example, 'map next mask selected' specifies
+ATthat the currently selected atoms are to be used to generate a
+ATmask to be applied to any maps created by subsequent 'map load'
+ATor 'map generate' commands.
+AP
+ATAny map may be used as a mask.  The portions of the mask map greater than
+ATthan or equal to the average value of the mask map allow the values of the
+ATmap being masked to be used as given.  The portions of the mask
+ATmap lower than the average value of the mask map cause the values of
+ATthe map being masked to be treated as if they were equal to the
+ATlowest data value of the map being masked. 
+AB
+
+PR?mapresolution
+RR#{\footnote mapresolution}
+ASMap resolution
+NRSyntax:  map {<map_selector>} resolution <number>
+NR
+HR<pre>
+HRSyntax:  map {&lt;map_selector&gt;} resolution &lt;number&gt;
+HR
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRmap \{<map_selector>\} resolution <number>
+RR}\pard\par
+
+ATThe RasMol
+ACmap resolution
+ATcommand specifies the resolution in RasMol units or,
+ATif a number containing a decimal point is given, the
+ATresolution in Angstroms to be used in generating and
+ATin representing maps.
+AP
+ATThe resolution is used at the map spacing for
+ATrepresentations of maps, indicating the separation
+ATbetween contour levels (see the
+AXmapspacing map spacing
+ATcommand) and to infer the map spread to be used in
+ATgenerated maps from selected atoms (see the
+AXmapspread map spread
+ATcommand).  The map spread is set to 1one sixth of
+ATthe specified resolution.
+AB
+
+
+PR?maprestrict
+RR#{\footnote maprestrict}
+ASMap restrict
+NRSyntax:  map {<map_selector>} restrict
+NR
+HR<pre>
+HRSyntax:  map {&lt;map_selector&gt;} restrict
+HR
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRmap \{<map_selector>\}  restrict
+RR}\pard\par
+
+ATThe RasMol
+ACmap select
+ATcommand selects particular maps to make the active for
+ATsubsequent map commands.  This is similar to the
+AXmapselect map select
+ATcommand, but does disables the display of the
+ATmaps that were not selected.
+AB
+
+
+
+PR?mapselect
+RR#{\footnote mapselect}
+ASMap select
+NRSyntax:  map {<map_selector>} select
+NR
+HR<pre>
+HRSyntax:  map {&lt;map_selector&gt;} select
+HR
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRmap \{<map_selector>\}  select
+RR}\pard\par
+
+ATThe RasMol
+ACmap select
+ATcommand selects particular maps to make the active for
+ATsubsequent map commands.  This is similar to the
+AXmaprestrict map restrict
+ATcommand, but does not disable the display of the
+ATmaps that were not selected.
+AB
+
+
+PR?mapshow
+RR#{\footnote mapshow}
+ASMap show
+NRSyntax:  map {<map_selector>} show
+NR
+HR<pre>
+HRSyntax:  map {&lt;map_selector&gt;} show
+HR
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRmap \{<map_selector>\} show
+RR}\pard\par
+
+ATThe RasMol
+ACmap show
+ATcommand causes information about the maps specified by
+ATthe map selector to be written to the command window.
+AB
+
+
+PR?mapspacing
+RR#{\footnote mapspacing}
+ASMap spacing
+NRSyntax:  map {<map_selector>} spacing <number>
+NR
+HR<pre>
+HRSyntax:  map {&lt;map_selector&gt;} spacing &lt;number&gt;
+HR
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRmap \{<map_selector>\} spacing <number>
+RR}\pard\par
+
+ATThe RasMol
+ACmap spacing
+ATcommand specifies the spacing to be used between contour lines
+ATin creating representations of maps.  The spacing is typically
+AT given in Angstroms with a decimal point, but may also be
+ATspecified in RasMol units (250ths of an Angstom) as an
+ATinteger.  For maps loaded in grid coordinates that spacing
+ATis parallel to the cell edges.  The default spacing in
+ATone half Angstrom. 
+AB
+
+PR?mapspread
+RR#{\footnote mapspread}
+ASMap spread
+NRSyntax:  map {<map_selector>} spread <number>
+NR
+HR<pre>
+HRSyntax:  map {&lt;map_selector&gt;} spread &lt;number&gt;
+HR
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRmap \{<map_selector>\} spread <number>
+RR}\pard\par
+
+ATThe RasMol
+ACmap spread
+ATcommand specifies the reciprocal of the number of
+ATstandard deviations per radius to be used in
+ATgenerating maps as sums of Gaussians centered
+ATon atomic positions.  The default spead is one
+ATsixth (i.e. each radius covers six standard deviations).
+AB
+
+
+PR?mapzap
+RR#{\footnote mapzap}
+ASMap zap
+NRSyntax:  map {<map_selector>} zap
+NR
+HR<pre>
+HRSyntax:  map {&lt;map_selector&gt;} zap
+HR
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRmap \{<map_selector>\} zap
+RR}\pard\par
+
+ATThe RasMol
+ACmap zap
+ATcommand removes the data and representations of the
+ATmaps specified by the map selector.  The map numbers
+ATof maps that have not been removed are not changed.
+AB
 
 
 ASMolecule
@@ -3971,6 +4230,7 @@ AXmolecule molecule n
 ATcommand.
 AB
 
+ASRussian
 NRSyntax:  Russian
 NR
 HR<pre>
