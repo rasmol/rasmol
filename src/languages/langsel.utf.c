@@ -144,7 +144,6 @@ langfont langfonts[NUMLANGS] = {
     Russian },
   { "RASMOL_CHINESE_MENU_FONT", 
     GB2312_CHARSET,
-    Chinese },
     "GB2312_CHARSET", 
     Chinese },
   { "RASMOL_JAPANESE_MENU_FONT", 
@@ -152,8 +151,8 @@ langfont langfonts[NUMLANGS] = {
     "SHIFTJIS_CHARSET", 
     Japanese },
   { "RASMOL_BULGARIAN_MENU_FONT", 
-    BULGARIAN_CHARSET,
-    "BULGARIAN_CHARSET", 
+    RUSSIAN_CHARSET,
+    "RUSSIAN_CHARSET", 
     Bulgarian }
 };
 #else
@@ -236,7 +235,12 @@ langfont langfonts[NUMLANGS] = {
 	
 
 static langstr langstrs[] = {
-
+  { "Error: NoToggle mode enabed; "
+    "type 'set notoggle off' to disabled.\n",          ErrNoToggle, English,0},
+  { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  English,0},
+  { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, English,0},
+  { "NoToggle mode: enabled.\n",                       StrNoTogOn,  English,0},
+  { "NoToggle mode: disabled.\n",                      StrNoTogOff, English,0},
 
   { "Invalid command syntax!\n",                       ErrSyntax,   English,0},
   { "Parameter value too large!\n",                    ErrBigNum,   English,0},
@@ -487,7 +491,12 @@ static langstr langstrs[] = {
   { "No Warranty, Open Source, GPL, Donations Appreciated", StrWarranty, English,0},
 
 
-
+  { "Error: NoToggle mode enabed; "
+    "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Spanish,0},
+  { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Spanish,0},
+  { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Spanish,0},
+  { "NoToggle mode: enabled.\n",                       StrNoTogOn,  Spanish,0},
+  { "NoToggle mode: disabled.\n",                      StrNoTogOff, Spanish,0},
 
   { "¡Sintaxis de comando inválida!\n",                ErrSyntax,   Spanish,0},
   { "¡Valor de parámetro demasiado larga!\n",          ErrBigNum,   Spanish,0},
@@ -738,7 +747,12 @@ static langstr langstrs[] = {
   { "Ninguna garantía, Open Source, GPL, donaciones apreciadas", StrWarranty, Spanish, 0},
 
 
-
+  { "Error: NoToggle mode enabed; "
+    "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Italian,0},
+  { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Italian,0},
+  { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Italian,0},
+  { "NoToggle mode: enabled.\n",                       StrNoTogOn,  Italian,0},
+  { "NoToggle mode: disabled.\n",                      StrNoTogOff, Italian,0},
 
   { "Sintassi del comando errata!\n",                  ErrSyntax,   Italian,0},
   { "Valore del parametro troppo grande!\n",           ErrBigNum,   Italian,0},
@@ -989,7 +1003,12 @@ static langstr langstrs[] = {
   { "Nessuna garanzia, Open Source, GPL, donazioni apprezzate", StrWarranty, Italian, 0},
 
 
-
+  { "Error: NoToggle mode enabed; "
+    "type 'set notoggle off' to disabled.\n",          ErrNoToggle, French,0},
+  { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  French,0},
+  { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, French,0},
+  { "NoToggle mode: enabled.\n",                       StrNoTogOn,  French,0},
+  { "NoToggle mode: disabled.\n",                      StrNoTogOff, French,0},
 
   { "Syntaxe de commande incorrecte!\n",               ErrSyntax,   French ,0},
   { "Valeur du paramètre trop grande!\n",              ErrBigNum,   French ,0},
@@ -1240,7 +1259,12 @@ static langstr langstrs[] = {
   { "Aucunes garantie, Open Source, GPL, donations appréciées", StrWarranty, French, 0},
 
 
-
+  { "Error: NoToggle mode enabed; "
+    "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Russian,0},
+  { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Russian,0},
+  { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Russian,0},
+  { "NoToggle mode: enabled.\n",                       StrNoTogOn,  Russian,0},
+  { "NoToggle mode: disabled.\n",                      StrNoTogOff, Russian,0},
 
   { "Неверный синтаксис команды!\n",                   ErrSyntax,   Russian,0},
   { "Значение параметра слишком длинное!\n",           ErrBigNum,   Russian,0},
@@ -1497,7 +1521,12 @@ static langstr langstrs[] = {
 
 
 
-
+  { "Error: NoToggle mode enabed; "
+    "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Bulgarian,0},
+  { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Bulgarian,0},
+  { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Bulgarian,0},
+  { "NoToggle mode: enabled.\n",                       StrNoTogOn,  Bulgarian,0},
+  { "NoToggle mode: disabled.\n",                      StrNoTogOff, Bulgarian,0},
 
   { "Невалиден команден синтаксис!\n",		       ErrSyntax,   Bulgarian,0},
   { "Твърде голяма стойност на параметъра\n!",	       ErrBigNum,   Bulgarian,0},
@@ -1748,6 +1777,13 @@ static langstr langstrs[] = {
   { "Без гаранция, Open Source, GPL, дарения са добре дошли", StrWarranty, Bulgarian, 0},
 
 
+  { "Error: NoToggle mode enabed; "
+    "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Chinese,0},
+  { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Chinese,0},
+  { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Chinese,0},
+  { "NoToggle mode: enabled.\n",                       StrNoTogOn,  Chinese,0},
+  { "NoToggle mode: disabled.\n",                      StrNoTogOff, Chinese,0},
+
   { "指挥无效语法!\n",                                 ErrSyntax,   Chinese,0},
   { "参数值太大!\n",                                     ErrBigNum,  Chinese,0},
   { "无效参数设定!\n",                                   ErrBadOpt,   Chinese,0},
@@ -1995,7 +2031,12 @@ static langstr langstrs[] = {
   { "赠送",                                            StrDonate,   Chinese,0},
   { "不要把这个对话放在启动中",                        StrNoShow,   Chinese,0},
   { "无保修，开放源码，通用公共许可证，捐赠物鉴别",    StrWarranty, Chinese,0},
-
+  { "Error: NoToggle mode enabed; "
+    "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Japanese,0},
+  { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Japanese,0},
+  { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Japanese,0},
+  { "NoToggle mode: enabled.\n",                       StrNoTogOn,  Japanese,0},
+  { "NoToggle mode: disabled.\n",                      StrNoTogOff, Japanese,0},
 
   { "コマンドの文法が不適切です!\n",                   ErrSyntax,   Japanese,0},
   { "パラメーターが大きすぎます!\n",                        ErrBigNum,   Japanese,0},

@@ -65,6 +65,16 @@
  ***************************************************************************/
 /* pixutils.h
  $Log: not supported by cvs2svn $
+ Revision 1.4  2007/12/14 02:04:50  yaya
+ Correct Chinese data for missing line in langsel_utf.c
+ Rewrite code for handling of slab mode in stereo -- HJB
+
+ Revision 1.3  2007/11/25 04:11:58  yaya
+ Updates to map mask logic and inverse transforms -- HJB
+
+ Revision 1.2  2007/11/25 17:57:50  yaya-hjb
+ Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
+
  Revision 1.2  2007/10/23 02:27:55  yaya
  Preliminary mods for revised PDB format derived from Rutgers mods.
  Partial changes for map tangles -- HJB
@@ -134,6 +144,8 @@ typedef struct {
 typedef struct {
         Pixel __huge *fbuf;
         short __huge *dbuf;
+        short __huge *slbuf;
+        short __huge *dlbuf;
         int   __huge *cbuf;
         int shift;
         int xmax, ymax;
@@ -166,8 +178,9 @@ typedef struct {
         int count;
     } Poly;
 
-#define ZValid(z)     ((!UseSlabPlane) || ((z)<SlabValue))
-#define ZBack(z)      ((!UseDepthPlane) || ((z)>DepthValue))
+#define ZValid(x,z)     ((!UseSlabPlane) || ((z)<SlabValue))
+#define ZBack(x,z)      ((!UseDepthPlane) || ((z)>DepthValue))
+#define ZBValid(x,z)  (((!UseSlabPlane) || ((z)<View.slbuf[x]))&&((!UseDepthPlane) || ((z)>View.dlbuf[x])))
 #define XValid(x)     (((x)>=0)&&((x)<View.xmax))
 #define YValid(y)     (((y)>=0)&&((y)<View.ymax))
 #define OValid(o)     (((o)>=0)&&((o)<View.offmax))

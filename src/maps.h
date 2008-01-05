@@ -93,7 +93,9 @@
 
  */
 typedef struct {
-  double * mapdata;          /* mapdata[xlow:xhigh,ylow:yhigh,zlow:zhigh] */
+  void * mapdata;            /* mapdata[xlow:xhigh,ylow:yhigh,zlow:zhigh] */
+  int elsize;                /* size of element in chars                  */ 
+  int eltype;                /* CBF_INTEGER or CBF_FLOAT                  */                  
   Long xint, yint, zint;     /* The interval between map segments         */
   Long xorig, yorig, zorig;  /* The origin for the map                    */
   Long xlow, ylow, zlow;     /* The low indices                           */
@@ -122,7 +124,22 @@ typedef struct {
 } MapPoint;
 
                      
-#define MapEl(map,ix,iy,iz)  (map)->mapdata[(ix)-((map)->xlow) +               \
+#define MapEldouble(map,ix,iy,iz)  ((double*)((map)->mapdata))[(ix)-((map)->xlow) +               \
+                   ((map)->xhigh-(map)->xlow+1)*((iy)-((map)->ylow)) +         \
+                   ((map)->xhigh-(map)->xlow+1)*((map)->yhigh-(map)->ylow+1)*((iz)-((map)->zlow))]
+#define MapElfloat(map,ix,iy,iz)  ((float*)((map)->mapdata))[(ix)-((map)->xlow) +               \
+                   ((map)->xhigh-(map)->xlow+1)*((iy)-((map)->ylow)) +         \
+                   ((map)->xhigh-(map)->xlow+1)*((map)->yhigh-(map)->ylow+1)*((iz)-((map)->zlow))]
+#define MapElint(map,ix,iy,iz)  ((int*)((map)->mapdata))[(ix)-((map)->xlow) +               \
+                   ((map)->xhigh-(map)->xlow+1)*((iy)-((map)->ylow)) +         \
+                   ((map)->xhigh-(map)->xlow+1)*((map)->yhigh-(map)->ylow+1)*((iz)-((map)->zlow))]
+#define MapEllong(map,ix,iy,iz)  ((long*)((map)->mapdata))[(ix)-((map)->xlow) +               \
+                   ((map)->xhigh-(map)->xlow+1)*((iy)-((map)->ylow)) +         \
+                   ((map)->xhigh-(map)->xlow+1)*((map)->yhigh-(map)->ylow+1)*((iz)-((map)->zlow))]
+#define MapElshort(map,ix,iy,iz)  ((short*)((map)->mapdata))[(ix)-((map)->xlow) +               \
+                   ((map)->xhigh-(map)->xlow+1)*((iy)-((map)->ylow)) +         \
+                   ((map)->xhigh-(map)->xlow+1)*((map)->yhigh-(map)->ylow+1)*((iz)-((map)->zlow))]
+#define MapElchar(map,ix,iy,iz)  ((char*)((map)->mapdata))[(ix)-((map)->xlow) +               \
                    ((map)->xhigh-(map)->xlow+1)*((iy)-((map)->ylow)) +         \
                    ((map)->xhigh-(map)->xlow+1)*((map)->yhigh-(map)->ylow+1)*((iz)-((map)->zlow))]
 
@@ -352,6 +369,12 @@ int vector_free(GenericVec __far * __far * vector);
 /* MapReRadius -- recalculate the maximum map radius */
 
 void MapReRadius( void );
+
+
+/* SaveMapFile -- load a map file */
+
+int SaveMapFile( FILE *fp, int info, int mapno );
+
 
 /* LoadMapFile -- load a map file */
 

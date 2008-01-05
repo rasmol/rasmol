@@ -1,4 +1,9 @@
-
+  { "Error: NoToggle mode enabed; "
+    "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Russian,0},
+  { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Russian,0},
+  { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Russian,0},
+  { "NoToggle mode: enabled.\n",                       StrNoTogOn,  Russian,0},
+  { "NoToggle mode: disabled.\n",                      StrNoTogOff, Russian,0},
 
   { "Неверный синтаксис команды!\n",                   ErrSyntax,   Russian,0},
   { "Значение параметра слишком длинное!\n",           ErrBigNum,   Russian,0},

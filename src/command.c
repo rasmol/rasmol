@@ -2304,7 +2304,20 @@ static void ExecuteSetCommand( void )
             } else if( CurToken==NumberTok )
             {   StereoAngle = TokenValue;
                 SetStereoMode(True);
-            } else CommandError(MsgStrs[ErrSyntax]);
+            } else {
+            CommandError(MsgStrs[ErrSyntax]); 
+            break;
+            }
+            if (StereoAngle > 60.) {
+              StereoAngle = 6.;
+              CommandError(MsgStrs[ErrBigNum]);
+              break;            	
+            }
+            if (StereoAngle < -60.) {
+              StereoAngle = -6.;
+              CommandError(MsgStrs[ErrBigNum]);
+              break;            	
+            }
             break;
 
         case(BondTok):
@@ -2470,15 +2483,242 @@ static void ExecuteSetCommand( void )
             ReDrawFlag |= RFRefresh;
             break;
 
+		/* set notoggle command - gm */
+		case (NoToggleTok):
+			FetchToken();
+			if (!CurToken || CurToken == TrueTok)
+			{
+				NoToggle = 1;
+				WriteString(MsgStrs[StrNoTogOn]);
+			}
+			else if (CurToken == FalseTok)
+			{
+				NoToggle = 0;
+				WriteString(MsgStrs[StrNoTogOff]);
+			}
+            break;
+
         default:
             CommandError(MsgStrs[ErrParam]);
     }
 }
 
 
-static void ExecuteColourCommand( void )
+static void OldExecuteColourCommand( void )
 {
     register int flag;
+
+    flag = 0;
+    switch( FetchToken() )
+    {   case(AtomTok):
+            FetchToken();
+        default:
+            switch( CurToken )
+            {   case(CPKTok):         CPKColourAttrib(); 
+                                      ReDrawFlag |= RFColour; break;
+
+                case(CpkNewTok):      CpkNewColourAttrib();
+                                      ReDrawFlag |= RFColour; break;	      
+
+                case(AminoTok):       AminoColourAttrib();
+                                      ReDrawFlag |= RFColour; break;
+
+                case(ShapelyTok):     ShapelyColourAttrib();
+                                      ReDrawFlag |= RFColour; break;
+                
+                case(UserTok):        UserMaskAttrib(MaskColourFlag);
+                                      ReDrawFlag |= RFColour; break;
+
+                case(GroupTok):       ScaleColourAttrib(GroupAttr);
+                                      ReDrawFlag |= RFColour; break;
+
+                case(ChainTok):       ScaleColourAttrib(ChainAttr);
+                                      ReDrawFlag |= RFColour; break;
+
+                case(ModelTok):       ScaleColourAttrib(ModelAttr);
+                                      ReDrawFlag |= RFColour; break;
+
+                case(AltlTok):        ScaleColourAttrib(AltAttr);
+                                      ReDrawFlag |= RFColour; break;
+
+                case(ChargeTok):      ScaleColourAttrib(ChargeAttr);
+                                      ReDrawFlag |= RFColour; break;
+
+                case(TemperatureTok): ScaleColourAttrib(TempAttr);
+                                      ReDrawFlag |= RFColour; break;
+
+                case(StructureTok):   StructColourAttrib();
+                                      ReDrawFlag |= RFColour; break;
+
+                default:  if( ParseColour() )
+                          {   MonoColourAttrib(RVal,GVal,BVal);
+                              ReDrawFlag |= RFColour;
+                          } else if( CurToken )
+                          {      CommandError(MsgStrs[ErrColour]);
+                          } else CommandError(MsgStrs[ErrNoCol]);
+            }
+            break;
+
+        case(BondTok):    
+        case(DashTok):
+            FetchToken();
+            if( CurToken==NoneTok )
+            {   ColourBondNone();
+                ReDrawFlag |= RFColour;
+            } else if( ParseColour() )
+            {   ColourBondAttrib(RVal,GVal,BVal);
+                ReDrawFlag |= RFColour;
+            } else if( CurToken )
+            {      CommandError(MsgStrs[ErrColour]);
+            } else CommandError(MsgStrs[ErrNoCol]);
+            break;
+
+        case(BackboneTok):
+            FetchToken();
+            if( CurToken==NoneTok )
+            {   ColourBackNone();
+                ReDrawFlag |= RFColour;
+            } else if( ParseColour() )
+            {   ColourBackAttrib(RVal,GVal,BVal);
+                ReDrawFlag |= RFColour;
+            } else if( CurToken )
+            {      CommandError(MsgStrs[ErrColour]);
+            } else CommandError(MsgStrs[ErrNoCol]);
+            break;
+
+        case(SSBondTok):
+            FetchToken();
+            if( CurToken==NoneTok )
+            {   ReDrawFlag |= RFColour;
+                ColourHBondNone( False );
+            } else if( ParseColour() )
+            {   ReDrawFlag |= RFColour;
+                ColourHBondAttrib(False,RVal,GVal,BVal);
+            } else if( CurToken )
+            {      CommandError(MsgStrs[ErrColour]);
+            } else CommandError(MsgStrs[ErrNoCol]);
+            break;
+
+        case(HBondTok):
+            FetchToken();
+            if( CurToken==NoneTok )
+            {   ReDrawFlag |= RFColour;
+                ColourHBondNone( True );
+            } else if( CurToken==TypeTok )
+            {   ReDrawFlag |= RFColour;
+                ColourHBondType();
+            } else if( ParseColour() )
+            {   ReDrawFlag |= RFColour;
+                ColourHBondAttrib(True,RVal,GVal,BVal);
+            } else if( CurToken )
+            {      CommandError(MsgStrs[ErrColour]);
+            } else CommandError(MsgStrs[ErrNoCol]);
+            break;
+
+        case(DotsTok):
+            FetchToken();
+            if( CurToken==PotentialTok )
+            {   ReDrawFlag |= RFColour;
+                ColourDotsPotential();
+            } else if( ParseColour() )
+            {   ReDrawFlag |= RFColour;
+                ColourDotsAttrib(RVal,GVal,BVal);
+            } else if( CurToken )
+            {      CommandError(MsgStrs[ErrColour]);
+            } else CommandError(MsgStrs[ErrNoCol]);
+            break;
+            
+    	case(MapTok):
+            FetchToken();
+            if( CurToken==PotentialTok )
+            {   ReDrawFlag |= RFColour;
+                MapFlag |= MapColourPot;
+                ApplyMapColour();
+           } else if( ParseColour() )
+            {   ReDrawFlag |= RFColour;
+                MapRGBCol[0] = RVal;
+                MapRGBCol[1] = GVal;
+                MapRGBCol[2] = BVal;
+                ApplyMapColour();
+            } else if( CurToken )
+            {      CommandError(MsgStrs[ErrColour]);
+            } else CommandError(MsgStrs[ErrNoCol]);
+            break;
+
+
+        case(MonitorTok):
+            FetchToken();
+            if( CurToken == NoneTok )
+            {   ColourMonitNone();
+            } else if( ParseColour() )
+            {   ReDrawFlag |= RFColour;
+                ColourMonitAttrib(RVal,GVal,BVal);
+            } else if( CurToken )
+            {      CommandError(MsgStrs[ErrColour]);
+            } else CommandError(MsgStrs[ErrNoCol]);
+            break;
+
+        case(AxesTok):
+        case(BoundBoxTok):
+        case(UnitCellTok):
+            FetchToken();
+            if( ParseColour() )
+            {   BoxR = RVal;  BoxG = GVal;  BoxB = BVal;
+                ReDrawFlag |= RFColour;
+            } else if( CurToken )
+            {      CommandError(MsgStrs[ErrColour]);
+            } else CommandError(MsgStrs[ErrNoCol]);
+            break;
+
+        case(LabelTok):
+            FetchToken();
+            if( CurToken==NoneTok )
+            {   ReDrawFlag |= RFColour;
+                UseLabelCol = False;
+            } else if( ParseColour() )
+            {   LabR = RVal;  LabG = GVal;  LabB = BVal;
+                ReDrawFlag |= RFColour;
+                UseLabelCol = True;
+            } else if( CurToken )
+            {      CommandError(MsgStrs[ErrColour]);
+            } else CommandError(MsgStrs[ErrNoCol]);
+            break;
+
+        case(TraceTok): 
+        case(RibbonTok):
+        case(StrandsTok):
+        case(CartoonTok):  flag = RibColBoth;     break;
+        case(Ribbon1Tok):  flag = RibColInside;   break;
+        case(Ribbon2Tok):  flag = RibColOutside;  break;
+    }
+
+    if( flag )
+    {   FetchToken();
+        if( CurToken==NoneTok )
+        {   ReDrawFlag |= RFColour;
+            ColourRibbonNone(flag);
+        } else if( ParseColour() )
+        {   ReDrawFlag |= RFColour;
+            ColourRibbonAttrib(flag,RVal,GVal,BVal);
+        } else if( CurToken )
+        {      CommandError(MsgStrs[ErrColour]);
+        } else CommandError(MsgStrs[ErrNoCol]);
+    }
+}
+
+static void ExecuteColourCommand( void )
+{
+	/* The new ExecuteColorCommand - at present this is a copy of the
+	 * previous version */
+    register int flag;
+
+	/* in case we want to use the old code... */
+	if (UseOldColorCode)
+	{
+		/* ... use it ... */
+		OldExecuteColourCommand();
+		return;
+	}
 
     flag = 0;
     switch( FetchToken() )
@@ -3236,6 +3476,7 @@ static void WriteImageFile( char *name, int type, int subtype )
         case(RamachanTok):   WritePhiPsiAngles(name, 1);  break;
         case(RamPrintTok):   WritePhiPsiAngles(name, -1); break;     
         case(VRMLTok):       WriteVRMLFile(name, subtype); break;
+
     }
 }
 
@@ -3715,7 +3956,6 @@ int ApplyMapMask(int mapno ) {
   MapInfo *mapinfo, *omapinfo;
   MapStruct __far *mapmaskptr;
   MapAtmSelVec __far *mapmaskgensel;
-  register Long xel, yel, zel;
   Long flag;
 
   ApplyMapSelection();
@@ -3778,7 +4018,7 @@ int ApplyMapMask(int mapno ) {
                 CommandError(MsgStrs[StrMalloc]);
                 return 1;	
               }
-              mapmaskptr->mapdata = (double *)_fmalloc(sizeof(double)*
+              mapmaskptr->mapdata = _fmalloc(omapinfo->MapPtr->elsize*
                 ((omapinfo->MapPtr)->xhigh-(omapinfo->MapPtr)->xlow+1)*
                 ((omapinfo->MapPtr)->yhigh-(omapinfo->MapPtr)->ylow+1)*
                 ((omapinfo->MapPtr)->zhigh-(omapinfo->MapPtr)->zlow+1));
@@ -3787,6 +4027,8 @@ int ApplyMapMask(int mapno ) {
            	    CommandError(MsgStrs[StrMalloc]);
            	    return 1;
               }
+              mapmaskptr->elsize=omapinfo->MapPtr->elsize;
+              mapmaskptr->eltype=omapinfo->MapPtr->eltype;
               mapmaskptr->xint=omapinfo->MapPtr->xint;
               mapmaskptr->yint=omapinfo->MapPtr->yint;
               mapmaskptr->zint=omapinfo->MapPtr->zint;
@@ -3810,10 +4052,11 @@ int ApplyMapMask(int mapno ) {
               for (i=0; i<3; i++) {
                 mapmaskptr->mapxlate[i]=omapinfo->MapPtr->mapxlate[i];
               }
-              for (xel=(mapmaskptr)->xlow; xel<=(mapmaskptr)->xhigh; xel++ )
-                for (yel=(mapmaskptr)->ylow; yel<=(mapmaskptr)->yhigh; yel++  )
-                  for (zel=(mapmaskptr)->zlow; zel<=(mapmaskptr)->zhigh; zel++ )
-                    MapEl(mapmaskptr,xel,yel,zel)=MapEl(omapinfo->MapPtr,xel,yel,zel);
+              memmove(mapmaskptr->mapdata,omapinfo->MapPtr->mapdata,
+                ((mapmaskptr)->xhigh-(mapmaskptr)->xlow+1)
+                *((mapmaskptr)->yhigh-(mapmaskptr)->ylow+1)
+                *((mapmaskptr)->zhigh-(mapmaskptr)->zlow+1)
+                *((mapmaskptr)->elsize));
               if (omapinfo->MapGenSel) {
                 MapAtmSel *mapatmsel;
                 vector_create((GenericVec __far **)&mapmaskgensel,sizeof(MapAtmSel),10);
@@ -3866,7 +4109,6 @@ static int ExecuteGenerateCommand( int mapflags ) {
   MapInfo *omapinfo;
   MapStruct __far *mapmaskptr;
   MapAtmSelVec __far *mapmaskgensel;
-  register Long xel, yel, zel;
   
   ApplyMapSelection();
   if (MapSpacing <= 0) MapSpacing = 125L;
@@ -3899,7 +4141,7 @@ static int ExecuteGenerateCommand( int mapflags ) {
       CommandError(MsgStrs[StrMalloc]);
       return 1;	
     }
-    mapmaskptr->mapdata = (double *)_fmalloc(sizeof(double)*
+    mapmaskptr->mapdata = _fmalloc(MapMaskPtr->elsize*
       ((MapMaskPtr)->xhigh-(MapMaskPtr)->xlow+1)*
       ((MapMaskPtr)->yhigh-(MapMaskPtr)->ylow+1)*
       ((MapMaskPtr)->zhigh-(MapMaskPtr)->zlow+1));
@@ -3908,6 +4150,8 @@ static int ExecuteGenerateCommand( int mapflags ) {
       CommandError(MsgStrs[StrMalloc]);
       return 1;
     }
+    mapmaskptr->elsize=MapMaskPtr->elsize;
+    mapmaskptr->eltype=MapMaskPtr->eltype;
     mapmaskptr->xint=MapMaskPtr->xint;
     mapmaskptr->yint=MapMaskPtr->yint;
     mapmaskptr->zint=MapMaskPtr->zint;
@@ -3931,10 +4175,11 @@ static int ExecuteGenerateCommand( int mapflags ) {
     for (i=0; i<3; i++) {
       mapmaskptr->mapxlate[i]=MapMaskPtr->mapxlate[i];
     }
-    for (xel=(mapmaskptr)->xlow; xel<=(mapmaskptr)->xhigh; xel++ )
-      for (yel=(mapmaskptr)->ylow; yel<=(mapmaskptr)->yhigh; yel++  )
-        for (zel=(mapmaskptr)->zlow; zel<=(mapmaskptr)->zhigh; zel++ )
-          MapEl(mapmaskptr,xel,yel,zel)=MapEl(MapMaskPtr,xel,yel,zel);
+    memmove(mapmaskptr->mapdata,MapMaskPtr->mapdata,
+      ((mapmaskptr)->xhigh-(mapmaskptr)->xlow+1)
+      *((mapmaskptr)->yhigh-(mapmaskptr)->ylow+1)
+      *((mapmaskptr)->zhigh-(mapmaskptr)->zlow+1)
+      *((mapmaskptr)->elsize));
     mapinfo.MapMaskPtr = mapmaskptr;
   }
   if (MapMaskGenSel) {
@@ -4047,6 +4292,57 @@ int ExecuteCommand( void )
                                ZapDatabase(); break;
                              } else CommandError(MsgStrs[ErrBadArg]);
                              break;
+
+		case (ColourModeTok): /* gm */
+							 FetchToken();
+							 if (CurToken == TrueTok)
+							 {
+								 UseOldColorCode = 1;
+								 WriteString(MsgStrs[StrCCompOn]);
+							 }
+							 else if (CurToken == FalseTok)
+							 {
+								 UseOldColorCode = 0;
+								 WriteString(MsgStrs[StrCCompOff]);
+							 }
+							 else {
+								 if (!NoToggle) {
+									 if (UseOldColorCode)
+									 {
+										 UseOldColorCode = 0;
+										 WriteString(MsgStrs[StrCCompOff]);
+									 }
+									 else
+									 {
+										 UseOldColorCode = 1;
+										 WriteString(MsgStrs[StrCCompOn]);
+									 }
+								 }
+								 else
+								 {
+									 CommandError(MsgStrs[ErrNoToggle]);
+								 }
+							 }
+							 break;
+
+		case (NoToggleTok): /* gm */
+
+							 FetchToken();
+							 if (CurToken == TrueTok)
+							 {
+								 NoToggle = 1;
+								 WriteString(MsgStrs[StrNoTogOn]);
+							 }
+							 else if (CurToken == FalseTok)
+							 {
+								 NoToggle = 0;
+								 WriteString(MsgStrs[StrNoTogOff]);
+							 }
+							 else {
+								 NoToggle = 1;
+								 WriteString(MsgStrs[StrNoTogOn]);
+							 }
+							 break;
 
 
         case(BondTok):    FetchToken();
@@ -4384,6 +4680,68 @@ int ExecuteCommand( void )
                                 } else CommandError(MsgStrs[ErrBadArg]);
                                 break;
                                 
+                                
+                              case(SaveTok):
+                              case(WriteTok):
+                                if( !AllowWrite )
+                                  if( (FileDepth!=-1) && LineStack[FileDepth] )
+                                  {   CommandError(MsgStrs[ErrInScrpt]);
+                                      break;
+                                  }
+                                FetchToken();
+                                if( !Database ) { 
+                                  CommandError(MsgStrs[ErrBadMolDB]);
+                                  break;
+                                }
+
+                                if( !CurToken ) {
+                                  CommandError(MsgStrs[ErrFilNam]);
+                                  break;
+                                } else if( CurToken==StringTok ) {
+                                  ProcessFileName(TokenIdent);
+                                } else ProcessFileName(TokenStart);
+                                
+                                param = DataFileName;
+                                CurToken = 0;
+                                
+#ifdef USE_CBFLIB        
+                                if( !(fp=fopen(DataFileName,"w+b")) ) {
+                                  CommandError( (char*)NULL );
+                                  FatalOutputError(DataFileName);
+                                  break;
+                                } 
+                                else {
+                                  MapInfo *omapinfo;
+                                  {
+                                  	ApplyMapSelection();
+                                  	if (MapFlag&MapSelectFlag) {
+                                  	  CommandError(MsgStrs[ErrBadArg]);
+                                  	  fclose(fp);
+                                  	  break;
+                                    } else {
+       	                              for (j=0; j < MapInfoPtr->size; j++) {
+                                        vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&omapinfo,j );
+                                        if (omapinfo->flag&MapSelectFlag) {
+                                          if(SaveMapFile(fp,(FileDepth == -1),j))  {
+             	                            CommandError( (char*)NULL );
+                                            WriteString(MsgStrs[StrErrFile]);
+                                            WriteString(DataFileName);
+                                            WriteString("'!\n");
+                                            break;
+                                          }
+                                        }
+                                      }
+                                      fclose(fp);
+                                    }
+                                  }
+                                  CurToken = 0;
+                                }
+#else
+                                CommandError(MsgStrs[ErrBadArg]);
+#endif
+                                break;
+                                
+
                               case(MaskTok):
                                 FetchToken();
                                 if (CurToken == SelectedTok) {
@@ -5321,7 +5679,20 @@ int ExecuteCommand( void )
                           } else if( CurToken==NumberTok )
                           {   StereoAngle = TokenValue;
                               SetStereoMode(True);
-                          } else CommandError(MsgStrs[ErrSyntax]);
+                          } else {
+                            CommandError(MsgStrs[ErrSyntax]);
+                            break;
+                          }
+                          if (StereoAngle > 60.) {
+                            StereoAngle = 6.;
+                            CommandError(MsgStrs[ErrBigNum]);
+                            break;            	
+                          }
+                          if (StereoAngle < -60.) {
+                            StereoAngle = -6.;
+                            CommandError(MsgStrs[ErrBigNum]);
+                            break;            	
+                          }
                           break;
 
         case(ResizeTok):  FetchToken();

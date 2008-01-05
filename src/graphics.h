@@ -167,6 +167,8 @@ int MouseUpdateStatus;
 
 Pixel __huge *FBuffer;
 short __huge *DBuffer;
+short __huge *SLineBuffer;
+short __huge *DLineBuffer;
 
 Pixel Lut[LutSize];
 Byte RLut[LutSize];
@@ -181,6 +183,8 @@ LOGPALETTE __far *Palette;
 HPALETTE ColourMap;
 HGLOBAL FBufHandle;
 HGLOBAL DBufHandle;
+HGLOBAL SLineHandle;
+HGLOBAL DLineHandle;
 HGLOBAL CBufHandle;
 HBITMAP PixMap;
 HWND CanvWin;
@@ -197,6 +201,8 @@ WindowPtr CmndWin;
 THPrint PrintHand;
 Handle FBufHandle;
 Handle DBufHandle;
+Handle SLineHandle;
+Handle DLinehandle;
 Handle CBufHandle;
 #endif /* APPLEMAC */
 
@@ -281,6 +287,9 @@ extern int MouseUpdateStatus;
 
 extern Pixel __huge *FBuffer;
 extern short __huge *DBuffer;
+extern short __huge *SLineBuffer;
+extern short __huge *DLineBuffer;
+
 
 extern Pixel Lut[LutSize];
 extern Byte RLut[LutSize];

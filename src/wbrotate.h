@@ -65,6 +65,13 @@
  ***************************************************************************/
 /* wbrotate.h
  $Log: not supported by cvs2svn $
+ Revision 1.3  2007/12/14 02:04:50  yaya
+ Correct Chinese data for missing line in langsel_utf.c
+ Rewrite code for handling of slab mode in stereo -- HJB
+
+ Revision 1.2  2007/11/25 17:57:50  yaya-hjb
+ Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
+
  Revision 1.2  2007/11/19 03:28:40  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -158,6 +165,7 @@ void ResetBondsSel( void );
 Real WLastRX, WLastRY, WLastRZ;
 Real WTransX, WTransY, WTransZ;
 Real WLastTX, WLastTY, WLastTZ;
+Real WLastRS;
 BondRot *BondSelected;
 BondRot *BondsSelected;
 RAtom __far *BSrcAtom;
@@ -165,14 +173,17 @@ RAtom __far *BDstAtom;
 Real BAxis[3];
 Real BRotValue, BLastRot;
 Real WRotValue[3];
+Real WRotStereo;
 Real WLRotX[3],WLRotY[3],WLRotZ[3];
 Real WIRotX[3],WIRotY[3],WIRotZ[3];
 #else
 extern Real WLastRX, WLastRY, WLastRZ;
 extern Real WTransX, WTransY, WTransZ;
 extern Real WLastTX, WLastTY, WLastTZ;
+extern Real WLastRS;
 extern BondRot *BondSelected;
 extern BondRot *BondsSelected;
+extern Real WRotStereo;
 #ifndef GRAPHICS
 extern RAtom __far *BSrcAtom;
 extern RAtom __far *BDstAtom;

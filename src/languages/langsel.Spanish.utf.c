@@ -1,4 +1,9 @@
-
+  { "Error: NoToggle mode enabed; "
+    "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Spanish,0},
+  { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Spanish,0},
+  { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Spanish,0},
+  { "NoToggle mode: enabled.\n",                       StrNoTogOn,  Spanish,0},
+  { "NoToggle mode: disabled.\n",                      StrNoTogOff, Spanish,0},
 
   { "¡Sintaxis de comando inválida!\n",                ErrSyntax,   Spanish,0},
   { "¡Valor de parámetro demasiado larga!\n",          ErrBigNum,   Spanish,0},

@@ -65,6 +65,13 @@
  ***************************************************************************/
 /* render.c
  $Log: not supported by cvs2svn $
+ Revision 1.7  2007/12/14 02:04:50  yaya
+ Correct Chinese data for missing line in langsel_utf.c
+ Rewrite code for handling of slab mode in stereo -- HJB
+
+ Revision 1.2  2007/11/25 17:57:50  yaya-hjb
+ Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
+
  Revision 1.6  2007/11/19 03:28:39  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -469,16 +476,29 @@ void ReAllocBuffers( void )
     register long len, temp;
 
 #ifdef MSWIN
+    temp = (long)XRange*sizeof(short)+32;
+    if( SLineHandle ) GlobalFree(SLineHandle);
+    SLineHandle = GlobalAlloc(GMEM_MOVEABLE,temp);
+    if( !SLineHandle ) FatalRenderError("slab line buffer");
+    if( DLineHandle ) GlobalFree(DLineHandle);
+    DLineHandle = GlobalAlloc(GMEM_MOVEABLE,temp);
+    if( !DLineHandle ) FatalRenderError("depth line buffer");
     temp = (long)XRange*YRange*sizeof(short)+32;
     if( DBufHandle ) GlobalFree(DBufHandle);
     DBufHandle = GlobalAlloc(GMEM_MOVEABLE,temp);
     if( !DBufHandle ) FatalRenderError("depth buffer");
 #else
+    temp = (long)XRange*sizeof(short)+32;
+    if( SLineBuffer ) _ffree( SLineBuffer );
+    SLineBuffer = (short*)_fmalloc( temp );
+    if( !SLineBuffer ) FatalRenderError("slab line buffer");
+    if( DLineBuffer ) _ffree( DLineBuffer );
+    DLineBuffer = (short*)_fmalloc( temp );
+    if( !DLineBuffer ) FatalRenderError("depth line buffer");
     temp = (long)XRange*YRange*sizeof(short)+32;
     if( DBuffer ) _ffree( DBuffer );
     DBuffer = (short*)_fmalloc( temp );
     if( !DBuffer ) FatalRenderError("depth buffer");
-    temp = (long)XRange*YRange*sizeof(int)+32;
 #endif
     DBClear=False;
 
@@ -1340,14 +1360,14 @@ static void DisplayBoxes( void )
 	if( DrawAxes )
 	{   /* Line (MinX,0,0) to (MaxX,0,0) */
             x = XOffset+dxx;  y = YOffset+dxy;  z = ZOffset+dxz;
-            if( ZValid(z) && ZBack(z) ) DisplayRasString(x+2,y,z,
+            if( ZBValid(x,z) ) DisplayRasString(x+2,y,z,
               (unsigned char *)"X",BoxCol);
 	    ClipTwinLine(XOffset-dxx,YOffset-dxy,ZOffset-dxz,
                          x,y,z,BoxCol,BoxCol,' ');
 
 	    /* Line (0,MinY,0) to (0,MaxY,0) */
             x = XOffset+dyx;  y = YOffset+dyy;  z = ZOffset+dyz;
-            if( ZValid(z) && ZBack(z) ) DisplayRasString(x+2,y,z,
+            if( ZBValid(x,z) ) DisplayRasString(x+2,y,z,
               (unsigned char *)"Y",BoxCol);
 	    ClipTwinLine(XOffset-dyx,YOffset-dyy,ZOffset-dyz, 
 			 x,y,z,BoxCol,BoxCol,' ');
@@ -1355,7 +1375,7 @@ static void DisplayBoxes( void )
 
 	    /* Line (0,0,MinZ) to (0,0,MaxZ) */
             x = XOffset-dzx;  y = YOffset-dzy;  z = ZOffset-dzz;
-            if( ZValid(z) && ZBack(z) ) DisplayRasString(x+2,y,z,
+            if( ZBValid(x,z) ) DisplayRasString(x+2,y,z,
               (unsigned char *)"Z",BoxCol);
 	    ClipTwinLine(XOffset+dzx,YOffset+dzy,ZOffset+dzz, 
 			 x,y,z,BoxCol,BoxCol,' ');
@@ -1640,8 +1660,10 @@ static void RenderFrame( void )
 
 static void DrawFrameOne( void )
 {
-    register double temp;
+    register double temp, kemp;
     register int wide;
+    register int ii;
+    double theta,costheta,tantheta;
 
     if( !Database ) 
 	return;
@@ -1653,14 +1675,25 @@ static void DrawFrameOne( void )
 		CreateVoxelData( SphereFlag );
     }
 
+#ifdef MSWIN
+    /* Lock Buffers into Memory */
+    FBuffer = (Pixel __huge*)GlobalLock(FBufHandle);
+    DBuffer = (short __huge*)GlobalLock(DBufHandle);
+    SLineBuffer = (short __huge*)GlobalLock(SLineHandle);
+    DLineBuffer = (short __huge*)GlobalLock(DLineHandle);
+#endif
+
     if( UseDepthPlane )
     {   DepthValue = (int)(DialValue[DialBClip]*ImageRadius)+ZOffset;
         UseClipping = True;
+        for (ii=0; ii < XRange; ii++) DLineBuffer[ii] = DepthValue;
     }   else UseClipping = UseScreenClip;
+
     if( UseSlabPlane )
     {   SlabValue = (int)(DialValue[DialSlab]*ImageRadius)+ZOffset;
 	    SlabInten = (int)(ColourMask*LightZComp/LightLength);
-	    SliceValue = SlabValue+16;
+	    SliceValue = 16;
+        for (ii=0; ii < XRange; ii++) SLineBuffer[ii] = SlabValue;
 	    UseClipping = True;
     } else UseClipping = UseScreenClip;
 
@@ -1672,21 +1705,21 @@ static void DrawFrameOne( void )
     } else
 		ShiftS = 0;
 
-#ifdef MSWIN
-    /* Lock Buffers into Memory */
-    FBuffer = (Pixel __huge*)GlobalLock(FBufHandle);
-    DBuffer = (short __huge*)GlobalLock(DBufHandle);
-#endif
 
     /* Common View Elements */
     View.yskip = XRange;
     View.ymax = YRange;
     View.fbuf = FBuffer;
     View.dbuf = DBuffer;
+    View.slbuf = SLineBuffer;
+    View.dlbuf = DLineBuffer;
 
     if( UseStereo )
     {
         temp = StereoAngle/180.0;
+        theta = -PI*temp/2.;
+        costheta = cos(theta);
+        tantheta = tan(theta);
         wide = XRange>>1;
 
         /* Create 'Left' View structure */
@@ -1694,7 +1727,26 @@ static void DrawFrameOne( void )
         View.xmax = wide;
         View.offmax = 2*wide*YRange;
 
-        DialValue[DialRY] -= temp;
+        if( UseSlabPlane ){
+          for (ii=0; ii<wide; ii++) {
+            kemp = (double)SlabValue+rint(((double)(wide/2-ii))*tantheta);
+            if (kemp > (double)ZRange-1) kemp = ZRange-1;
+            if (kemp < 0.) kemp=0.;
+            View.slbuf[ii] = (short)kemp;
+          }
+        }
+        if( UseDepthPlane ) { 
+          for (ii=0; ii<wide; ii++) {
+            kemp = (double)DepthValue+rint(((double)(wide/2-ii))*tantheta);
+            if (kemp > (double)ZRange-1) kemp = ZRange-1;
+            if (kemp < 0.) kemp=0.;
+            View.dlbuf[ii] = (short)kemp;
+          }
+        }
+        SliceValue = rint(16./costheta);
+
+        /*  DialValue[DialRY] -= temp; */
+        WRotStereo = -temp/2.;
         ReDrawFlag |= RFRotateY;
         ApplyTransform();
         RenderFrame();
@@ -1703,8 +1755,28 @@ static void DrawFrameOne( void )
         View.shift = wide;
         View.xmax = wide;
         View.offmax = 2*wide*YRange;
+        View.slbuf += wide;
+        View.dlbuf += wide;
 
-        DialValue[DialRY] += temp;
+        if( UseSlabPlane ){
+          for (ii=0; ii<wide; ii++) {
+            kemp = (double)SlabValue-rint(((double)(wide/2-ii))*tantheta);
+            if (kemp > (double)ZRange-1) kemp = ZRange-1;
+            if (kemp < 0.) kemp=0.;
+            View.slbuf[ii] = (short)kemp;
+          }
+        }
+        if( UseDepthPlane ) { 
+          for (ii=0; ii<wide; ii++) {
+            kemp = (double)DepthValue-rint(((double)(wide/2-ii))*tantheta);
+            if (kemp > (double)ZRange-1) kemp = ZRange-1;
+            if (kemp < 0.) kemp=0.;
+            View.dlbuf[ii] = (short)kemp;
+          }
+        }
+
+        /* DialValue[DialRY] += temp; */
+        WRotStereo = temp/2.;
         ReDrawFlag |= RFRotateY;
         ApplyTransform();
         RenderFrame();
@@ -1714,6 +1786,8 @@ static void DrawFrameOne( void )
         View.shift = 0;
         View.xmax = XRange;
         View.offmax = XRange*YRange;
+        WRotStereo = 0.;
+        if (WLastRS != 0.) ApplyTransform();
         RenderFrame();
     }
 
@@ -1721,6 +1795,8 @@ static void DrawFrameOne( void )
     /* Unlock Buffers */
     GlobalUnlock(FBufHandle);
     GlobalUnlock(DBufHandle);
+    GlobalUnlock(SLineHandle);
+    GlobalUnlock(DLineHandle);
 #endif
     DBClear = False;
     FBClear = False;
@@ -1870,17 +1946,14 @@ static void IdentifyAtom( int xpos, int ypos )
 		    if( SlabMode && (dz >= -rad) )
 		    {   wide = pythag(aptr->irad,AbsFun(dz));
 			if( (dy<=wide) && (dx<=pythag(wide,dy)) )
-			{   if( SlabMode == SlabFinal )
-			    {   dpth = SliceValue;
-				new = True;
-			    } else if( SlabMode == SlabHollow )
+			{   if( SlabMode == SlabHollow )
 			    {   dpth = aptr->z-pythag(rad,dx);
 				new = !IdentFound || (dpth>IdentDepth);
 			    } else if( SlabMode != SlabHalf )
 			    {   /* SlabClose, SlabSection */
-				dpth = dx*dx+dy*dy+dz*dz+SliceValue;
+				dpth = dx*dx+dy*dy+dz*dz+SlabValue+SliceValue;
 				if( IdentFound )
-				{   new = (IdentDepth<SliceValue) 
+				{   new = (IdentDepth<SlabValue+SliceValue) 
 					  || (dpth<IdentDepth);
 				} else new=True;
 			    }
@@ -2375,6 +2448,8 @@ void InitialiseRenderer( void )
 #if defined(MSWIN) || defined(APPLEMAC)
     FBufHandle = NULL;
     DBufHandle = NULL;
+    SLineHandle = NULL;
+    DLineHandle = NULL;
 #endif
 
 #if defined(IBMPC) || defined(APPLEMAC)

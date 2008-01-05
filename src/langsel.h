@@ -105,6 +105,12 @@ typedef enum {
        ErrBadMolDB =   20,
        ErrNoBond   =   21,
        ErrBlocSel  =   22,
+	   ErrNoToggle =  172,
+
+	   StrCCompOn  =  173,
+	   StrCCompOff =  174,
+	   StrNoTogOn  =  175,
+	   StrNoTogOff =  176,
 
        StrErrFile  =   30,
        StrNotFnd   =   31,
@@ -265,7 +271,7 @@ typedef enum {
 
 } strflag;
 
-#define MaxStrFlag     172
+#define MaxStrFlag     177
 typedef struct {
       char *    msg;
       strflag   msgno;

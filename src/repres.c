@@ -65,6 +65,13 @@
  ***************************************************************************/
 /* repres.c
  $Log: not supported by cvs2svn $
+ Revision 1.15  2007/12/14 02:04:50  yaya
+ Correct Chinese data for missing line in langsel_utf.c
+ Rewrite code for handling of slab mode in stereo -- HJB
+
+ Revision 1.2  2007/11/25 17:57:50  yaya-hjb
+ Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
+
  Revision 1.14  2007/11/19 03:28:40  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -571,7 +578,7 @@ void DisplayLabels( void )
     ForEachAtom
         if( aptr->label )
         {   /* Peform Label Slabbing! */
-            if( !ZValid(aptr->z) || !ZBack(aptr->z) )
+            if( !ZBValid(aptr->x,aptr->z) )
                 continue;
  
             label = (Label*)aptr->label;
@@ -762,7 +769,7 @@ void DisplayMonitors( void )
         ClipDashVector(s->x,s->y,s->z,d->x,d->y,d->z,sc,dc,' ');
  
         if( DrawMonitDistance )
-            if( ZValid( (s->z+d->z)/2 ) && ZBack( (s->z+d->z)/2 ))
+            if( ZBValid( (s->x+d->x)/2, (s->z+d->z)/2 ) )
             {   x = (s->x+d->x)/2;
                 y = (s->y+d->y)/2;
  
@@ -1183,7 +1190,7 @@ void DisplaySurface( void )
             {   yi = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset-Ceny;
                 if( YValid(yi) )
                 {   zi = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset-Cenz;
-                    if( ZValid(zi) && ZBack(zi) )
+                    if( ZBValid(xi,zi))
                         PlotDeepPoint(xi,yi,zi,ptr->col[i]);
                 }
             }
@@ -1222,8 +1229,8 @@ void DisplayMapPoints( void )
               yi = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset-Ceny;
               if( YValid(yi) ) { 
                 zi = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset-Cenz;
-                if( ZValid(zi) && ZBack(zi) ) {
-                  if (irad > 0) {
+                if( ZBValid(xi,zi)  ) {
+                  if (irad <= 0 && ZBValid(xi,zi) ) {
                         PlotDeepPoint(xi,yi,zi,(MapPointsPtr->array[i]).col);
                   } else  {
                     ClipSphere(xi,yi,zi,irad,(MapPointsPtr->array[i]).col);

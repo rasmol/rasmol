@@ -1,4 +1,9 @@
-
+  { "Error: NoToggle mode enabed; "
+    "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Bulgarian,0},
+  { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Bulgarian,0},
+  { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Bulgarian,0},
+  { "NoToggle mode: enabled.\n",                       StrNoTogOn,  Bulgarian,0},
+  { "NoToggle mode: disabled.\n",                      StrNoTogOff, Bulgarian,0},
 
   { "Ќевалиден команден синтаксис!\n",		       ErrSyntax,   Bulgarian,0},
   { "’върде голЯма стойност на параметъра\n!",	       ErrBigNum,   Bulgarian,0},

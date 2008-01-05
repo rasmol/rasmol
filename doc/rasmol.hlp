@@ -766,17 +766,18 @@ Type "help <command>" for more information on each RasMol function.
 
 
     backbone     background   bond         bulgarian    cartoon
-    centre       chinese      clipboard    colour       connect
-    cpk          cpknew       define       depth        dots
-    echo         english      exit         french       hbonds
-    help         italian      japanese     label        load
-    map          molecule     monitor      pause        print
-    quit         refresh      renumber     reset        restrict
-    ribbons      rotate       save         script       select
-    set          show         slab         source       spacefill
-    spanish      ssbonds      star         stereo       strands
-    structure    surface      trace        translate    unbond
-    wireframe    write        zap          zoom
+    centre       chinese      clipboard    colour       colourmode
+    connect      cpk          cpknew       define       depth
+    dots         echo         english      exit         french
+    hbonds       help         italian      japanese     label
+    load         map          molecule     monitor      notoggle
+    pause        print        quit         refresh      renumber
+    reset        restrict     ribbons      rotate       save
+    script       select       set          show         slab
+    source       spacefill    spanish      ssbonds      star
+    stereo       strands      structure    surface      trace
+    translate    unbond       wireframe    write        zap
+    zoom
 
 
 ?backbone
@@ -941,6 +942,19 @@ connect). 'Atom' objects can also be coloured by 'alt', 'amino', 'chain',
 'user'. Hydrogen bonds can also be coloured by 'type' and dot surfaces can 
 also be coloured by 'electrostatic potential'. For more information type 
 'help colour <colour>'. 
+
+?colourmode
+?colourmode
+ColourMode
+Syntax:  colourmode {<boolean>}
+         colormode {<boolean>}
+
+ColourMode allows the user to switch between using the new 'colour' method. 
+At present, the new coloring technique is the same as the old one, but to 
+preserve compatibility for older scripts it may be wise to add a "colormode 
+on" near the top of your script somewhere, if the script was designed for 
+version 2.7.3 of RasMol or earlier. The new color method, when completed, 
+aims to fix a few bugs in the coloring routines. 
 
 ?connect
 Connect
@@ -1399,6 +1413,19 @@ atom displays the distance between this atom and the previous one. The shift
 key may be used to form distance monitors between a fixed atom and several 
 consecutive positions. A distance monitor may also be removed (toggled) by 
 selecting the appropriate pair of atom end points a second time. 
+
+?notoggle
+Notoggle
+Syntax:  notoggle {<boolean>}
+
+The RasMol 'NoToggle' command enables or disables the use of the toggle 
+ability that is used by some of the other RasMol commands. When no boolean 
+value is specified, NoToggle mode is ENABLED. When NoToggle mode is ENABLED, 
+all toggle functionality is DISABLED. To turn it off, one must explicitly 
+set 'notoggle off'. 
+
+Some commands which use the toggle feature are: 'ColourMode'. More functions 
+that utilize this capability may be added at a later date. 
 
 ?pause
 Pause

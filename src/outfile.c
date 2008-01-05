@@ -65,6 +65,13 @@
  ***************************************************************************/
 /* outfile.c
  $Log: not supported by cvs2svn $
+ Revision 1.5  2007/12/14 02:04:50  yaya
+ Correct Chinese data for missing line in langsel_utf.c
+ Rewrite code for handling of slab mode in stereo -- HJB
+
+ Revision 1.2  2007/11/25 17:57:50  yaya-hjb
+ Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
+
  Revision 1.4  2007/11/19 03:28:39  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -328,7 +335,7 @@ void SetFileInfo( char*, OSType, OSType, short );
 
 
 
-static void FatalOutputError( char *ptr )
+void FatalOutputError( char *ptr )
 {
     InvalidateCmndLine();
     WriteString("Output Error: Unable to create file `");
@@ -1961,6 +1968,7 @@ static void WriteVectDots( void )
     register int temp, tump;
     register int zi;
     register int i;
+    register int xp;
 
     if( LineWidth != 1.0 )
     {   fputs("1 setlinewidth\n",OutFile);
@@ -1977,13 +1985,14 @@ static void WriteVectDots( void )
 
 
             xi = (x*MatX[0]+y*MatX[1]+z*MatX[2]) + XOffset;
-            if( (xi<0.0) || (xi>=XRange) ) continue;
+            if( (xi<0.0) || ((int)rint(xi)>=View.xmax) ) continue;
             yi = (x*MatY[0]+y*MatY[1]+z*MatY[2]) + YOffset;
-            if( (yi<0.0) || (yi>=YRange) ) continue;
+            if( (yi<0.0) || ((int)rint(yi)>=View.ymax) ) continue;
 
             zi = (int)(x*MatZ[0]+y*MatZ[1]+z*MatZ[2]);
-            if( UseSlabPlane && (zi>=temp) ) continue;
-            if( UseDepthPlane && (zi<=tump) ) continue;
+            xp = rint(xi);
+            if( UseSlabPlane && (zi>=View.slbuf[xp]) ) continue;
+            if( UseDepthPlane && (zi<=View.dlbuf[xp]) ) continue;
 
             inten = (ColourDepth*(zi+ImageRadius))/ImageSize;
             WriteVectColour( ptr->col[i]+inten );
@@ -1999,6 +2008,7 @@ static void WriteVectMapPoints( void )
     register int temp, tump;
     register int zi;
     register int i;
+    register int xp;
 
     if( LineWidth != 1.0 )
     {   fputs("1 setlinewidth\n",OutFile);
@@ -2021,13 +2031,14 @@ static void WriteVectMapPoints( void )
             z = (MapPointsPtr->array[i]).xpos;
         
             xi = (x*MatX[0]+y*MatX[1]+z*MatX[2]) + XOffset;
-            if( (xi<0.0) || (xi>=XRange) ) continue;
+            if( (xi<0.0) || ((int)rint(xi)>=View.xmax) ) continue;
             yi = (x*MatY[0]+y*MatY[1]+z*MatY[2]) + YOffset;
-            if( (yi<0.0) || (yi>=YRange) ) continue;
+            if( (yi<0.0) || ((int)rint(yi)>=View.ymax) ) continue;
 
             zi = (int)(x*MatZ[0]+y*MatZ[1]+z*MatZ[2]);
-            if( UseSlabPlane && (zi>=temp) ) continue;
-            if( UseDepthPlane && (zi<=tump) ) continue;
+            xp = rint(xi);
+            if( UseSlabPlane && (zi>=View.slbuf[xp]) ) continue;
+            if( UseDepthPlane && (zi<=View.dlbuf[xp]) ) continue;
 
             inten = (ColourDepth*(zi+ImageRadius))/ImageSize;
             WriteVectColour( (MapPointsPtr->array[i]).col+inten );
@@ -2093,7 +2104,7 @@ static void WriteVectMonitors( void )
     {   s = ptr->src;
         d = ptr->dst;
 
-        if( ZValid( (s->z+d->z)/2 ) && ZBack( (s->z+d->z)/2 ))
+        if( ZBValid( (s->x+d->x)/2,(s->z+d->z)/2 ) )
         {   x = (s->x+d->x)/2;
             y = (s->y+d->y)/2;
  

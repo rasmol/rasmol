@@ -700,60 +700,62 @@ HR<td><a href="#chinese">Chinese</a>
 HR<td><a href="#clipboard">Clipboard</a>
 
 HR<tr><td><a href="#colour">Colour</a>
+HR<td><a href="#colourmode">ColourMode</a>
 HR<td><a href="#connect">Connect</a>
 HR<td><a href="#spacefill">CPK</a>
 HR<td><a href="#cpknew">CPKnew</a>
 HR<td><a href="#define">Define</a>
 HR<td><a href="#depth">Depth</a>
 HR<td><a href="#dots">Dots</a>
-HR<td><a href="#echo">Echo</a>
 
-HR<tr><td><a href="#english">English</a>
+HR<tr><td><a href="#echo">Echo</a>
+HR<td><a href="#english">English</a>
 HR<td><a href="#quit">Exit</a>
 HR<td><a href="#french">French</a>
 HR<td><a href="#hbonds">HBonds</a>
 HR<td><a href="#help">Help</a>
 HR<td><a href="#italian">Italian</a>
 HR<td><a href="#japanese">Japanese</a>
-HR<td><a href="#label">Label</a>
 
-HR<tr><td><a href="#load">Load</a>
+HR<tr><td><a href="#label">Label</a>
+HR<td><a href="#load">Load</a>
 HR<td><a href="#map">Map</a>
 HR<td><a href="#molecule">Molecule</a>
 HR<td><a href="#monitor">Monitor</a>
+HR<td><a href="#notoggle">NoToggle</a>
 HR<td><a href="#pause">Pause</a>
 HR<td><a href="#print">Print</a>
-HR<td><a href="#quit">Quit</a>
-HR<td><a href="#refresh">Refresh</a>
 
-HR<tr><td><a href="#renumber">Renumber</a>
+HR<tr><td><a href="#quit">Quit</a>
+HR<td><a href="#refresh">Refresh</a>
+HR<td><a href="#renumber">Renumber</a>
 HR<td><a href="#reset">Reset</a>
 HR<td><a href="#restrict">Restrict</a>
 HR<td><a href="#ribbons">Ribbons</a>
 HR<td><a href="#rotate">Rotate</a>
 HR<td><a href="#save">Save</a>
-HR<td><a href="#script">Script</a>
-HR<td><a href="#select">Select</a>
 
-HR<tr><td><a href="#set">Set</a>
+HR<tr><td><a href="#script">Script</a>
+HR<td><a href="#select">Select</a>
+HR<td><a href="#set">Set</a>
 HR<td><a href="#show">Show</a>
 HR<td><a href="#slab">Slab</a>
 HR<td><a href="#script">Source</a>
 HR<td><a href="#spacefill">Spacefill</a>
 HR<td><a href="#spanish">Spanish</a>
-HR<td><a href="#ssbonds">SSBonds</a>
-HR<td><a href="#star">Star</a>
 
-HR<tr><td><a href="#stereo">Stereo</a>
+HR<tr><td><a href="#ssbonds">SSBonds</a>
+HR<td><a href="#star">Star</a>
+HR<td><a href="#stereo">Stereo</a>
 HR<td><a href="#strands">Strands</a>
 HR<td><a href="#structure">Structure</a>
 HR<td><a href="#surface">Surface</a>
 HR<td><a href="#trace">Trace</a>
 HR<td><a href="#translate">Translate</a>
-HR<td><a href="#unbond">UnBond</a>
-HR<td><a href="#wireframe">Wireframe</a>     
 
-HR<tr><td><a href="#write">Write</a>
+HR<tr><td><a href="#unbond">UnBond</a>
+HR<td><a href="#wireframe">Wireframe</a>     
+HR<td><a href="#write">Write</a>
 HR<td><a href="#zap">Zap</a>
 HR<td><a href="#zoom">Zoom</a>
 HR<td colspan=1>
@@ -2382,17 +2384,18 @@ PRType "help <command>" for more information on each RasMol function.
 AP
 
 NR    backbone     background   bond         bulgarian    cartoon
-NR    centre       chinese      clipboard    colour       connect
-NR    cpk          cpknew       define       depth        dots
-NR    echo         english      exit         french       hbonds
-NR    help         italian      japanese     label        load
-NR    map          molecule     monitor      pause        print
-NR    quit         refresh      renumber     reset        restrict
-NR    ribbons      rotate       save         script       select
-NR    set          show         slab         source       spacefill
-NR    spanish      ssbonds      star         stereo       strands
-NR    structure    surface      trace        translate    unbond
-NR    wireframe    write        zap          zoom
+NR    centre       chinese      clipboard    colour       colourmode
+NR    connect      cpk          cpknew       define       depth        
+NR    dots         echo         english      exit         french      
+NR    hbonds       help         italian      japanese     label      
+NR    load         map          molecule     monitor      notoggle 
+NR    pause        print        quit         refresh      renumber
+NR    reset        restrict     ribbons      rotate       save     
+NR    script       select       set          show         slab      
+NR    source       spacefill    spanish      ssbonds      star       
+NR    stereo       strands      structure    surface      trace       
+NR    translate    unbond       wireframe    write        zap          
+NR    zoom
 NP
 
 HR<center>
@@ -2407,60 +2410,62 @@ HR<td><a href="#chinese">Chinese</a>
 HR<td><a href="#clipboard">Clipboard</a>
 
 HR<tr><td><a href="#colour">Colour</a>
+HR<td><a href="#colourmode">ColourMode</a>
 HR<td><a href="#connect">Connect</a>
 HR<td><a href="#spacefill">CPK</a>
 HR<td><a href="#cpknew">CPKnew</a>
 HR<td><a href="#define">Define</a>
 HR<td><a href="#depth">Depth</a>
 HR<td><a href="#dots">Dots</a>
-HR<td><a href="#echo">Echo</a>
 
-HR<tr><td><a href="#english">English</a>
+HR<tr><td><a href="#echo">Echo</a>
+HR<td><a href="#english">English</a>
 HR<td><a href="#quit">Exit</a>
 HR<td><a href="#french">French</a>
 HR<td><a href="#hbonds">HBonds</a>
 HR<td><a href="#help">Help</a>
 HR<td><a href="#italian">Italian</a>
 HR<td><a href="#Japanese">Japanese</a>
-HR<td><a href="#label">Label</a>
 
-HR<tr><td><a href="#load">Load</a>
+HR<tr><td><a href="#label">Label</a>
+HR<td><a href="#load">Load</a>
 HR<td><a href="#map">Map</a>
 HR<td><a href="#molecule">Molecule</a>
 HR<td><a href="#monitor">Monitor</a>
+HR<td><a href="#notoggle">NoToggle</a>
 HR<td><a href="#pause">Pause</a>
 HR<td><a href="#print">Print</a>
-HR<td><a href="#quit">Quit</a>
-HR<td><a href="#refresh">Refresh</a>
 
-HR<tr><td><a href="#renumber">Renumber</a>
+HR<tr><td><a href="#quit">Quit</a>
+HR<td><a href="#refresh">Refresh</a>
+HR<td><a href="#renumber">Renumber</a>
 HR<td><a href="#reset">Reset</a>
 HR<td><a href="#restrict">Restrict</a>
 HR<td><a href="#ribbons">Ribbons</a>
 HR<td><a href="#rotate">Rotate</a>
 HR<td><a href="#save">Save</a>
-HR<td><a href="#script">Script</a>
-HR<td><a href="#select">Select</a>
 
-HR<tr><td><a href="#set">Set</a>
+HR<tr><td><a href="#script">Script</a>
+HR<td><a href="#select">Select</a>
+HR<td><a href="#set">Set</a>
 HR<td><a href="#show">Show</a>
 HR<td><a href="#slab">Slab</a>
 HR<td><a href="#script">Source</a>
 HR<td><a href="#spacefill">Spacefill</a>
 HR<td><a href="#spanish">Spanish</a>
-HR<td><a href="#ssbonds">SSBonds</a>
-HR<td><a href="#star">Star</a>
 
-HR<tr><td><a href="#stereo">Stereo</a>
+HR<tr><td><a href="#ssbonds">SSBonds</a>
+HR<td><a href="#star">Star</a>
+HR<td><a href="#stereo">Stereo</a>
 HR<td><a href="#strands">Strands</a>
 HR<td><a href="#structure">Structure</a>
 HR<td><a href="#surface">Surface</a>
 HR<td><a href="#trace">Trace</a>
 HR<td><a href="#translate">Translate</a>
-HR<td><a href="#unbond">UnBond</a>
-HR<td><a href="#wireframe">Wireframe</a>     
 
-HR<tr><td><a href="#write">Write</a>
+HR<tr><td><a href="#unbond">UnBond</a>
+HR<td><a href="#wireframe">Wireframe</a>     
+HR<td><a href="#write">Write</a>
 HR<td><a href="#zap">Zap</a>
 HR<td><a href="#zoom">Zoom</a>
 HR</table>
@@ -2483,79 +2488,83 @@ RR{\uldb clipboard}{\v clipboard}\cell
 RR\row\intbl
 
 RR{\uldb colour}{\v colour}\cell
+RR{\uldb colourmode}{\v colourmode}\cell
 RR{\uldb connect}{\v connect}\cell
 RR{\uldb cpk}{\v cpk}\cell
-RR{\uldb cpknew}{\v cpknew}\cell
 RR\row\intbl
 
+RR{\uldb cpknew}{\v cpknew}\cell
 RR{\uldb define}{\v define}\cell
 RR{\uldb depth}{\v depth}\cell
 RR{\uldb dots}{\v dots}\cell
-RR{\uldb echo}{\v echo}\cell
 RR\row\intbl
 
+RR{\uldb echo}{\v echo}\cell
 RR{\uldb english}{\v english}\cell
 RR{\uldb exit}{\v exit}\cell
 RR{\uldb french}{\v french}\cell
-RR{\uldb hbonds}{\v hbonds}\cell
 RR\row\intbl
 
+RR{\uldb hbonds}{\v hbonds}\cell
 RR{\uldb help}{\v help}\cell
 RR{\uldb italian}{\v italian}\cell
 RR{\uldb japanese}{\v japanese}\cell
-RR{\uldb label}{\v label}\cell
 RR\row\intbl
 
+RR{\uldb label}{\v label}\cell
 RR{\uldb load}{\v load}\cell
 RR{\uldb map}{\v map}\cell
 RR{\uldb molecule}{\v molecule}\cell
-RR{\uldb monitor}{\v pause}\cell
 RR\row\intbl
 
+RR{\uldb monitor}{\v pause}\cell
+RR{\uldb notoggle}{\v notoggle}\cell
 RR{\uldb pause}{\v pause}\cell
 RR{\uldb print}{\v print}\cell
+RR\row\intbl
+
 RR{\uldb quit}{\v quit}\cell
 RR{\uldb refresh}{\v refresh}\cell
-RR\row\intbl
-
 RR{\uldb renumber}{\v renumber}\cell
 RR{\uldb reset}{\v reset}\cell
+RR\row\intbl
+
 RR{\uldb restrict}{\v restrict}\cell
 RR{\uldb ribbons}{\v ribbons}\cell
-RR\row\intbl
-
 RR{\uldb rotate}{\v rotate}\cell
 RR{\uldb save}{\v save}\cell
+RR\row\intbl
+
 RR{\uldb script}{\v script}\cell
 RR{\uldb select}{\v select}\cell
-RR\row\intbl
-
 RR{\uldb set}{\v set}\cell
 RR{\uldb show}{\v show}\cell
+RR\row\intbl
+
 RR{\uldb slab}{\v slab}\cell
 RR{\uldb source}{\v source}\cell
-RR\row\intbl
-
 RR{\uldb spacefill}{\v spacefill}\cell
 RR{\uldb spanish}{\v spanish}\cell
+RR\row\intbl
+
 RR{\uldb ssbonds}{\v ssbonds}\cell
 RR{\uldb star}{\v star}\cell
-RR\row\intbl
-
 RR{\uldb stereo}{\v stereo}\cell
 RR{\uldb strands}{\v strands}\cell
+RR\row\intbl
+
 RR{\uldb structure}{\v structure}\cell
 RR{\uldb surface}{\v surface}\cell
-RR\row\intbl
-
 RR{\uldb trace}{\v trace}\cell
 RR{\uldb translate}{\v translate}\cell
-RR{\uldb unbond}{\v unbond}\cell
-RR{\uldb wireframe}{\v wireframe}\cell
 RR\row\intbl
 
+RR{\uldb unbond}{\v unbond}\cell
+RR{\uldb wireframe}{\v wireframe}\cell
 RR{\uldb write}{\v write}\cell
 RR{\uldb zap}{\v zap}\cell
+RR\row\intbl
+
 RR{\uldb zoom}{\v zoom}\cell\cell
 RR\row\pard\par\trowd}
 RB
@@ -2931,6 +2940,32 @@ AXpotentialcolours electrostatic potential.
 ATFor more information type
 AXchcolours help colour <colour>.
 AB
+
+PR?colourmode
+RR#{\footnode colourmode}
+ASColourMode
+NRSyntax:  colourmode {<boolean>}
+NR         colormode {<boolean>}
+NR
+HR<pre>
+HRSyntax:  colourmode {&lt;boolean&gt;}
+HR         colormode {&lt;boolean&gt;}
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRcolourmode \{<boolean>\}\line\tab
+RRcolormode \{<boolean>\}\par
+RR}\pard\par
+
+ATColourMode allows the user to switch between using the new
+AXcolour colour
+ATmethod. At present, the new coloring technique is the same as
+ATthe old one, but to preserve compatibility for older scripts
+ATit may be wise to add a "colormode on" near the top of your
+ATscript somewhere, if the script was designed for version 2.7.3
+ATof RasMol or earlier. The new color method, when completed,
+ATaims to fix a few bugs in the coloring routines.
+AP
 
 
 ASConnect
@@ -3919,6 +3954,30 @@ ATmonitor may also be removed (toggled) by selecting the appropriate
 ATpair of atom end points a second time.
 AB
 
+ASNotoggle
+NRSyntax:  notoggle {<boolean>}
+NR
+HR<pre>
+HRSyntax:  notoggle {&lt;boolean&gt;}
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRnotoggle \{<boolean>\}\par
+RR}\pard\par
+ATThe RasMol
+ACNoToggle
+ATcommand enables or disables the use of the toggle ability
+ATthat is used by some of the other RasMol commands.
+ATWhen no boolean value is specified, NoToggle mode is ENABLED.
+ATWhen NoToggle mode is ENABLED, all toggle functionality is
+ATDISABLED. To turn it off, one must explicitly set
+ACnotoggle off.
+AP
+ATSome commands which use the toggle feature are:
+AXcolourmode ColourMode.
+ATMore functions that utilize this capability may be added
+ATat a later date.
+AB
 
 ASPause
 NRSyntax:  pause

@@ -65,6 +65,13 @@
  ***************************************************************************/
 /* wbrotate.c
  $Log: not supported by cvs2svn $
+ Revision 1.3  2007/12/14 02:04:50  yaya
+ Correct Chinese data for missing line in langsel_utf.c
+ Rewrite code for handling of slab mode in stereo -- HJB
+
+ Revision 1.2  2007/11/25 17:57:50  yaya-hjb
+ Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
+
  Revision 1.2  2007/11/19 03:28:40  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -636,6 +643,7 @@ void WorldRotate( void )
     /* Fill out a 4x4 matrix representing our current transformation */
     static Real A[4][4], R[4][4], B[4][4];
     Real NRotX[3], NRotY[3], NRotZ[3];
+    Real SRotX[3], SRotY[3], SRotZ[3];
     Real RMat[3][3];
     
  
@@ -645,13 +653,15 @@ void WorldRotate( void )
     if (ReDrawFlag || WRotValue[0] != WLastRX || 
       WRotValue[1] != WLastRY ||
       WRotValue[2] != WLastRZ ||
+      WRotStereo != WLastRS   ||
       WTransX != WLastTX ||
       WTransY != WLastTY ||
       WTransZ != WLastTZ ) {
 
       if ( ( WRotValue[0] != WLastRX ) || 
         ( WRotValue[1] != WLastRY ) ||
-        ( WRotValue[2] != WLastRZ ) ) {
+        ( WRotValue[2] != WLastRZ ) ||
+        ( WRotStereo != WLastRS  ) ) {
          
         RV2RMat(WRotValue[0]-WLastRX, 
           WRotValue[1]-WLastRY, 
@@ -678,17 +688,35 @@ void WorldRotate( void )
           &(WRotValue[2]), 
           WLRotX, WLRotY, WLRotZ);
           
+        if (WRotStereo != 0.) {
+          RV2RMat(0.,  WRotStereo, 0.,
+            SRotX, SRotY, SRotZ);       	
+          NRotX[0] = SRotX[0]*WLRotX[0]+SRotX[1]*WLRotY[0]+SRotX[2]*WLRotZ[0];
+          NRotX[1] = SRotX[0]*WLRotX[1]+SRotX[1]*WLRotY[1]+SRotX[2]*WLRotZ[1];
+          NRotX[2] = SRotX[0]*WLRotX[2]+SRotX[1]*WLRotY[2]+SRotX[2]*WLRotZ[2];
+
+          NRotY[0] = SRotY[0]*WLRotX[0]+SRotY[1]*WLRotY[0]+SRotY[2]*WLRotZ[0];
+          NRotY[1] = SRotY[0]*WLRotX[1]+SRotY[1]*WLRotY[1]+SRotY[2]*WLRotZ[1];
+          NRotY[2] = SRotY[0]*WLRotX[2]+SRotY[1]*WLRotY[2]+SRotY[2]*WLRotZ[2];
+
+          NRotZ[0] = SRotZ[0]*WLRotX[0]+SRotZ[1]*WLRotY[0]+SRotZ[2]*WLRotZ[0];
+          NRotZ[1] = SRotZ[0]*WLRotX[1]+SRotZ[1]*WLRotY[1]+SRotZ[2]*WLRotZ[1];
+          NRotZ[2] = SRotZ[0]*WLRotX[2]+SRotZ[1]*WLRotY[2]+SRotZ[2]*WLRotZ[2];
+          
+          for (i=0;i<3;i++) {
+            WLRotX[i]=NRotX[i];
+            WLRotY[i]=NRotY[i];
+            WLRotZ[i]=NRotZ[i];          	
+          }
+        }
+
+          
         RMatInv( WLRotX, WLRotY, WLRotZ, WIRotX, WIRotY, WIRotZ);
 
         WLastRX = WRotValue[0];
         WLastRY = WRotValue[1];
         WLastRZ = WRotValue[2];
  
-/*      } else {
-    
-        RV2RMat(WRotValue[0], WRotValue[1], WRotValue[2],
-          WLRotX, WLRotY, WLRotZ);
- */
       }
     
     IdentityMatrix(A);
@@ -734,6 +762,7 @@ void WorldRotate( void )
     WLastTX = WTransX;
     WLastTY = WTransY;
     WLastTZ = WTransZ;
+    WLastRS = WRotStereo;
     
     /* Make transfor.c recalculate everything */
     ReDrawFlag |= (RFRefresh|RFRotate|RFTrans);

@@ -65,6 +65,13 @@
  ***************************************************************************/
 /* rasmac.c
  $Log: not supported by cvs2svn $
+ Revision 1.6  2007/12/14 02:04:50  yaya
+ Correct Chinese data for missing line in langsel_utf.c
+ Rewrite code for handling of slab mode in stereo -- HJB
+
+ Revision 1.2  2007/11/25 17:57:50  yaya-hjb
+ Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
+
  Revision 1.5  2007/11/19 03:28:39  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -286,6 +293,8 @@ void RasMolExit( void )
     /* Free System Memory Resources */
     if( FBuffer ) _ffree( FBuffer );
     if( DBuffer ) _ffree( DBuffer );
+    if( SLineBuffer ) _ffree( SLineBuffer );
+    if( DlineBuffer ) _ffree( DLineBuffer );
     if( DotPtr ) DeleteSurface();
     if( MapInfoPtr ) DeleteAllMaps();
     PurgeDatabase();
@@ -344,6 +353,8 @@ void RasMolFatalExit( char *msg )
     /* Free System Memory Resources */
     if( FBuffer ) _ffree( FBuffer );
     if( DBuffer ) _ffree( DBuffer );
+    if( SLineBuffer ) _ffree( SlineBuffer );
+    if( DLineBuffer ) _ffree( DLineBuffer );
     if( DotPtr ) DeleteSurface();
     if( MapInfoPtr ) DeleteAllMaps();
     PurgeDatabase();

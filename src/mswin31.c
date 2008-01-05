@@ -65,6 +65,12 @@
  ***************************************************************************/
 /* mswin31.c
  $Log: not supported by cvs2svn $
+ Revision 1.2  2007/11/25 17:57:50  yaya-hjb
+ Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
+
+ Revision 1.2  2007/11/25 04:11:58  yaya
+ Updates to map mask logic and inverse transforms -- HJB
+
  Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
  Chinese working versio from rasmol_ru initial import
 

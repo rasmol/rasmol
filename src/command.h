@@ -65,6 +65,15 @@
  ***************************************************************************/
 /* command.h
  $Log: not supported by cvs2svn $
+ Revision 1.7  2007/12/06 18:47:09  hk0i
+ added NoToggle and ColourMode commands + messages (translations needed), README for lang files, script to generate all langsel files (uses previous scripts).
+
+ Revision 1.2  2007/11/25 17:57:49  yaya-hjb
+ Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
+
+ Revision 1.6  2007/11/25 04:11:58  yaya
+ Updates to map mask logic and inverse transforms -- HJB
+
  Revision 1.5  2007/11/19 03:28:39  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -165,6 +174,8 @@ int CalcSurfFlag;
 int AllowWrite;
 
 int DefaultBackground = True;
+int UseOldColorCode   = 0;
+int NoToggle          = 0;
 
 #else
 extern int DataFileFormat;

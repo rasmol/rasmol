@@ -1,4 +1,9 @@
-
+  { "Error: NoToggle mode enabed; "
+    "type 'set notoggle off' to disabled.n",          ErrNoToggle, Japanese,0},
+  { "2.7.3 Color compatibility mode enabled.n",       StrCCompOn,  Japanese,0},
+  { "2.7.3 Color compatibility mode disabled.n",      StrCCompOff, Japanese,0},
+  { "NoToggle mode: enabled.n",                       StrNoTogOn,  Japanese,0},
+  { "NoToggle mode: disabled.n",                      StrNoTogOff, Japanese,0},
 
   { "コマンドの文法が不適切です!n",                   ErrSyntax,   Japanese,0},
   { "パラメーターが大きすぎます!n",                        ErrBigNum,   Japanese,0},

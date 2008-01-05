@@ -66,6 +66,12 @@
 
 /* tokens.h
  $Log: not supported by cvs2svn $
+ Revision 1.9  2007/12/06 18:47:10  hk0i
+ added NoToggle and ColourMode commands + messages (translations needed), README for lang files, script to generate all langsel files (uses previous scripts).
+
+ Revision 1.2  2007/11/25 17:57:50  yaya-hjb
+ Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
+
  Revision 1.8  2007/11/19 03:28:40  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -161,6 +167,7 @@
 #define CentreTok      263
 #define ClipboardTok   264
 #define ColourTok      265
+#define ColourModeTok  609
 #define ConnectTok     266
 #define DashTok        267
 #define DefineTok      268
@@ -180,6 +187,7 @@
 #define MolSurfTok     282 
 #define MonitorTok     283
 #define MoveTok        284
+#define NoToggleTok    610
 #define PrintTok       285
 #define QuitTok        286
 #define RefreshTok     287

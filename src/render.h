@@ -65,6 +65,9 @@
  ***************************************************************************/
 /* render.h
  $Log: not supported by cvs2svn $
+ Revision 1.2  2007/11/25 17:57:50  yaya-hjb
+ Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
+
  Revision 1.2  2007/11/19 03:28:40  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -125,7 +128,6 @@
 #define SlabReject       0x00
 #define SlabHalf         0x01
 #define SlabHollow       0x02
-#define SlabFinal        0x03
 #define SlabClose        0x04
 #define SlabSection      0x05
 

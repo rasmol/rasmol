@@ -65,6 +65,12 @@
  ***************************************************************************/
 /* tokens.c
  $Log: not supported by cvs2svn $
+ Revision 1.10  2007/12/06 18:47:10  hk0i
+ added NoToggle and ColourMode commands + messages (translations needed), README for lang files, script to generate all langsel files (uses previous scripts).
+
+ Revision 1.2  2007/11/25 17:57:50  yaya-hjb
+ Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
+
  Revision 1.9  2007/11/19 03:28:40  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -376,8 +382,10 @@ int LookUpKeyword( char *ptr )
         CISBONDED            CisBondedTok
         CLIPBOARD            ClipboardTok
         COLOR                ColourTok
+		COLORMODE            ColourModeTok
         COLORS               ColourTok
         COLOUR               ColourTok
+		COLOURMODE           ColourModeTok
         COLOURS              ColourTok
         CONNECT              ConnectTok
         CONTOUR              ContourTok (LevelTok)
@@ -460,10 +468,14 @@ int LookUpKeyword( char *ptr )
                 case('O'):
                     if( !strcmp(ptr,"LOR") ) {
                         return( ColourTok );
+					} else if( !strcmp(ptr,"LORMODE") ) {
+						return( ColourModeTok );
                     } else if( !strcmp(ptr,"LORS") ) {
                         return( ColourTok );
                     } else if( !strcmp(ptr,"LOUR") ) {
                         return( ColourTok );
+					} else if( !strcmp(ptr,"LOURMODE") ) {
+						return( ColourModeTok );
                     } else if( !strcmp(ptr,"LOURS") ) {
                         return( ColourTok );
                     } else if( !strcmp(ptr,"NNECT") ) {
@@ -1107,6 +1119,7 @@ int LookUpKeyword( char *ptr )
         NONE                 NoneTok
         NORMAL               NormalTok
         NOT                  NotTok
+		NOTOGGLE             NoToggleTok
         NUCLEIC              NucleicTok
       */
 
@@ -1143,6 +1156,8 @@ int LookUpKeyword( char *ptr )
                         return( NormalTok );
                     } else if( (*ptr=='T') && !ptr[1] ) {
                         return( NotTok );
+					} else if( !strcmp(ptr,"TOGGLE") ) {
+						return( NoToggleTok );
                     }
                     break;
 

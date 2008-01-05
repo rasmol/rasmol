@@ -85,6 +85,7 @@ int WriteGIFFile( char* );
 int WriteBMPFile( char* );
 int WriteR3DFile( char* );
 void InitialiseOutFile();
+void FatalOutputError( char * );
 
 typedef struct _R3DRib{
 

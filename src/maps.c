@@ -96,6 +96,9 @@
 #include "cbf.h"
 #include "cbf_file.h"
 #include "cbf_alloc.h"
+#else
+#define CBF_INTEGER     0x0010  /* Uncompressed integer               */
+#define CBF_FLOAT       0x0020  /* Uncompressed IEEE floating-point   */
 #endif
 
 /* Macros for commonly used loops */
@@ -319,12 +322,236 @@ void MapReRadius( void ) {
 
 #ifdef USE_CBFLIB
 
-int LoadMapFile( FILE *fp, int info, int mapno )
-{
+int SaveMapFile( FILE *fp, int info, int mapno ) {
+
+  cbf_handle cbf;
+  
+  MapStruct *map, *mapmask;
+
+  char map_id[81], map_structure_id[81], mask_structure_id[81];
+  
+  MapInfo *mapinfo;
+
+  if (mapno < 0 ) return CBF_ARGUMENT;
+  
+  if (!MapInfoPtr) return CBF_ARGUMENT;
+  
+  if (mapno > MapInfoPtr->size) return CBF_ARGUMENT;
+  
+  vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,mapno );
+  
+  if (!mapinfo) return 0;
+
+  cbf_failnez (cbf_make_handle (&cbf))
+  
+  sprintf(map_id, "map_%-d", mapno+1);
+  
+  strcpy (map_structure_id,map_id);
+  
+  strcat (map_structure_id,"_structure");
+  
+  strcpy (mask_structure_id,map_id);
+  
+  strcat (mask_structure_id,"_mask_structure");
+
+  cbf_failnez (cbf_force_new_datablock(cbf,map_id))
+  
+  cbf_failnez (cbf_new_category(cbf,"map"))
+  
+  cbf_failnez (cbf_new_column(cbf,"id"))
+  
+  cbf_failnez (cbf_set_integervalue(cbf,mapno+1))
+  
+  if ( mapinfo->MapLabel && *mapinfo->MapLabel)  {
+  	
+    cbf_failnez (cbf_new_column(cbf,"details"))
+  
+    cbf_failnez (cbf_set_value(cbf,mapinfo->MapLabel))
+  
+    cbf_failnez (cbf_set_typeofvalue(cbf,"dblq"))
+
+  } else  if ( mapinfo->MapFile && *mapinfo->MapFile) {
+
+    cbf_failnez (cbf_new_column(cbf,"details"))
+  
+    cbf_failnez (cbf_set_value(cbf,mapinfo->MapLabel))
+  
+    cbf_failnez (cbf_set_typeofvalue(cbf,"dblq"))
+  	
+  }
+
+  cbf_failnez (cbf_new_column(cbf,"entry_id"))
+  
+  if (Info.identcode && *Info.identcode) {
+  
+  	 cbf_failnez (cbf_set_value(cbf,Info.identcode))
+  
+     cbf_failnez (cbf_set_typeofvalue(cbf,"dblq"))
+  }
+  
+  
+  map = mapmask = NULL;
+  
+  if (mapinfo->MapPtr) {
+  
+    map = mapinfo->MapPtr;
+  	
+  }
+
+  if (mapinfo->MapMaskPtr) {
+  
+    mapmask = mapinfo->MapMaskPtr;
+  	
+  }
+  
+  if ( map || mapmask )  {
+  
+    cbf_failnez (cbf_new_category(cbf,"map_segment"))
+    
+    cbf_failnez (cbf_new_column(cbf,"map_id"))
+    
+    cbf_failnez (cbf_set_value(cbf,map_id))
+    
+    cbf_failnez (cbf_new_column(cbf,"id"))
+
+    cbf_failnez (cbf_set_value(cbf,map_id))
+
+    cbf_failnez (cbf_new_column(cbf,"array_id"))
+    
+    if (map)  {
+    
+      cbf_failnez (cbf_set_value(cbf,map_structure_id))
+    	
+    }
+    
+    cbf_failnez (cbf_new_column(cbf,"binary_id"))
+
+    if (map)  {
+    
+      cbf_failnez (cbf_set_integervalue(cbf,1))
+    	
+    }
+
+    cbf_failnez (cbf_new_column(cbf,"mask_array_id"))
+
+    if (mapmask)  {
+    
+      cbf_failnez (cbf_set_value(cbf,mask_structure_id))
+    	
+    }
+
+    cbf_failnez (cbf_new_column(cbf,"mask_binary_id"))
+    
+    if (mapmask)  {
+    
+      cbf_failnez (cbf_set_integervalue(cbf,2))
+    	
+    }
+    
+    cbf_failnez (cbf_new_category(cbf,"array_data"))
+    
+    if (map)  {
+    
+      cbf_failnez (cbf_new_column(cbf,"array_id"))
+    
+      cbf_failnez (cbf_set_value(cbf,map_structure_id))
+
+      cbf_failnez (cbf_new_column(cbf,"binary_id"))
+
+      cbf_failnez (cbf_set_integervalue(cbf,1))
+
+      cbf_failnez (cbf_new_column(cbf,"data"))
+      
+      if (map->eltype == CBF_FLOAT) {
+      	
+        cbf_failnez(cbf_set_realarray_wdims (cbf,CBF_PACKED_V2, 1, 
+          (void *)(map->mapdata), 
+          map->elsize,
+          ((map->xhigh)-(map->xlow)+1)
+          *((map->yhigh)-(map->ylow)+1)
+          *((map->zhigh)-(map->zlow)+1),
+          "little_endian", ((map->xhigh)-(map->xlow)+1), 
+          ((map->yhigh)-(map->ylow)+1), ((map->zhigh)-(map->zlow)+1), 0))
+
+      } else  {
+
+        cbf_failnez(cbf_set_integerarray_wdims (cbf,CBF_PACKED_V2, 1, 
+          (void *)(map->mapdata), 
+          map->elsize, 1,
+          ((map->xhigh)-(map->xlow)+1)
+          *((map->yhigh)-(map->ylow)+1)
+          *((map->zhigh)-(map->zlow)+1),
+          "little_endian", ((map->xhigh)-(map->xlow)+1), 
+          ((map->yhigh)-(map->ylow)+1), ((map->zhigh)-(map->zlow)+1), 0))
+      	
+      }
+    	
+    }
+    
+    if (mapmask)  {
+    
+      cbf_failnez (cbf_new_row(cbf))
+    
+      cbf_failnez (cbf_require_column(cbf,"array_id"))
+    
+      cbf_failnez (cbf_set_value(cbf,mask_structure_id))
+
+      cbf_failnez (cbf_require_column(cbf,"binary_id"))
+
+      cbf_failnez (cbf_set_integervalue(cbf,2))
+
+      cbf_failnez (cbf_require_column(cbf,"data"))
+      
+      if (map->eltype == CBF_FLOAT) {
+      	
+        cbf_failnez(cbf_set_realarray_wdims (cbf,CBF_PACKED_V2, 1, 
+          (void *)(mapmask->mapdata), 
+          mapmask->elsize,
+          ((mapmask->xhigh)-(mapmask->xlow)+1)
+          *((mapmask->yhigh)-(mapmask->ylow)+1)
+          *((mapmask->zhigh)-(mapmask->zlow)+1),
+          "little_endian", ((mapmask->xhigh)-(mapmask->xlow)+1), 
+          ((mapmask->yhigh)-(mapmask->ylow)+1), ((mapmask->zhigh)-(mapmask->zlow)+1), 0))
+
+      } else  {
+
+        cbf_failnez(cbf_set_integerarray_wdims (cbf,CBF_PACKED_V2, 1, 
+          (void *)(map->mapdata), 
+          map->elsize, 1,
+          ((mapmask->xhigh)-(mapmask->xlow)+1)
+          *((mapmask->yhigh)-(mapmask->ylow)+1)
+          *((mapmask->zhigh)-(mapmask->zlow)+1),
+          "little_endian", ((mapmask->xhigh)-(mapmask->xlow)+1), 
+          ((mapmask->yhigh)-(mapmask->ylow)+1), ((mapmask->zhigh)-(mapmask->zlow)+1), 0))
+      	
+      }
+    	
+    }
+
+
+  }
+  
+
+  cbf_failnez (cbf_write_file (cbf, fp, 0, CBF,
+                               MSG_DIGEST | MIME_HEADERS, 0))
+
+    /* Free the cbf */
+
+  cbf_failnez (cbf_free_handle (cbf))
+  
+  return 0;
+
+	
+}
+
+int LoadMapFile( FILE *fp, int info, int mapno ) {
 
     MapInfo mapinfo;
     MapStruct * map;
           
+    /* size of raw little-endian elements */
+    
+    int rawelsize;
 
     /* CCP4 map header variables */
     int NCRS[3], MODE, 
@@ -343,13 +570,10 @@ int LoadMapFile( FILE *fp, int info, int mapno )
     int NLABL;
     char LABEL[800];
 
-    double * mapdata;
+    void * mapdata;
     double datasq;
-    unsigned char * bytemapdata;
     MapStruct __far *mapmaskptr;
     MapAtmSelVec __far *mapmaskgensel;
-    register Long xel, yel, zel;
-
     
     cbf_file *mapfile;
     int i,ii;
@@ -452,6 +676,32 @@ int LoadMapFile( FILE *fp, int info, int mapno )
     AXIS_XYZ[MAP_CRS[1]-1] = 1;
     AXIS_XYZ[MAP_CRS[2]-1] = 2;
     
+    switch (MODE) {
+    
+    	case 0:
+    	case 5:           /* signed bytes */
+    	  rawelsize = 1;
+    	  (map)->elsize = sizeof(signed char);
+    	  (map)->eltype = CBF_INTEGER;
+    	  break;
+    	case 1:	          /* integer *2   */
+    	  rawelsize = 2;
+    	  (map)->elsize = sizeof(short);
+    	  (map)->eltype = CBF_INTEGER;
+    	  break;
+    	case 2:           /* real *2      */
+    	  rawelsize = 2;
+    	  (map)->elsize = sizeof(float);
+    	  (map)->eltype = CBF_FLOAT;
+    	  break;
+    	case 3:           /* complex integer *2 */
+    	  return CBF_FORMAT;
+    	case 4:           /* complex real *2 */
+    	  return CBF_FORMAT;
+    	default:
+    	  return CBF_FORMAT;
+    }
+    
     (map)->xint = rint(250.*XYZ[AXIS_XYZ[0]]/NXYZ[AXIS_XYZ[0]]);
     (map)->yint = rint(250.*XYZ[AXIS_XYZ[1]]/NXYZ[AXIS_XYZ[1]]);
     (map)->zint = rint(250.*XYZ[AXIS_XYZ[2]]/NXYZ[AXIS_XYZ[2]]);
@@ -542,33 +792,42 @@ int LoadMapFile( FILE *fp, int info, int mapno )
 
     datasq = 0;
 
+    cbf_failnez(cbf_alloc((void **)&mapdata, NULL, (map)->elsize, NCRS[0]*NCRS[1]*NCRS[2]))
+    (map)->mapdata = (void *)mapdata;
+    
     /* ** ALLOCATE AND MAP THE DATA ITSELF ** */
     
-    if (MODE == 2)  {
+    if ((map)->eltype == CBF_FLOAT)  {
       float temp;
-      cbf_failnez(cbf_alloc((void **)&mapdata, NULL, 8, NCRS[0]*NCRS[1]*NCRS[2]))
-      (map)->mapdata = (double *)mapdata;
       for (ID[2] = 0; ID[2] < NCRS[2]; ID[2]++)
         for (ID[1] = 0; ID[1] < NCRS[1]; ID[1]++)
           for (ID[0] = 0; ID[0] < NCRS[0]; ID[0]++) {
             cbf_failnez(cbf_get_integer(mapfile,(int *)&temp,0,32))
             /* fprintf(stderr,"mapel[%d,%d,%d] = %f\n",ID[AXIS_XYZ[0]],ID[AXIS_XYZ[1]],ID[AXIS_XYZ[2]],temp); */
-            MapEl(map,ID[AXIS_XYZ[0]],ID[AXIS_XYZ[1]],ID[AXIS_XYZ[2]]) = (double)temp;
+            MapElfloat(map,ID[AXIS_XYZ[0]],ID[AXIS_XYZ[1]],ID[AXIS_XYZ[2]]) = (float)temp;
             datasq += ((double)temp)*((double)temp);
           }
       
-    } else if (MODE == 0) 
+    } else if (map->elsize == sizeof(char)) /* byte */
     {
       int bytetemp;
-      cbf_failnez(cbf_alloc((void **)&bytemapdata, NULL, 1, NCRS[0]*NCRS[1]*NCRS[2]))    
-      (map)->mapdata = (double *)bytemapdata;
       for (ID[2] = 0; ID[2] < NCRS[2]; ID[2]++)
         for (ID[1] = 0; ID[1] < NCRS[1]; ID[1]++)
           for (ID[0] = 0; ID[0] < NCRS[0]; ID[0]++) {
             cbf_failnez(cbf_get_integer(mapfile,(int *)&bytetemp,0,8))
-            MapEl(map,ID[AXIS_XYZ[0]],ID[AXIS_XYZ[1]],ID[AXIS_XYZ[2]]) = bytetemp;
+            MapElchar(map,ID[AXIS_XYZ[0]],ID[AXIS_XYZ[1]],ID[AXIS_XYZ[2]]) = bytetemp;
             datasq += (double)(bytetemp*bytetemp); 
       }    	
+    } else if (map->elsize == sizeof(short)) /* integer*2  */
+    {
+      int shorttemp;
+      for (ID[2] = 0; ID[2] < NCRS[2]; ID[2]++)
+        for (ID[1] = 0; ID[1] < NCRS[1]; ID[1]++)
+          for (ID[0] = 0; ID[0] < NCRS[0]; ID[0]++) {
+            cbf_failnez(cbf_get_integer(mapfile,(int *)&shorttemp,0,16))
+            MapElshort(map,ID[AXIS_XYZ[0]],ID[AXIS_XYZ[1]],ID[AXIS_XYZ[2]]) = shorttemp;
+            datasq += (double)(shorttemp*shorttemp); 
+          }
     }
 
     datasq = datasq/((double)NCRS[0]*NCRS[1]*NCRS[2]);
@@ -591,7 +850,7 @@ int LoadMapFile( FILE *fp, int info, int mapno )
         CommandError(MsgStrs[StrMalloc]);
         return 1;	
       }
-      mapmaskptr->mapdata = (double *)_fmalloc(sizeof(double)*
+      mapmaskptr->mapdata = _fmalloc(MapMaskPtr->elsize*
        (MapMaskPtr->xhigh-MapMaskPtr->xlow+1)*
        (MapMaskPtr->yhigh-MapMaskPtr->ylow+1)*
        (MapMaskPtr->zhigh-MapMaskPtr->zlow+1));
@@ -600,6 +859,8 @@ int LoadMapFile( FILE *fp, int info, int mapno )
        CommandError(MsgStrs[StrMalloc]);
        return 1;
      }
+     mapmaskptr->elsize=MapMaskPtr->elsize;
+     mapmaskptr->eltype=MapMaskPtr->eltype;
      mapmaskptr->xint=MapMaskPtr->xint;
      mapmaskptr->yint=MapMaskPtr->yint;
      mapmaskptr->zint=MapMaskPtr->zint;
@@ -623,10 +884,11 @@ int LoadMapFile( FILE *fp, int info, int mapno )
      for (i=0; i<3; i++) {
        mapmaskptr->mapxlate[i]=MapMaskPtr->mapxlate[i];
      }
-     for (xel=(mapmaskptr)->xlow; xel<=(mapmaskptr)->xhigh; xel++ )
-       for (yel=(mapmaskptr)->ylow; yel<=(mapmaskptr)->yhigh; yel++  )
-         for (zel=(mapmaskptr)->zlow; zel<=(mapmaskptr)->zhigh; zel++ )
-           MapEl(mapmaskptr,xel,yel,zel)=MapEl(MapMaskPtr,xel,yel,zel);
+     memmove(mapmaskptr->mapdata,MapMaskPtr->mapdata,
+      ((mapmaskptr)->xhigh-(mapmaskptr)->xlow+1)
+      *((mapmaskptr)->yhigh-(mapmaskptr)->ylow+1)
+      *((mapmaskptr)->zhigh-(mapmaskptr)->zlow+1)
+      *((mapmaskptr)->elsize));
      mapinfo.MapMaskPtr=mapmaskptr;
      if (MapMaskGenSel) {
        MapAtmSel *mapatmsel;
@@ -639,10 +901,10 @@ int LoadMapFile( FILE *fp, int info, int mapno )
      }	
     }
 
-    map_points(mapinfo.MapPtr, 
+    cbf_failnez(map_points(mapinfo.MapPtr, 
     mapinfo.MapLevel+((mapinfo.flag&MapMeanFlag)?mapinfo.MapPtr->mapdatamean:0), 
     mapinfo.MapSpacing, mapinfo.MapPointsPtr,mapinfo.MapBondsPtr,mapinfo.MapTanglePtr,
-    mapinfo.MapMaskPtr, mapinfo.MapRGBCol );
+    mapinfo.MapMaskPtr, mapinfo.MapRGBCol ))
 
     if (mapno < 0)
     vector_add_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo);
@@ -874,6 +1136,8 @@ int generate_map(MapStruct **map,
     
     if (!*map) return 1;
     
+    (*map)->elsize = sizeof(double);
+    (*map)->eltype = CBF_FLOAT;    
     (*map)->xint = xint;
     (*map)->yint = yint;
     (*map)->zint = zint;
@@ -943,7 +1207,7 @@ int generate_map(MapStruct **map,
       (*map)->zhigh = zselhigh-zorig;
       (*map)->zhigh = ( (*map)->zhigh + (zint-1) )/zint;
       
-      (*map)->mapdata = (double *)_fmalloc(sizeof(double)*
+      (*map)->mapdata = _fmalloc(sizeof(double)*
       ((*map)->xhigh-(*map)->xlow+1)*
       ((*map)->yhigh-(*map)->ylow+1)*
       ((*map)->zhigh-(*map)->zlow+1));
@@ -957,7 +1221,7 @@ int generate_map(MapStruct **map,
       for (xel=(*map)->xlow; xel<=(*map)->xhigh; xel++ )
         for (yel=(*map)->ylow; yel<=(*map)->yhigh; yel++  )
           for (zel=(*map)->zlow; zel<=(*map)->zhigh; zel++ )
-            MapEl((*map),xel,yel,zel) = 0.;
+            MapEldouble((*map),xel,yel,zel) = 0.;
       
 
     /* Scan each selected atom and add its contributions to the
@@ -1034,9 +1298,9 @@ int generate_map(MapStruct **map,
                    
                  distsq /= 62500.;
             
-            	 MapEl((*map),xel,yel,zel) += ((double)(ptr->elemno)*coeff*exp(-distsq/(2.*sig*sig)));
+            	 MapEldouble((*map),xel,yel,zel) += ((double)(ptr->elemno)*coeff*exp(-distsq/(2.*sig*sig)));
             	 
-            	 /* fprintf (stderr,"MapEl(%ld,%ld,%ld) = %g\n",xel,yel,zel,MapEl((*map),xel,yel,zel)); */
+            	 /* fprintf (stderr,"MapEl(%ld,%ld,%ld) = %g\n",xel,yel,zel,MapEldouble((*map),xel,yel,zel)); */
             }
     
     	
@@ -1052,7 +1316,7 @@ int generate_map(MapStruct **map,
       for (xel=(*map)->xlow; xel<=(*map)->xhigh; xel++ )
         for (yel=(*map)->ylow; yel<=(*map)->yhigh; yel++  )
           for (zel=(*map)->zlow; zel<=(*map)->zhigh; zel++ ) {
-            test = MapEl((*map),xel,yel,zel);
+            test = MapEldouble((*map),xel,yel,zel);
             if (test) {
               mapcount++;
             if ((*map)->mapdatamin > test) (*map)->mapdatamin = test;
@@ -1151,8 +1415,34 @@ int interpolate_map_value(MapStruct __far *map,
     || yp[0] < map->ylow || yp[0] > map->yhigh
     || zp[0] < map->zlow || zp[0] > map->zhigh ) return -1;
     
+  switch(map->eltype) {
   
-  mapval[0] = MapEl(map,xp[0]  ,yp[0]  ,zp[0] );
+  	case CBF_INTEGER:
+  	  if (map->elsize == sizeof(char) ) {
+  	  	mapval[0] = (double)(MapElchar(map,xp[0]  ,yp[0]  ,zp[0] ) );
+  	  } else if (map->elsize == sizeof(short) ) {
+  	  	mapval[0] = (double)(MapElshort(map,xp[0]  ,yp[0]  ,zp[0] ) );
+  	  } else if (map->elsize == sizeof(int) ) {
+  	    mapval[0] = (double)(MapElint(map,xp[0]  ,yp[0]  ,zp[0] ) );
+  	  } else if (map->elsize == sizeof(long) ) {
+  	  	mapval[0] = (double)(MapEllong(map,xp[0]  ,yp[0]  ,zp[0] )  );
+  	  } else { 
+  	    return -1;
+  	  }
+  	  break;
+  	
+  	case CBF_FLOAT:
+  	  if(map->elsize ==  sizeof(float)) {
+        mapval[0] = (double)(MapElfloat(map,xp[0]  ,yp[0]  ,zp[0] ) );
+      } else if (map->elsize ==  sizeof(double)) {
+   	    mapval[0] = (double)(MapEldouble(map,xp[0]  ,yp[0]  ,zp[0] ) );
+  	  } else { 
+  	    return -1;
+  	  }
+  	  break;
+  }
+  
+  
   xppos[0] = map->xorig + xp[0]*(map->xint);
   yppos[0] = map->yorig + yp[0]*(map->yint);
   zppos[0] = map->zorig + zp[0]*(map->zint);
@@ -1177,13 +1467,71 @@ int interpolate_map_value(MapStruct __far *map,
   yp[7] = (yp[0] < map->yhigh)?yp[0]+1:yp[0]-1;
   zp[7] = (zp[0] < map->zhigh)?zp[0]+1:zp[0]-1;
 
-  mapval[1] = MapEl(map,xp[0]  ,yp[0]  ,zp[7] );
-  mapval[2] = MapEl(map,xp[0]  ,yp[7]  ,zp[0] );
-  mapval[3] = MapEl(map,xp[0]  ,yp[7]  ,zp[7] );
-  mapval[4] = MapEl(map,xp[7]  ,yp[0]  ,zp[0] );
-  mapval[5] = MapEl(map,xp[7]  ,yp[0]  ,zp[7] );
-  mapval[6] = MapEl(map,xp[7]  ,yp[7]  ,zp[0] );
-  mapval[7] = MapEl(map,xp[7]  ,yp[7]  ,zp[7] );
+  switch(map->eltype) {
+  
+  	case CBF_INTEGER:
+  	  if(map->elsize == sizeof(char) ){
+        mapval[1] = (double)MapElchar(map,xp[0]  ,yp[0]  ,zp[7] );
+        mapval[2] = (double)MapElchar(map,xp[0]  ,yp[7]  ,zp[0] );
+        mapval[3] = (double)MapElchar(map,xp[0]  ,yp[7]  ,zp[7] );
+        mapval[4] = (double)MapElchar(map,xp[7]  ,yp[0]  ,zp[0] );
+        mapval[5] = (double)MapElchar(map,xp[7]  ,yp[0]  ,zp[7] );
+        mapval[6] = (double)MapElchar(map,xp[7]  ,yp[7]  ,zp[0] );
+        mapval[7] = (double)MapElchar(map,xp[7]  ,yp[7]  ,zp[7] );
+  	  } else if (map->elsize == sizeof(short) ) {
+  	    mapval[1] = (double)MapElshort(map,xp[0]  ,yp[0]  ,zp[7] );
+        mapval[2] = (double)MapElshort(map,xp[0]  ,yp[7]  ,zp[0] );
+        mapval[3] = (double)MapElshort(map,xp[0]  ,yp[7]  ,zp[7] );
+        mapval[4] = (double)MapElshort(map,xp[7]  ,yp[0]  ,zp[0] );
+        mapval[5] = (double)MapElshort(map,xp[7]  ,yp[0]  ,zp[7] );
+        mapval[6] = (double)MapElshort(map,xp[7]  ,yp[7]  ,zp[0] );
+        mapval[7] = (double)MapElshort(map,xp[7]  ,yp[7]  ,zp[7] );
+  	  } else if (map->elsize == sizeof(int) ) {
+        mapval[1] = (double)MapElint(map,xp[0]  ,yp[0]  ,zp[7] );
+        mapval[2] = (double)MapElint(map,xp[0]  ,yp[7]  ,zp[0] );
+        mapval[3] = (double)MapElint(map,xp[0]  ,yp[7]  ,zp[7] );
+        mapval[4] = (double)MapElint(map,xp[7]  ,yp[0]  ,zp[0] );
+        mapval[5] = (double)MapElint(map,xp[7]  ,yp[0]  ,zp[7] );
+        mapval[6] = (double)MapElint(map,xp[7]  ,yp[7]  ,zp[0] );
+        mapval[7] = (double)MapElint(map,xp[7]  ,yp[7]  ,zp[7] );
+  	  } else if (map->elsize == sizeof(long) ) {
+        mapval[1] = (double)MapEllong(map,xp[0]  ,yp[0]  ,zp[7] );
+        mapval[2] = (double)MapEllong(map,xp[0]  ,yp[7]  ,zp[0] );
+        mapval[3] = (double)MapEllong(map,xp[0]  ,yp[7]  ,zp[7] );
+        mapval[4] = (double)MapEllong(map,xp[7]  ,yp[0]  ,zp[0] );
+        mapval[5] = (double)MapEllong(map,xp[7]  ,yp[0]  ,zp[7] );
+        mapval[6] = (double)MapEllong(map,xp[7]  ,yp[7]  ,zp[0] );
+        mapval[7] = (double)MapEllong(map,xp[7]  ,yp[7]  ,zp[7] );
+  	  } else {
+        return -1;
+  	  }
+  	  break;
+  	
+  	case CBF_FLOAT:
+  	   if (map->elsize== sizeof(float) ) {
+  	     mapval[1] = (double)MapElfloat(map,xp[0]  ,yp[0]  ,zp[7] );
+         mapval[2] = (double)MapElfloat(map,xp[0]  ,yp[7]  ,zp[0] );
+         mapval[3] = (double)MapElfloat(map,xp[0]  ,yp[7]  ,zp[7] );
+         mapval[4] = (double)MapElfloat(map,xp[7]  ,yp[0]  ,zp[0] );
+         mapval[5] = (double)MapElfloat(map,xp[7]  ,yp[0]  ,zp[7] );
+         mapval[6] = (double)MapElfloat(map,xp[7]  ,yp[7]  ,zp[0] );
+         mapval[7] = (double)MapElfloat(map,xp[7]  ,yp[7]  ,zp[7] );
+  	   } else if (map->elsize== sizeof(double) ) {
+         mapval[1] = (double)MapEldouble(map,xp[0]  ,yp[0]  ,zp[7] );
+         mapval[2] = (double)MapEldouble(map,xp[0]  ,yp[7]  ,zp[0] );
+         mapval[3] = (double)MapEldouble(map,xp[0]  ,yp[7]  ,zp[7] );
+         mapval[4] = (double)MapEldouble(map,xp[7]  ,yp[0]  ,zp[0] );
+         mapval[5] = (double)MapEldouble(map,xp[7]  ,yp[0]  ,zp[7] );
+         mapval[6] = (double)MapEldouble(map,xp[7]  ,yp[7]  ,zp[0] );
+         mapval[7] = (double)MapEldouble(map,xp[7]  ,yp[7]  ,zp[7] );
+  	   } else  {
+ 	     return -1;
+  	   }
+  	   break;
+  	
+  	default: return -1;
+  	
+  }
 
   xp[1] = xp[2] = xp[3] = xp[0];
   xp[4] = xp[5] = xp[6] = xp[7];
