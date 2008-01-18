@@ -1805,12 +1805,20 @@ static void ExecuteLoadCommand( void )
         } 
 #ifdef USE_CBFLIB        
           else { /* format == FormatMap */
-            if(LoadMapFile(fp,info, -1)) {
+            if(LoadCCP4MapFile(fp,info, -1)) {
+              if( !(fp=fopen(DataFileName,"rb")) ) {
+                CommandError( (char*)NULL );
+                WriteString(MsgStrs[StrDFile]);
+                WriteString(DataFileName);
+                WriteString("'!\n");
+                return;
+              } else if (LoadCBFMapFile(fp,info,-1)) {
             	CommandError( (char*)NULL );
                 WriteString(MsgStrs[StrErrFile]);
                 WriteString(DataFileName);
                 WriteString("'!\n");
                 return;
+              }
             }
             ReDrawFlag |= RFInitial|RFColour;
         }
@@ -3783,6 +3791,7 @@ static void ApplyMapFlag( void ) {
       if (mapinfo->flag&MapSelectFlag) {
         mapinfo->flag |= mapflag;
         DeleteMap(j,True);
+        if (mapinfo->MapPtr) {
         if (mapinfo->flag&(MapPointFlag|MapMeshFlag|MapSurfFlag)) {
            vector_create((GenericVec __far **)&mapinfo->MapPointsPtr,sizeof(MapPoint),1000);
         if (mapinfo->flag&(MapMeshFlag))
@@ -3797,6 +3806,7 @@ static void ApplyMapFlag( void ) {
         }
       }
     }
+  }
   }
   MapReRadius();
   ReRadius();
@@ -3848,7 +3858,7 @@ static void ApplyMapSpacing( void ) {
     for (j=0; j < MapInfoPtr->size; j++) {
       vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
       if (mapinfo->flag&MapSelectFlag) {
-        mapinfo->MapSpacing &= MapSpacing;
+        mapinfo->MapSpacing = MapSpacing;
       }
     }
   }
@@ -3959,7 +3969,7 @@ int ApplyMapMask(int mapno ) {
   Long flag;
 
   ApplyMapSelection();
-  if (MapSpacing <= 0) MapSpacing = 125L;
+  if (MapSpacing <= 0) MapSpacing = 250L;
 
   if (MapInfoPtr)  {
     if (mapno != -1 && mapno > MapInfoPtr->size)  {
@@ -3987,7 +3997,7 @@ int ApplyMapMask(int mapno ) {
       if (flag&MapSelectFlag) {
         if (mapno == 0) {
       	
-          if (MapSpread < 0.1) MapSpread = 0.1;
+          if (MapSpread < 0.1) MapSpread = 2.*(double)MapSpacing/750.;
   
           if (flag&MapSurfFlag) {
             if(generate_map(&mapmaskptr,MapSpacing/2, 
@@ -4029,6 +4039,10 @@ int ApplyMapMask(int mapno ) {
               }
               mapmaskptr->elsize=omapinfo->MapPtr->elsize;
               mapmaskptr->eltype=omapinfo->MapPtr->eltype;
+              mapmaskptr->maptype=omapinfo->MapPtr->maptype;
+              mapmaskptr->adiv=omapinfo->MapPtr->adiv;
+              mapmaskptr->bdiv=omapinfo->MapPtr->bdiv;
+              mapmaskptr->cdiv=omapinfo->MapPtr->cdiv;
               mapmaskptr->xint=omapinfo->MapPtr->xint;
               mapmaskptr->yint=omapinfo->MapPtr->yint;
               mapmaskptr->zint=omapinfo->MapPtr->zint;
@@ -4111,7 +4125,7 @@ static int ExecuteGenerateCommand( int mapflags ) {
   MapAtmSelVec __far *mapmaskgensel;
   
   ApplyMapSelection();
-  if (MapSpacing <= 0) MapSpacing = 125L;
+  if (MapSpacing <= 0) MapSpacing = 250L;
   
   /* Initialize a mapinfo struct */
   
@@ -4152,6 +4166,10 @@ static int ExecuteGenerateCommand( int mapflags ) {
     }
     mapmaskptr->elsize=MapMaskPtr->elsize;
     mapmaskptr->eltype=MapMaskPtr->eltype;
+    mapmaskptr->maptype=MapMaskPtr->maptype;
+    mapmaskptr->adiv=MapMaskPtr->adiv;
+    mapmaskptr->bdiv=MapMaskPtr->bdiv;
+    mapmaskptr->cdiv=MapMaskPtr->cdiv;
     mapmaskptr->xint=MapMaskPtr->xint;
     mapmaskptr->yint=MapMaskPtr->yint;
     mapmaskptr->zint=MapMaskPtr->zint;
@@ -4625,12 +4643,20 @@ int ExecuteCommand( void )
                                       }
                                     }
                                   }
-                                  if(LoadMapFile(fp,(FileDepth == -1),mapno)) {
+                                  if(LoadCCP4MapFile(fp,(FileDepth == -1),mapno)) {
+                                    if( !(fp=fopen(DataFileName,"rb")) ) {
+            	                      CommandError( (char*)NULL );
+                                      WriteString(MsgStrs[StrErrFile]);
+                                      WriteString(DataFileName);
+                                      WriteString("'!\n");
+                                      break;
+                                    } else if (LoadCBFMapFile(fp,(FileDepth == -1),mapno)) {
             	                     CommandError( (char*)NULL );
                                      WriteString(MsgStrs[StrErrFile]);
                                      WriteString(DataFileName);
                                      WriteString("'!\n");
                                      break;
+                                    }
                                   }
                                   CurToken = 0;
                                   ReDrawFlag |= RFInitial|RFColour;

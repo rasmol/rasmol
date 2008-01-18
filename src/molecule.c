@@ -65,6 +65,12 @@
  ***************************************************************************/
 /* molecule.c
  $Log: not supported by cvs2svn $
+ Revision 1.3  2008/01/05 21:31:40  yaya-hjb
+ Update ChangeLog and TODO for 2.7.4.
+ Update rasmol.doc, rasmol.hlp and rasmol.html for GM's toggle.
+ Update slab mode for stereo.
+ Add save of maps in CBF mode. -- HJB
+
  Revision 1.2  2007/11/25 17:57:50  yaya-hjb
  Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
 
@@ -3119,8 +3125,8 @@ static void ResetDatabase( void )
     
     MapLevel = 0.;
     MapFlag = MapMeanFlag;
-    MapSpacing = 125L;
-    MapSpread = 1./6.;
+    MapSpacing = 250L;
+    MapSpread = .6667;
     MapRGBCol[0] = 0xFA;
     MapRGBCol[1] = 0xFF;
     MapRGBCol[2] = 0xFA;
@@ -3226,8 +3232,8 @@ void InitialiseDatabase( void )
     CisBondCutOff = CIS;
     MapLevel = 0.;
     MapFlag = MapMeanFlag;
-    MapSpacing = 125L;
-    MapSpread = 1./6.;
+    MapSpacing = 250L;
+    MapSpread = .6667;
     MapRGBCol[0] = 0xFA;
     MapRGBCol[1] = 0xFF;
     MapRGBCol[2] = 0xFA;

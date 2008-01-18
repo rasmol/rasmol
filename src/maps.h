@@ -96,6 +96,8 @@ typedef struct {
   void * mapdata;            /* mapdata[xlow:xhigh,ylow:yhigh,zlow:zhigh] */
   int elsize;                /* size of element in chars                  */ 
   int eltype;                /* CBF_INTEGER or CBF_FLOAT                  */                  
+  int maptype;               /* MAP_ORTHOGONAL or MAP_FRACTIONAL          */
+  int adiv, bdiv, cdiv;      /* number of a,b,c grid divisions            */
   Long xint, yint, zint;     /* The interval between map segments         */
   Long xorig, yorig, zorig;  /* The origin for the map                    */
   Long xlow, ylow, zlow;     /* The low indices                           */
@@ -104,9 +106,9 @@ typedef struct {
   double mapdatamax;         /* The maximum value in the map              */
   double mapdatamean;        /* The average value in the map              */
   double mapdataesd;         /* The average value esd in the map          */
-  double mapm2r[9];          /* The scale matrix from map units to rasmol units  */
-  double mapr2m[9];          /* The inverse of the scale matrix           */
-  double mapxlate[3];        /* post translation after scale              */
+  double mapm2r[9];          /* The xform matrix from map units to rasmol units  */
+  double mapr2m[9];          /* The inverse of the mapm2r                 */
+  double mapxlate[3];        /* post translation after mapm2r             */
 } MapStruct;
 
 #define MapM2R(map,ii,jj) (map)->mapm2r[(ii)+(jj*3)]
@@ -169,19 +171,18 @@ typedef struct {
      (mp).xpos = dxpos;   \
      (mp).ypos = dypos;   \
      (mp).zpos = dzpos;   \
+     (mp).Un[0] = (mp).Un[1] = (mp).Un[2] = 0; \
+     if (gradient)      { \
      dxpos =  MapR2M(map,0,0)*(gradient)[0] + MapR2M(map,0,1)*(gradient)[1] + MapR2M(map,0,2)*(gradient)[2]; \
      dypos =  MapR2M(map,1,0)*(gradient)[0] + MapR2M(map,1,1)*(gradient)[1] + MapR2M(map,1,2)*(gradient)[2]; \
      dzpos =  MapR2M(map,2,0)*(gradient)[0] + MapR2M(map,2,1)*(gradient)[1] + MapR2M(map,2,2)*(gradient)[2]; \
      glen = sqrt(dxpos*dxpos+dypos*dypos+dzpos*dzpos); \
      if (glen > 0.) {                                  \
-       (mp).Un[0] = -(Long)(4096.*(gradient)[0]/glen);   \
-       (mp).Un[1] = -(Long)(4096.*(gradient)[1]/glen);   \
-       (mp).Un[2] = -(Long)(4096.*(gradient)[2]/glen);   \
-     } else {                                          \
-       (mp).Un[0] = (mp).Un[1] = (mp).Un[2] = 0;       \
-       fprintf(stderr,"zero gradient at xpos, ypos, zpos [%ld,%ld,%ld]\n",mp.xpos, mp.ypos, mp.zpos);\
-       fprintf(stderr,"gradient [%lg,%lg,%lg]\n",gradient[0], gradient[1], gradient[2]);\
-     }                                                 \
+       (mp).Un[0] = -(Long)(4096.*(gradient)[0]/glen); \
+       (mp).Un[1] = -(Long)(4096.*(gradient)[1]/glen); \
+       (mp).Un[2] = -(Long)(4096.*(gradient)[2]/glen); \
+     } \
+     } \
   }
 
 
@@ -256,6 +257,8 @@ typedef struct {
 #define MapMeshDashFlag 0x210    /* Represent map as dashed mesh    */
 #define MapSurfFlag     0x400    /* Represent map as surface        */
 #define MapMeanFlag     0x800    /* Map level relative to MEAN      */
+#define MAP_ORTHOGONAL  0x000    /* Orthogonal map coordinates      */
+#define MAP_FRACTIONAL  0x001    /* Fractional map coordinates      */
 
 typedef struct {
         Real              MapLevel;    /* map level for this map     */
@@ -371,14 +374,19 @@ int vector_free(GenericVec __far * __far * vector);
 void MapReRadius( void );
 
 
-/* SaveMapFile -- load a map file */
+/* SaveMapFile -- save a map file */
 
 int SaveMapFile( FILE *fp, int info, int mapno );
 
 
-/* LoadMapFile -- load a map file */
+/* LoadCBFMapFile -- load a CBF map file */
 
-int LoadMapFile( FILE *fp, int info, int mapno );
+int LoadCBFMapFile( FILE *fp, int info, int mapno );
+
+
+/* LoadCCP4MapFile -- load a map file */
+
+int LoadCCP4MapFile( FILE *fp, int info, int mapno );
 
 
                    

@@ -79,6 +79,7 @@
 #include "abstree.h"
 #include "transfor.h"
 #include "multiple.h"
+#include "cif_fract.h"
 #define MAPS
 #include "maps.h"
 
@@ -96,10 +97,16 @@
 #include "cbf.h"
 #include "cbf_file.h"
 #include "cbf_alloc.h"
+#include "cbf_string.h"
 #else
 #define CBF_INTEGER     0x0010  /* Uncompressed integer               */
 #define CBF_FLOAT       0x0020  /* Uncompressed IEEE floating-point   */
 #endif
+
+#ifndef PI
+#define PI 3.14159265358979323846
+#endif
+
 
 /* Macros for commonly used loops */
 #define ForEachAtom  for(chain=Database->clist;chain;chain=chain->cnext) \
@@ -325,20 +332,23 @@ void MapReRadius( void ) {
 int SaveMapFile( FILE *fp, int info, int mapno ) {
 
   cbf_handle cbf;
-  
   MapStruct *map, *mapmask;
-
   char map_id[81], map_structure_id[81], mask_structure_id[81];
+    int ii,jj;
+    double ocmap_axismat[3][3], ocmap_axisvec[3];
+    double fcmap_axismat[3][3], fcmap_axisvec[3];
+    double ocmapmask_axismat[3][3], ocmapmask_axisvec[3];
+    double fcmapmask_axismat[3][3], fcmapmask_axisvec[3];
+    double rc2oc[3];
   
   MapInfo *mapinfo;
 
   if (mapno < 0 ) return CBF_ARGUMENT;
-  
   if (!MapInfoPtr) return CBF_ARGUMENT;
-  
   if (mapno > MapInfoPtr->size) return CBF_ARGUMENT;
   
-  vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,mapno );
+  vector_get_elementptr((GenericVec __far *)MapInfoPtr,
+    (void __far * __far *)&mapinfo,mapno );
   
   if (!mapinfo) return 0;
 
@@ -351,7 +361,6 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
   strcat (map_structure_id,"_structure");
   
   strcpy (mask_structure_id,map_id);
-  
   strcat (mask_structure_id,"_mask_structure");
 
   cbf_failnez (cbf_force_new_datablock(cbf,map_id))
@@ -359,23 +368,18 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
   cbf_failnez (cbf_new_category(cbf,"map"))
   
   cbf_failnez (cbf_new_column(cbf,"id"))
-  
   cbf_failnez (cbf_set_integervalue(cbf,mapno+1))
   
   if ( mapinfo->MapLabel && *mapinfo->MapLabel)  {
   	
     cbf_failnez (cbf_new_column(cbf,"details"))
-  
     cbf_failnez (cbf_set_value(cbf,mapinfo->MapLabel))
-  
     cbf_failnez (cbf_set_typeofvalue(cbf,"dblq"))
 
   } else  if ( mapinfo->MapFile && *mapinfo->MapFile) {
 
     cbf_failnez (cbf_new_column(cbf,"details"))
-  
-    cbf_failnez (cbf_set_value(cbf,mapinfo->MapLabel))
-  
+            cbf_failnez (cbf_set_value(cbf,mapinfo->MapFile))
     cbf_failnez (cbf_set_typeofvalue(cbf,"dblq"))
   	
   }
@@ -385,7 +389,6 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
   if (Info.identcode && *Info.identcode) {
   
   	 cbf_failnez (cbf_set_value(cbf,Info.identcode))
-  
      cbf_failnez (cbf_set_typeofvalue(cbf,"dblq"))
   }
   
@@ -406,14 +409,163 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
   
   if ( map || mapmask )  {
   
+    Long map_xbase=0, map_ybase=0, map_zbase=0;
+    Long mapmask_xbase=0, mapmask_ybase=0, mapmask_zbase=0;
+    double ocmap_xbase=0., ocmap_ybase=0., ocmap_zbase=0.;
+    double ocmapmask_xbase=0., ocmapmask_ybase=0, ocmapmask_zbase=0.;
+    double fcmap_xbase=0., fcmap_ybase=0., fcmap_zbase=0.;
+    double fcmapmask_xbase=0., fcmapmask_ybase=0, fcmapmask_zbase=0.;
+        double templen[3];
+        double OrigC[3];
+        
+        rc2oc[0] = 1./250.;
+#ifdef INVERT
+        rc2oc[1] = -1./250.;
+#else
+        rc2oc[1] = 1./250.;
+#endif
+        rc2oc[2] = -1/250.;
+        
+        OrigC[0] = OrigCX;
+        OrigC[1] = OrigCY;
+        OrigC[2] = OrigCZ;
+    
+    if (map) {
+    
+            map_xbase = map->xorig;
+            map_ybase = map->yorig;
+            map_zbase = map->zorig;
+
+        Mapm2o(map, map_xbase,map_ybase,map_zbase, 
+          ocmap_xbase,ocmap_ybase,ocmap_zbase);
+            fcmap_xbase = Info.mato2f[0][0]*ocmap_xbase*rc2oc[0]
+                          + Info.mato2f[0][1]*ocmap_ybase*rc2oc[1]
+                          + Info.mato2f[0][2]*ocmap_zbase*rc2oc[2]
+                          + Info.veco2f[0];
+            fcmap_ybase = Info.mato2f[1][0]*ocmap_xbase*rc2oc[0]
+                          + Info.mato2f[1][1]*ocmap_ybase*rc2oc[1]
+                          + Info.mato2f[1][2]*ocmap_zbase*rc2oc[2]
+                          + Info.veco2f[1];
+            fcmap_zbase = Info.mato2f[2][0]*ocmap_xbase*rc2oc[0]
+                          + Info.mato2f[2][1]*ocmap_ybase*rc2oc[1]
+                          + Info.mato2f[2][2]*ocmap_zbase*rc2oc[2]
+                          + Info.veco2f[2];
+        ocmap_xbase *= 4.*1.e-10;
+#ifdef INVERT
+            ocmap_ybase *= -4.*1.e-10;
+#else
+        ocmap_ybase *= 4.*1.e-10;
+#endif
+            ocmap_zbase *= -4.*1.e-10;
+            
+            for (jj = 0; jj < 3; jj++) templen[jj] = 0;
+            for (ii = 0; ii < 3; ii++) {
+              ocmap_axisvec[ii] = (map->mapxlate[ii]+OrigC[ii])*rc2oc[ii];
+              for (jj=0; jj<3; jj++) {
+                ocmap_axismat[ii][jj] = MapM2R(map,ii,jj)*rc2oc[ii];
+                templen[jj] +=  ocmap_axismat[ii][jj]*ocmap_axismat[ii][jj];              	
+              }	
+            }
+            for (jj = 0; jj < 3; jj++) templen[jj] = sqrt(templen[jj]);
+            for (ii=0 ; ii<3; ii++) {
+              for (jj=0; jj<3; jj++) {
+                ocmap_axismat[ii][jj] /= templen[jj];
+              }	
+            }
+            
+            matmul(Info.mato2f, ocmap_axismat, fcmap_axismat);
+            matvec(Info.mato2f, ocmap_axisvec, fcmap_axisvec);
+
+            for (jj = 0; jj < 3; jj++) templen[jj] = 0;
+            for (ii = 0; ii < 3; ii++) {
+              for (jj=0; jj<3; jj++) {
+                templen[jj] +=  fcmap_axismat[ii][jj]*fcmap_axismat[ii][jj];              	
+              }	
+            }
+            for (jj = 0; jj < 3; jj++) templen[jj] = sqrt(templen[jj]);
+            for (ii=0 ; ii<3; ii++) {
+              for (jj=0; jj<3; jj++) {
+                fcmap_axismat[ii][jj] /= templen[jj];
+              }	
+            }
+
+
+                
+    }
+  
+    if (mapmask) {
+
+            mapmask_xbase = mapmask->xorig;
+            mapmask_ybase = mapmask->yorig;
+            mapmask_zbase = mapmask->zorig;
+
+        Mapm2o(map, mapmask_xbase,mapmask_ybase,mapmask_zbase, 
+          ocmapmask_xbase,ocmapmask_ybase,ocmapmask_zbase);
+              
+            ocmapmask_xbase += OrigCX;
+            ocmapmask_ybase += OrigCY;
+            ocmapmask_zbase += OrigCZ;
+
+            fcmapmask_xbase = Info.mato2f[0][0]*ocmapmask_xbase*rc2oc[0]
+                          + Info.mato2f[0][1]*ocmapmask_ybase*rc2oc[1]
+                          + Info.mato2f[0][2]*ocmapmask_zbase*rc2oc[2]
+                          + Info.veco2f[0];
+            fcmapmask_ybase = Info.mato2f[1][0]*ocmapmask_xbase*rc2oc[0]
+                          + Info.mato2f[1][1]*ocmapmask_ybase*rc2oc[1]
+                          + Info.mato2f[1][2]*ocmapmask_zbase*rc2oc[2]
+                          + Info.veco2f[1];
+            fcmapmask_zbase = Info.mato2f[2][0]*ocmapmask_xbase*rc2oc[0]
+                          + Info.mato2f[2][1]*ocmapmask_ybase*rc2oc[1]
+                          + Info.mato2f[2][2]*ocmapmask_zbase*rc2oc[2]
+                          + Info.veco2f[2];
+        ocmapmask_xbase *= 4.*1.e-10;
+#ifdef INVERT
+            ocmapmask_ybase *= -4.*1.e-10;
+#else
+        ocmapmask_ybase *= 4.*1.e-10;
+#endif
+            ocmapmask_zbase *= -4.*1.e-10;
+
+            for (jj = 0; jj < 3; jj++) templen[jj] = 0;
+            for (ii = 0; ii < 3; ii++) {
+              ocmapmask_axisvec[ii] = (mapmask->mapxlate[ii]+OrigC[ii])*rc2oc[ii];
+              for (jj=0; jj<3; jj++) {
+                ocmapmask_axismat[ii][jj] = MapM2R(mapmask,ii,jj)*rc2oc[ii];
+                templen[jj] +=  ocmapmask_axismat[ii][jj]*ocmapmask_axismat[ii][jj];              	
+              }	
+            }
+            for (jj = 0; jj < 3; jj++) templen[jj] = sqrt(templen[jj]);
+            for (ii=0 ; ii<3; ii++) {
+              for (jj=0; jj<3; jj++) {
+                ocmapmask_axismat[ii][jj] /= templen[jj];
+              }	
+            }
+            
+            matmul(Info.mato2f, ocmapmask_axismat, fcmapmask_axismat);
+            matvec(Info.mato2f, ocmapmask_axisvec, fcmapmask_axisvec);
+
+            for (jj = 0; jj < 3; jj++) templen[jj] = 0;
+            for (ii = 0; ii < 3; ii++) {
+              for (jj=0; jj<3; jj++) {
+                templen[jj] +=  fcmapmask_axismat[ii][jj]*fcmapmask_axismat[ii][jj];              	
+              }	
+            }
+            for (jj = 0; jj < 3; jj++) templen[jj] = sqrt(templen[jj]);
+            for (ii=0 ; ii<3; ii++) {
+              for (jj=0; jj<3; jj++) {
+                fcmapmask_axismat[ii][jj] /= templen[jj];
+              }	
+            }
+
+    	
+    }
+  
     cbf_failnez (cbf_new_category(cbf,"map_segment"))
     
     cbf_failnez (cbf_new_column(cbf,"map_id"))
-    
     cbf_failnez (cbf_set_value(cbf,map_id))
     
     cbf_failnez (cbf_new_column(cbf,"id"))
-
     cbf_failnez (cbf_set_value(cbf,map_id))
 
     cbf_failnez (cbf_new_column(cbf,"array_id"))
@@ -448,23 +600,1047 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
     	
     }
     
+    cbf_failnez (cbf_new_category(cbf,"array_structure"))
+    
+    if (map)  {
+    
+      cbf_failnez (cbf_new_column(cbf,"id"))
+      cbf_failnez (cbf_set_value(cbf,map_structure_id))
+      
+      cbf_failnez (cbf_new_column(cbf,"byte_order"))
+      cbf_failnez (cbf_set_value(cbf,"little_endian"))
+
+      cbf_failnez (cbf_new_column(cbf,"compression_type"))
+      cbf_failnez (cbf_set_value(cbf,"packed_v2"))
+
+      cbf_failnez (cbf_new_column(cbf,"encoding_type"))
+      
+      switch (map->eltype) {
+      
+      	case CBF_INTEGER:
+      	
+      	  switch (map->elsize) {
+      	  
+      	  	case 1: cbf_failnez (cbf_set_value(cbf, "signed 8-bit integer")); break;
+      	  	case 2: cbf_failnez (cbf_set_value(cbf, "signed 16-bit integer")); break;
+      	  	case 4: cbf_failnez (cbf_set_value(cbf, "signed 32-bit integer")); break;
+      	  	case 8: cbf_failnez (cbf_set_value(cbf, "signed 64-bit integer")); break;
+      	  	      	  	default: return CBF_FORMAT;
+      	  	
+      	  }
+      	      	
+      	break;
+      	
+      	case CBF_FLOAT:
+      	
+      	  switch (map->elsize) {
+      	  
+      	    case 4: cbf_failnez (cbf_set_value(cbf, "signed 32-bit real IEEE")); break;
+      	    case 8: cbf_failnez (cbf_set_value(cbf, "signed 64-bit real IEEE")); break;
+            default: return CBF_FORMAT;
+      	  	
+      	  }
+      	
+      	break;
+      	
+      	default:  return CBF_FORMAT;
+      	
+      }
+          	
+    }
+    
+    if (mapmask)  {
+    
+      cbf_failnez (cbf_new_row(cbf))
+
+      cbf_failnez (cbf_require_column(cbf,"id"))
+      cbf_failnez (cbf_set_value(cbf,mask_structure_id))
+      
+      cbf_failnez (cbf_require_column(cbf,"byte_order"))
+      cbf_failnez (cbf_set_value(cbf,"little_endian"))
+
+      cbf_failnez (cbf_require_column(cbf,"compression_type"))
+      
+      cbf_failnez (cbf_set_value(cbf,"packed_v2"))
+
+      cbf_failnez (cbf_require_column(cbf,"encoding_type"))
+      
+      switch (mapmask->eltype) {
+      
+      	case CBF_INTEGER:
+      	
+      	  switch (mapmask->elsize) {
+      	  
+      	  	case 1: cbf_failnez (cbf_set_value(cbf, "signed 8-bit integer")); break;
+      	  	case 2: cbf_failnez (cbf_set_value(cbf, "signed 16-bit integer")); break;
+      	  	case 4: cbf_failnez (cbf_set_value(cbf, "signed 32-bit integer")); break;
+      	  	case 8: cbf_failnez (cbf_set_value(cbf, "signed 64-bit integer")); break;
+      	  	default: return CBF_FORMAT;
+      	  	
+      	  }
+      	      	
+      	break;
+      	
+      	case CBF_FLOAT:
+      	
+      	  switch (mapmask->elsize) {
+      	  
+      	    case 4: cbf_failnez (cbf_set_value(cbf, "signed 32-bit real IEEE")); break;
+      	    case 8: cbf_failnez (cbf_set_value(cbf, "signed 64-bit real IEEE")); break;
+      	    default: return CBF_FORMAT;
+      	  	
+      	  }
+      	
+      	break;
+      	
+      	default:  return CBF_FORMAT;
+      	
+      }
+          	
+    }
+    
+    cbf_failnez (cbf_new_category(cbf,"array_structure_list"))
+    
+    if (map) {
+    	
+      cbf_failnez (cbf_new_column(cbf,"array_id"))
+      cbf_failnez (cbf_set_value(cbf,map_structure_id))
+    
+      cbf_failnez (cbf_new_column(cbf,"index"))
+      cbf_failnez (cbf_set_integervalue(cbf,1))
+
+      cbf_failnez (cbf_new_column(cbf,"dimension"))
+      cbf_failnez (cbf_set_integervalue(cbf,map->xhigh-map->xlow+1))
+    
+      cbf_failnez (cbf_new_column(cbf,"precedence"))
+      cbf_failnez (cbf_set_integervalue(cbf,1))
+
+      cbf_failnez (cbf_new_column(cbf,"direction"))
+      cbf_failnez (cbf_set_value(cbf,"increasing"))
+      
+      cbf_failnez (cbf_new_column(cbf,"axis_set_id"))
+      if (map->maptype==MAP_FRACTIONAL) {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_X"))      	
+      } else {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_X"))      	
+      }
+      
+      cbf_failnez (cbf_new_row(cbf))
+    
+      cbf_failnez (cbf_find_column(cbf,"array_id"))
+      cbf_failnez (cbf_set_value(cbf,map_structure_id))
+    
+      cbf_failnez (cbf_find_column(cbf,"index"))
+      cbf_failnez (cbf_set_integervalue(cbf,2))
+
+      cbf_failnez (cbf_find_column(cbf,"dimension"))
+      cbf_failnez (cbf_set_integervalue(cbf,map->yhigh-map->ylow+1))
+    
+      cbf_failnez (cbf_find_column(cbf,"precedence"))
+      cbf_failnez (cbf_set_integervalue(cbf,2))
+
+      cbf_failnez (cbf_find_column(cbf,"direction"))
+      cbf_failnez (cbf_set_value(cbf,"increasing"))
+
+      cbf_failnez (cbf_find_column(cbf,"axis_set_id")) 
+      if (map->maptype==MAP_FRACTIONAL) {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Y"))      	
+      } else {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Y"))      	
+      }
+      
+      cbf_failnez (cbf_new_row(cbf))
+    
+      cbf_failnez (cbf_find_column(cbf,"array_id"))
+      cbf_failnez (cbf_set_value(cbf,map_structure_id))
+    
+      cbf_failnez (cbf_find_column(cbf,"index"))
+      cbf_failnez (cbf_set_integervalue(cbf,3))
+
+      cbf_failnez (cbf_find_column(cbf,"dimension"))
+      cbf_failnez (cbf_set_integervalue(cbf,map->zhigh-map->zlow+1))
+    
+      cbf_failnez (cbf_find_column(cbf,"precedence"))
+      cbf_failnez (cbf_set_integervalue(cbf,3))
+
+      cbf_failnez (cbf_find_column(cbf,"direction"))
+      cbf_failnez (cbf_set_value(cbf,"increasing"))
+
+      cbf_failnez (cbf_find_column(cbf,"axis_set_id"))
+      if (map->maptype==MAP_FRACTIONAL) {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Z"))      	
+      } else {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Z"))      	
+      }
+
+    }
+    
+    if (mapmask) {
+    	
+      cbf_failnez (cbf_new_row(cbf))
+
+      cbf_failnez (cbf_require_column(cbf,"array_id"))
+            cbf_failnez (cbf_set_value(cbf,mask_structure_id))
+    
+      cbf_failnez (cbf_require_column(cbf,"index"))
+      cbf_failnez (cbf_set_integervalue(cbf,1))
+
+      cbf_failnez (cbf_require_column(cbf,"dimension"))
+      cbf_failnez (cbf_set_integervalue(cbf,mapmask->xhigh-mapmask->xlow+1))
+    
+      cbf_failnez (cbf_require_column(cbf,"precedence"))
+      cbf_failnez (cbf_set_integervalue(cbf,1))
+
+      cbf_failnez (cbf_require_column(cbf,"direction"))
+      cbf_failnez (cbf_set_value(cbf,"increasing"))
+      
+      cbf_failnez (cbf_require_column(cbf,"axis_set_id"))
+      if (mapmask->maptype==MAP_FRACTIONAL) {
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_X"))      	
+      } else {
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_X"))      	
+      }
+      
+      cbf_failnez (cbf_new_row(cbf))
+    
+      cbf_failnez (cbf_find_column(cbf,"array_id"))
+            cbf_failnez (cbf_set_value(cbf,mask_structure_id))
+    
+      cbf_failnez (cbf_find_column(cbf,"index"))
+      cbf_failnez (cbf_set_integervalue(cbf,2))
+
+      cbf_failnez (cbf_find_column(cbf,"dimension"))
+      cbf_failnez (cbf_set_integervalue(cbf,mapmask->yhigh-mapmask->ylow+1))
+    
+      cbf_failnez (cbf_find_column(cbf,"precedence"))
+      cbf_failnez (cbf_set_integervalue(cbf,2))
+
+      cbf_failnez (cbf_find_column(cbf,"direction"))
+      cbf_failnez (cbf_set_value(cbf,"increasing"))
+
+      cbf_failnez (cbf_find_column(cbf,"axis_set_id"))
+      if (mapmask->maptype==MAP_FRACTIONAL) {
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Y"))      	
+      } else {
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Y"))      	
+      }
+
+      cbf_failnez (cbf_new_row(cbf))
+    
+      cbf_failnez (cbf_find_column(cbf,"array_id"))
+            cbf_failnez (cbf_set_value(cbf,mask_structure_id))
+    
+      cbf_failnez (cbf_find_column(cbf,"index"))
+      cbf_failnez (cbf_set_integervalue(cbf,3))
+
+      cbf_failnez (cbf_find_column(cbf,"dimension"))
+      cbf_failnez (cbf_set_integervalue(cbf,mapmask->zhigh-mapmask->zlow+1))
+    
+      cbf_failnez (cbf_find_column(cbf,"precedence"))
+      cbf_failnez (cbf_set_integervalue(cbf,3))
+
+      cbf_failnez (cbf_find_column(cbf,"direction"))
+      cbf_failnez (cbf_set_value(cbf,"increasing"))
+
+      cbf_failnez (cbf_find_column(cbf,"axis_set_id"))
+      if (mapmask->maptype==MAP_FRACTIONAL) {
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Z"))      	
+      } else {
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Z"))      	
+      }
+
+    }
+    
+    cbf_failnez (cbf_new_category(cbf,"array_structure_list_axis"))
+    
+    if (map) {
+    
+      cbf_failnez (cbf_new_column(cbf,"axis_id"))
+      if (map->maptype==MAP_FRACTIONAL) {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_X"))      	
+      } else {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_X"))      	
+      }
+      
+      cbf_failnez (cbf_new_column(cbf,"axis_set_id"))
+      if (map->maptype==MAP_FRACTIONAL) {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_X"))      	
+      } else {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_X"))      	
+      }
+
+      if (map->maptype == MAP_ORTHOGONAL) {
+
+        cbf_failnez (cbf_new_column(cbf,"displacement"))
+                    cbf_failnez (cbf_set_doublevalue(cbf,"%-g",
+                      ((double)map->xlow*map->xint)*4.e-10))
+      	
+        cbf_failnez (cbf_new_column(cbf,"displacement_increment"))
+        cbf_failnez (cbf_set_doublevalue(cbf,"%-g",((double)map->xint)*4.e-10))
+
+      } else if (map->maptype == MAP_FRACTIONAL) {
+
+        cbf_failnez (cbf_new_column(cbf,"fract_displacement"))
+                    cbf_failnez (cbf_set_doublevalue(cbf,"%-g",
+                      (double)map->xlow/(double)map->adiv ))
+      	
+        cbf_failnez (cbf_new_column(cbf,"fract_displacement_increment"))
+        cbf_failnez (cbf_set_doublevalue(cbf,"%-g",1./(double)(map->adiv)))
+      	
+      }
+
+      cbf_failnez (cbf_new_row(cbf))
+      cbf_failnez (cbf_find_column(cbf,"axis_id"))
+      if (map->maptype==MAP_FRACTIONAL) {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Y"))      	
+      } else {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Y"))      	
+      }
+      
+      cbf_failnez (cbf_find_column(cbf,"axis_set_id"))
+      if (map->maptype==MAP_FRACTIONAL) {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Y"))      	
+      } else {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Y"))      	
+      }
+
+      if (map->maptype == MAP_ORTHOGONAL) {
+
+        cbf_failnez (cbf_find_column(cbf,"displacement"))
+                    cbf_failnez (cbf_set_doublevalue(cbf,"%-g",
+                      ((double)map->xlow*map->yint)*4.e-10))
+      	
+        cbf_failnez (cbf_find_column(cbf,"displacement_increment"))
+        cbf_failnez (cbf_set_doublevalue(cbf,"%-g",((double)map->yint)*4.e-10))
+
+      } else if (map->maptype == MAP_FRACTIONAL) {
+
+        cbf_failnez (cbf_find_column(cbf,"fract_displacement"))
+                    cbf_failnez (cbf_set_doublevalue(cbf,"%-g",
+                      (double)map->ylow/(double)map->bdiv ))
+      	
+        cbf_failnez (cbf_find_column(cbf,"fract_displacement_increment"))
+        cbf_failnez (cbf_set_doublevalue(cbf,"%-g",1./(double)(map->bdiv)))
+      	
+      }
+      
+      cbf_failnez (cbf_new_row(cbf))
+      cbf_failnez (cbf_find_column(cbf,"axis_id"))
+      if (map->maptype==MAP_FRACTIONAL) {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Z"))      	
+      } else {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Z"))      	
+      }
+      
+      cbf_failnez (cbf_find_column(cbf,"axis_set_id"))
+      if (map->maptype==MAP_FRACTIONAL) {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Z"))      	
+      } else {
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Z"))      	
+      }
+
+      if (map->maptype == MAP_ORTHOGONAL) {
+
+        cbf_failnez (cbf_find_column(cbf,"displacement"))
+                    cbf_failnez (cbf_set_doublevalue(cbf,"%-g",
+                      ((double)map->zlow*map->zint)*4.e-10))
+      	
+        cbf_failnez (cbf_find_column(cbf,"displacement_increment"))
+        cbf_failnez (cbf_set_doublevalue(cbf,"%-g",((double)map->zint)*4.e-10))
+
+      } else if (map->maptype == MAP_FRACTIONAL) {
+
+        cbf_failnez (cbf_find_column(cbf,"fract_displacement"))
+                    cbf_failnez (cbf_set_doublevalue(cbf,"%-g",
+                      (double)map->zlow/(double)map->cdiv ))
+      	
+        cbf_failnez (cbf_find_column(cbf,"fract_displacement_increment"))
+        cbf_failnez (cbf_set_doublevalue(cbf,"%-g",1./(double)(map->cdiv)))
+      	
+      }
+
+    
+    }
+    
+      if (mapmask) {
+    
+      cbf_failnez (cbf_new_row(cbf))
+      cbf_failnez (cbf_require_column(cbf,"axis_id"))
+      if (mapmask->maptype==MAP_FRACTIONAL) {
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_X"))      	
+      } else {
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_X"))      	
+      }
+      
+      cbf_failnez (cbf_require_column(cbf,"axis_set_id"))
+      if (mapmask->maptype==MAP_FRACTIONAL) {
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_X"))      	
+      } else {
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_X"))      	
+      }
+
+      if (mapmask->maptype == MAP_ORTHOGONAL) {
+
+        cbf_failnez (cbf_require_column(cbf,"displacement"))
+                cbf_failnez (cbf_set_doublevalue(cbf,"%-g",
+                  ((double)mapmask->xlow*mapmask->xint)*4.e-10))
+      	
+        cbf_failnez (cbf_require_column(cbf,"displacement_increment"))
+        cbf_failnez (cbf_set_doublevalue(cbf,"%-g",((double)mapmask->xint)*4.e-10))
+
+      } else if (mapmask->maptype == MAP_FRACTIONAL) {
+
+        cbf_failnez (cbf_require_column(cbf,"fract_displacement"))
+                cbf_failnez (cbf_set_doublevalue(cbf,"%-g",
+                  (double)mapmask->xlow/(double)mapmask->adiv ))
+      	
+        cbf_failnez (cbf_require_column(cbf,"fract_displacement_increment"))
+        cbf_failnez (cbf_set_doublevalue(cbf,"%-g",1./(double)(mapmask->adiv)))
+      	
+      }
+
+      cbf_failnez (cbf_new_row(cbf))
+      cbf_failnez (cbf_find_column(cbf,"axis_id"))
+      if (mapmask->maptype==MAP_FRACTIONAL) {
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Y"))      	
+      } else {
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Y"))      	
+      }
+      
+      cbf_failnez (cbf_find_column(cbf,"axis_set_id"))
+      if (mapmask->maptype==MAP_FRACTIONAL) {
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Y"))      	
+      } else {
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Y"))      	
+      }
+
+      if (mapmask->maptype == MAP_ORTHOGONAL) {
+
+        cbf_failnez (cbf_find_column(cbf,"displacement"))
+                cbf_failnez (cbf_set_doublevalue(cbf,"%-g",
+                  ((double)mapmask->ylow*mapmask->yint)*4.e-10))
+      	
+        cbf_failnez (cbf_find_column(cbf,"displacement_increment"))
+        cbf_failnez (cbf_set_doublevalue(cbf,"%-g",((double)mapmask->yint)*4.e-10))
+
+      } else if (mapmask->maptype == MAP_FRACTIONAL) {
+
+        cbf_failnez (cbf_find_column(cbf,"fract_displacement"))
+                cbf_failnez (cbf_set_doublevalue(cbf,"%-g",
+                  (double)mapmask->ylow/(double)mapmask->bdiv ))
+      	
+        cbf_failnez (cbf_find_column(cbf,"fract_displacement_increment"))
+        cbf_failnez (cbf_set_doublevalue(cbf,"%-g",1./(double)(mapmask->bdiv)))
+      	
+      }
+      
+      cbf_failnez (cbf_new_row(cbf))
+      cbf_failnez (cbf_find_column(cbf,"axis_id"))
+      if (mapmask->maptype==MAP_FRACTIONAL) {
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Z"))      	
+      } else {
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Z"))      	
+      }
+      
+      cbf_failnez (cbf_find_column(cbf,"axis_set_id"))
+      if (mapmask->maptype==MAP_FRACTIONAL) {
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Z"))      	
+      } else {
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Z"))      	
+      }
+
+      if (mapmask->maptype == MAP_ORTHOGONAL) {
+
+        cbf_failnez (cbf_find_column(cbf,"displacement"))
+                cbf_failnez (cbf_set_doublevalue(cbf,"%-g",
+                  ((double)mapmask->zlow*mapmask->zint)*4.e-10))
+      	
+        cbf_failnez (cbf_find_column(cbf,"displacement_increment"))
+        cbf_failnez (cbf_set_doublevalue(cbf,"%-g",((double)mapmask->zint)*4.e-10))
+
+      } else if (mapmask->maptype == MAP_FRACTIONAL) {
+
+        cbf_failnez (cbf_find_column(cbf,"fract_displacement"))
+                cbf_failnez (cbf_set_doublevalue(cbf,"%-g",
+                  (double)mapmask->zlow/(double)mapmask->cdiv ))
+      	
+        cbf_failnez (cbf_find_column(cbf,"fract_displacement_increment"))
+        cbf_failnez (cbf_set_doublevalue(cbf,"%-g",1./(double)(mapmask->cdiv)))
+      	
+      }
+
+    
+    }
+
+    cbf_failnez (cbf_new_category(cbf,"axis"))
+    
+    if ((map && map->maptype == MAP_FRACTIONAL) ||
+      (mapmask && mapmask->maptype == MAP_FRACTIONAL)) {
+      
+      cbf_failnez (cbf_new_column(cbf,"id"))
+      cbf_failnez (cbf_set_value(cbf,"CELL_A")) 
+      
+      cbf_failnez (cbf_new_column(cbf,"system"))
+      cbf_failnez (cbf_set_value(cbf,"fractional")) 
+
+      cbf_failnez (cbf_new_column(cbf,"vector[1]"))
+      cbf_failnez (cbf_set_value(cbf,"1")) 
+
+      cbf_failnez (cbf_new_column(cbf,"vector[2]"))
+      cbf_failnez (cbf_set_value(cbf,"0"))
+      
+      cbf_failnez (cbf_new_column(cbf,"vector[3]"))
+                cbf_failnez (cbf_set_value(cbf,"0"))    
+            
+                cbf_failnez (cbf_new_column(cbf,"offset[1]"))
+      cbf_failnez (cbf_set_value(cbf,"0")) 
+      
+                cbf_failnez (cbf_new_column(cbf,"offset[2]"))
+                cbf_failnez (cbf_set_value(cbf,"0")) 
+            
+                cbf_failnez (cbf_new_column(cbf,"offset[3]"))
+                cbf_failnez (cbf_set_value(cbf,"0")) 
+
+      cbf_failnez (cbf_new_row(cbf))
+ 
+      cbf_failnez (cbf_find_column(cbf,"id"))
+      cbf_failnez (cbf_set_value(cbf,"CELL_B")) 
+      
+      cbf_failnez (cbf_find_column(cbf,"system"))
+      cbf_failnez (cbf_set_value(cbf,"fractional")) 
+
+      cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+      cbf_failnez (cbf_set_value(cbf,"0")) 
+
+      cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+      cbf_failnez (cbf_set_value(cbf,"1"))
+      
+      cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+      cbf_failnez (cbf_set_value(cbf,"0")) 
+
+                cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+                cbf_failnez (cbf_set_value(cbf,"0")) 
+            
+                cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+                cbf_failnez (cbf_set_value(cbf,"0")) 
+            
+                cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+                cbf_failnez (cbf_set_value(cbf,"0")) 
+
+      cbf_failnez (cbf_new_row(cbf))
+ 
+      cbf_failnez (cbf_find_column(cbf,"id"))
+      cbf_failnez (cbf_set_value(cbf,"CELL_C")) 
+      
+      cbf_failnez (cbf_find_column(cbf,"system"))
+      cbf_failnez (cbf_set_value(cbf,"fractional")) 
+
+      cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+      cbf_failnez (cbf_set_value(cbf,"0")) 
+
+      cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+      cbf_failnez (cbf_set_value(cbf,"0"))
+      
+      cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+      cbf_failnez (cbf_set_value(cbf,"1")) 
+         	
+                cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+                cbf_failnez (cbf_set_value(cbf,"0")) 
+            
+                cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+                cbf_failnez (cbf_set_value(cbf,"0")) 
+            
+                cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+                cbf_failnez (cbf_set_value(cbf,"0")) 
+                
+    }
+    
+    if ((map && map->maptype == MAP_ORTHOGONAL) ||
+      (mapmask && mapmask->maptype == MAP_ORTHOGONAL)) {
+      
+      cbf_failnez (cbf_new_row(cbf))
+
+      cbf_failnez (cbf_require_column(cbf,"id"))
+      cbf_failnez (cbf_set_value(cbf,"ORTHOGONAL_X")) 
+      
+      cbf_failnez (cbf_require_column(cbf,"system"))
+      cbf_failnez (cbf_set_value(cbf,"orthogonal")) 
+
+      cbf_failnez (cbf_require_column(cbf,"vector[1]"))
+      cbf_failnez (cbf_set_value(cbf,"1")) 
+
+      cbf_failnez (cbf_require_column(cbf,"vector[2]"))
+      cbf_failnez (cbf_set_value(cbf,"0"))
+      
+      cbf_failnez (cbf_require_column(cbf,"vector[3]"))
+            cbf_failnez (cbf_set_value(cbf,"0")) 
+            
+            cbf_failnez (cbf_require_column(cbf,"offset[1]"))
+      cbf_failnez (cbf_set_value(cbf,"0")) 
+      
+            cbf_failnez (cbf_require_column(cbf,"offset[2]"))
+            cbf_failnez (cbf_set_value(cbf,"0")) 
+            
+            cbf_failnez (cbf_require_column(cbf,"offset[3]"))
+            cbf_failnez (cbf_set_value(cbf,"0")) 
+
+      cbf_failnez (cbf_new_row(cbf))
+ 
+      cbf_failnez (cbf_find_column(cbf,"id"))
+      cbf_failnez (cbf_set_value(cbf,"ORTHOGONAL_Y")) 
+      
+      cbf_failnez (cbf_find_column(cbf,"system"))
+      cbf_failnez (cbf_set_value(cbf,"orthogonal")) 
+
+      cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+      cbf_failnez (cbf_set_value(cbf,"0")) 
+
+      cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+      cbf_failnez (cbf_set_value(cbf,"1"))
+      
+      cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+            cbf_failnez (cbf_set_value(cbf,"0")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+      cbf_failnez (cbf_set_value(cbf,"0")) 
+
+            cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+            cbf_failnez (cbf_set_value(cbf,"0")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+            cbf_failnez (cbf_set_value(cbf,"0")) 
+            
+      cbf_failnez (cbf_new_row(cbf))
+ 
+      cbf_failnez (cbf_find_column(cbf,"id"))
+      cbf_failnez (cbf_set_value(cbf,"ORTHOGONAL_Z")) 
+      
+      cbf_failnez (cbf_find_column(cbf,"system"))
+      cbf_failnez (cbf_set_value(cbf,"orthogonal")) 
+
+      cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+      cbf_failnez (cbf_set_value(cbf,"0")) 
+
+      cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+      cbf_failnez (cbf_set_value(cbf,"0"))
+      
+      cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+      cbf_failnez (cbf_set_value(cbf,"1")) 
+
+            cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+            cbf_failnez (cbf_set_value(cbf,"0")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+            cbf_failnez (cbf_set_value(cbf,"0")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+            cbf_failnez (cbf_set_value(cbf,"0")) 
+           
+         	
+        }
+        
+        if (map && map->maptype == MAP_ORTHOGONAL)  {
+            
+            cbf_failnez (cbf_new_row(cbf))
+            
+            cbf_failnez (cbf_require_column(cbf,"id"))
+            cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_X")) 
+            
+            cbf_failnez (cbf_require_column(cbf,"system"))
+            cbf_failnez (cbf_set_value(cbf,"orthogonal")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmap_axismat[0][0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmap_axismat[1][0]))
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmap_axismat[2][0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmap_axisvec[0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmap_axisvec[1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmap_axisvec[2])) 
+            
+            cbf_failnez (cbf_new_row(cbf))
+            
+            cbf_failnez (cbf_find_column(cbf,"id"))
+            cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Y")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"system"))
+            cbf_failnez (cbf_set_value(cbf,"orthogonal")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmap_axismat[0][1])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmap_axismat[1][1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmap_axismat[2][1])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmap_axisvec[0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmap_axisvec[1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmap_axisvec[2])) 
+            
+            cbf_failnez (cbf_new_row(cbf))
+            
+            cbf_failnez (cbf_find_column(cbf,"id"))
+            cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Z")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"system"))
+            cbf_failnez (cbf_set_value(cbf,"orthogonal")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmap_axismat[0][2])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmap_axismat[1][2]))
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmap_axismat[2][2])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmap_axisvec[0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmap_axisvec[1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmap_axisvec[2])) 
+         	
+        }
+        
+        if (map && map->maptype == MAP_FRACTIONAL)  {
+            
+            cbf_failnez (cbf_new_row(cbf))
+            
+            cbf_failnez (cbf_require_column(cbf,"id"))
+            cbf_failnez (cbf_set_value(cbf,"MAP_CELL_X")) 
+            
+            cbf_failnez (cbf_require_column(cbf,"system"))
+            cbf_failnez (cbf_set_value(cbf,"fractional")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmap_axismat[0][0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmap_axismat[1][0]))
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmap_axismat[2][0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmap_axisvec[0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmap_axisvec[1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmap_axisvec[2])) 
+            
+            cbf_failnez (cbf_new_row(cbf))
+            
+            cbf_failnez (cbf_find_column(cbf,"id"))
+            cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Y")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"system"))
+            cbf_failnez (cbf_set_value(cbf,"fractional")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmap_axismat[0][1])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmap_axismat[1][1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmap_axismat[2][1])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmap_axisvec[0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmap_axisvec[1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmap_axisvec[2])) 
+            
+            cbf_failnez (cbf_new_row(cbf))
+            
+            cbf_failnez (cbf_find_column(cbf,"id"))
+            cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Z")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"system"))
+            cbf_failnez (cbf_set_value(cbf,"fractional")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmap_axismat[0][2])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmap_axismat[1][2]))
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmap_axismat[2][2])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmap_axisvec[0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmap_axisvec[1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmap_axisvec[2])) 
+         	
+        }
+
+        if (mapmask && mapmask->maptype == MAP_ORTHOGONAL)  {
+            
+            cbf_failnez (cbf_new_row(cbf))
+            
+            cbf_failnez (cbf_require_column(cbf,"id"))
+            cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_X")) 
+            
+            cbf_failnez (cbf_require_column(cbf,"system"))
+            cbf_failnez (cbf_set_value(cbf,"orthogonal")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmapmask_axismat[0][0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmapmask_axismat[1][0]))
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmapmask_axismat[2][0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmapmask_axisvec[0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmapmask_axisvec[1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmapmask_axisvec[2])) 
+            
+            cbf_failnez (cbf_new_row(cbf))
+            
+            cbf_failnez (cbf_find_column(cbf,"id"))
+            cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Y")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"system"))
+            cbf_failnez (cbf_set_value(cbf,"orthogonal")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmapmask_axismat[0][1])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmapmask_axismat[1][1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmapmask_axismat[2][1])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmapmask_axisvec[0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmapmask_axisvec[1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmapmask_axisvec[2])) 
+            
+            cbf_failnez (cbf_new_row(cbf))
+            
+            cbf_failnez (cbf_find_column(cbf,"id"))
+            cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Z")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"system"))
+            cbf_failnez (cbf_set_value(cbf,"orthogonal")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmapmask_axismat[0][2])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmapmask_axismat[1][2]))
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",ocmapmask_axismat[2][2])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmapmask_axisvec[0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmapmask_axisvec[1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmapmask_axisvec[2])) 
+         	
+        }
+        
+        if (mapmask && mapmask->maptype == MAP_FRACTIONAL)  {
+            
+            cbf_failnez (cbf_new_row(cbf))
+            
+            cbf_failnez (cbf_require_column(cbf,"id"))
+            cbf_failnez (cbf_set_value(cbf,"MASK_CELL_X")) 
+            
+            cbf_failnez (cbf_require_column(cbf,"system"))
+            cbf_failnez (cbf_set_value(cbf,"fractional")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmapmask_axismat[0][0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmapmask_axismat[1][0]))
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmapmask_axismat[2][0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmapmask_axisvec[0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmapmask_axisvec[1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmapmask_axisvec[2])) 
+            
+            cbf_failnez (cbf_new_row(cbf))
+            
+            cbf_failnez (cbf_find_column(cbf,"id"))
+            cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Y")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"system"))
+            cbf_failnez (cbf_set_value(cbf,"fractional")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmapmask_axismat[0][1])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmapmask_axismat[1][1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmapmask_axismat[2][1])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmapmask_axisvec[0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmapmask_axisvec[1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmapmask_axisvec[2])) 
+            
+            cbf_failnez (cbf_new_row(cbf))
+            
+            cbf_failnez (cbf_find_column(cbf,"id"))
+            cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Z")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"system"))
+            cbf_failnez (cbf_set_value(cbf,"fractional")) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmapmask_axismat[0][2])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmapmask_axismat[1][2]))
+            
+            cbf_failnez (cbf_find_column(cbf,"vector[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-f",fcmapmask_axismat[2][2])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmapmask_axisvec[0])) 
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmapmask_axisvec[1]))
+            
+            cbf_failnez (cbf_find_column(cbf,"offset[3]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmapmask_axisvec[2])) 
+         	
+    }
+
+
+        
+    if ((map && map->maptype == MAP_FRACTIONAL) ||
+      (mapmask && mapmask->maptype == MAP_FRACTIONAL)) {
+      
+      cbf_failnez (cbf_new_category(cbf,"cell"))
+      
+      cbf_failnez (cbf_new_column(cbf,"length_a"))
+      cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.cella))
+      cbf_failnez (cbf_new_column(cbf,"length_b"))
+      cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.cellb))
+      cbf_failnez (cbf_new_column(cbf,"length_c"))
+      cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.cellc))
+
+      cbf_failnez (cbf_new_column(cbf,"angle_alpha"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.cellalpha*180./PI))
+      cbf_failnez (cbf_new_column(cbf,"angle_beta"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.cellbeta*180./PI))
+      cbf_failnez (cbf_new_column(cbf,"angle_gamma"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.cellgamma*180./PI))
+
+
+      cbf_failnez (cbf_new_category(cbf,"atom_sites"))
+      
+      cbf_failnez (cbf_new_column(cbf,"Cartn_transf_matrix[1][1]"))
+      cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.matf2o[0][0]))
+      cbf_failnez (cbf_new_column(cbf,"Cartn_transf_matrix[1][2]"))
+      cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.matf2o[0][1]))
+      cbf_failnez (cbf_new_column(cbf,"Cartn_transf_matrix[1][3]"))
+      cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.matf2o[0][2]))
+      cbf_failnez (cbf_new_column(cbf,"Cartn_transf_matrix[2][1]"))
+      cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.matf2o[1][0]))
+      cbf_failnez (cbf_new_column(cbf,"Cartn_transf_matrix[2][2]"))
+      cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.matf2o[1][1]))
+      cbf_failnez (cbf_new_column(cbf,"Cartn_transf_matrix[2][3]"))
+      cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.matf2o[1][2]))
+      cbf_failnez (cbf_new_column(cbf,"Cartn_transf_matrix[3][1]"))
+      cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.matf2o[2][0]))
+      cbf_failnez (cbf_new_column(cbf,"Cartn_transf_matrix[3][2]"))
+      cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.matf2o[2][1]))
+      cbf_failnez (cbf_new_column(cbf,"Cartn_transf_matrix[3][3]"))
+      cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.matf2o[2][2]))
+
+            cbf_failnez (cbf_new_column(cbf,"Cartn_transf_vector[1]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.vecf2o[0]))
+            cbf_failnez (cbf_new_column(cbf,"Cartn_transf_vector[2]"))
+            cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.vecf2o[1]))
+      cbf_failnez (cbf_new_column(cbf,"Cartn_transf_vector[3]"))
+      cbf_failnez (cbf_set_doublevalue(cbf,"%-g",Info.vecf2o[2]))
+
+    }
+
+    
+
+        
+        
     cbf_failnez (cbf_new_category(cbf,"array_data"))
     
     if (map)  {
     
       cbf_failnez (cbf_new_column(cbf,"array_id"))
-    
       cbf_failnez (cbf_set_value(cbf,map_structure_id))
 
       cbf_failnez (cbf_new_column(cbf,"binary_id"))
-
       cbf_failnez (cbf_set_integervalue(cbf,1))
 
       cbf_failnez (cbf_new_column(cbf,"data"))
       
       if (map->eltype == CBF_FLOAT) {
       	
-        cbf_failnez(cbf_set_realarray_wdims (cbf,CBF_PACKED_V2, 1, 
+                    int compression;
+                    compression = CBF_NONE;
+                    
+                    cbf_failnez(cbf_set_realarray_wdims (cbf,compression, 1, 
           (void *)(map->mapdata), 
           map->elsize,
           ((map->xhigh)-(map->xlow)+1)
@@ -493,18 +1669,20 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
       cbf_failnez (cbf_new_row(cbf))
     
       cbf_failnez (cbf_require_column(cbf,"array_id"))
-    
       cbf_failnez (cbf_set_value(cbf,mask_structure_id))
 
       cbf_failnez (cbf_require_column(cbf,"binary_id"))
-
       cbf_failnez (cbf_set_integervalue(cbf,2))
 
       cbf_failnez (cbf_require_column(cbf,"data"))
       
       if (map->eltype == CBF_FLOAT) {
       	
-        cbf_failnez(cbf_set_realarray_wdims (cbf,CBF_PACKED_V2, 1, 
+               int compression;
+               compression = CBF_NONE;
+
+                
+               cbf_failnez(cbf_set_realarray_wdims (cbf,compression, 1, 
           (void *)(mapmask->mapdata), 
           mapmask->elsize,
           ((mapmask->xhigh)-(mapmask->xlow)+1)
@@ -540,11 +1718,1252 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
   cbf_failnez (cbf_free_handle (cbf))
   
   return 0;
-
+    
 	
 }
 
-int LoadMapFile( FILE *fp, int info, int mapno ) {
+
+int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
+
+    cbf_handle cbf;
+
+    MapInfo mapinfo;
+    MapStruct * map;
+    MapStruct * mask;
+    char * map_structure_id;
+    char * mask_structure_id;
+    int map_bin_id, mask_bin_id;
+    char * enc_type;
+
+    void * mapdata;
+    void * maskdata;
+    
+    Long   map_xbase,       map_ybase,       map_zbase;
+    Long   mapmask_xbase,   mapmask_ybase,   mapmask_zbase;
+    double ocmap_xbase,     ocmap_ybase,     ocmap_zbase;
+    double ocmapmask_xbase, ocmapmask_ybase, ocmapmask_zbase;
+    double fcmap_xbase,     fcmap_ybase,     fcmap_zbase;
+    double fcmapmask_xbase, fcmapmask_ybase, fcmapmask_zbase;
+    int    map_dimension[3],           mask_dimension[3];
+    int    map_index[3],               mask_index[3];
+    double map_displacement[3],        map_displacement_increment[3];
+    double mask_displacement[3],       mask_displacement_increment[3];
+    double map_fract_displacement[3],  map_fract_displacement_increment[3];
+    double mask_fract_displacement[3], mask_fract_displacement_increment[3];
+    double map_axis_vector[3][3],      map_axis_offset[3][3];
+    double mask_axis_vector[3][3],     mask_axis_offset[3][3];
+    double map_axis_length[3],         mask_axis_length[3];
+    double cell_a, cell_b, cell_c, cell_alpha, cell_beta, cell_gamma;
+    double matf2o[3][3], vecf2o[3];
+    double tempmatin[3][3], tempmatout[3][3], tempvecin[3], tempvecout[3];
+    
+    char * map_axis_set_id[3];
+    char * mask_axis_set_id[3];
+    char * map_axis_system[3];
+    char * map_system;
+    char * mask_axis_system[3];
+    char * mask_system;
+    char * valtype;
+    int    map_dir[3], mask_dir[3]; /* +1 for incr, -1 for decr */
+    unsigned int  row, rows;
+
+    
+    int ii, jj;
+    int cell_found;
+    
+    if (!MapInfoPtr) InitialiseMaps();
+    if (MapSpacing <= 0) MapSpacing = 250L;
+    
+    cbf_failnez (cbf_make_handle (&cbf))
+    cbf_failnez (cbf_read_widefile(cbf, fp, MSG_DIGEST))
+    cbf_failnez (cbf_rewind_datablock(cbf))
+    
+    /* we have the first datablock, loop through until there are no more */
+    
+    do {
+      map_xbase       = map_ybase       = map_zbase       = 0;
+      mapmask_xbase   = mapmask_ybase   = mapmask_zbase   = 0;
+      cell_found = 0;
+      ocmap_xbase     = ocmap_ybase     = ocmap_zbase     = 0.;
+      ocmapmask_xbase = ocmapmask_ybase = ocmapmask_zbase = 0.;
+      fcmap_xbase     = fcmap_ybase     = fcmap_zbase     = 0.;
+      fcmapmask_xbase = fcmapmask_ybase = fcmapmask_zbase = 0.;
+      cell_a = cell_b = cell_c = cell_alpha = cell_beta = cell_gamma = 0.;
+      for (ii=0; ii<3; ii++) { 
+        map_dimension[ii]           = mask_dimension[ii]                    = 0;
+        map_index[ii]               = mask_index[ii]                        = 0;
+        map_axis_set_id[ii]         = mask_axis_set_id[ii]                  = NULL;
+        map_axis_system[ii]         = mask_axis_system[ii]                  = NULL;
+        map_dir[ii]                 = mask_dir[ii]                          = 0;
+        map_displacement[ii]        = map_displacement_increment[ii]        = 0.;
+        mask_displacement[ii]       = mask_displacement_increment[ii]       = 0.;
+        map_fract_displacement[ii]  = map_fract_displacement_increment[ii]  = 0.;
+        mask_fract_displacement[ii] = mask_fract_displacement_increment[ii] = 0.;
+        matf2o[ii][0] = matf2o[ii][1] = matf2o[ii][2] = vecf2o[ii] = 0.;
+        map_axis_vector[ii][0]  =  map_axis_vector[ii][1]  =  map_axis_vector[ii][2]   = 0;
+        map_axis_offset[ii][0]  =  map_axis_offset[ii][1]  =  map_axis_offset[ii][2]   = 0;
+        mask_axis_vector[ii][0] =  mask_axis_vector[ii][1] =  mask_axis_vector[ii][2]  = 0;
+        mask_axis_offset[ii][0] =  mask_axis_offset[ii][1] =  mask_axis_offset[ii][2]  = 0;
+        map_axis_length[ii]     =  mask_axis_length[ii]    =  1.;
+      }
+      matf2o[0][0] = matf2o[1][1] = matf2o[2][2] = 1.;
+      
+      map  = NULL;
+      mask = NULL;
+      map_system = NULL;
+      mask_system = NULL;
+
+      map_structure_id = mask_structure_id = NULL;
+      map_bin_id = mask_bin_id = -1;
+    
+      /* only recognize datablocks with map and map_segment categories */
+      if (cbf_find_category(cbf,"map")) continue;
+      if (cbf_find_column(cbf,"id")) continue;
+      if (cbf_find_category(cbf,"map_segment")) continue;
+      
+      if (!cbf_find_column(cbf,"array_id")) 
+        if (cbf_get_value(cbf,(const char **)&map_structure_id)
+        || (!cbf_get_typeofvalue(cbf,(const char **)&valtype) 
+           && !cbf_cistrcmp(valtype,"null"))) map_structure_id = NULL;
+      if (!cbf_find_column(cbf,"mask_array_id")) 
+        if (cbf_get_value(cbf,(const char **)&mask_structure_id)
+        || (!cbf_get_typeofvalue(cbf,(const char **)&valtype) 
+           && !cbf_cistrcmp(valtype,"null"))
+        || MapMaskPtr) mask_structure_id = NULL;
+      if (!cbf_find_column(cbf,"binary_id")) 
+        cbf_get_integervalue(cbf,&map_bin_id);
+      if (!cbf_find_column(cbf,"mask_binary_id")) 
+        cbf_get_integervalue(cbf,&mask_bin_id);
+      
+      if (map_structure_id && map_structure_id[0]) {
+      	map = _fmalloc(sizeof(MapStruct));
+      }
+ 
+      if (mask_structure_id && mask_structure_id[0]) {
+      	mask = _fmalloc(sizeof(MapStruct));
+      }
+     
+      if (cbf_find_category(cbf,"array_structure")) continue;
+      cbf_failnez(cbf_rewind_row(cbf))
+      if (map 
+        && !cbf_find_column(cbf,"id")
+        && !cbf_find_row(cbf,map_structure_id))  {
+        if (!cbf_find_column(cbf,"encoding_type") 
+          && !cbf_get_value(cbf,(const char **)&enc_type)
+          && enc_type ) {
+          if (!cbf_cistrcmp(enc_type,"signed 8-bit integer")) {
+            map->elsize = 1;
+            map->eltype = CBF_INTEGER;
+          } else if (!cbf_cistrcmp(enc_type,"signed 16-bit integer")) {
+            map->elsize = 2;
+            map->eltype = CBF_INTEGER;
+          } else if (!cbf_cistrcmp(enc_type,"signed 32-bit integer")) {
+            map->elsize = 4;
+            map->eltype = CBF_INTEGER;
+          } else if (!cbf_cistrcmp(enc_type,"signed 64-bit integer")) {
+            map->elsize = 8;
+            map->eltype = CBF_INTEGER;
+          } else if (!cbf_cistrcmp(enc_type,"signed 32-bit real IEEE")) {
+            map->elsize = 4;
+            map->eltype = CBF_FLOAT;
+          } else if (!cbf_cistrcmp(enc_type,"signed 64-bit real IEEE")) {
+            map->elsize = 8;
+            map->eltype = CBF_FLOAT;
+          } else return CBF_FORMAT;
+        }
+      }
+      cbf_failnez(cbf_rewind_row(cbf))
+      if (mask 
+        && !cbf_find_column(cbf,"id")
+        && !cbf_find_row(cbf,mask_structure_id))  {
+        if (!cbf_find_column(cbf,"encoding_type") 
+          && !cbf_get_value(cbf,(const char **)&enc_type)
+          && enc_type ) {
+          if (!cbf_cistrcmp(enc_type,"signed 8-bit integer")) {
+            mask->elsize = 1;
+            mask->eltype = CBF_INTEGER;
+          } else if (!cbf_cistrcmp(enc_type,"signed 16-bit integer")) {
+            mask->elsize = 2;
+            mask->eltype = CBF_INTEGER;
+          } else if (!cbf_cistrcmp(enc_type,"signed 32-bit integer")) {
+            mask->elsize = 4;
+            mask->eltype = CBF_INTEGER;
+          } else if (!cbf_cistrcmp(enc_type,"signed 64-bit integer")) {
+            mask->elsize = 8;
+            mask->eltype = CBF_INTEGER;
+          } else if (!cbf_cistrcmp(enc_type,"signed 32-bit real IEEE")) {
+            mask->elsize = 4;
+            mask->eltype = CBF_FLOAT;
+          } else if (!cbf_cistrcmp(enc_type,"signed 64-bit real IEEE")) {
+            mask->elsize = 8;
+            mask->eltype = CBF_FLOAT;
+          } else return CBF_FORMAT;
+        }
+      }
+      
+      cbf_onfailnez(cbf_find_category(cbf,"array_structure_list"),
+        {if (map) _ffree(map); if (mask) _ffree(mask);})
+      cbf_onfailnez(cbf_rewind_row(cbf),
+        {if (map) _ffree(map); if (mask) _ffree(mask);})
+      cbf_onfailnez(cbf_count_rows(cbf, &rows),
+        {if (map) _ffree(map); if (mask) _ffree(mask);})
+      
+      for (row=0; row < rows; row++) {
+        char * tempval;
+        int precedence;
+      
+
+        cbf_onfailnez(cbf_find_column(cbf,"array_id"),
+        {if (map) _ffree(map); if (mask) _ffree(mask);})
+        cbf_onfailnez(cbf_select_row(cbf, row),
+        {if (map) _ffree(map); if (mask) _ffree(mask);})
+        cbf_onfailnez(cbf_get_value(cbf,(const char**)&tempval),
+        {if (map) _ffree(map); if (mask) _ffree(mask);})
+        if (map && !cbf_cistrcmp(tempval,map_structure_id)) {
+          if (!cbf_find_column(cbf,"precedence") 
+            && !cbf_get_integervalue(cbf,&precedence)) {
+            if (precedence < 1 || precedence > 3) { if (map) _ffree(map); 
+              if (mask) _ffree(mask); return CBF_FORMAT;
+            }
+            if (cbf_find_column(cbf,"index") 
+              || cbf_get_integervalue(cbf,&(map_index[precedence-1]))) {
+              if (map) _ffree(map); 
+              if (mask) _ffree(mask); return CBF_FORMAT;
+            }
+            if (cbf_find_column(cbf,"dimension") 
+              || cbf_get_integervalue(cbf,&(map_dimension[precedence-1]))) {
+              if (map) _ffree(map); 
+              if (mask) _ffree(mask); return CBF_FORMAT;
+            }
+            if (cbf_find_column(cbf,"direction") 
+              || cbf_get_value(cbf,(const char **)&tempval)) {
+              if (map) _ffree(map); 
+              if (mask) _ffree(mask); return CBF_FORMAT;
+            }
+            map_dir[precedence-1] = 0;
+            if (!cbf_cistrcmp("increasing",tempval)) map_dir[precedence-1] = 1;
+            if (!cbf_cistrcmp("decreasing",tempval)) map_dir[precedence-1] = -1;
+
+          	if (cbf_find_column(cbf,"axis_set_id") 
+              || cbf_get_value(cbf,(const char **)&map_axis_set_id[precedence-1])
+              || !map_axis_set_id[precedence-1] 
+              || !map_axis_set_id[precedence-1][0]) {
+              if (map) _ffree(map); 
+              if (mask) _ffree(mask); return CBF_FORMAT;
+            }
+
+          }
+        	
+        }
+        if (mask && !cbf_cistrcmp(tempval,mask_structure_id)) {
+          if (!cbf_find_column(cbf,"precedence") 
+            && !cbf_get_integervalue(cbf,&precedence)) {
+            if (precedence < 1 || precedence > 3) { if (map) _ffree(map); 
+              if (mask) _ffree(mask); return CBF_FORMAT;
+            }
+            if (cbf_find_column(cbf,"index") 
+              || cbf_get_integervalue(cbf,&(mask_index[precedence-1]))) {
+              if (map) _ffree(map); 
+              if (mask) _ffree(mask); return CBF_FORMAT;
+            }
+            if (cbf_find_column(cbf,"dimension") 
+              || cbf_get_integervalue(cbf,&(mask_dimension[precedence-1]))) {
+              if (map) _ffree(map); 
+              if (mask) _ffree(mask); return CBF_FORMAT;
+            }
+            if (cbf_find_column(cbf,"direction") 
+              || cbf_get_value(cbf,(const char **)&tempval)) {
+              if (map) _ffree(map); 
+              if (mask) _ffree(mask); return CBF_FORMAT;
+            }
+            mask_dir[precedence-1] = 0;
+            if (!cbf_cistrcmp("increasing",tempval)) mask_dir[precedence-1] = 1;
+            if (!cbf_cistrcmp("decreasing",tempval)) mask_dir[precedence-1] = -1;
+          	if (cbf_find_column(cbf,"axis_set_id") 
+              || cbf_get_value(cbf,(const char **)&map_axis_set_id[precedence-1])
+              || !mask_axis_set_id[precedence-1] 
+              || !mask_axis_set_id[precedence-1][0]) {
+              if (map) _ffree(map); 
+              if (mask) _ffree(mask); return CBF_FORMAT;
+            }
+          	
+          }
+        	
+        }
+        
+      	
+      }
+      
+      cbf_onfailnez(cbf_find_category(cbf,"array_structure_list_axis"),
+        {if (map) _ffree(map); if (mask) _ffree(mask);})
+      cbf_onfailnez(cbf_rewind_row(cbf),
+        {if (map) _ffree(map); if (mask) _ffree(mask);})
+      cbf_onfailnez(cbf_count_rows(cbf, &rows),
+        {if (map) _ffree(map); if (mask) _ffree(mask);})
+      
+      for (row=0; row < rows; row++) {
+        char * tempval;
+        int precedence;
+
+        if (cbf_find_column(cbf,"axis_id")) {
+          if (map) _ffree(map); if (mask) _ffree(mask); return CBF_FORMAT;
+        }
+        cbf_onfailnez(cbf_select_row(cbf, row),
+        {if (map) _ffree(map); if (mask) _ffree(mask);})
+        
+        if (!cbf_get_value(cbf,(const char**)&tempval) && tempval && tempval[0]) {
+          if (map) for (precedence=1; precedence<4; precedence++) {
+            if (map_axis_set_id[precedence-1]
+              &&!cbf_cistrcmp(tempval,map_axis_set_id[precedence-1])) {
+              if (!cbf_find_column(cbf,"displacement") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&map_displacement[precedence-1]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"displacement_increment") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&map_displacement_increment[precedence-1]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"fract_displacement") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&map_fract_displacement[precedence-1]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"fract_displacement_increment") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&map_fract_displacement_increment[precedence-1]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              break;	
+            }
+          	
+          }
+          if (mask) for (precedence=1; precedence<4; precedence++) {
+            if (mask_axis_set_id[precedence-1]
+              &&!cbf_cistrcmp(tempval,mask_axis_set_id[precedence-1])) {
+              if (!cbf_find_column(cbf,"displacement") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&mask_displacement[precedence-1]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"displacement_increment") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&mask_displacement_increment[precedence-1]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"fract_displacement") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&mask_fract_displacement[precedence-1]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"fract_displacement_increment") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&mask_fract_displacement_increment[precedence-1]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              break;	
+            }
+          	
+          }
+        	
+        }
+      	
+      }
+      
+      cbf_onfailnez(cbf_find_category(cbf,"axis"),
+        {if (map) _ffree(map); if (mask) _ffree(mask);})
+      cbf_onfailnez(cbf_rewind_row(cbf),
+        {if (map) _ffree(map); if (mask) _ffree(mask);})
+      cbf_onfailnez(cbf_count_rows(cbf, &rows),
+        {if (map) _ffree(map); if (mask) _ffree(mask);})
+      
+      for (row=0; row < rows; row++) {
+        char * tempval;
+        int precedence;
+
+        
+        if (cbf_find_column(cbf,"id")) {
+          if (map) _ffree(map); if (mask) _ffree(mask); return CBF_FORMAT;
+        }
+        cbf_onfailnez(cbf_select_row(cbf, row),
+        {if (map) _ffree(map); if (mask) _ffree(mask);})
+
+        if (!cbf_get_value(cbf,(const char**)&tempval) && tempval && tempval[0]) {
+          if (map) for (precedence=1; precedence<4; precedence++) {
+            if (map_axis_set_id[precedence-1]
+              &&!cbf_cistrcmp(tempval,map_axis_set_id[precedence-1])) {
+              map_axis_system[precedence-1] = NULL;
+              if (!cbf_find_column(cbf,"system") ) {
+                cbf_onfailnez(cbf_get_value(cbf,(const char **)&map_axis_system[precedence-1]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+                if (!map_system) map_system = map_axis_system[precedence-1];
+                else {
+                  if (cbf_cistrcmp(map_system,map_axis_system[precedence-1]))
+                    {if (map) _ffree(map); if (mask) _ffree(mask); return CBF_FORMAT;}
+                }
+              }
+              if (!cbf_find_column(cbf,"vector[1]") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&map_axis_vector[precedence-1][0]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"vector[2]") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&map_axis_vector[precedence-1][1]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"vector[3]") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&map_axis_vector[precedence-1][2]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"offset[1]") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&map_axis_offset[precedence-1][0]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"offset[2]") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&map_axis_offset[precedence-1][1]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"offset[3]") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&map_axis_offset[precedence-1][2]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              break;
+            }
+          }
+          if (mask) for (precedence=1; precedence<4; precedence++) {
+            if (mask_axis_set_id[precedence-1]
+              &&!cbf_cistrcmp(tempval,mask_axis_set_id[precedence-1])) {
+              mask_axis_system[precedence-1] = NULL;
+              if (!cbf_find_column(cbf,"system") ) {
+                cbf_onfailnez(cbf_get_value(cbf,(const char **)&mask_axis_system[precedence-1]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+                if (!mask_system) mask_system = mask_axis_system[precedence-1];
+                else {
+                  if (cbf_cistrcmp(mask_system,mask_axis_system[precedence-1]))
+                    {if (map) _ffree(map); if (mask) _ffree(mask); return CBF_FORMAT;}
+                }
+
+              }
+              if (!cbf_find_column(cbf,"vector[1]") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&mask_axis_vector[precedence-1][0]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"vector[2]") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&mask_axis_vector[precedence-1][1]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"vector[3]") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&mask_axis_vector[precedence-1][2]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"offset[1]") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&mask_axis_offset[precedence-1][0]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"offset[2]") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&mask_axis_offset[precedence-1][1]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              if (!cbf_find_column(cbf,"offset[3]") ) {
+                cbf_onfailnez(cbf_get_doublevalue(cbf,&mask_axis_offset[precedence-1][2]),
+                  {if (map) _ffree(map); if (mask) _ffree(mask);})
+              }
+              break;
+            }
+          }
+        }
+      }
+
+      if (map) {
+        if (!map_system) {if (map) _ffree(map); if (mask) _ffree(mask); return CBF_FORMAT;}
+        if (!cbf_cistrcmp(map_system,"fractional")) {
+          map->maptype = MAP_FRACTIONAL;
+          if (map_fract_displacement_increment[0] != 0.) 
+            map->adiv = rint(1./fabs(map_fract_displacement_increment[0]));
+          if (map_fract_displacement_increment[1] != 0.) 
+            map->bdiv = rint(1./fabs(map_fract_displacement_increment[1]));
+          if (map_fract_displacement_increment[2] != 0.) 
+            map->cdiv = rint(1./fabs(map_fract_displacement_increment[2]));
+        } else if (!cbf_cistrcmp(map_system,"orthogonal")) {
+          map->adiv = map->bdiv = map->cdiv = 1;
+          map->maptype = MAP_ORTHOGONAL;        	
+        }   	
+      }
+      
+      if (mask) {
+        if (!mask_system) {if (map) _ffree(map); if (mask) _ffree(mask); return CBF_FORMAT;}
+        if (!cbf_cistrcmp(mask_system,"fractional")) {
+          mask->maptype = MAP_FRACTIONAL;
+          if (map_fract_displacement_increment[0] != 0.) 
+            mask->adiv = rint(1./fabs(map_fract_displacement_increment[0]));
+          if (map_fract_displacement_increment[1] != 0.) 
+            mask->bdiv = rint(1./fabs(map_fract_displacement_increment[1]));
+          if (map_fract_displacement_increment[2] != 0.) 
+            mask->cdiv = rint(1./fabs(map_fract_displacement_increment[2]));
+        } else if (!cbf_cistrcmp(mask_system,"orthogonal"))
+        {
+          mask->adiv = mask->bdiv = mask->cdiv = 1;
+          mask->maptype = MAP_ORTHOGONAL;        	
+        }      	
+      }
+      
+      
+      
+      if (!cbf_find_category(cbf,"cell")) {
+        cell_found = 1;
+        cbf_onfailnez(cbf_find_column(cbf,"length_a"),
+          {if (map) _ffree(map); if (mask) _ffree(mask);})
+        cbf_onfailnez(cbf_get_doublevalue(cbf,&cell_a),
+          {if (map) _ffree(map); if (mask) _ffree(mask);})
+        cbf_onfailnez(cbf_find_column(cbf,"length_b"),
+          {if (map) _ffree(map); if (mask) _ffree(mask);})
+        cbf_onfailnez(cbf_get_doublevalue(cbf,&cell_b),
+          {if (map) _ffree(map); if (mask) _ffree(mask);})
+        cbf_onfailnez(cbf_find_column(cbf,"length_c"),
+          {if (map) _ffree(map); if (mask) _ffree(mask);})
+        cbf_onfailnez(cbf_get_doublevalue(cbf,&cell_c),
+          {if (map) _ffree(map); if (mask) _ffree(mask);})
+        cbf_onfailnez(cbf_find_column(cbf,"angle_alpha"),
+          {if (map) _ffree(map); if (mask) _ffree(mask);})
+        cbf_onfailnez(cbf_get_doublevalue(cbf,&cell_alpha),
+          {if (map) _ffree(map); if (mask) _ffree(mask);})
+        cbf_onfailnez(cbf_find_column(cbf,"angle_beta"),
+          {if (map) _ffree(map); if (mask) _ffree(mask);})
+        cbf_onfailnez(cbf_get_doublevalue(cbf,&cell_beta),
+          {if (map) _ffree(map); if (mask) _ffree(mask);})
+        cbf_onfailnez(cbf_find_column(cbf,"angle_gamma"),
+          {if (map) _ffree(map); if (mask) _ffree(mask);})
+        cbf_onfailnez(cbf_get_doublevalue(cbf,&cell_gamma),
+          {if (map) _ffree(map); if (mask) _ffree(mask);})
+      }
+     	  
+      if (!cbf_find_category(cbf,"atom_sites")) {
+        if (!cbf_find_column(cbf,"Cartn_transf_matrix[1][1]")) {
+          cbf_get_doublevalue(cbf,&matf2o[0][0]);
+        }
+        if (!cbf_find_column(cbf,"Cartn_transf_matrix[1][2]")) {
+          cbf_get_doublevalue(cbf,&matf2o[0][1]);
+        }
+        if (!cbf_find_column(cbf,"Cartn_transf_matrix[1][3]")) {
+          cbf_get_doublevalue(cbf,&matf2o[0][2]);
+        }
+        if (!cbf_find_column(cbf,"Cartn_transf_matrix[2][1]")) {
+          cbf_get_doublevalue(cbf,&matf2o[0][0]);
+        }
+        if (!cbf_find_column(cbf,"Cartn_transf_matrix[2][2]")) {
+          cbf_get_doublevalue(cbf,&matf2o[1][1]);
+        }
+        if (!cbf_find_column(cbf,"Cartn_transf_matrix[2][3]")) {
+          cbf_get_doublevalue(cbf,&matf2o[1][2]);
+        }
+        if (!cbf_find_column(cbf,"Cartn_transf_matrix[3][1]")) {
+          cbf_get_doublevalue(cbf,&matf2o[2][0]);
+        }
+        if (!cbf_find_column(cbf,"Cartn_transf_matrix[3][2]")) {
+          cbf_get_doublevalue(cbf,&matf2o[2][1]);
+        }
+        if (!cbf_find_column(cbf,"Cartn_transf_matrix[3][3]")) {
+          cbf_get_doublevalue(cbf,&matf2o[2][2]);
+        }
+        if (!cbf_find_column(cbf,"Cartn_transf_vector[1]")) {
+          cbf_get_doublevalue(cbf,&vecf2o[0]);
+        }
+        if (!cbf_find_column(cbf,"Cartn_transf_vector[2]")) {
+          cbf_get_doublevalue(cbf,&vecf2o[1]);
+        }
+        if (!cbf_find_column(cbf,"Cartn_transf_vector[3]")) {
+          cbf_get_doublevalue(cbf,&vecf2o[2]);
+        }
+      } else if (cell_found) {
+      
+        static double pi = PI;
+        double d1, d2, d3, d4;
+        double torad;
+        
+        torad = pi / 180.;
+        
+        d1 = cos(torad*cell_alpha);
+        d2 = cos(torad*cell_beta);
+        d3 = cos(torad*cell_gamma);
+        if ( fabs (d4 = sin(torad * cell_gamma)) <  1.e-6)
+          {if (map) _ffree(map); if (mask) _ffree(mask); return CBF_FORMAT;}
+        matf2o[0][0] = cell_a;
+        matf2o[0][1] = cell_b*d3;
+        matf2o[1][1] = cell_b*d4;
+        matf2o[0][2] = cell_c*d2;
+        matf2o[1][2] = cell_c*((d1 - d2*d3)/d4);
+        d1 = cell_c;
+        d2 = matf2o[0][2];
+        d3 = matf2o[1][2];
+        matf2o[2][2] = sqrt(fabs(d1*d1 - d2*d2 - d3*d3));
+        if ( fabs(det(matf2o)) < 
+          (fabs(cell_a*cell_b*cell_c) + 1.)*1.e-9 )
+          {if (map) _ffree(map); if (mask) _ffree(mask); return CBF_FORMAT;}     	
+      } else {
+      	for (ii=0; ii < 3; ii++) {
+      	  vecf2o[ii] = Info.vecf2o[ii];
+      	  for (jj=0; jj < 3; jj++)
+      	    matf2o[ii][jj] = Info.matf2o[ii][jj];
+      	}
+      }
+      
+      /* Now we have the coordinate system for the map and the mask organized
+         byt axis precedence.  Before we use them we apply, we flip any
+         axes that are presented as decreasing, and then we flip any axes
+         for which the increment is negative */
+         
+      if (map) {
+        for (ii=0; ii<3; ii++) {
+          if (map_dir[ii] < 0) {
+            map_displacement[ii] += (map_dimension[ii]-1)*map_displacement_increment[ii];
+            map_fract_displacement[ii] += (map_dimension[ii]-1)*map_fract_displacement_increment[ii];
+            map_dir[ii] = -map_dir[ii];
+            map_displacement_increment[ii] = -map_displacement_increment[ii];
+            map_fract_displacement_increment[ii] = -map_fract_displacement_increment[ii];
+          }
+          if (map_displacement_increment[ii] < 0.||map_fract_displacement_increment[ii] < 0.) {
+            for (jj=0; jj<3; ii++) {
+              map_axis_vector[ii][jj] = -map_axis_vector[ii][jj];
+            }
+          	map_displacement_increment[ii] = -map_displacement_increment[ii];
+          	map_fract_displacement_increment[ii] = -map_fract_displacement_increment[ii];
+          }
+        }
+      }
+      if (mask) {
+        for (ii=0; ii<3; ii++) {
+          if (mask_dir[ii] < 0) {
+            mask_displacement[ii] += (mask_dimension[ii]-1)*mask_displacement_increment[ii];
+            mask_fract_displacement[ii] += (mask_dimension[ii]-1)*mask_fract_displacement_increment[ii];
+            mask_dir[ii] = -mask_dir[ii];
+            mask_displacement_increment[ii] = -mask_displacement_increment[ii];
+            mask_fract_displacement_increment[ii] = -mask_fract_displacement_increment[ii];
+          }
+          if (mask_displacement_increment[ii] < 0.||mask_fract_displacement_increment[ii] < 0.) {
+            for (jj=0; jj<3; ii++) {
+              mask_axis_vector[ii][jj] = -mask_axis_vector[ii][jj];
+            }
+          	mask_displacement_increment[ii] = -mask_displacement_increment[ii];
+          	mask_fract_displacement_increment[ii] = -mask_fract_displacement_increment[ii];
+          }
+        }
+      }
+      
+      
+      /* Get the intervals along each axis *
+          For orthogonal coordinates it is just the displacement along the axis
+          For fractional coordinates we have to scale by the axis length
+          */
+      
+      if (map) {
+        if (map->maptype == MAP_ORTHOGONAL) {
+          map->xint = (long)rint(fabs(.25e10*map_displacement_increment[0]));
+          map->yint = (long)rint(fabs(.25e10*map_displacement_increment[1]));
+          map->zint = (long)rint(fabs(.25e10*map_displacement_increment[2]));
+          map->xlow = (long)rint(map_displacement[0]/map_displacement_increment[0]);
+          map->ylow = (long)rint(map_displacement[1]/map_displacement_increment[1]);
+          map->zlow = (long)rint(map_displacement[2]/map_displacement_increment[2]);
+        } else {
+          double tempvec[3];
+          for (ii=0; ii< 3; ii++) {
+            for (jj=0; jj<3; jj++) {
+              tempvec[jj]=matf2o[jj][0]*map_axis_vector[ii][0]
+                + matf2o[jj][1]*map_axis_vector[ii][1]
+                + matf2o[jj][2]*map_axis_vector[ii][2];
+            }
+            map_axis_length[ii]=sqrt(tempvec[0]*tempvec[0]+tempvec[1]*tempvec[1]+tempvec[2]*tempvec[2]);
+          }
+          map->xint = (long)rint(fabs(250.*map_axis_length[0]*map_fract_displacement_increment[0]));
+          map->yint = (long)rint(fabs(250.*map_axis_length[1]*map_fract_displacement_increment[1]));
+          map->zint = (long)rint(fabs(250.*map_axis_length[2]*map_fract_displacement_increment[2]));
+          map->xlow = (long)rint(map_fract_displacement[0]/map_fract_displacement_increment[0]);
+          map->ylow = (long)rint(map_fract_displacement[1]/map_fract_displacement_increment[1]);
+          map->zlow = (long)rint(map_fract_displacement[2]/map_fract_displacement_increment[2]);
+        }
+        map->xhigh = map->xlow + map_dimension[0]-1;
+        map->yhigh = map->ylow + map_dimension[1]-1;
+        map->zhigh = map->zlow + map_dimension[2]-1;
+      }
+      if (mask) {
+        if (mask->maptype == MAP_ORTHOGONAL) {
+          mask->xint = (long)rint(fabs(.25e10*mask_displacement_increment[0]));
+          mask->yint = (long)rint(fabs(.25e10*mask_displacement_increment[1]));
+          mask->zint = (long)rint(fabs(.25e10*mask_displacement_increment[2]));
+          mask->xlow = (long)rint(mask_displacement[0]/mask_displacement_increment[0]);
+          mask->ylow = (long)rint(mask_displacement[1]/mask_displacement_increment[1]);
+          mask->zlow = (long)rint(mask_displacement[2]/mask_displacement_increment[2]);
+        } else {
+          double tempvec[3];
+          for (ii=0; ii< 3; ii++) {
+            for (jj=0; jj<3; jj++) {
+              tempvec[jj]=matf2o[jj][0]*mask_axis_vector[ii][0]
+                + matf2o[jj][1]*mask_axis_vector[ii][1]
+                + matf2o[jj][2]*mask_axis_vector[ii][2];
+            }
+            mask_axis_length[ii]=sqrt(tempvec[0]*tempvec[0]+tempvec[1]*tempvec[1]+tempvec[2]*tempvec[2]);
+          }
+          mask->xint = (long)rint(fabs(250.*mask_axis_length[0]*mask_fract_displacement_increment[0]));
+          mask->yint = (long)rint(fabs(250.*mask_axis_length[1]*mask_fract_displacement_increment[1]));
+          mask->zint = (long)rint(fabs(250.*mask_axis_length[2]*mask_fract_displacement_increment[2]));
+          mask->xlow = (long)rint(mask_fract_displacement[0]/mask_fract_displacement_increment[0]);
+          mask->ylow = (long)rint(mask_fract_displacement[1]/mask_fract_displacement_increment[1]);
+          mask->zlow = (long)rint(mask_fract_displacement[2]/mask_fract_displacement_increment[2]);
+        }
+        mask->xhigh = mask->xlow + mask_dimension[0]-1;
+        mask->yhigh = mask->ylow + mask_dimension[1]-1;
+        mask->zhigh = mask->zlow + mask_dimension[2]-1;
+      }
+      
+      /* Convert the map grid vectors to orthogonal vectors to make a transform matrix
+      
+         For orthogonal coordinates, the matrix columns are just the axes.
+         
+         For fractional coordinates, the matrix columns are the transformed axes.
+         
+         In both cases, we need to do a post-transform for the negation of Z
+         and the possible negation of Y.
+         
+      
+      
+       */
+      
+
+      if (map) {
+        if (map->maptype == MAP_ORTHOGONAL) {
+          for (ii=0; ii < 3; ii++)  {
+            map->mapxlate[ii] = 0.;
+          	for (jj=0; jj < 3; jj++) {
+          	  MapM2R(map,ii,jj) = map_axis_vector[jj][ii];
+          	  map->mapxlate[jj] += map_axis_offset[ii][jj];
+          	}
+          }
+        	
+        } else  if (map->maptype == MAP_FRACTIONAL) {
+          for (ii=0; ii < 3; ii++)  {
+            map->mapxlate[ii] = 0.;
+          	for (jj=0; jj < 3; jj++) {
+          	  MapM2R(map,ii,jj) = (matf2o[jj][0]*map_axis_vector[ii][0]
+          	                    + matf2o[jj][1]*map_axis_vector[ii][1]
+          	                    + matf2o[jj][2]*map_axis_vector[ii][2])/
+          	                    map_axis_length[ii];
+          	                   
+          	  map->mapxlate[jj] += matf2o[jj][0]*map_axis_offset[ii][0]
+          	                    + matf2o[jj][1]*map_axis_offset[ii][1]
+          	                    + matf2o[jj][2]*map_axis_offset[ii][2];
+          	}
+          }
+          
+        	
+        } else {if (map) _ffree(map); if (mask) _ffree(mask); return CBF_FORMAT;}
+      	map->mapxlate[0] = 250.*(map->mapxlate[0])-OrigCX;
+#ifdef INVERT
+        map->mapxlate[1] = -(250.*map->mapxlate[1])-OrigCY;
+#else
+        map->mapxlate[1] = 250.*map->mapxlate[1]-OrigCY;
+#endif
+        map->mapxlate[2] = -(250.*map->mapxlate[2])-OrigCZ;
+        
+        for (jj=0; jj < 3; jj++) {
+#ifdef INVERT
+          MapM2R(map,1,jj) = -MapM2R(map,1,jj);
+#endif
+          MapM2R(map,2,jj) = -MapM2R(map,2,jj);
+        }
+        
+        for (ii=0; ii < 3; ii++) {
+          tempvecin[ii] = map->mapxlate[ii];
+          for (jj=0; jj < 3; jj++) {
+            tempmatin[ii][jj] = MapM2R(map,ii,jj);
+          }
+        }
+        invxfrm (tempmatin,tempvecin, tempmatout, tempvecout);
+        for (ii=0; ii < 3; ii++) {
+          for (jj=0; jj < 3; jj++) {
+            MapR2M(map,ii,jj) = tempmatout[ii][jj];
+          }
+        }
+        
+        
+      }
+
+
+      if (mask) {
+        if (mask->maptype == MAP_ORTHOGONAL) {
+          for (ii=0; ii < 3; ii++)  {
+            mask->mapxlate[ii] = 0.;
+          	for (jj=0; jj < 3; jj++) {
+          	  MapM2R(mask,ii,jj) = mask_axis_vector[jj][ii];
+          	  mask->mapxlate[jj] += mask_axis_offset[ii][jj];
+          	}
+          	
+          }
+        	
+        } else  if (mask->maptype == MAP_FRACTIONAL) {
+          for (ii=0; ii < 3; ii++)  {
+            map->mapxlate[ii] = 0.;
+          	for (jj=0; jj < 3; jj++) {
+          	  MapM2R(mask,ii,jj) = (matf2o[jj][0]*mask_axis_vector[ii][0]
+          	                    + matf2o[jj][1]*mask_axis_vector[ii][1]
+          	                    + matf2o[jj][2]*mask_axis_vector[ii][2])/
+          	                    mask_axis_length[ii];
+          	  mask->mapxlate[jj] += matf2o[jj][0]*mask_axis_offset[ii][0]
+          	                    + matf2o[jj][1]*mask_axis_offset[ii][1]
+          	                    + matf2o[jj][2]*mask_axis_offset[ii][2];
+          	}
+          	
+          }
+          
+        	
+        } else {if (map) _ffree(map); if (mask) _ffree(mask); return CBF_FORMAT;}
+
+      	mask->mapxlate[0] = 250.*(mask->mapxlate[0])-OrigCX;
+#ifdef INVERT
+        mask->mapxlate[1] = -(250.*mask->mapxlate[1])-OrigCY;
+#else
+        mask->mapxlate[1] = 250.*mask->mapxlate[1]-OrigCY;
+#endif
+        mask->mapxlate[2] = -(250.*mask->mapxlate[2])-OrigCZ;
+        
+        for (jj=0; jj < 3; jj++) {
+#ifdef INVERT
+          MapM2R(mask,1,jj) = -MapM2R(mask,1,jj);
+#endif
+          MapM2R(mask,2,jj) = -MapM2R(mask,2,jj);
+        }
+        for (ii=0; ii < 3; ii++) {
+          tempvecin[ii] = mask->mapxlate[ii];
+          for (jj=0; jj < 3; jj++) {
+            tempmatin[ii][jj] = MapM2R(mask,ii,jj);
+          }
+        }
+        invxfrm (tempmatin,tempvecin, tempmatout, tempvecout);
+        for (ii=0; ii < 3; ii++) {
+          for (jj=0; jj < 3; jj++) {
+            MapR2M(mask,ii,jj) = tempmatout[ii][jj];
+          }
+        }
+      	
+      }
+
+      cbf_onfailnez(cbf_find_category(cbf,"array_data"),
+        {if (map) _ffree(map); if (mask) _ffree(mask);})
+
+    
+      if (map) {
+        int binary_id, elsigned, elunsigned;
+        size_t elements,elements_read, elsize;
+        int minelement, maxelement;
+        unsigned int cifcompression;
+        int realarray;
+        const char *byteorder;
+        size_t dim1, dim2, dim3, padding;
+
+      
+        cbf_onfailnez(cbf_find_column(cbf,"array_id"),
+        {if (map) _ffree(map); if (mask) _ffree(mask);}) 
+        cbf_onfailnez(cbf_rewind_row(cbf),
+        {if (map) _ffree(map); if (mask) _ffree(mask);}) 
+        while (!cbf_find_nextrow(cbf,map_structure_id)) {
+          cbf_onfailnez(cbf_find_column(cbf,"binary_id"),
+          {if (map) _ffree(map); if (mask) _ffree(mask);}) 
+          if (!cbf_get_integervalue(cbf,&ii)&&ii==map_bin_id) {
+            cbf_onfailnez(cbf_find_column(cbf,"data"),
+            {if (map) _ffree(map); if (mask) _ffree(mask);})
+            cbf_onfailnez(cbf_get_arrayparameters_wdims(
+              cbf, &cifcompression,
+              &binary_id, &elsize, &elsigned, &elunsigned,
+              &elements, &minelement, &maxelement, &realarray,
+              &byteorder, &dim1, &dim2, &dim3, &padding),
+              {if (map) _ffree(map); if (mask) _ffree(mask);})
+            if (elsize != map->elsize
+              || dim1 != map_dimension[0]
+              || dim2 != map_dimension[1]
+              || dim3 != map_dimension[2]
+              || (realarray&&map->eltype!=CBF_FLOAT)
+              || dim1*dim2*dim3 <= 0 
+              || dim1*dim2*dim3 != elements
+              || binary_id != map_bin_id)
+              {if (map) _ffree(map); if (mask) _ffree(mask);}
+            cbf_onfailnez(cbf_alloc((void **)&mapdata, NULL, (map)->elsize, 
+            map_dimension[0]*map_dimension[1]*map_dimension[2]),
+            {if (map) _ffree(map); if (mask) _ffree(mask);})
+            (map)->mapdata = (void *)mapdata;
+            if (!realarray)  {
+              cbf_onfailnez (cbf_get_integerarray(
+                cbf, &binary_id, (map)->mapdata, elsize, elsigned,
+                elements, &elements_read),
+                {if (map) { _ffree(map->mapdata); _ffree(map);} if (mask) _ffree(mask);})
+              if (elsize==sizeof(signed char)) {
+                double datamin, datamax, datasum, datasqsum;
+                register double data;
+                datamax = datamin = datasum = (double)((signed char *)(map->mapdata))[0];
+                datasqsum = datasum*datasum;
+                for (ii=1; ii< elements; ii++) {
+                  data = (double) (((signed char *)(map->mapdata))[ii]);
+                  datasum += data;
+                  datasqsum += data*data;
+                  if (data > datamax) datamax = data;
+                  if (data < datamin) datamin = data;
+                }
+                datasqsum /= (double)elements;
+                map->mapdatamin = datamin;
+                map->mapdatamax = datamax;
+                map->mapdatamean = datasum/(double)elements;
+                map->mapdataesd= sqrt(datasqsum/(double)elements-
+                  map->mapdatamean*map->mapdatamean);
+              } else if (elsize==sizeof(short)) {
+                double datamin, datamax, datasum, datasqsum;
+                register double data;
+                datamax = datamin = datasum = (double)((short *)(map->mapdata))[0];
+                datasqsum = datasum*datasum;
+                for (ii=1; ii< elements; ii++) {
+                  data = (double)(((short *)(map->mapdata))[ii]);
+                  datasum += data;
+                  datasqsum += data*data;
+                  if (data > datamax) datamax = data;
+                  if (data < datamin) datamin = data;
+                }
+                datasqsum /= (double)elements;
+                map->mapdatamin = datamin;
+                map->mapdatamax = datamax;
+                map->mapdatamean = datasum/(double)elements;
+                map->mapdataesd= sqrt(datasqsum/(double)elements-
+                  map->mapdatamean*map->mapdatamean);
+              	
+              } else if (elsize==sizeof(int)) {
+                double datamin, datamax, datasum, datasqsum;
+                register double data;
+                datamax = datamin = datasum = (double)((int *)(map->mapdata))[0];
+                datasqsum = datasum*datasum;
+                for (ii=1; ii< elements; ii++) {
+                  data = (double)(((int *)(map->mapdata))[ii]);
+                  datasum += data;
+                  datasqsum += data*data;
+                  if (data > datamax) datamax = data;
+                  if (data < datamin) datamin = data;
+                }
+                datasqsum /= (double)elements;
+                map->mapdatamin = datamin;
+                map->mapdatamax = datamax;
+                map->mapdatamean = datasum/(double)elements;
+                map->mapdataesd= sqrt(datasqsum/(double)elements-
+                  map->mapdatamean*map->mapdatamean);
+              	
+              }
+              else {if (map) { _ffree(map->mapdata); _ffree(map);} if (mask) _ffree(mask); return CBF_FORMAT;}
+            } else {
+              cbf_onfailnez (cbf_get_realarray(
+                cbf, &binary_id, (map)->mapdata, elsize,
+                elements, &elements_read),
+                {if (map) { _ffree(map->mapdata); _ffree(map);} if (mask) _ffree(mask);})
+              if (elsize==sizeof(float)) {
+                double datamin, datamax, datasum, datasqsum;
+                register double data;
+                datamax = datamin = datasum = (double)((float *)(map->mapdata))[0];
+                datasqsum = datasum*datasum;
+                for (ii=1; ii< elements; ii++) {
+                  data = (double) (((float *)(map->mapdata))[ii]);
+                  datasum += data;
+                  datasqsum += data*data;
+                  if (data > datamax) datamax = data;
+                  if (data < datamin) datamin = data;
+                }
+                datasqsum /= (double)elements;
+                map->mapdatamin = datamin;
+                map->mapdatamax = datamax;
+                map->mapdatamean = datasum/(double)elements;
+                map->mapdataesd= sqrt(datasqsum/(double)elements-
+                  map->mapdatamean*map->mapdatamean);
+              } else if (elsize==sizeof(double)) {
+                double datamin, datamax, datasum, datasqsum;
+                register double data;
+                datamax = datamin = datasum = ((double *)(map->mapdata))[0];
+                datasqsum = datasum*datasum;
+                for (ii=1; ii< elements; ii++) {
+                  data = (((double *)(map->mapdata))[ii]);
+                  datasum += data;
+                  datasqsum += data*data;
+                  if (data > datamax) datamax = data;
+                  if (data < datamin) datamin = data;
+                }
+                datasqsum /= (double)elements;
+                map->mapdatamin = datamin;
+                map->mapdatamax = datamax;
+                map->mapdatamean = datasum/(double)elements;
+                map->mapdataesd= sqrt(datasqsum/(double)elements-
+                  map->mapdatamean*map->mapdatamean);
+              	
+              }
+              else {if (map) { _ffree(map->mapdata); _ffree(map);} if (mask) _ffree(mask); return CBF_FORMAT;}
+            }
+          }
+        }
+      }
+      if (mask) {
+        int binary_id, elsigned, elunsigned;
+        size_t elements,elements_read, elsize;
+        int minelement, maxelement;
+        unsigned int cifcompression;
+        int realarray;
+        const char *byteorder;
+        size_t dim1, dim2, dim3, padding;
+
+	
+        cbf_onfailnez(cbf_find_column(cbf,"array_id"),
+        { _ffree(map->mapdata); _ffree(map); if (mask) _ffree(mask);}) 
+        cbf_onfailnez(cbf_rewind_row(cbf),
+        { _ffree(map->mapdata); _ffree(map); if (mask) _ffree(mask);}) 
+        while (!cbf_find_nextrow(cbf,mask_structure_id)) {
+          cbf_onfailnez(cbf_find_column(cbf,"binary_id"),
+          { _ffree(map->mapdata); _ffree(map); if (mask) _ffree(mask);}) 
+          if (!cbf_get_integervalue(cbf,&ii)&&ii==mask_bin_id) {
+            cbf_onfailnez(cbf_find_column(cbf,"data"),
+            { _ffree(map->mapdata); _ffree(map); if (mask) _ffree(mask);})
+            cbf_onfailnez(cbf_get_arrayparameters_wdims(
+              cbf, &cifcompression,
+              &binary_id, &elsize, &elsigned, &elunsigned,
+              &elements, &minelement, &maxelement, &realarray,
+              &byteorder, &dim1, &dim2, &dim3, &padding),
+              { _ffree(map->mapdata); _ffree(map); if (mask) _ffree(mask);})
+            if (elsize != mask->elsize
+              || dim1 != mask_dimension[0]
+              || dim2 != mask_dimension[1]
+              || dim3 != mask_dimension[2]
+              || (realarray&&mask->eltype!=CBF_FLOAT)
+              || dim1*dim2*dim3 <= 0 
+              || dim1*dim2*dim3 != elements
+              || binary_id != mask_bin_id)
+              { _ffree(map->mapdata); _ffree(map); if (mask) _ffree(mask);}
+            cbf_onfailnez(cbf_alloc((void **)&maskdata, NULL, (mask)->elsize, 
+            mask_dimension[0]*mask_dimension[1]*mask_dimension[2]),
+            { _ffree(map->mapdata); _ffree(map); if (mask) _ffree(mask);})
+            (mask)->mapdata = (void *)maskdata;
+            if (!realarray)  {
+              cbf_onfailnez (cbf_get_integerarray(
+                cbf, &binary_id, (mask)->mapdata, elsize, elsigned,
+                elements, &elements_read),
+                {if (map) { _ffree(map->mapdata); _ffree(map);} if (mask) {_ffree(mask->mapdata);_ffree(mask);}})
+              if (elsize==sizeof(signed char)) {
+                double datamin, datamax, datasum, datasqsum;
+                register double data;
+                datamax = datamin = datasum = (double)((signed char *)(mask->mapdata))[0];
+                datasqsum = datasum*datasum;
+                for (ii=1; ii< elements; ii++) {
+                  data = (double) (((signed char *)(mask->mapdata))[ii]);
+                  datasum += data;
+                  datasqsum += data*data;
+                  if (data > datamax) datamax = data;
+                  if (data < datamin) datamin = data;
+                }
+                datasqsum /= (double)elements;
+                mask->mapdatamin = datamin;
+                mask->mapdatamax = datamax;
+                mask->mapdatamean = datasum/(double)elements;
+                mask->mapdataesd= sqrt(datasqsum/(double)elements-
+                  mask->mapdatamean*mask->mapdatamean);
+              } else if (elsize==sizeof(short)) {
+                double datamin, datamax, datasum, datasqsum;
+                register double data;
+                datamax = datamin = datasum = (double)((short *)(mask->mapdata))[0];
+                datasqsum = datasum*datasum;
+                for (ii=1; ii< elements; ii++) {
+                  data = (double)(((short *)(mask->mapdata))[ii]);
+                  datasum += data;
+                  datasqsum += data*data;
+                  if (data > datamax) datamax = data;
+                  if (data < datamin) datamin = data;
+                }
+                datasqsum /= (double)elements;
+                mask->mapdatamin = datamin;
+                mask->mapdatamax = datamax;
+                mask->mapdatamean = datasum/(double)elements;
+                mask->mapdataesd= sqrt(datasqsum/(double)elements-
+                  mask->mapdatamean*mask->mapdatamean);
+              	
+              } else if (elsize==sizeof(int)) {
+                double datamin, datamax, datasum, datasqsum;
+                register double data;
+                datamax = datamin = datasum = (double)((int *)(mask->mapdata))[0];
+                datasqsum = datasum*datasum;
+                for (ii=1; ii< elements; ii++) {
+                  data = (double)(((int *)(mask->mapdata))[ii]);
+                  datasum += data;
+                  datasqsum += data*data;
+                  if (data > datamax) datamax = data;
+                  if (data < datamin) datamin = data;
+                }
+                datasqsum /= (double)elements;
+                mask->mapdatamin = datamin;
+                mask->mapdatamax = datamax;
+                mask->mapdatamean = datasum/(double)elements;
+                mask->mapdataesd= sqrt(datasqsum/(double)elements-
+                  mask->mapdatamean*mask->mapdatamean);
+              	
+              }
+              else {if (map) { _ffree(map->mapdata); _ffree(map);} if (mask) _ffree(mask); return CBF_FORMAT;}
+            } else {
+              cbf_onfailnez (cbf_get_realarray(
+                cbf, &binary_id, (mask)->mapdata, elsize,
+                elements, &elements_read),
+                {if (map) { _ffree(map->mapdata); _ffree(map);} if (mask) {_ffree(mask->mapdata);_ffree(mask);}})
+              if (elsize==sizeof(float)) {
+                double datamin, datamax, datasum, datasqsum;
+                register double data;
+                datamax = datamin = datasum = (double)((float *)(mask->mapdata))[0];
+                datasqsum = datasum*datasum;
+                for (ii=1; ii< elements; ii++) {
+                  data = (double) (((float *)(mask->mapdata))[ii]);
+                  datasum += data;
+                  datasqsum += data*data;
+                  if (data > datamax) datamax = data;
+                  if (data < datamin) datamin = data;
+                }
+                datasqsum /= (double)elements;
+                mask->mapdatamin = datamin;
+                mask->mapdatamax = datamax;
+                mask->mapdatamean = datasum/(double)elements;
+                mask->mapdataesd= sqrt(datasqsum/(double)elements-
+                  mask->mapdatamean*mask->mapdatamean);
+              } else if (elsize==sizeof(double)) {
+                double datamin, datamax, datasum, datasqsum;
+                register double data;
+                datamax = datamin = datasum = ((double *)(mask->mapdata))[0];
+                datasqsum = datasum*datasum;
+                for (ii=1; ii< elements; ii++) {
+                  data = (((double *)(mask->mapdata))[ii]);
+                  datasum += data;
+                  datasqsum += data*data;
+                  if (data > datamax) datamax = data;
+                  if (data < datamin) datamin = data;
+                }
+                datasqsum /= (double)elements;
+                mask->mapdatamin = datamin;
+                mask->mapdatamax = datamax;
+                mask->mapdatamean = datasum/(double)elements;
+                mask->mapdataesd= sqrt(datasqsum/(double)elements-
+                  mask->mapdatamean*mask->mapdatamean);
+              	
+              }
+              else {if (map) { _ffree(map->mapdata); _ffree(map);} if (mask) _ffree(mask); return CBF_FORMAT;}
+            }
+          }
+        }
+      }
+      
+          /* If no mask in the file try for one in MapMaskPtr */
+          
+      if (!mask && MapMaskPtr) {
+      
+        mask = _fmalloc(sizeof(MapStruct));
+        if(!mask) {
+          CommandError(MsgStrs[StrMalloc]);
+          if (map) { _ffree(map->mapdata); _ffree(map);}
+          return 1;	
+        }
+        mask->mapdata = _fmalloc(MapMaskPtr->elsize*
+         (MapMaskPtr->xhigh-MapMaskPtr->xlow+1)*
+         (MapMaskPtr->yhigh-MapMaskPtr->ylow+1)*
+         (MapMaskPtr->zhigh-MapMaskPtr->zlow+1));
+       if(!mask->mapdata) {
+         _ffree(mask);
+         CommandError(MsgStrs[StrMalloc]);
+         if (map) { _ffree(map->mapdata); _ffree(map);}
+         return 1;
+       }
+       mask->elsize=MapMaskPtr->elsize;
+       mask->eltype=MapMaskPtr->eltype;
+       mask->maptype=MapMaskPtr->maptype;
+       mask->adiv=MapMaskPtr->adiv;
+       mask->bdiv=MapMaskPtr->bdiv;
+       mask->cdiv=MapMaskPtr->cdiv;
+       mask->xint=MapMaskPtr->xint;
+       mask->yint=MapMaskPtr->yint;
+       mask->zint=MapMaskPtr->zint;
+       mask->xorig=MapMaskPtr->xorig;
+       mask->yorig=MapMaskPtr->yorig;
+       mask->zorig=MapMaskPtr->zorig;
+       mask->xlow=MapMaskPtr->xlow;
+       mask->ylow=MapMaskPtr->ylow;
+       mask->zlow=MapMaskPtr->zlow;
+       mask->xhigh=MapMaskPtr->xhigh;
+       mask->yhigh=MapMaskPtr->yhigh;
+       mask->zhigh=MapMaskPtr->zhigh;
+       mask->mapdatamin=MapMaskPtr->mapdatamin;
+       mask->mapdatamax=MapMaskPtr->mapdatamax;
+       mask->mapdatamean=MapMaskPtr->mapdatamean;
+       mask->mapdataesd=MapMaskPtr->mapdataesd;
+       for (ii=0; ii<9; ii++) {
+         mask->mapm2r[ii]=MapMaskPtr->mapm2r[ii];
+         mask->mapr2m[ii]=MapMaskPtr->mapr2m[ii];
+       }
+       for (ii=0; ii<3; ii++) {
+         mask->mapxlate[ii]=MapMaskPtr->mapxlate[ii];
+       }
+       memmove(mask->mapdata,MapMaskPtr->mapdata,
+         ((mask)->xhigh-(mask)->xlow+1)
+         *((mask)->yhigh-(mask)->ylow+1)
+         *((mask)->zhigh-(mask)->zlow+1)
+         *((mask)->elsize));
+
+      	
+      }
+      	
+          /* Initialize a mapinfo struct */
+  
+      mapinfo.MapLevel = MapLevel;
+      mapinfo.MapLabel = NULL;          /* clear the map label */
+      mapinfo.MapSpacing = MapSpacing;
+      if (MapSpread < 0.1) MapSpread = 2.*((double)MapSpacing)/750.;
+      mapinfo.MapSpread = MapSpread;
+      if (!(MapFlag & (MapPointFlag|MapMeshFlag|MapSurfFlag)) ) MapFlag |= MapPointFlag;
+      mapinfo.flag = SelectFlag|MapFlag;
+      mapinfo.MapPointsPtr = NULL;
+      mapinfo.MapBondsPtr = NULL;
+      mapinfo.MapTanglePtr = NULL;
+      mapinfo.MapMaskPtr = mask;
+      mapinfo.MapFile = NULL;
+      mapinfo.MapGenSel = NULL;
+      mapinfo.MapMaskGenSel = NULL;
+      mapinfo.MapPtr =map;
+      mapinfo.MapRGBCol[0] = MapRGBCol[0];
+      mapinfo.MapRGBCol[1] = MapRGBCol[1];
+      mapinfo.MapRGBCol[2] = MapRGBCol[2];
+      mapinfo.MapMeshRad = MapMeshRad;
+      mapinfo.MapPointRad = MapPointRad;
+      mapinfo.MapLabel = MapLabel;
+
+
+      vector_create((GenericVec __far **)&mapinfo.MapPointsPtr,sizeof(MapPoint),1000);
+      if (mapinfo.flag&(MapMeshFlag))
+        vector_create((GenericVec __far **)&mapinfo.MapBondsPtr,sizeof(MapBond),1000);
+      if (mapinfo.flag&(MapSurfFlag))
+        vector_create((GenericVec __far **)&mapinfo.MapTanglePtr,sizeof(MapTangle),1000);
+
+      cbf_failnez(map_points(mapinfo.MapPtr, 
+      mapinfo.MapLevel+((mapinfo.flag&MapMeanFlag)?mapinfo.MapPtr->mapdatamean:0), 
+      mapinfo.MapSpacing, mapinfo.MapPointsPtr,mapinfo.MapBondsPtr,mapinfo.MapTanglePtr,
+      mapinfo.MapMaskPtr, mapinfo.MapRGBCol ))
+
+      mapinfo.MapFile = (char __far *)_fmalloc(strlen(DataFileName)+1);
+      strcpy(mapinfo.MapFile,DataFileName);
+
+      if (mapno < 0)
+        vector_add_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo);
+      else
+        vector_set_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,mapno);
+    
+   	
+    } while (!cbf_next_datablock(cbf));
+    
+    
+    cbf_free_handle(cbf);
+    
+    MapReRadius();
+    ReRadius();
+
+    ReDrawFlag |= RFRefresh;
+
+    if( info )
+    {   InvalidateCmndLine();
+
+    }
+    return 0;
+}
+
+
+int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
 
     MapInfo mapinfo;
     MapStruct * map;
@@ -579,8 +2998,10 @@ int LoadMapFile( FILE *fp, int info, int mapno ) {
     int i,ii;
     char buffer[80];
 
+    long int fpos;
+    
     if (!MapInfoPtr) InitialiseMaps();
-    if (MapSpacing <= 0) MapSpacing = 125L;
+    if (MapSpacing <= 0) MapSpacing = 250L;
   
     /* Initialize a mapinfo struct */
   
@@ -606,66 +3027,138 @@ int LoadMapFile( FILE *fp, int info, int mapno ) {
     mapinfo.MapPointRad = MapPointRad;
     mapinfo.MapLabel = MapLabel;
     MapLabel=NULL;
+    int errorcnt;
 
     cbf_failnez(cbf_make_file(&mapfile, fp))
+    cbf_onfailnez(cbf_get_fileposition(mapfile, &fpos)
+      ,cbf_free_file(&mapfile))
+      
+    cbf_onfailnez(cbf_set_fileposition(mapfile, 208L, SEEK_SET)
+      ,cbf_free_file(&mapfile))	
+
+    errorcnt = 0 ;
+    for (ii=0; ii<4; ii++) {                                  /*  53 */
+      unsigned int tmp;
+      if (cbf_get_integer(mapfile,(int *)(&tmp),0,8) ) errorcnt++;
+      (unsigned char)MAP[ii]=tmp&0xFF;
+    }
     
-    cbf_failnez(cbf_get_integer(mapfile,&NCRS[0],0,32))       /*   1 */
-    cbf_failnez(cbf_get_integer(mapfile,&NCRS[1],0,32))       /*   2 */
-    cbf_failnez(cbf_get_integer(mapfile,&NCRS[2],0,32))       /*   3 */
-    cbf_failnez(cbf_get_integer(mapfile,&MODE,0,32))          /*   4 */
-    cbf_failnez(cbf_get_integer(mapfile,&NCRSSTART[0],0,32))  /*   5 */
-    cbf_failnez(cbf_get_integer(mapfile,&NCRSSTART[1],0,32))  /*   6 */
-    cbf_failnez(cbf_get_integer(mapfile,&NCRSSTART[2],0,32))  /*   7 */
-    cbf_failnez(cbf_get_integer(mapfile,&NXYZ[0],0,32))       /*   8 */
-    cbf_failnez(cbf_get_integer(mapfile,&NXYZ[1],0,32))       /*   9 */
-    cbf_failnez(cbf_get_integer(mapfile,&NXYZ[2],0,32))       /*  10 */
-    cbf_failnez(cbf_get_integer(mapfile,(int *)&(XYZ[0]),0,32))/*  11 */
-    cbf_failnez(cbf_get_integer(mapfile,(int *)&(XYZ[1]),0,32))/*  12 */
-    cbf_failnez(cbf_get_integer(mapfile,(int *)&(XYZ[2]),0,32))/*  13 */
-    cbf_failnez(cbf_get_integer(mapfile,(int *)&alpha,0,32))  /*  14 */
-    cbf_failnez(cbf_get_integer(mapfile,(int *)&beta,0,32))   /*  15 */
-    cbf_failnez(cbf_get_integer(mapfile,(int *)&gamma,0,32))  /*  16 */
-    cbf_failnez(cbf_get_integer(mapfile,&MAP_CRS[0],0,32))    /*  17 */
-    cbf_failnez(cbf_get_integer(mapfile,&MAP_CRS[1],0,32))    /*  18 */
-    cbf_failnez(cbf_get_integer(mapfile,&MAP_CRS[2],0,32))    /*  19 */
-    cbf_failnez(cbf_get_integer(mapfile,(int *)&AMIN,0,32))   /*  20 */
-    cbf_failnez(cbf_get_integer(mapfile,(int *)&AMAX,0,32))   /*  21 */
-    cbf_failnez(cbf_get_integer(mapfile,(int *)&AMEAN,0,32))  /*  22 */
-    cbf_failnez(cbf_get_integer(mapfile,&ISPG,0,32))          /*  23 */
-    cbf_failnez(cbf_get_integer(mapfile,&NSYMBT,0,32))        /*  24 */
-    cbf_failnez(cbf_get_integer(mapfile,&LSKFLG,0,32))        /*  25 */
+    if (cbf_cistrncmp(MAP,"MAP ",4)) errorcnt++;
+
+    cbf_onfailnez(cbf_set_fileposition(mapfile, fpos, SEEK_SET)
+      ,cbf_free_file(&mapfile))	
+
+    if (errorcnt) {
+      
+      cbf_failnez(cbf_free_file(&mapfile));
+      
+      return CBF_FORMAT;
+    	
+    }
+
+    
+    cbf_onfailnez(cbf_get_integer(mapfile,&NCRS[0],0,32)
+      ,cbf_free_file(&mapfile))                                /*   1 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&NCRS[1],0,32)
+      ,cbf_free_file(&mapfile))                                /*   2 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&NCRS[2],0,32)
+      ,cbf_free_file(&mapfile))                                /*   3 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&MODE,0,32)
+      ,cbf_free_file(&mapfile))                                /*   4 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&NCRSSTART[0],0,32)
+      ,cbf_free_file(&mapfile))                                /*   5 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&NCRSSTART[1],0,32)
+      ,cbf_free_file(&mapfile))                                /*   6 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&NCRSSTART[2],0,32)
+      ,cbf_free_file(&mapfile))                                /*   7 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&NXYZ[0],0,32)
+      ,cbf_free_file(&mapfile))                                /*   8 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&NXYZ[1],0,32)
+      ,cbf_free_file(&mapfile))                                /*   9 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&NXYZ[2],0,32)
+      ,cbf_free_file(&mapfile))                                /*  10 */
+    cbf_onfailnez(cbf_get_integer(mapfile,(int *)&(XYZ[0]),0,32)
+      ,cbf_free_file(&mapfile))                                /*  11 */
+    cbf_onfailnez(cbf_get_integer(mapfile,(int *)&(XYZ[1]),0,32)
+      ,cbf_free_file(&mapfile))                                /*  12 */
+    cbf_onfailnez(cbf_get_integer(mapfile,(int *)&(XYZ[2]),0,32)
+      ,cbf_free_file(&mapfile))                                /*  13 */
+    cbf_onfailnez(cbf_get_integer(mapfile,(int *)&alpha,0,32)
+      ,cbf_free_file(&mapfile))                                /*  14 */
+    cbf_onfailnez(cbf_get_integer(mapfile,(int *)&beta,0,32)
+      ,cbf_free_file(&mapfile))                                /*  15 */
+    cbf_onfailnez(cbf_get_integer(mapfile,(int *)&gamma,0,32)
+      ,cbf_free_file(&mapfile))                                /*  16 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&MAP_CRS[0],0,32)
+      ,cbf_free_file(&mapfile))                                /*  17 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&MAP_CRS[1],0,32)
+      ,cbf_free_file(&mapfile))                                /*  18 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&MAP_CRS[2],0,32)
+      ,cbf_free_file(&mapfile))                                /*  19 */
+    cbf_onfailnez(cbf_get_integer(mapfile,(int *)&AMIN,0,32)
+      ,cbf_free_file(&mapfile))                                /*  20 */
+    cbf_onfailnez(cbf_get_integer(mapfile,(int *)&AMAX,0,32)
+      ,cbf_free_file(&mapfile))                                /*  21 */
+    cbf_onfailnez(cbf_get_integer(mapfile,(int *)&AMEAN,0,32)
+      ,cbf_free_file(&mapfile))                                /*  22 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&ISPG,0,32)
+      ,cbf_free_file(&mapfile))                                /*  23 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&NSYMBT,0,32)
+      ,cbf_free_file(&mapfile))                                /*  24 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&LSKFLG,0,32)
+      ,cbf_free_file(&mapfile))                                /*  25 */
     
     for (ii=0; ii<9; ii++) {                                  /*  26 -- 34 */
-      cbf_failnez(cbf_get_integer(mapfile,(int *)(SKWMAT+ii),0,32)) 	
+      cbf_onfailnez(cbf_get_integer(mapfile,(int *)(SKWMAT+ii),0,32)
+      ,cbf_free_file(&mapfile))	
     }
 
     for (ii=0; ii<3; ii++) {                                  /*  35 -- 37 */
-      cbf_failnez(cbf_get_integer(mapfile,(int *)(SKWTRAN+ii),0,32)) 	
+      cbf_onfailnez(cbf_get_integer(mapfile,(int *)(SKWTRAN+ii),0,32)
+      ,cbf_free_file(&mapfile))	 	
     }
     
     for (ii=38; ii<53; ii++) {                                /*  38 -- 52 */
-      cbf_failnez(cbf_get_integer(mapfile,&DUMMY,0,32)) 	
+      cbf_onfailnez(cbf_get_integer(mapfile,&DUMMY,0,32)
+      ,cbf_free_file(&mapfile))	 	
     }
     
     for (ii=0; ii<4; ii++) {                                  /*  53 */
-      cbf_failnez(cbf_get_integer(mapfile,(int *)(MAP+ii),0,8)) 
+      unsigned int tmp;
+      cbf_onfailnez(cbf_get_integer(mapfile,(int *)(&tmp),0,8)
+      ,cbf_free_file(&mapfile))
+      (unsigned char)MAP[ii]=tmp&0xFF;
+    }
+
+    if (cbf_cistrncmp(MAP,"MAP ",4)) {
+    
+
+      cbf_failnez (cbf_free_file(&mapfile))	
+      
+      return CBF_FORMAT;
+    	
     }
 
     for (ii=0; ii<4; ii++) {                                  /*  54 */
-      cbf_failnez(cbf_get_integer(mapfile,(int *)(MACHST+ii),0,8)) 
+      cbf_onfailnez(cbf_get_integer(mapfile,(int *)(MACHST+ii),0,8)
+      ,cbf_free_file(&mapfile))	 
     }
     
-    cbf_failnez(cbf_get_integer(mapfile,(int *)&ARMS,0,32))   /*  55 */
-    cbf_failnez(cbf_get_integer(mapfile,&NLABL,0,32))         /*  56 */
+    cbf_onfailnez(cbf_get_integer(mapfile,(int *)&ARMS,0,32)
+      ,cbf_free_file(&mapfile))	                              /*  55 */
+    cbf_onfailnez(cbf_get_integer(mapfile,&NLABL,0,32)
+      ,cbf_free_file(&mapfile))	                              /*  56 */
 
     for (ii=0; ii<800; ii++) {                                /*  57 -- 256 */                          
-      cbf_failnez(cbf_get_integer(mapfile,(int *)(LABEL+ii),0,8)) 
+      cbf_onfailnez(cbf_get_integer(mapfile,(int *)(LABEL+ii),0,8)
+      ,cbf_free_file(&mapfile))
     }
     
     NSYMBT = (NSYMBT+79)/80;
 
     for (ii=0; ii<NSYMBT; ii++) {                     /* 257 -- 256+(NSYMBT/4) */
-      cbf_failnez(cbf_get_integer(mapfile,&DUMMY,0,8)) 
+      cbf_onfailnez(cbf_get_integer(mapfile,&DUMMY,0,8)
+      ,cbf_free_file(&mapfile))
     }
    
     map = (MapStruct*)_fmalloc(sizeof(MapStruct));
@@ -702,6 +3195,12 @@ int LoadMapFile( FILE *fp, int info, int mapno ) {
     	  return CBF_FORMAT;
     }
     
+    (map)->maptype = MAP_FRACTIONAL;
+    
+    (map)->adiv = NXYZ[AXIS_XYZ[0]];
+    (map)->bdiv = NXYZ[AXIS_XYZ[1]];
+    (map)->cdiv = NXYZ[AXIS_XYZ[2]];
+    
     (map)->xint = rint(250.*XYZ[AXIS_XYZ[0]]/NXYZ[AXIS_XYZ[0]]);
     (map)->yint = rint(250.*XYZ[AXIS_XYZ[1]]/NXYZ[AXIS_XYZ[1]]);
     (map)->zint = rint(250.*XYZ[AXIS_XYZ[2]]/NXYZ[AXIS_XYZ[2]]);
@@ -723,11 +3222,11 @@ int LoadMapFile( FILE *fp, int info, int mapno ) {
     
     (map)->mapxlate[0] = 250.*Info.vecf2o[0]-OrigCX;
 #ifdef INVERT
-    (map)->mapxlate[1] = -(250.*Info.vecf2o[0])-OrigCY;
+    (map)->mapxlate[1] = -(250.*Info.vecf2o[1])-OrigCY;
 #else
-    (map)->mapxlate[1] = 250.*Info.vecf2o[0]-OrigCY;
+    (map)->mapxlate[1] = 250.*Info.vecf2o[1]-OrigCY;
 #endif
-    (map)->mapxlate[2] = -(250.*Info.vecf2o[0])-OrigCZ;
+    (map)->mapxlate[2] = -(250.*Info.vecf2o[2])-OrigCZ;
     
 /* M2R[0,0] */
     (map)->mapm2r[0] = 250.*Info.matf2o[0][0]/((map)->xint*(double)NXYZ[0]);
@@ -802,7 +3301,8 @@ int LoadMapFile( FILE *fp, int info, int mapno ) {
       for (ID[2] = 0; ID[2] < NCRS[2]; ID[2]++)
         for (ID[1] = 0; ID[1] < NCRS[1]; ID[1]++)
           for (ID[0] = 0; ID[0] < NCRS[0]; ID[0]++) {
-            cbf_failnez(cbf_get_integer(mapfile,(int *)&temp,0,32))
+            cbf_onfailnez(cbf_get_integer(mapfile,(int *)&temp,0,32)
+              ,cbf_free_file(&mapfile))
             /* fprintf(stderr,"mapel[%d,%d,%d] = %f\n",ID[AXIS_XYZ[0]],ID[AXIS_XYZ[1]],ID[AXIS_XYZ[2]],temp); */
             MapElfloat(map,ID[AXIS_XYZ[0]],ID[AXIS_XYZ[1]],ID[AXIS_XYZ[2]]) = (float)temp;
             datasq += ((double)temp)*((double)temp);
@@ -814,7 +3314,8 @@ int LoadMapFile( FILE *fp, int info, int mapno ) {
       for (ID[2] = 0; ID[2] < NCRS[2]; ID[2]++)
         for (ID[1] = 0; ID[1] < NCRS[1]; ID[1]++)
           for (ID[0] = 0; ID[0] < NCRS[0]; ID[0]++) {
-            cbf_failnez(cbf_get_integer(mapfile,(int *)&bytetemp,0,8))
+            cbf_onfailnez(cbf_get_integer(mapfile,(int *)&bytetemp,0,8)
+              ,cbf_free_file(&mapfile))	                              
             MapElchar(map,ID[AXIS_XYZ[0]],ID[AXIS_XYZ[1]],ID[AXIS_XYZ[2]]) = bytetemp;
             datasq += (double)(bytetemp*bytetemp); 
       }    	
@@ -824,7 +3325,8 @@ int LoadMapFile( FILE *fp, int info, int mapno ) {
       for (ID[2] = 0; ID[2] < NCRS[2]; ID[2]++)
         for (ID[1] = 0; ID[1] < NCRS[1]; ID[1]++)
           for (ID[0] = 0; ID[0] < NCRS[0]; ID[0]++) {
-            cbf_failnez(cbf_get_integer(mapfile,(int *)&shorttemp,0,16))
+            cbf_onfailnez(cbf_get_integer(mapfile,(int *)&shorttemp,0,16)
+              ,cbf_free_file(&mapfile))
             MapElshort(map,ID[AXIS_XYZ[0]],ID[AXIS_XYZ[1]],ID[AXIS_XYZ[2]]) = shorttemp;
             datasq += (double)(shorttemp*shorttemp); 
           }
@@ -861,6 +3363,10 @@ int LoadMapFile( FILE *fp, int info, int mapno ) {
      }
      mapmaskptr->elsize=MapMaskPtr->elsize;
      mapmaskptr->eltype=MapMaskPtr->eltype;
+     mapmaskptr->maptype=MapMaskPtr->maptype;
+     mapmaskptr->adiv=MapMaskPtr->adiv;
+     mapmaskptr->bdiv=MapMaskPtr->bdiv;
+     mapmaskptr->cdiv=MapMaskPtr->cdiv;
      mapmaskptr->xint=MapMaskPtr->xint;
      mapmaskptr->yint=MapMaskPtr->yint;
      mapmaskptr->zint=MapMaskPtr->zint;
@@ -906,13 +3412,14 @@ int LoadMapFile( FILE *fp, int info, int mapno ) {
     mapinfo.MapSpacing, mapinfo.MapPointsPtr,mapinfo.MapBondsPtr,mapinfo.MapTanglePtr,
     mapinfo.MapMaskPtr, mapinfo.MapRGBCol ))
 
+    mapinfo.MapFile = (char __far *)_fmalloc(strlen(DataFileName)+1);
+    strcpy(mapinfo.MapFile,DataFileName);
+
     if (mapno < 0)
     vector_add_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo);
     else
     vector_set_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,mapno);
     
-    mapinfo.MapFile = (char __far *)_fmalloc(strlen(DataFileName)+1);
-    strcpy(mapinfo.MapFile,DataFileName);
 
     MapReRadius();
     ReRadius();
@@ -1125,7 +3632,7 @@ int generate_map(MapStruct **map,
     
     double pi,sqrt2pi3;
     
-    pi = 4.*atan2(1.,1.);
+    pi = PI;
     
     sqrt2pi3 = 2.*pi*sqrt(2.*pi);
     
@@ -1138,12 +3645,21 @@ int generate_map(MapStruct **map,
     
     (*map)->elsize = sizeof(double);
     (*map)->eltype = CBF_FLOAT;    
+    (*map)->maptype = MAP_ORTHOGONAL;    
+    (*map)->adiv = 1;    
+    (*map)->bdiv = 1;    
+    (*map)->cdiv = 1;    
     (*map)->xint = xint;
     (*map)->yint = yint;
     (*map)->zint = zint;
     (*map)->xorig = xorig;
+#ifdef INVERT
+    (*map)->yorig = -yorig;
+#else
     (*map)->yorig = yorig;
-    (*map)->zorig = zorig;
+#endif
+    (*map)->zorig = -zorig;
+
     (*map)->xlow = (*map)->xhigh = 0;
     (*map)->ylow = (*map)->yhigh = 0;
     (*map)->ylow = (*map)->zhigh = 0;
@@ -1159,23 +3675,49 @@ int generate_map(MapStruct **map,
     ForEachAtom 
       if (ptr->flag&SelectFlag) {
 
+        
+        Long rad;
+        
+        Long sig6;
+        
+        double sig;
+        
+        radius = ptr->radius;
+        if (radius < 10) radius = Element[ptr->elemno].vdwrad;
+
+        rad = radius + ProbeRadius;
+        
+        sig = ((double)rad)/sig_per_rad;
+        
+        sig6 = (Long)(6* sig);
+
         radius = ptr->radius;
         if (radius < 10) radius = Element[ptr->elemno].vdwrad;
 
       
-        if (ptr->xorg+ptr->fxorg-radius-ProbeRadius<xsellow)
-          xsellow = ptr->xorg+ptr->fxorg-radius-ProbeRadius;
-        if (ptr->yorg+ptr->fyorg-radius-ProbeRadius<ysellow)
-          ysellow = ptr->yorg+ptr->fyorg-radius-ProbeRadius;
-        if (ptr->zorg+ptr->fzorg-radius-ProbeRadius<zsellow)
-          zsellow = ptr->zorg+ptr->fzorg-radius-ProbeRadius;
+        if (ptr->xorg+ptr->fxorg+OrigCX-sig6 <xsellow)
+          xsellow = ptr->xorg+ptr->fxorg+OrigCX-sig6;
+#ifdef INVERT
+        if (-(ptr->yorg+ptr->fyorg+OrigCY)-sig6<ysellow)
+          ysellow = -(ptr->yorg+ptr->fyorg+OrigCY)-sig6;
+#else
+        if (ptr->yorg+ptr->fyorg+OrigCY-sig6<ysellow)
+          ysellow = ptr->yorg+ptr->fyorg+OrigCY-sig6;
+#endif
+        if (-(ptr->zorg+ptr->fzorg+OrigCZ)-sig6<zsellow)
+          zsellow = -(ptr->zorg+ptr->fzorg+OrigCZ)-sig6;
         
-        if (ptr->xorg+ptr->fxorg+radius+ProbeRadius>xselhigh)
-          xselhigh = ptr->xorg+ptr->fxorg+radius+ProbeRadius;
-        if (ptr->yorg+ptr->fyorg+radius+ProbeRadius>yselhigh)
-          yselhigh = ptr->yorg+ptr->fyorg+radius+ProbeRadius;
-        if (ptr->zorg+ptr->fzorg+radius+ProbeRadius>zselhigh)
-          zselhigh = ptr->zorg+ptr->fzorg+radius+ProbeRadius;    	
+        if (ptr->xorg+ptr->fxorg+OrigCX+sig6>xselhigh)
+          xselhigh = ptr->xorg+ptr->fxorg+OrigCY+sig6;
+#ifdef INVERT
+        if (-(ptr->yorg+ptr->fyorg+OrigCY)+sig6>yselhigh)
+          yselhigh = -(ptr->yorg+ptr->fyorg+OrigCY)+sig6;
+#else
+        if (ptr->yorg+ptr->fyorg+OrigCY+sig6>yselhigh)
+          yselhigh = ptr->yorg+ptr->fyorg+OrigCY+sig6;
+#endif
+        if (-(ptr->zorg+ptr->fzorg+OrigCZ)+sig6>zselhigh)
+          zselhigh = -(ptr->zorg+ptr->fzorg+OrigCZ)+sig6;    	
       }
       
       xsellow -= buffer;
@@ -1251,9 +3793,13 @@ int generate_map(MapStruct **map,
         
         coeff = 1/(sig*sig*sig*sqrt2pi3);
         
-        xpos = ptr->xorg + ptr->fxorg - xorig;
-        ypos = ptr->yorg + ptr->fyorg - yorig;
-        zpos = ptr->zorg + ptr->fzorg - zorig;
+        xpos = ptr->xorg + ptr->fxorg +OrigCX -xorig;
+#ifdef INVERT
+        ypos = -(ptr->yorg + ptr->fyorg +OrigCY) -yorig;
+#else
+        ypos = ptr->yorg + ptr->fyorg +OrigCY -yorig;
+#endif
+        zpos = -(ptr->zorg + ptr->fzorg +OrigCZ) -zorig;
         
         xsellow = xpos - sig6;
         if (xsellow< 0) xsellow = ( xsellow - (xint-1) )/xint;
@@ -1286,6 +3832,8 @@ int generate_map(MapStruct **map,
         else zselhigh = ( zselhigh + (zint-1) )/zint;
         if (zselhigh < (*map)->zlow) zselhigh = (*map)->zlow;
         if (zselhigh > (*map)->zhigh) zselhigh = (*map)->zhigh;
+        
+        
         
         for (xel = xsellow; xel <= xselhigh; xel++)
           for (yel = ysellow; yel <= yselhigh; yel++)
@@ -1334,12 +3882,25 @@ int generate_map(MapStruct **map,
         (*map)->mapdatamin = (*map)->mapdatamax = 0;
       }
       
+      
       for (ii=0; ii< 3; ii++) {
-        (*map)->mapxlate[ii] = 0;
         for (jj=0; jj< 3; jj++) {
-          MapM2R(*map,ii,jj) = MapR2M(*map,ii,jj)= (ii==jj?1.:0.);
+          MapM2R(*map,ii,jj) = MapR2M(*map,ii,jj) = 0.;
         }
       }
+      
+      MapM2R(*map,0,0) = MapR2M(*map,0,0) = 1.;
+      (*map)->mapxlate[0] = -OrigCX;
+#ifdef INVERT
+      MapM2R(*map,1,1) = MapR2M(*map,1,1) = -1.;
+      (*map)->mapxlate[1] = -OrigCY;
+#else
+      MapM2R(*map,1,1) = MapR2M(*map,1,1) = 1.;
+      (*map)->mapxlate[1] = -OrigCY;
+#endif
+      MapM2R(*map,2,2) = MapR2M(*map,2,2) = -1.;
+      (*map)->mapxlate[2] = -OrigCZ;
+      
       return 0;
 	
 }
@@ -2177,7 +4738,7 @@ int map_points(MapStruct __far *map, double level, Long spacing,
               cubebase = 3*(ix+iy*xpts+zalt*xpts*ypts);         /* top layer, pick up  X and Y */
               
               for (ii=0; ii< 2; ii++) {
-            	jj=((int *)(PointsUsed->array))[cubebase+ii]; /* pick up X,Y top corner*/
+            	jj=((int *)(PointsUsed->array))[cubebase+ii];   /* pick up X,Y top corner*/
             	if (jj) {
             	  cube[numpoints]=jj; numpoints++;
             	}

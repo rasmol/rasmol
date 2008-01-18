@@ -65,6 +65,9 @@
  ***************************************************************************/
 /* vector.c
  $Log: not supported by cvs2svn $
+ Revision 1.2  2007/11/25 17:57:50  yaya-hjb
+ Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
+
  Revision 1.2  2007/11/19 03:28:40  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -157,7 +160,9 @@
 #include "vector.h"
 #include "multiple.h"
 
+#ifndef PI
 #define PI 3.14159265358979323846
+#endif
 
 Real Length( Real u[3] )
 {

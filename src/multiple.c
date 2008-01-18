@@ -65,6 +65,9 @@
  ***************************************************************************/
 /* multiple.c
  $Log: not supported by cvs2svn $
+ Revision 1.2  2007/11/25 17:57:50  yaya-hjb
+ Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
+
  Revision 1.12  2007/11/19 03:28:39  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -199,9 +202,12 @@
 #include <stdlib.h>
 #endif
 
+/* Ladislav Michnovic, 10 Jan 08 start */
+#include <string.h>
+/* Ladislav Michnovic, 10 Jan 08 end */
 #include <ctype.h>
 #include <stdio.h>
-#include <string.h>
+/* #include <string.h> */  /* Ladislav Michnovic, 10 Jan 08 */
 
 #if !defined(IBMPC) && !defined(VMS) && !defined(APPLEMAC)
 #include <pwd.h>
