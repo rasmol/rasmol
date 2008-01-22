@@ -65,6 +65,14 @@
  ***************************************************************************/
 /* repres.c
  $Log: not supported by cvs2svn $
+ Revision 1.4  2008/01/18 03:25:09  yaya-hjb
+ Update to RasMol 2.7.4 prerelease 4 level -- HJB
+
+ Revision 1.16  2008/01/16 21:35:11  yaya
+ Change default resolution from .5 Angstrom to 1 Angstrom
+ Correct map xlow, xhigh calculations
+ Correct map axis output -- HJB
+
  Revision 1.3  2008/01/05 21:31:40  yaya-hjb
  Update ChangeLog and TODO for 2.7.4.
  Update rasmol.doc, rasmol.hlp and rasmol.html for GM's toggle.

@@ -4,6 +4,7 @@
 <title>RasMol V2.7.4 Manual</title>
 </HEAD>
 <BODY BACKGROUND="../html_graphics/rasmolwallpaper.jpg">
+<font face="Helvetica,Arial,Times" size=3>
 <a href="http://www.iucr.org/iucr-top/welcome.html">
 <img alt="[IUCr Home Page]" src="../html_graphics/iucrhome.jpg"></a>
 <a href="http://www.iucr.org/iucr-top/cif/home.html">
@@ -15,174 +16,59 @@ ALT="[RasMol]"></A>
 | <a href="http://www.OpenrasMol.org">OpenRasMol</a> |
 <A href="../README.html#Copying">Copying and Distribution</A> |
 <A href="../README.html#Contents">Contents</A> |
-<A href="../INSTALL.html">Installation Instructions</A> |<BR>
+<A href="../INSTALL.html">Installation Instructions</A> |<br />
 | <A href="../ChangeLog.html">Changes</A> |
 <A href="../TODO.html">Things To Do</A> |
 <A href="../README.html#Introduction">Introduction</A> |
-<A href="../README.html#CodeAndBinaries">Source Code and Binaries</A> |<BR>
+<A href="../README.html#CodeAndBinaries">Source Code and Binaries</A> |<br />
 | <A href="rasmol.html">RasMol Manual</A> |
 <a href="esrasmol27.html">Spanish Translation of RasMol Manual</a> |
-<a href="itrasmol.hlp">Italian Translation of RasMol Help File</a> |<BR>
-<a href="../README.html">Release README</A> |<BR>
+<a href="itrasmol.hlp">Italian Translation of RasMol Help File</a> |<br />
+| <a href=http://www.rasmol.org/donate.shtml>Donate to Support RasMol</a> |
+<a href="../README.html">Release README</A> |
+<a href=http://www.rasmol.org/register.shtml>Register your RasMol</a> |
+<br />
 </CENTER>
 
 
 <font color="#0808A0">
 <H1 ALIGN=CENTER>Manual<BR>
-RasMol 2.7.4</H1>
+RasMol 2.7.4.1</H1>
 <center>
-<table border=0 callpadding=3 cellspacing=0>
+<table celpadding=0>
 <tr>
-<td rowspan=9><IMG  SRC="../html_graphics/rasmollogo.jpg" ALT="RasMol"><BR>
-<td colspan=11 bgcolor="#C0C0FF">&nbsp;
-<tr>
-<td rowspan=7 bgcolor="#C0C0FF">&nbsp;
-<th valign="bottom">Version
-<td rowspan=7 bgcolor="#C0C0FF">&nbsp;
-<th align="center">MAC PPC<br>binaries
-<td rowspan=7 bgcolor="#C0C0FF">&nbsp;
-<th align="center">MSWIN<br>binaries
-<th align="center">RasWin<br>Help File
-<td rowspan=7 bgcolor="#C0C0FF">&nbsp;
-<th align="center">LINUX<br>binaries
-<th align="center">RasMol<br>Help File
-<td rowspan=7 bgcolor="#C0C0FF">&nbsp;
-
-
-<tr><td><a href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.1/README.html">2.7.1</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.MAC/RasMac_PPC_8BIT.bin">8</a>
-&nbsp;&nbsp;&nbsp;
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.MAC/RasMac_PPC_32BIT.bin">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.MSWIN/raswin.exe"
-TYPE="application/octet-stream">8</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1/doc/raswin.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.1/doc/raswin.hlp.gz" TYPE="application/octet-stream">gz</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1/RasMol.LINUX/RedHat_6.0/i386/rasmol_8BIT"
-TYPE="application/octet-stream">8</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1/RasMol.LINUX/RedHat_6.0/i386/rasmol_16BIT"
-TYPE="application/octet-stream">16</a>
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1/RasMol.LINUX/RedHat_6.0/i386/rasmol_32BIT"
-TYPE="application/octet-stream">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1/doc/rasmol.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.1/doc/rasmol.hlp.gz" TYPE="application/octet-stream">gz</a>
-<tr><td><a href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.1.1/README.html"><b>2.7.1.1</b></a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1.MAC/RasMac_PPC_8BIT.bin">8</a>
-&nbsp;&nbsp;&nbsp;
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1.MAC/RasMac_PPC_32BIT.bin">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1.MSWIN/raswin.exe"
-TYPE="application/octet-stream">8</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1/doc/raswin.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.1.1/doc/raswin.hlp.gz" TYPE="application/octet-stream">gz
-</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1/RasMol.LINUX/Mandrake_7.2/i586/rasmol_8BIT" TYPE="application/octet-stream">8</a>
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1/RasMol.LINUX/Mandrake_7.2/i586/rasmol_16BIT" TYPE="application/octet-stream">16</a>
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1/RasMol.LINUX/Mandrake_7.2/i586/rasmol_32BIT" TYPE="application/octet-stream">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1/doc/rasmol.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.1.1/doc/rasmol.hlp.gz" TYPE="application/octet-stream">gz</a>
-
-<tr><td><a href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2/README.html">2.7.2</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.MAC/RasMac_PPC_8BIT.bin">8</a>
-&nbsp;&nbsp;&nbsp;
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.MAC/RasMac_PPC_32BIT.bin">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.MSWIN/raswin.exe"
-TYPE="application/octet-stream">8</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2/doc/raswin.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2/doc/raswin.hlp.gz" TYPE="application/octet-stream">gz</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2/RasMol.LINUX/Mandrake_7.1/i386/rasmol_8BIT"
-TYPE="application/octet-stream">8</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2/RasMol.LINUX/Mandrake_7.1/i386/rasmol_16BIT"
-TYPE="application/octet-stream">16</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2/RasMol.LINUX/Mandrake_7.1/i386/rasmol_32BIT"
-TYPE="application/octet-stream">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2/doc/rasmol.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2/doc/rasmol.hlp.gz" TYPE="application/octet-stream">gz</a>
-<tr><td><a href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2.1/README.html"><b>2.7.2.1</b></a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.MAC/RasMac_PPC_8BIT.bin">8</a>
-&nbsp;&nbsp;&nbsp;
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.MAC/RasMac_PPC_32BIT.bin">32</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.MSWIN/raswin.exe"
-TYPE="application/octet-stream">8</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1/doc/raswin.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2.1/doc/raswin.hlp.gz" TYPE="application/octet-stream">gz</a>
-<td align="center">
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1/RasMol.LINUX/Mandrake_7.2/i386/rasmol_8BIT"
-TYPE="application/octet-stream">8</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1/RasMol.LINUX/Mandrake_7.2/i386/rasmol_16BIT"
-TYPE="application/octet-stream">16</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1/RasMol.LINUX/Mandrake_7.2/i386/rasmol_32BIT"
-TYPE="application/octet-stream">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1/doc/rasmol.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2.1/doc/rasmol.hlp.gz" TYPE="application/octet-stream">gz</a>
-
-<tr><td><a href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2.1.1/README.html"><b>2.7.2.1.1</b></a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1.MAC/RasMac_PPC_8BIT.bin">8</a>
-&nbsp;&nbsp;&nbsp;
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1.MAC/RasMac_PPC_32BIT.bin">32</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1.MSWIN/raswin.exe"
-TYPE="application/octet-stream">8</a> <td align="center">
-
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1/doc/raswin.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2.1.1/doc/raswin.hlp.gz" TYPE="application/octet-stream">gz</a>
-<td align="center">
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1/RasMol.LINUX/RedHat_7/i386/rasmol_8BIT"
-TYPE="application/octet-stream">8</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1/RasMol.LINUX/RedHat_7/i386/rasmol_16BIT"
-TYPE="application/octet-stream">16</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1/RasMol.LINUX/RedHat_7/i386/rasmol_32BIT"
-TYPE="application/octet-stream">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1/doc/rasmol.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2.1.1/doc/rasmol.hlp.gz" TYPE="application/octet-stream">gz</a >
-
-<tr><td><a href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.3/README.html"><b>2.7.3</b></a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3.MAC/RasMac_PPC_8BIT.bin">8</a>
-&nbsp;&nbsp;&nbsp;
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3.MAC/RasMac_PPC_32BIT.bin">32</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3.MSWIN/raswin.exe"
-TYPE="application/octet-stream">8</a> <td align="center">
-
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3/doc/raswin.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.3/doc/raswin.hlp.gz" TYPE="application/octet-stream">gz</a>
-<td align="center">
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3/RasMol.LINUX/Mandrake_9/i386/rasmol_8BIT"
-TYPE="application/octet-stream">8</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3/RasMol.LINUX/Mandrake_9/i386/rasmol_16BIT"
-TYPE="application/octet-stream">16</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3/RasMol.LINUX/Mandrake_9/i386/rasmol_32BIT"
-TYPE="application/octet-stream">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3/doc/rasmol.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.3/doc/rasmol.hlp.gz" TYPE="application/octet-stream">gz</a >
-<tr><td colspan=11 bgcolor="#C0C0FF" align=center>See <A href="#CodeAndBinaries">Source Code and Binaries</A> for more.
-
+<td valign=top bgcolor="#A0FFFF"><font face="Helvetica,Arial,Times" size=2>
+<ul>
+<li><a href=http://www.rasmol.org/software/RasMol_Latest_Windows_Installer.exe>RasMol
+Latest Windows Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;<br />
+<li><a href=http://www.rasmol.org/software/RasMol_Latest.tar.gz>RasMol
+Latest Source Tarball </a><br />&nbsp;<br />
+<li><a href=http://www.rasmol.org/software/RasMol_Latest_Manual.html>RasMol
+Latest Manual </a><br />&nbsp;<br />
+<li><a href=http://www.rasmol.org/donate.shtml>Donate to Support RasMol </a><br />
+<li><a href=http://www.rasmol.org/register.shtml>Register your RasMol</a><br />
+</ul>
+</font>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<td><IMG  SRC="html_graphics/rasmollogo.jpg" ALT="RasMol">
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<td valign=top bgcolor="#FFFFA0"><font face="Helvetica,Arial,Times" size=2>
+<ul>
+<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.1_Windows_Installer.exe>RasMol
+2.7.4.1 Windows Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;<br />
+<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.1_Windows_Installer.exe>RasMol
+2.7.4.1 Source Tarball</a><br />&nbsp;<br />
+<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.1_Manual.html>RasMol
+2.7.4.1 Manual</a><br />&nbsp;<br />
+<li><a href=http://www.rasmol.org/donate.shtml>Donate to Support RasMol </a><br />
+<li><a href=http://www.rasmol.org/register.shtml>Register your RasMol</a><br />
+</ul>
+</font>
 </table>
 </center>
 <H3 ALIGN=CENTER>
 Molecular Graphics Visualisation Tool<BR>
-6 November 2007<BR>
+19 November 2007 (rev. 19 January 2008)<br />
 </H3>
 </font><font color="#000000">
 <CENTER>
@@ -209,7 +95,8 @@ RasMol 2.7.1 June 1999<br>RasMol 2.7.1.1 January 2001<BR>
 RasMol 2.7.2 August 2000<br>RasMol 2.7.2.1 April 2001<BR>
 RasMol 2.7.2.1.1 January 2004<br>RasMol 2.7.3 February 2005<BR>
 RasMol 2.7.3.1 Apr 06<br>RasMol 2.7.4 November 2007<br>
-<td valign="top">&#169 Herbert J. Bernstein 1998-2007
+RasMol 2.7.3.1 Apr 06<br>RasMol 2.7.4.1 January 2008<br>
+<td valign="top">&#169 Herbert J. Bernstein 1998-2008
 </table>
 </CENTER>
 <P>
@@ -261,7 +148,7 @@ Bernstein + Sons, P.O. Box 177, Bellport, NY, USA<BR>
 yaya&#64;bernstein-plus-sons&#46;com
 </noscript>
 <BR>
-Copyright &#169; Herbert J. Bernstein 1998-2005<BR>
+Copyright &#169; Herbert J. Bernstein 1998-2008<BR>
 </CENTER>
 <P>
 The original RasMol manual was created by Roger Sayle.  In July 1996,
@@ -315,7 +202,8 @@ THIS IS A PRELIMINARY RELEASE INVOLVING EXTENSIVE MODIFICATIONS<BR>
 <HR>
 <H2 ALIGN=CENTER>IMPORTANT</H2>
 <P>
-This version is based directly on RasMol version 2.7.3.1,
+This version is based directly on RasMol version 2.7.4,
+on RasMol version 2.7.3.1,
 on RasMol vesion 2.7.3, on RasMol version 2.7.2.1.1,
 on RasMol version 2.7.2, on RasMol version 2.7.1, on RasMol
 version 2.6_CIF.2, on RasMol version 2.6x1, on RasMol version
@@ -464,8 +352,8 @@ license terms (GPL or RASLIC).
 <BR>Versions 2.5-ucb and 2.6-ucb Mods Copyright &#169;
 UC Regents/ModularCHEM Consortium 1995, 1996
 <BR>RasTop 1.3 Copyright &#169; Philippe Valadon 2000
-<BR>Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3, 2.7.4 Mods
-Copyright &#169; Herbert J. Bernstein 1998-2007
+<BR>Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1 Mods
+Copyright &#169; Herbert J. Bernstein 1998-2009
 <BR><address><a href="mailto:rasmol@rasmol.org">rasmol@rasmol.org</a></address>
 <p>
 All rights reserved. Use of copyright notice does not imply publication or
@@ -518,13 +406,14 @@ or an earlier version, type the RasMol command
 <p><hr>
 <a name="chcopying"><h2>Copying</h2></a>
 <p>
-This version is based directly on RasMol version 2.7.3.1,
-on RasMol vesion 2.7.3, on RasMol version 2.7.2.1.1,
-Rasmol version 2.7.2, RasMol version 2.7.1.1 and RasTop
-version 1.3 and indirectly on the RasMol 2.5-ucb and 2.6-ucb
-versions and version 2.6_CIF.2, RasMol 2.6x1 and RasMol_2.6.4.
+This version is based directly on RasMol version 2.7.4.
+on RasMol version 2.7.3.1, on RasMol version 2.7.3,
+on RasMol version 2.7.2.1.1, Rasmol version 2.7.2, RasMol
+version 2.7.1.1 and RasTop version 1.3 and indirectly on
+the RasMol 2.5-ucb and 2.6-ucb versions and version
+2.6_CIF.2, RasMol 2.6x1 and RasMol_2.6.4.
 <p>
-RasMol 2.7.4 may be distributed under the terms of the GNU
+RasMol 2.7.4.1 may be distributed under the terms of the GNU
 General Public License (the GPL), see
 <p>
           http://www.gnu.org/licenses/gpl.txt
@@ -532,7 +421,7 @@ General Public License (the GPL), see
 or the file GPL or type the command
 '<a href="#GPL"><tt><b>help GPL</b></tt></a>'
 <p>
-or RasMol 2.7.4 may be distributed under the RASMOL license.
+or RasMol 2.7.4.1 may be distributed under the RASMOL license.
 See the file NOTICE
 or type the command
 '<a href="#RASLIC"><tt><b>help RASLIC</b></tt></a>'
@@ -2436,8 +2325,10 @@ to designate a mask for the selected maps,
 to set the resolution for contouring selected maps,
 '<a href="#maprestrict"><tt><b>map restrict</b></tt></a>',
 to select one or more maps and to disable all others,
+'<a href="#mapsave"><tt><b>map save</b></tt></a>',
+to save map information to a file,
 '<a href="#mapselect"><tt><b>map select</b></tt></a>',
-to select one or more maps
+to select one or more maps,
 '<a href="#mapshow"><tt><b>map show</b></tt></a>',
 to display information about one or more maps or about the
 parameters to be used in generating or loading the next map,
@@ -2446,7 +2337,7 @@ to set the spacing betwen contour lines of selected maps,
 '<a href="#mapspread"><tt><b>map spread</b></tt></a>',
 to set the variance of the Gaussians for map generation as a fraction
 of the atomic radius, and
-map_zap map zap
+'<a href="#mapzap"><tt><b>map zap</b></tt></a>'
 to delete previously generated or loaded maps.
 <p>
 The effect of
@@ -2473,7 +2364,7 @@ Each Gaussian has a height proportional to the atomic number of the
 element type of the atom and a standard deviation determined by the
 most recently specified spread or resolution.  If a spread has been
 given the radius of the atom is multiplied by the spread to find the
-standard deviation.  The default is 1/6th of the radius.  If a resolution
+standard deviation.  The default is 2/3rds.  If a resolution
 has been given, the spread is inferred as 2/3rds of the resolution.
 For example, if the resolution is given as 1., and the atom in question
 is a Carbon with a van der Waals radius of 468 RasMol units (1.87 &Aring;ngstroms),
@@ -2578,7 +2469,7 @@ between contour levels (see the
 command) and to infer the map spread to be used in
 generated maps from selected atoms (see the
 '<a href="#mapspread"><tt><b>map spread</b></tt></a>'
-command).  The map spread is set to 1one sixth of
+command).  The map spread is set to one sixth of
 the specified resolution.
 <p><hr>
 <a name="maprestrict"><h3>Map restrict</h3></a><p>
@@ -2594,6 +2485,19 @@ subsequent map commands.  This is similar to the
 command, but does disables the display of the
 maps that were not selected.
 <p><hr>
+<a name="mapsave"><h3>Map save</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} save &lt;filename&gt;
+
+</pre><p>
+The RasMol
+'<tt><b>map save</b></tt>'
+command save an imgCIF map file.
+<p>
+If no specific map was given by the map selector, the currently
+selected maps and their masks are written to the file, one
+map and mask pair per data block.
+<p>
 <a name="mapselect"><h3>Map select</h3></a><p>
 <pre>
 Syntax:  map {&lt;map_selector&gt;} select
@@ -7062,22 +6966,26 @@ Information File (mmCIF)&quot;, Meth. Enzymol. (1997) 277, 571-590.
 Transfer and Archiving&quot;, Journal of Chemical Information and Computer
 Sciences, Vol. 31, 326-333, 1991.
 <p><hr>
+<hr>
 <CENTER>
 | <a href="http://www.OpenrasMol.org">OpenRasMol</a> |
 <A href="../README.html#Copying">Copying and Distribution</A> |
 <A href="../README.html#Contents">Contents</A> |
-<A href="../INSTALL.html">Installation Instructions</A> |<BR>
+<A href="../INSTALL.html">Installation Instructions</A> |<br />
 | <A href="../ChangeLog.html">Changes</A> |
 <A href="../TODO.html">Things To Do</A> |
 <A href="../README.html#Introduction">Introduction</A> |
-<A href="../README.html#CodeAndBinaries">Source Code and Binaries</A> |<BR>
+<A href="../README.html#CodeAndBinaries">Source Code and Binaries</A> |<br />
 | <A href="rasmol.html">RasMol Manual</A> |
 <a href="esrasmol27.html">Spanish Translation of RasMol Manual</a> |
-<a href="itrasmol.hlp">Italian Translation of RasMol 2.7.1 Help File</a> |<BR>
-<a href="../README.html">Release README</A> |<BR>
+<a href="itrasmol.hlp">Italian Translation of RasMol Help File</a> |<br />
+| <a href=http://www.rasmol.org/donate.shtml>Donate to Support RasMol</a> |
+<a href="../README.html">Release README</A> |
+<a href=http://www.rasmol.org/register.shtml>Register your RasMol</a> |
+<br />
 </CENTER>
 <HR>
-Updated 28 April 2005.<BR>
+Updated 19 January 2008.<BR>
 Herbert J. Bernstein<BR>
 Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA<BR>
 <script language="javascript" type="text/javascript">
@@ -7091,8 +6999,6 @@ Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA<BR>
 <noscript>
 yaya&#64;bernstein-plus-sons&#46;com
 </noscript>
-<BR>
-+1-631-286-1339<BR>
 </font>
 
 </BODY>

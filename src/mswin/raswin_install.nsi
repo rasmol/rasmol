@@ -39,6 +39,8 @@ InstallDirRegKey HKLM "Software\RasWin" ""
 !insertmacro MUI_LANGUAGE "Italian"
 !insertmacro MUI_LANGUAGE "Spanish"
 !insertmacro MUI_LANGUAGE "Russian"
+!insertmacro MUI_LANGUAGE "Bulgarian"
+!insertmacro MUI_LANGUAGE "SimpChinese"
 !insertmacro MUI_LANGUAGE "Japanese"
 
 !insertmacro MUI_RESERVEFILE_LANGDLL

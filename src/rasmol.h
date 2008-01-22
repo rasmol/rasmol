@@ -243,6 +243,12 @@ typedef short Pixel;
 #define _fmemset   memset
 #define __huge
 #define __far
+#else
+#ifdef USE_CBFLIB
+#define _fmalloc   halloc
+#define _ffree     hfree
+#define __far      __huge
+#endif
 #endif
 
 

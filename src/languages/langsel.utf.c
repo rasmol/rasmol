@@ -235,7 +235,7 @@ langfont langfonts[NUMLANGS] = {
 	
 
 static langstr langstrs[] = {
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, English,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  English,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, English,0},
@@ -491,7 +491,7 @@ static langstr langstrs[] = {
   { "No Warranty, Open Source, GPL, Donations Appreciated", StrWarranty, English,0},
 
 
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Spanish,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Spanish,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Spanish,0},
@@ -747,7 +747,7 @@ static langstr langstrs[] = {
   { "Ninguna garantía, Open Source, GPL, donaciones apreciadas", StrWarranty, Spanish, 0},
 
 
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Italian,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Italian,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Italian,0},
@@ -1003,7 +1003,7 @@ static langstr langstrs[] = {
   { "Nessuna garanzia, Open Source, GPL, donazioni apprezzate", StrWarranty, Italian, 0},
 
 
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, French,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  French,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, French,0},
@@ -1259,7 +1259,7 @@ static langstr langstrs[] = {
   { "Aucunes garantie, Open Source, GPL, donations appréciées", StrWarranty, French, 0},
 
 
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Russian,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Russian,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Russian,0},
@@ -1521,7 +1521,7 @@ static langstr langstrs[] = {
 
 
 
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Bulgarian,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Bulgarian,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Bulgarian,0},
@@ -1777,7 +1777,7 @@ static langstr langstrs[] = {
   { "Без гаранция, Open Source, GPL, дарения са добре дошли", StrWarranty, Bulgarian, 0},
 
 
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Chinese,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Chinese,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Chinese,0},
@@ -2031,7 +2031,7 @@ static langstr langstrs[] = {
   { "赠送",                                            StrDonate,   Chinese,0},
   { "不要把这个对话放在启动中",                        StrNoShow,   Chinese,0},
   { "无保修，开放源码，通用公共许可证，捐赠物鉴别",    StrWarranty, Chinese,0},
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Japanese,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Japanese,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Japanese,0},
@@ -2041,22 +2041,22 @@ static langstr langstrs[] = {
   { "コマンドの文法が不適切です!\n",                   ErrSyntax,   Japanese,0},
   { "パラメーターが大きすぎます!\n",                        ErrBigNum,   Japanese,0},
   { "パラメーターの設定が不適切です!\n",                    ErrBadOpt,   Japanese,0},
-  { "パラメーターの名前が不適切です!\n",                    ErrParam,    Japanese,0},
+  { "パラメーター名が不適切です!\n",                        ErrParam,    Japanese,0},
   { "ファイル名を示す文字列がありません!\n",                 ErrFilNam,  Japanese,0},
   { "分子構造データーベースを読みました!\n",                 ErrBadLoad,  Japanese,0},
   { "整数値を指定する必要があります!\n",                     ErrNotNum,   Japanese,0},
-  { "区切り子としてのコンマがありません! \n",                ErrNotSep,   Japanese,0},
+  { "区切り（コンマ）がありません! \n",                     ErrNotSep,   Japanese,0},
   { "右カッコ ']' がありませありません!\n",                 ErrNotBrac,  Japanese,0},
   { "色が指定されていません!\n",                           ErrNoCol,    Japanese,0},
   { "色の指定が不適切です!\n",                             ErrColour,   Japanese,0},
   { "コマンドの引数が不適切です!\n",                   ErrBadArg,   Japanese,0},
-  { "表記に誤りがあります!\n",                         ErrBadExpr,  Japanese,0},
+  { "表現に誤りがあります!\n",                         ErrBadExpr,  Japanese,0},
   { "右カッコ ')' がありません!\n",                       ErrParen,    Japanese,0},
   { "スクリプトが複雑すぎます!\n",                         ErrScript,   Japanese,0},
   { "左カッコ '(' がありません!\n",                        ErrFunc,     Japanese,0}, 
   { "原子団の名前が不適切です!\n",                         ErrSetName,  Japanese,0},
   { "原子団を定義するために必要なメモリーが確保できません!\n",  ErrBadSet,   Japanese,0},
-  { " スクリプトファイルでは使えないコマンドがあります!\n",     ErrInScrpt,  Japanese,0},
+  { "スクリプトファイルでは使えないコマンドがあります!\n",     ErrInScrpt,  Japanese,0},
   { "スクリプトファイルでしか使えないコマンドです!\n",         ErrOutScrpt, Japanese,0},
   { "分子構造データーベースを読み込めません!\n",              ErrBadMolDB, Japanese,0},
   { "回転のための結合が指定されていません!\n",                ErrNoBond,   Japanese,0},
@@ -2077,7 +2077,7 @@ static langstr langstrs[] = {
   { "クリップボードにコピーできません!\n",                   StrCClip,    Japanese,0},
   { "設定（ドット）ファイルを開くことができません: '",         StrDFile,    Japanese,0},
   { "注意: プリンターが指定されていません!\n",               StrNPrint,   Japanese,0},
-  { "単位細胞",                                         StrUCell,    Japanese,0},
+  { "単位格子",                                         StrUCell,    Japanese,0},
   { "空間群",                                           StrSGroup,   Japanese,0},
   { "結晶の対称性が不明です!\n",                           StrSymm,     Japanese,0},
   { "コマンドが意味不明です!\n",                           StrUnrec,    Japanese,0},
@@ -2085,23 +2085,23 @@ static langstr langstrs[] = {
   { "注意: リモートコマンドが長すぎます!\n",                 StrRCLong,   Japanese,0},
   { "スクリプトファイルを開くことができません:'",             StrSFile,    Japanese,0},
   { "識別子が長すぎます!\n",                               StrILong,    Japanese,0},
-  { "分子名 ......... ",                                StrMolNam,   Japanese,0},
-  { "分類  ........ ",                                  StrClass,    Japanese,0},
+  { "分子名 ............ ",                                StrMolNam,   Japanese,0},
+  { "分類 .............. ",                                  StrClass,    Japanese,0},
   { "二次構造... ",                                     StrSecSt,    Japanese,0},
   { "アサインされていません\n",                            StrNoAsmt,   Japanese,0},
   { "PDBデータのレコードによる\n",                         StrPDBRec,   Japanese,0},
   { "計算による\n",                                      StrCalc,     Japanese,0},
-  { "コード番号 ......... ",                             StrDBCode,   Japanese,0},
-  { "実験方法 .. ",                                     StrExpTec,   Japanese,0},
-  { "主鎖の数  ...... ",                                StrNumChn,   Japanese,0},
-  { "グループの数...... ",                               StrNumGrp,   Japanese,0},
-  { "原子の数 ....... ",                                StrNumAtm,   Japanese,0},
-  { "結合の数 ....... ",                                StrNumBnd,   Japanese,0},
-  { "S-S結合の数 ..... ",                               StrNumBrg,   Japanese,0},
-  { " 水素結合の数  ..... ",                             StrNumHbd,   Japanese,0},
-  { "ヘリックスの数 ..... ",                             StrNumHel,   Japanese,0},
-  { "ストランドの数 ..... ",                             StrNumStrnd, Japanese,0},
-  { "ターンの数 ....... ",                               StrNumTrn,   Japanese,0},
+  { "コード番号 ........ ",                             StrDBCode,   Japanese,0},
+  { "実験方法 .......... ",                                     StrExpTec,   Japanese,0},
+  { "主鎖の数 .......... ",                                StrNumChn,   Japanese,0},
+  { "グループの数 ...... ",                               StrNumGrp,   Japanese,0},
+  { "原子の数 .......... ",                                StrNumAtm,   Japanese,0},
+  { "結合の数 .......... ",                                StrNumBnd,   Japanese,0},
+  { "S-S結合の数 ....... ",                               StrNumBrg,   Japanese,0},
+  { "水素結合の数 ...... ",                             StrNumHbd,   Japanese,0},
+  { "ヘリックスの数 .... ",                             StrNumHel,   Japanese,0},
+  { "ストランドの数 .... ",                             StrNumStrnd, Japanese,0},
+  { "ターンの数 ........ ",                               StrNumTrn,   Japanese,0},
   { "メモリーの確保に失敗しました",                         StrMalloc,   Japanese,0},
   { "残基の種類が多すぎます",                              StrXSRes,    Japanese,0},
   { "原子の種類が多すぎます",                              StrXSAtyp,   Japanese,0},
@@ -2127,7 +2127,7 @@ static langstr langstrs[] = {
   { "カートゥーン",                                        StrMCartoon, Japanese,0},
   { "分子表面",                                           StrMMolSurf, Japanese,0},
   { "白黒",                                            StrMMonochr, Japanese,0},
-  { "CPK",                                             StrMCPK,     Japanese,0},
+  { "CPK（カラー）",                                             StrMCPK,     Japanese,0},
   { "形",                                              StrMShapely, Japanese,0},
   { "グループ",                                         StrMGroup,   Japanese,0},
   { "鎖",                                              StrMChain,   Japanese,1},
@@ -2135,7 +2135,7 @@ static langstr langstrs[] = {
   { "構造",                                            StrMStruct,  Japanese,2},
   { "ユーザー",                                         StrMUser,    Japanese,0},
   { "モデル",                                           StrMModel,   Japanese,2},
-  { "Alt",                                             StrMAlt,     Japanese,0},
+  { "可換構造",                                             StrMAlt,     Japanese,0},
   { "スラブモード",                                     StrMSlab,    Japanese,0},
   { "水素原子",                                         StrMHydr,    Japanese,1},
   { "ヘテロ原子",                                       StrMHet,     Japanese,2},
@@ -2170,8 +2170,8 @@ static langstr langstrs[] = {
   { "VRML ...",                                        StrMVRML,    Japanese,3},  
   { "Ramachandran ...",                                StrMRPP,     Japanese,3},  
   { "Raster3D ...",                                    StrMR3D,     Japanese,6},  
-  { "RasMol の原稿(&c)  ...",                           StrMSCR,     Japanese,8},  
-  { "RasMol について...",                                StrMAbout,   Japanese,0},
+  { "RasMolスクリプト...",                           StrMSCR,     Japanese,8},  
+  { "RasMolについて...",                                StrMAbout,   Japanese,0},
   { "マニュアル...",                                     StrMUserM,   Japanese,0},
   { "元に戻す",                                         StrMUndo,    Japanese,0},
   { "カット",                                           StrMCut,     Japanese,1},
@@ -2223,7 +2223,7 @@ static langstr langstrs[] = {
   { "構造(&S)",                                      StrMStruct,  Japanese,2},
   { "ユーザー(&U)",                                           StrMUser,    Japanese,0},
   { "モデル(&D)",                                          StrMModel,   Japanese,2},
-  { "&Alt",                                            StrMAlt,     Japanese,0},
+  { "可換構造(&A)",                                            StrMAlt,     Japanese,0},
   { "スラブモード(&P)",                                      StrMSlab,    Japanese,0},
   { "水素原子(&H)",                                      StrMHydr,    Japanese,1},
   { "ヘテロ原子(&N)",                                   StrMHet,     Japanese,2},
@@ -2258,14 +2258,14 @@ static langstr langstrs[] = {
   { "VRM&L ...",                                       StrMVRML,    Japanese,3},  
   { "Ram&achandran ...",                               StrMRPP,     Japanese,3},  
   { "Raster&3D ...",                                   StrMR3D,     Japanese,6},  
-  { "RasMol の原稿(&c) ...",                              StrMSCR,     Japanese,8},  
-  { "RasMol について(&A)...",                                StrMAbout,   Japanese,0},
+  { "RasMolスクリプト(&C)...",                              StrMSCR,     Japanese,8},  
+  { "RasMolについて(&A)...",                                StrMAbout,   Japanese,0},
   { "マニュアル(&M)...",                                 StrMUserM,   Japanese,0},
   { "元に戻す(&Z)",                                           StrMUndo,    Japanese,0},
   { "カット(&X)",                                            StrMCut,     Japanese,1},
   { "コピー(&C)",                                           StrMCopy,    Japanese,1},
   { "ペースト(&V)",                                          StrMPaste,   Japanese,0},
-  { " 削除(&D)",                                         StrMDelete,  Japanese,0},
+  { "削除(&D)",                                         StrMDelete,  Japanese,0},
   { "すべてを選択(&S)",                                     StrMSelAll,  Japanese,0},
   { "ファイル(&F)",                                           StrMFile,    Japanese,0},
   { "編集(&E)",                                           StrMEdit,    Japanese,0},
@@ -2281,10 +2281,10 @@ static langstr langstrs[] = {
   { "分子構造ファイル名:",                             StrPrmtMol,  Japanese,0},
   { "警告: ",                                           StrWarn,     Japanese,0},
   { "鎖",                                              StrChain,    Japanese,0},
-  { "記録",                                        StrRegister, Japanese,0},
-  { "寄付しなさい",                                          StrDonate,   Japanese,0},
-  { "開始でこのダイアログを示してはいけない",              StrNoShow,   Japanese,0},
-  { "保証無し、オープンソース、GPL の認められる寄付", StrWarranty, Japanese,0}
+  { "ユーザー登録",                                        StrRegister, Japanese,0},
+  { "寄付について",                                          StrDonate,   Japanese,0},
+  { "起動時にこのダイアログを表示しない",              StrNoShow,   Japanese,0},
+  { "GPLによる保証無しのオープンソース。寄付をお願いします。", StrWarranty, Japanese,0}
 
 
 

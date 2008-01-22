@@ -244,7 +244,7 @@ langfont langfonts[NUMLANGS] = {
 	
 
 static langstr langstrs[] = {
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, English,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  English,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, English,0},
@@ -500,7 +500,7 @@ static langstr langstrs[] = {
   { "No Warranty, Open Source, GPL, Donations Appreciated", StrWarranty, English,0},
 
 
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Spanish,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Spanish,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Spanish,0},
@@ -756,7 +756,7 @@ static langstr langstrs[] = {
   { "Ninguna garantía, Open Source, GPL, donaciones apreciadas", StrWarranty, Spanish, 0},
 
 
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Italian,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Italian,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Italian,0},
@@ -1012,7 +1012,7 @@ static langstr langstrs[] = {
   { "Nessuna garanzia, Open Source, GPL, donazioni apprezzate", StrWarranty, Italian, 0},
 
 
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, French,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  French,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, French,0},
@@ -1268,7 +1268,7 @@ static langstr langstrs[] = {
   { "Aucunes garantie, Open Source, GPL, donations appréciées", StrWarranty, French, 0},
 
 
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Russian,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Russian,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Russian,0},
@@ -1530,7 +1530,7 @@ static langstr langstrs[] = {
 
 
 
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Bulgarian,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Bulgarian,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Bulgarian,0},
@@ -1786,7 +1786,7 @@ static langstr langstrs[] = {
   { "Áåç ãàğàíöèÿ, Open Source, GPL, äàğåíèÿ ñà äîáğå äîøëè", StrWarranty, Bulgarian, 0},
 
 
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Chinese,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Chinese,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Chinese,0},
@@ -2040,7 +2040,7 @@ static langstr langstrs[] = {
   { "ÔùËÍ",                                            StrDonate,   Chinese,0},
   { "²»Òª°ÑÕâ¸ö¶Ô»°·ÅÔÚÆô¶¯ÖĞ",                        StrNoShow,   Chinese,0},
   { "ÎŞ±£ĞŞ£¬¿ª·ÅÔ´Âë£¬Í¨ÓÃ¹«¹²Ğí¿ÉÖ¤£¬¾èÔùÎï¼ø±ğ",    StrWarranty, Chinese,0},
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Japanese,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Japanese,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Japanese,0},
@@ -2050,22 +2050,22 @@ static langstr langstrs[] = {
   { "ƒRƒ}ƒ“ƒh‚Ì•¶–@‚ª•s“KØ‚Å‚·!\n",                   ErrSyntax,   Japanese,0},
   { "ƒpƒ‰ƒ[ƒ^[‚ª‘å‚«‚·‚¬‚Ü‚·!\n",                        ErrBigNum,   Japanese,0},
   { "ƒpƒ‰ƒ[ƒ^[‚Ìİ’è‚ª•s“KØ‚Å‚·!\n",                    ErrBadOpt,   Japanese,0},
-  { "ƒpƒ‰ƒ[ƒ^[‚Ì–¼‘O‚ª•s“KØ‚Å‚·!\n",                    ErrParam,    Japanese,0},
+  { "ƒpƒ‰ƒ[ƒ^[–¼‚ª•s“KØ‚Å‚·!\n",                        ErrParam,    Japanese,0},
   { "ƒtƒ@ƒCƒ‹–¼‚ğ¦‚·•¶š—ñ‚ª‚ ‚è‚Ü‚¹‚ñ!\n",                 ErrFilNam,  Japanese,0},
   { "•ªq\‘¢ƒf[ƒ^[ƒx[ƒX‚ğ“Ç‚İ‚Ü‚µ‚½!\n",                 ErrBadLoad,  Japanese,0},
   { "®”’l‚ğw’è‚·‚é•K—v‚ª‚ ‚è‚Ü‚·!\n",                     ErrNotNum,   Japanese,0},
-  { "‹æØ‚èq‚Æ‚µ‚Ä‚ÌƒRƒ“ƒ}‚ª‚ ‚è‚Ü‚¹‚ñ! \n",                ErrNotSep,   Japanese,0},
+  { "‹æØ‚èiƒRƒ“ƒ}j‚ª‚ ‚è‚Ü‚¹‚ñ! \n",                     ErrNotSep,   Japanese,0},
   { "‰EƒJƒbƒR ']' ‚ª‚ ‚è‚Ü‚¹‚ ‚è‚Ü‚¹‚ñ!\n",                 ErrNotBrac,  Japanese,0},
   { "F‚ªw’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ!\n",                           ErrNoCol,    Japanese,0},
   { "F‚Ìw’è‚ª•s“KØ‚Å‚·!\n",                             ErrColour,   Japanese,0},
   { "ƒRƒ}ƒ“ƒh‚Ìˆø”‚ª•s“KØ‚Å‚·!\n",                   ErrBadArg,   Japanese,0},
-  { "•\‹L‚ÉŒë‚è‚ª‚ ‚è‚Ü‚·!\n",                         ErrBadExpr,  Japanese,0},
+  { "•\Œ»‚ÉŒë‚è‚ª‚ ‚è‚Ü‚·!\n",                         ErrBadExpr,  Japanese,0},
   { "‰EƒJƒbƒR ')' ‚ª‚ ‚è‚Ü‚¹‚ñ!\n",                       ErrParen,    Japanese,0},
   { "ƒXƒNƒŠƒvƒg‚ª•¡G‚·‚¬‚Ü‚·!\n",                         ErrScript,   Japanese,0},
   { "¶ƒJƒbƒR '(' ‚ª‚ ‚è‚Ü‚¹‚ñ!\n",                        ErrFunc,     Japanese,0}, 
   { "Œ´q’c‚Ì–¼‘O‚ª•s“KØ‚Å‚·!\n",                         ErrSetName,  Japanese,0},
   { "Œ´q’c‚ğ’è‹`‚·‚é‚½‚ß‚É•K—v‚Èƒƒ‚ƒŠ[‚ªŠm•Û‚Å‚«‚Ü‚¹‚ñ!\n",  ErrBadSet,   Japanese,0},
-  { " ƒXƒNƒŠƒvƒgƒtƒ@ƒCƒ‹‚Å‚Íg‚¦‚È‚¢ƒRƒ}ƒ“ƒh‚ª‚ ‚è‚Ü‚·!\n",     ErrInScrpt,  Japanese,0},
+  { "ƒXƒNƒŠƒvƒgƒtƒ@ƒCƒ‹‚Å‚Íg‚¦‚È‚¢ƒRƒ}ƒ“ƒh‚ª‚ ‚è‚Ü‚·!\n",     ErrInScrpt,  Japanese,0},
   { "ƒXƒNƒŠƒvƒgƒtƒ@ƒCƒ‹‚Å‚µ‚©g‚¦‚È‚¢ƒRƒ}ƒ“ƒh‚Å‚·!\n",         ErrOutScrpt, Japanese,0},
   { "•ªq\‘¢ƒf[ƒ^[ƒx[ƒX‚ğ“Ç‚İ‚ß‚Ü‚¹‚ñ!\n",              ErrBadMolDB, Japanese,0},
   { "‰ñ“]‚Ì‚½‚ß‚ÌŒ‹‡‚ªw’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ!\n",                ErrNoBond,   Japanese,0},
@@ -2086,7 +2086,7 @@ static langstr langstrs[] = {
   { "ƒNƒŠƒbƒvƒ{[ƒh‚ÉƒRƒs[‚Å‚«‚Ü‚¹‚ñ!\n",                   StrCClip,    Japanese,0},
   { "İ’èiƒhƒbƒgjƒtƒ@ƒCƒ‹‚ğŠJ‚­‚±‚Æ‚ª‚Å‚«‚Ü‚¹‚ñ: '",         StrDFile,    Japanese,0},
   { "’ˆÓ: ƒvƒŠƒ“ƒ^[‚ªw’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ!\n",               StrNPrint,   Japanese,0},
-  { "’PˆÊ×–E",                                         StrUCell,    Japanese,0},
+  { "’PˆÊŠiq",                                         StrUCell,    Japanese,0},
   { "‹óŠÔŒQ",                                           StrSGroup,   Japanese,0},
   { "Œ‹»‚Ì‘ÎÌ«‚ª•s–¾‚Å‚·!\n",                           StrSymm,     Japanese,0},
   { "ƒRƒ}ƒ“ƒh‚ªˆÓ–¡•s–¾‚Å‚·!\n",                           StrUnrec,    Japanese,0},
@@ -2094,23 +2094,23 @@ static langstr langstrs[] = {
   { "’ˆÓ: ƒŠƒ‚[ƒgƒRƒ}ƒ“ƒh‚ª’·‚·‚¬‚Ü‚·!\n",                 StrRCLong,   Japanese,0},
   { "ƒXƒNƒŠƒvƒgƒtƒ@ƒCƒ‹‚ğŠJ‚­‚±‚Æ‚ª‚Å‚«‚Ü‚¹‚ñ:'",             StrSFile,    Japanese,0},
   { "¯•Êq‚ª’·‚·‚¬‚Ü‚·!\n",                               StrILong,    Japanese,0},
-  { "•ªq–¼ ......... ",                                StrMolNam,   Japanese,0},
-  { "•ª—Ş  ........ ",                                  StrClass,    Japanese,0},
+  { "•ªq–¼ ............ ",                                StrMolNam,   Japanese,0},
+  { "•ª—Ş .............. ",                                  StrClass,    Japanese,0},
   { "“ñŸ\‘¢... ",                                     StrSecSt,    Japanese,0},
   { "ƒAƒTƒCƒ“‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ\n",                            StrNoAsmt,   Japanese,0},
   { "PDBƒf[ƒ^‚ÌƒŒƒR[ƒh‚É‚æ‚é\n",                         StrPDBRec,   Japanese,0},
   { "ŒvZ‚É‚æ‚é\n",                                      StrCalc,     Japanese,0},
-  { "ƒR[ƒh”Ô† ......... ",                             StrDBCode,   Japanese,0},
-  { "ÀŒ±•û–@ .. ",                                     StrExpTec,   Japanese,0},
-  { "å½‚Ì”  ...... ",                                StrNumChn,   Japanese,0},
-  { "ƒOƒ‹[ƒv‚Ì”...... ",                               StrNumGrp,   Japanese,0},
-  { "Œ´q‚Ì” ....... ",                                StrNumAtm,   Japanese,0},
-  { "Œ‹‡‚Ì” ....... ",                                StrNumBnd,   Japanese,0},
-  { "S-SŒ‹‡‚Ì” ..... ",                               StrNumBrg,   Japanese,0},
-  { " …‘fŒ‹‡‚Ì”  ..... ",                             StrNumHbd,   Japanese,0},
-  { "ƒwƒŠƒbƒNƒX‚Ì” ..... ",                             StrNumHel,   Japanese,0},
-  { "ƒXƒgƒ‰ƒ“ƒh‚Ì” ..... ",                             StrNumStrnd, Japanese,0},
-  { "ƒ^[ƒ“‚Ì” ....... ",                               StrNumTrn,   Japanese,0},
+  { "ƒR[ƒh”Ô† ........ ",                             StrDBCode,   Japanese,0},
+  { "ÀŒ±•û–@ .......... ",                                     StrExpTec,   Japanese,0},
+  { "å½‚Ì” .......... ",                                StrNumChn,   Japanese,0},
+  { "ƒOƒ‹[ƒv‚Ì” ...... ",                               StrNumGrp,   Japanese,0},
+  { "Œ´q‚Ì” .......... ",                                StrNumAtm,   Japanese,0},
+  { "Œ‹‡‚Ì” .......... ",                                StrNumBnd,   Japanese,0},
+  { "S-SŒ‹‡‚Ì” ....... ",                               StrNumBrg,   Japanese,0},
+  { "…‘fŒ‹‡‚Ì” ...... ",                             StrNumHbd,   Japanese,0},
+  { "ƒwƒŠƒbƒNƒX‚Ì” .... ",                             StrNumHel,   Japanese,0},
+  { "ƒXƒgƒ‰ƒ“ƒh‚Ì” .... ",                             StrNumStrnd, Japanese,0},
+  { "ƒ^[ƒ“‚Ì” ........ ",                               StrNumTrn,   Japanese,0},
   { "ƒƒ‚ƒŠ[‚ÌŠm•Û‚É¸”s‚µ‚Ü‚µ‚½",                         StrMalloc,   Japanese,0},
   { "cŠî‚Ìí—Ş‚ª‘½‚·‚¬‚Ü‚·",                              StrXSRes,    Japanese,0},
   { "Œ´q‚Ìí—Ş‚ª‘½‚·‚¬‚Ü‚·",                              StrXSAtyp,   Japanese,0},
@@ -2136,7 +2136,7 @@ static langstr langstrs[] = {
   { "ƒJ[ƒgƒD[ƒ“",                                        StrMCartoon, Japanese,0},
   { "•ªq•\–Ê",                                           StrMMolSurf, Japanese,0},
   { "”’•",                                            StrMMonochr, Japanese,0},
-  { "CPK",                                             StrMCPK,     Japanese,0},
+  { "CPKiƒJƒ‰[j",                                             StrMCPK,     Japanese,0},
   { "Œ`",                                              StrMShapely, Japanese,0},
   { "ƒOƒ‹[ƒv",                                         StrMGroup,   Japanese,0},
   { "½",                                              StrMChain,   Japanese,1},
@@ -2144,7 +2144,7 @@ static langstr langstrs[] = {
   { "\‘¢",                                            StrMStruct,  Japanese,2},
   { "ƒ†[ƒU[",                                         StrMUser,    Japanese,0},
   { "ƒ‚ƒfƒ‹",                                           StrMModel,   Japanese,2},
-  { "Alt",                                             StrMAlt,     Japanese,0},
+  { "‰ÂŠ·\‘¢",                                             StrMAlt,     Japanese,0},
   { "ƒXƒ‰ƒuƒ‚[ƒh",                                     StrMSlab,    Japanese,0},
   { "…‘fŒ´q",                                         StrMHydr,    Japanese,1},
   { "ƒwƒeƒŒ´q",                                       StrMHet,     Japanese,2},
@@ -2179,8 +2179,8 @@ static langstr langstrs[] = {
   { "VRML ...",                                        StrMVRML,    Japanese,3},  
   { "Ramachandran ...",                                StrMRPP,     Japanese,3},  
   { "Raster3D ...",                                    StrMR3D,     Japanese,6},  
-  { "RasMol ‚ÌŒ´e(&c)  ...",                           StrMSCR,     Japanese,8},  
-  { "RasMol ‚É‚Â‚¢‚Ä...",                                StrMAbout,   Japanese,0},
+  { "RasMolƒXƒNƒŠƒvƒg...",                           StrMSCR,     Japanese,8},  
+  { "RasMol‚É‚Â‚¢‚Ä...",                                StrMAbout,   Japanese,0},
   { "ƒ}ƒjƒ…ƒAƒ‹...",                                     StrMUserM,   Japanese,0},
   { "Œ³‚É–ß‚·",                                         StrMUndo,    Japanese,0},
   { "ƒJƒbƒg",                                           StrMCut,     Japanese,1},
@@ -2232,7 +2232,7 @@ static langstr langstrs[] = {
   { "\‘¢(&S)",                                      StrMStruct,  Japanese,2},
   { "ƒ†[ƒU[(&U)",                                           StrMUser,    Japanese,0},
   { "ƒ‚ƒfƒ‹(&D)",                                          StrMModel,   Japanese,2},
-  { "&Alt",                                            StrMAlt,     Japanese,0},
+  { "‰ÂŠ·\‘¢(&A)",                                            StrMAlt,     Japanese,0},
   { "ƒXƒ‰ƒuƒ‚[ƒh(&P)",                                      StrMSlab,    Japanese,0},
   { "…‘fŒ´q(&H)",                                      StrMHydr,    Japanese,1},
   { "ƒwƒeƒŒ´q(&N)",                                   StrMHet,     Japanese,2},
@@ -2267,14 +2267,14 @@ static langstr langstrs[] = {
   { "VRM&L ...",                                       StrMVRML,    Japanese,3},  
   { "Ram&achandran ...",                               StrMRPP,     Japanese,3},  
   { "Raster&3D ...",                                   StrMR3D,     Japanese,6},  
-  { "RasMol ‚ÌŒ´e(&c) ...",                              StrMSCR,     Japanese,8},  
-  { "RasMol ‚É‚Â‚¢‚Ä(&A)...",                                StrMAbout,   Japanese,0},
+  { "RasMolƒXƒNƒŠƒvƒg(&C)...",                              StrMSCR,     Japanese,8},  
+  { "RasMol‚É‚Â‚¢‚Ä(&A)...",                                StrMAbout,   Japanese,0},
   { "ƒ}ƒjƒ…ƒAƒ‹(&M)...",                                 StrMUserM,   Japanese,0},
   { "Œ³‚É–ß‚·(&Z)",                                           StrMUndo,    Japanese,0},
   { "ƒJƒbƒg(&X)",                                            StrMCut,     Japanese,1},
   { "ƒRƒs[(&C)",                                           StrMCopy,    Japanese,1},
   { "ƒy[ƒXƒg(&V)",                                          StrMPaste,   Japanese,0},
-  { " íœ(&D)",                                         StrMDelete,  Japanese,0},
+  { "íœ(&D)",                                         StrMDelete,  Japanese,0},
   { "‚·‚×‚Ä‚ğ‘I‘ğ(&S)",                                     StrMSelAll,  Japanese,0},
   { "ƒtƒ@ƒCƒ‹(&F)",                                           StrMFile,    Japanese,0},
   { "•ÒW(&E)",                                           StrMEdit,    Japanese,0},
@@ -2290,10 +2290,10 @@ static langstr langstrs[] = {
   { "•ªq\‘¢ƒtƒ@ƒCƒ‹–¼:",                             StrPrmtMol,  Japanese,0},
   { "Œx: ",                                           StrWarn,     Japanese,0},
   { "½",                                              StrChain,    Japanese,0},
-  { "‹L˜^",                                        StrRegister, Japanese,0},
-  { "Šñ•t‚µ‚È‚³‚¢",                                          StrDonate,   Japanese,0},
-  { "ŠJn‚Å‚±‚Ìƒ_ƒCƒAƒƒO‚ğ¦‚µ‚Ä‚Í‚¢‚¯‚È‚¢",              StrNoShow,   Japanese,0},
-  { "•ÛØ–³‚µAƒI[ƒvƒ“ƒ\[ƒXAGPL ‚Ì”F‚ß‚ç‚ê‚éŠñ•t", StrWarranty, Japanese,0}
+  { "ƒ†[ƒU[“o˜^",                                        StrRegister, Japanese,0},
+  { "Šñ•t‚É‚Â‚¢‚Ä",                                          StrDonate,   Japanese,0},
+  { "‹N“®‚É‚±‚Ìƒ_ƒCƒAƒƒO‚ğ•\¦‚µ‚È‚¢",              StrNoShow,   Japanese,0},
+  { "GPL‚É‚æ‚é•ÛØ–³‚µ‚ÌƒI[ƒvƒ“ƒ\[ƒXBŠñ•t‚ğ‚¨Šè‚¢‚µ‚Ü‚·B", StrWarranty, Japanese,0}
 
 
 

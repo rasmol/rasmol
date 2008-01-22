@@ -2999,6 +2999,7 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
     char buffer[80];
 
     long int fpos;
+    int errorcnt;
     
     if (!MapInfoPtr) InitialiseMaps();
     if (MapSpacing <= 0) MapSpacing = 250L;
@@ -3027,7 +3028,6 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
     mapinfo.MapPointRad = MapPointRad;
     mapinfo.MapLabel = MapLabel;
     MapLabel=NULL;
-    int errorcnt;
 
     cbf_failnez(cbf_make_file(&mapfile, fp))
     cbf_onfailnez(cbf_get_fileposition(mapfile, &fpos)
@@ -3040,7 +3040,7 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
     for (ii=0; ii<4; ii++) {                                  /*  53 */
       unsigned int tmp;
       if (cbf_get_integer(mapfile,(int *)(&tmp),0,8) ) errorcnt++;
-      (unsigned char)MAP[ii]=tmp&0xFF;
+      ((unsigned char *)MAP)[ii]=tmp&0xFF;
     }
     
     if (cbf_cistrncmp(MAP,"MAP ",4)) errorcnt++;
@@ -3127,7 +3127,7 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
       unsigned int tmp;
       cbf_onfailnez(cbf_get_integer(mapfile,(int *)(&tmp),0,8)
       ,cbf_free_file(&mapfile))
-      (unsigned char)MAP[ii]=tmp&0xFF;
+      ((unsigned char *)MAP)[ii]=tmp&0xFF;
     }
 
     if (cbf_cistrncmp(MAP,"MAP ",4)) {
@@ -3413,6 +3413,10 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
     mapinfo.MapMaskPtr, mapinfo.MapRGBCol ))
 
     mapinfo.MapFile = (char __far *)_fmalloc(strlen(DataFileName)+1);
+    if (!mapinfo.MapFile) {
+      CommandError(MsgStrs[StrMalloc]);
+      return -1;
+    }
     strcpy(mapinfo.MapFile,DataFileName);
 
     if (mapno < 0)
@@ -3443,7 +3447,10 @@ int vector_create(GenericVec __far * __far * vector, size_t elementsize, size_t 
 
    *vector = (GenericVec __far *)_fmalloc(sizeof(GenericVec));
    
-   if (!(*vector)) return -1;
+   if (!(*vector)) {
+      CommandError(MsgStrs[StrMalloc]);
+      return -1;
+   }
    
    (*vector)->size = 0;
    (*vector)->capacity = 0;
@@ -3456,6 +3463,7 @@ int vector_create(GenericVec __far * __far * vector, size_t elementsize, size_t 
    }
    _ffree(*vector);
    *vector = NULL;
+   CommandError(MsgStrs[StrMalloc]);
    return -1;
 }
 
@@ -3464,19 +3472,31 @@ int vector_create(GenericVec __far * __far * vector, size_t elementsize, size_t 
 
 int vector_add_element(GenericVec __far * vector, void __far * element) {
    
+   size_t newcap;
+   
    if (!(vector)) return -1;
    
    if (vector->size >= vector->capacity) {
    
      void __far * temparray;
      
-     temparray = _fmalloc(vector->capacity*vector->elementsize*2);
-     if (!temparray) return -1;
+     newcap = vector->capacity*2;
+     
+     temparray = _fmalloc(newcap*vector->elementsize);
+     if (!temparray)  {
+       newcap = vector->capacity*1.2;
+       if (newcap < vector->capacity+1024); newcap = vector->capacity;
+       temparray = _fmalloc(newcap*vector->elementsize);
+       if (!temparray) {
+       	 CommandError(MsgStrs[StrMalloc]);
+         return -1;
+       }
+     }
      if (vector->size)    
        memmove((char *)temparray, (char *)vector->array, vector->size*vector->elementsize);
      _ffree(vector->array);
      vector->array = temparray;
-     vector->capacity *=2;
+     vector->capacity = newcap;
    }
    
    memmove(((char *)(vector->array))+vector->size*vector->elementsize,
@@ -3488,7 +3508,7 @@ int vector_add_element(GenericVec __far * vector, void __far * element) {
 
 /* vector_get_element -- get a copy of an element from a generic vector */
 
-int vector_get_element(GenericVec __far * vector, void __far * element, int index) {
+int vector_get_element(GenericVec __far * vector, void __far * element, size_t index) {
 
   if (index >= 0 && index < vector->size) {
   
@@ -3507,7 +3527,7 @@ int vector_get_element(GenericVec __far * vector, void __far * element, int inde
 
 /* vector_get_elementptr -- get a pointer to an element from a generic vector */
 
-int vector_get_elementptr(GenericVec __far * vector, void __far ** elementptr, int index) {
+int vector_get_elementptr(GenericVec __far * vector, void __far ** elementptr, size_t index) {
 
   if (index >= 0 && index < vector->size) {
   
@@ -3525,19 +3545,31 @@ int vector_get_elementptr(GenericVec __far * vector, void __far ** elementptr, i
 
 /* vector_set_element -- set a copy of an element into a generic vector */
 
-int vector_set_element(GenericVec __far * vector, void __far * element, int index) {
+int vector_set_element(GenericVec __far * vector, void __far * element, size_t index) {
+
+  size_t newcap;
 
   if (index >= vector->capacity) {
 
      void __far * temparray;
      
-     temparray = _fmalloc((index+vector->capacity)*vector->elementsize);
-     if (!temparray) return -1;
+     newcap = (index+vector->capacity);
+     
+     temparray = _fmalloc(newcap*vector->elementsize);
+     if (!temparray)  {
+       newcap = index*1.2;
+       if (newcap < index+1024); newcap = index+1024;
+       temparray = _fmalloc(newcap*vector->elementsize);
+       if (!temparray) {
+       	 CommandError(MsgStrs[StrMalloc]);
+         return -1;
+       }
+     }
      if (vector->size)    
        memmove((char *)temparray, (char *)vector->array, vector->size*vector->elementsize);
      _ffree(vector->array);
      vector->array = temparray;
-     vector->capacity += index;
+     vector->capacity = newcap;
      _fmemset((void __far *)((char *)vector->array+vector->elementsize*vector->size),
      0,(vector->capacity-vector->size)*vector->elementsize);
   }
@@ -3624,6 +3656,7 @@ int generate_map(MapStruct **map,
     register Group __far *group;
     register RAtom __far *ptr;
     register Long xsellow,xselhigh,ysellow,yselhigh,zsellow,zselhigh;
+    register long xpos, ypos, zpos;
     register Long xel, yel, zel;
     register int radius;
     size_t mapcount;
@@ -3641,7 +3674,11 @@ int generate_map(MapStruct **map,
     
     *map = (MapStruct*)_fmalloc(sizeof(MapStruct));
     
-    if (!*map) return 1;
+    if (!*map) {
+      CommandError(MsgStrs[StrMalloc]);
+      return -1;
+    }
+
     
     (*map)->elsize = sizeof(double);
     (*map)->eltype = CBF_FLOAT;    
@@ -3653,12 +3690,8 @@ int generate_map(MapStruct **map,
     (*map)->yint = yint;
     (*map)->zint = zint;
     (*map)->xorig = xorig;
-#ifdef INVERT
-    (*map)->yorig = -yorig;
-#else
     (*map)->yorig = yorig;
-#endif
-    (*map)->zorig = -zorig;
+    (*map)->zorig = zorig;
 
     (*map)->xlow = (*map)->xhigh = 0;
     (*map)->ylow = (*map)->yhigh = 0;
@@ -3691,33 +3724,20 @@ int generate_map(MapStruct **map,
         
         sig6 = (Long)(6* sig);
 
-        radius = ptr->radius;
-        if (radius < 10) radius = Element[ptr->elemno].vdwrad;
-
-      
-        if (ptr->xorg+ptr->fxorg+OrigCX-sig6 <xsellow)
-          xsellow = ptr->xorg+ptr->fxorg+OrigCX-sig6;
+        xpos = ptr->xorg+ptr->fxorg+OrigCX;
 #ifdef INVERT
-        if (-(ptr->yorg+ptr->fyorg+OrigCY)-sig6<ysellow)
-          ysellow = -(ptr->yorg+ptr->fyorg+OrigCY)-sig6;
+        ypos = -(ptr->yorg+ptr->fyorg+OrigCY);
 #else
-        if (ptr->yorg+ptr->fyorg+OrigCY-sig6<ysellow)
-          ysellow = ptr->yorg+ptr->fyorg+OrigCY-sig6;
+        ypos = ptr->yorg+ptr->fyorg+OrigCY;
 #endif
-        if (-(ptr->zorg+ptr->fzorg+OrigCZ)-sig6<zsellow)
-          zsellow = -(ptr->zorg+ptr->fzorg+OrigCZ)-sig6;
+        zpos = -(ptr->zorg+ptr->fzorg+OrigCZ);
         
-        if (ptr->xorg+ptr->fxorg+OrigCX+sig6>xselhigh)
-          xselhigh = ptr->xorg+ptr->fxorg+OrigCY+sig6;
-#ifdef INVERT
-        if (-(ptr->yorg+ptr->fyorg+OrigCY)+sig6>yselhigh)
-          yselhigh = -(ptr->yorg+ptr->fyorg+OrigCY)+sig6;
-#else
-        if (ptr->yorg+ptr->fyorg+OrigCY+sig6>yselhigh)
-          yselhigh = ptr->yorg+ptr->fyorg+OrigCY+sig6;
-#endif
-        if (-(ptr->zorg+ptr->fzorg+OrigCZ)+sig6>zselhigh)
-          zselhigh = -(ptr->zorg+ptr->fzorg+OrigCZ)+sig6;    	
+        if (xpos-sig6 < xsellow) xsellow = xpos-sig6;
+        if (ypos-sig6 < ysellow) ysellow = ypos-sig6;
+        if (zpos-sig6 < zsellow) zsellow = zpos-sig6;
+        if (xpos+sig6 > xselhigh) xselhigh = xpos+sig6;
+        if (ypos+sig6 > yselhigh) yselhigh = ypos+sig6;
+        if (zpos+sig6 > zselhigh) zselhigh = zpos+sig6;
       }
       
       xsellow -= buffer;
@@ -3728,26 +3748,13 @@ int generate_map(MapStruct **map,
       yselhigh += buffer;
       zselhigh += buffer;
       
-      (*map)->xlow = xsellow-xorig;
-      if ((*map)->xlow< 0) (*map)->xlow = ( (*map)->xlow - (xint-1) )/xint;
-      else (*map)->xlow = ( (*map)->xlow + (xint-1) )/xint;
-
-      (*map)->ylow = ysellow-yorig;
-      if ((*map)->ylow< 0) (*map)->ylow = ( (*map)->ylow - (yint-1) )/yint;
-      else (*map)->ylow = ( (*map)->ylow + (yint-1) )/yint;
-
-      (*map)->zlow = zsellow-zorig;
-      if ((*map)->zlow< 0) (*map)->zlow = ( (*map)->zlow - (zint-1) )/zint;
-      else (*map)->zlow = ( (*map)->zlow + (zint-1) )/zint;
- 
-      (*map)->xhigh = xselhigh-xorig;
-      (*map)->xhigh = ( (*map)->xhigh + (xint-1) )/xint;
-
-      (*map)->yhigh = yselhigh-yorig;
-      (*map)->yhigh = ( (*map)->yhigh + (yint-1) )/yint;
-
-      (*map)->zhigh = zselhigh-zorig;
-      (*map)->zhigh = ( (*map)->zhigh + (zint-1) )/zint;
+  
+      (*map)->xlow = (long)rint((double)(xsellow-xorig)/(double)(xint));
+      (*map)->xhigh = (long)rint((double)(xselhigh-yorig)/(double)(xint));
+      (*map)->ylow = (long)rint((double)(ysellow-zorig)/(double)(yint));
+      (*map)->yhigh = (long)rint((double)(yselhigh-xorig)/(double)(yint));
+      (*map)->zlow = (long)rint((double)(zsellow-yorig)/(double)(zint));
+      (*map)->zhigh = (long)rint((double)(zselhigh-zorig)/(double)(zint));
       
       (*map)->mapdata = _fmalloc(sizeof(double)*
       ((*map)->xhigh-(*map)->xlow+1)*
@@ -3757,6 +3764,7 @@ int generate_map(MapStruct **map,
       if (!(*map)->mapdata) {
       	_ffree(*map);
         *map = NULL;
+        CommandError(MsgStrs[StrMalloc]);
         return 1;
       }
       
@@ -3900,6 +3908,16 @@ int generate_map(MapStruct **map,
 #endif
       MapM2R(*map,2,2) = MapR2M(*map,2,2) = -1.;
       (*map)->mapxlate[2] = -OrigCZ;
+      
+      {char buffer[132];
+      	
+      sprintf(buffer,"\nmap generate normal completion \n X:[%ld,%ld], Y:[%ld,%ld], Z:[%ld,%ld]\n",
+        (*map)->xlow,(*map)->xhigh,(*map)->ylow,(*map)->yhigh,(*map)->zlow,(*map)->zhigh);
+        
+      WriteString(buffer);
+      }
+      
+      
       
       return 0;
 	

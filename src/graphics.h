@@ -302,6 +302,8 @@ extern Byte ULut[LutSize];
 extern LOGPALETTE __far *Palette;
 extern HPALETTE ColourMap;
 extern HGLOBAL FBufHandle;
+extern HGLOBAL SLineHandle;
+extern HGLOBAL DLineHandle;
 extern HGLOBAL DBufHandle;
 extern HGLOBAL CBufHandle;
 extern HBITMAP PixMap;

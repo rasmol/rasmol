@@ -353,15 +353,15 @@ int vector_add_element(GenericVec __far * vector, void __far * element);
 
 /* vector_get_element -- get a copy of an element from a generic vector */
 
-int vector_get_element(GenericVec __far * vector, void __far * element, int index);
+int vector_get_element(GenericVec __far * vector, void __far * element, size_t index);
 
 /* vector_get_elementptr -- get a pointer to an element from a generic vector */
 
-int vector_get_elementptr(GenericVec __far * vector, void __far ** elementptr, int index);
+int vector_get_elementptr(GenericVec __far * vector, void __far ** elementptr, size_t index);
 
 /* vector_set_element -- set a copy of an element into a generic vector */
 
-int vector_set_element(GenericVec __far * vector, void __far * element, int index);
+int vector_set_element(GenericVec __far * vector, void __far * element, size_t index);
 
 /* vector_free -- remove a generic vector */
 

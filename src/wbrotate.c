@@ -65,6 +65,14 @@
  ***************************************************************************/
 /* wbrotate.c
  $Log: not supported by cvs2svn $
+ Revision 1.4  2008/01/18 03:25:09  yaya-hjb
+ Update to RasMol 2.7.4 prerelease 4 level -- HJB
+
+ Revision 1.4  2008/01/14 15:49:16  yaya
+ More of code for CBF style map save
+ More use of stdlib as per Ladislav Michnovic
+ --HJB
+
  Revision 1.3  2008/01/05 21:31:40  yaya-hjb
  Update ChangeLog and TODO for 2.7.4.
  Update rasmol.doc, rasmol.hlp and rasmol.html for GM's toggle.

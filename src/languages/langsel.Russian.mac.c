@@ -1,4 +1,4 @@
-  { "Error: NoToggle mode enabed; "
+  { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Russian,0},
   { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Russian,0},
   { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Russian,0},

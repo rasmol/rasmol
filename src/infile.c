@@ -65,6 +65,14 @@
  ***************************************************************************/
 /* infile.c
  $Log: not supported by cvs2svn $
+ Revision 1.5  2008/01/14 15:49:16  yaya
+ More of code for CBF style map save
+ More use of stdlib as per Ladislav Michnovic
+ --HJB
+
+ Revision 1.2  2007/11/25 17:57:49  yaya-hjb
+ Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
+
  Revision 1.4  2007/11/19 03:28:39  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -125,7 +133,19 @@
 
  */
 
+/* Ladislav Michnovic, 10 Jan 08 start */
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+/* Ladislav Michnovic, 10 Jan 08 end */
+
+
 #include "rasmol.h"
+/* Ladislav Michnovic, 10 Jan 08 start */
+#include <string.h>
+/* Ladislav Michnovic, 10 Jan 08 end */
+
+
 
 #ifdef IBMPC
 #include <windows.h>

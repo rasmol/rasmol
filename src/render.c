@@ -65,6 +65,16 @@
  ***************************************************************************/
 /* render.c
  $Log: not supported by cvs2svn $
+ Revision 1.3  2008/01/05 21:31:40  yaya-hjb
+ Update ChangeLog and TODO for 2.7.4.
+ Update rasmol.doc, rasmol.hlp and rasmol.html for GM's toggle.
+ Update slab mode for stereo.
+ Add save of maps in CBF mode. -- HJB
+
+ Revision 1.8  2008/01/05 20:56:29  yaya
+ Update handling of stereo interaction with slab
+ Enable save of CBF-style maps. -- HJB
+
  Revision 1.7  2007/12/14 02:04:50  yaya
  Correct Chinese data for missing line in langsel_utf.c
  Rewrite code for handling of slab mode in stereo -- HJB
