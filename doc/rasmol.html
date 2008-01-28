@@ -95,7 +95,7 @@ RasMol 2.7.1 June 1999<br>RasMol 2.7.1.1 January 2001<BR>
 RasMol 2.7.2 August 2000<br>RasMol 2.7.2.1 April 2001<BR>
 RasMol 2.7.2.1.1 January 2004<br>RasMol 2.7.3 February 2005<BR>
 RasMol 2.7.3.1 Apr 06<br>RasMol 2.7.4 November 2007<br>
-RasMol 2.7.3.1 Apr 06<br>RasMol 2.7.4.1 January 2008<br>
+RasMol 2.7.4.1 January 2008<br>
 <td valign="top">&#169 Herbert J. Bernstein 1998-2008
 </table>
 </CENTER>
@@ -2469,7 +2469,7 @@ between contour levels (see the
 command) and to infer the map spread to be used in
 generated maps from selected atoms (see the
 '<a href="#mapspread"><tt><b>map spread</b></tt></a>'
-command).  The map spread is set to one sixth of
+command).  The map spread is set to two thirds of
 the specified resolution.
 <p><hr>
 <a name="maprestrict"><h3>Map restrict</h3></a><p>
@@ -2478,8 +2478,8 @@ Syntax:  map {&lt;map_selector&gt;} restrict
 
 </pre><p>
 The RasMol
-'<tt><b>map select</b></tt>'
-command selects particular maps to make the active for
+'<tt><b>map restrict</b></tt>'
+command selects particular maps to make them active for
 subsequent map commands.  This is similar to the
 '<a href="#mapselect"><tt><b>map select</b></tt></a>'
 command, but does disables the display of the
@@ -2492,12 +2492,12 @@ Syntax:  map {&lt;map_selector&gt;} save &lt;filename&gt;
 </pre><p>
 The RasMol
 '<tt><b>map save</b></tt>'
-command save an imgCIF map file.
+command saves an imgCIF map file.
 <p>
 If no specific map was given by the map selector, the currently
 selected maps and their masks are written to the file, one
 map and mask pair per data block.
-<p>
+<p><hr>
 <a name="mapselect"><h3>Map select</h3></a><p>
 <pre>
 Syntax:  map {&lt;map_selector&gt;} select
@@ -2505,7 +2505,7 @@ Syntax:  map {&lt;map_selector&gt;} select
 </pre><p>
 The RasMol
 '<tt><b>map select</b></tt>'
-command selects particular maps to make the active for
+command selects particular maps to make them active for
 subsequent map commands.  This is similar to the
 '<a href="#maprestrict"><tt><b>map restrict</b></tt></a>'
 command, but does not disable the display of the
@@ -2533,7 +2533,7 @@ in creating representations of maps.  The spacing is typically
  given in &Aring;ngstroms with a decimal point, but may also be
 specified in RasMol units (250ths of an Angstom) as an
 integer.  For maps loaded in grid coordinates that spacing
-is parallel to the cell edges.  The default spacing in
+is parallel to the cell edges.  The default spacing is
 one half &Aring;ngstrom.
 <p><hr>
 <a name="mapspread"><h3>Map spread</h3></a><p>
@@ -2547,7 +2547,7 @@ command specifies the reciprocal of the number of
 standard deviations per radius to be used in
 generating maps as sums of Gaussians centered
 on atomic positions.  The default spead is one
-sixth (<i>i.e.</i> each radius covers six standard deviations).
+two thirds (<i>i.e.</i> each radius covers 1.5 standard deviations).
 <p><hr>
 <a name="mapzap"><h3>Map zap</h3></a><p>
 <pre>

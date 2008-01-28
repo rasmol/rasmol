@@ -433,7 +433,7 @@ HRRasMol 2.7.1 June 1999<br>RasMol 2.7.1.1 January 2001<BR>
 HRRasMol 2.7.2 August 2000<br>RasMol 2.7.2.1 April 2001<BR>
 HRRasMol 2.7.2.1.1 January 2004<br>RasMol 2.7.3 February 2005<BR>
 HRRasMol 2.7.3.1 Apr 06<br>RasMol 2.7.4 November 2007<br>
-HRRasMol 2.7.3.1 Apr 06<br>RasMol 2.7.4.1 January 2008<br>
+HRRasMol 2.7.4.1 January 2008<br>
 HR<td valign="top">&#169 Herbert J. Bernstein 1998-2008
 HR</table>
 HR</CENTER>
@@ -3629,7 +3629,7 @@ AXmapspacing map spacing
 ATcommand) and to infer the map spread to be used in
 ATgenerated maps from selected atoms (see the
 AXmapspread map spread
-ATcommand).  The map spread is set to one sixth of
+ATcommand).  The map spread is set to two thirds of
 ATthe specified resolution.
 AB
 
@@ -3648,8 +3648,8 @@ RRmap \{<map_selector>\}  restrict
 RR}\pard\par
 
 ATThe RasMol
-ACmap select
-ATcommand selects particular maps to make the active for
+ACmap restrict
+ATcommand selects particular maps to make them active for
 ATsubsequent map commands.  This is similar to the
 AXmapselect map select
 ATcommand, but does disables the display of the
@@ -3673,12 +3673,11 @@ RR}\pard\par
 
 ATThe RasMol
 ACmap save
-ATcommand save an imgCIF map file.
+ATcommand saves an imgCIF map file.
 AP
 ATIf no specific map was given by the map selector, the currently
 ATselected maps and their masks are written to the file, one
 ATmap and mask pair per data block.
-AP
 AB
 
 PR?mapselect
@@ -3696,7 +3695,7 @@ RR}\pard\par
 
 ATThe RasMol
 ACmap select
-ATcommand selects particular maps to make the active for
+ATcommand selects particular maps to make them active for
 ATsubsequent map commands.  This is similar to the
 AXmaprestrict map restrict
 ATcommand, but does not disable the display of the
@@ -3744,7 +3743,7 @@ ATin creating representations of maps.  The spacing is typically
 AT given in Angstroms with a decimal point, but may also be
 ATspecified in RasMol units (250ths of an Angstom) as an
 ATinteger.  For maps loaded in grid coordinates that spacing
-ATis parallel to the cell edges.  The default spacing in
+ATis parallel to the cell edges.  The default spacing is
 ATone half Angstrom. 
 AB
 
@@ -3767,7 +3766,7 @@ ATcommand specifies the reciprocal of the number of
 ATstandard deviations per radius to be used in
 ATgenerating maps as sums of Gaussians centered
 ATon atomic positions.  The default spead is one
-ATsixth (i.e. each radius covers six standard deviations).
+ATtwo thirds (i.e. each radius covers 1.5 standard deviations).
 AB
 
 

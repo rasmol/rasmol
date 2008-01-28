@@ -1320,24 +1320,24 @@ Angstroms to be used in generating and in representing maps.
 The resolution is used at the map spacing for representations of maps, 
 indicating the separation between contour levels (see the 'map spacing' 
 command) and to infer the map spread to be used in generated maps from 
-selected atoms (see the 'map spread' command). The map spread is set to one 
-sixth of the specified resolution. 
+selected atoms (see the 'map spread' command). The map spread is set to two 
+thirds of the specified resolution. 
 
 ?maprestrict
 ?map restrict
 Map restrict
 Syntax:  map {<map_selector>} restrict
 
-The RasMol 'map select' command selects particular maps to make the active 
-for subsequent map commands. This is similar to the 'map select' command, 
-but does disables the display of the maps that were not selected. 
+The RasMol 'map restrict' command selects particular maps to make them 
+active for subsequent map commands. This is similar to the 'map select' 
+command, but does disables the display of the maps that were not selected. 
 
 ?mapsave
 ?map save
 Map save
 Syntax:  map {<map_selector>} save <filename>
 
-The RasMol 'map save' command save an imgCIF map file. 
+The RasMol 'map save' command saves an imgCIF map file. 
 
 If no specific map was given by the map selector, the currently selected 
 maps and their masks are written to the file, one map and mask pair per data 
@@ -1348,7 +1348,7 @@ block.
 Map select
 Syntax:  map {<map_selector>} select
 
-The RasMol 'map select' command selects particular maps to make the active 
+The RasMol 'map select' command selects particular maps to make them active 
 for subsequent map commands. This is similar to the 'map restrict' command, 
 but does not disable the display of the maps that were not selected. 
 
@@ -1370,7 +1370,7 @@ contour lines in creating representations of maps. The spacing is typically
 given in Angstroms with a decimal point, but may also be specified in RasMol 
 units (250ths of an Angstom) as an integer. For maps loaded in grid 
 coordinates that spacing is parallel to the cell edges. The default spacing 
-in one half Angstrom. 
+is one half Angstrom. 
 
 ?mapspread
 ?map spread
@@ -1379,8 +1379,8 @@ Syntax:  map {<map_selector>} spread <number>
 
 The RasMol 'map spread' command specifies the reciprocal of the number of 
 standard deviations per radius to be used in generating maps as sums of 
-Gaussians centered on atomic positions. The default spead is one sixth (i.e. 
-each radius covers six standard deviations). 
+Gaussians centered on atomic positions. The default spead is two thirds 
+(i.e. each radius covers 1.5 standard deviations). 
 
 ?mapzap
 ?map zap

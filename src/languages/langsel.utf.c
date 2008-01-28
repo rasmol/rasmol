@@ -144,7 +144,7 @@ langfont langfonts[NUMLANGS] = {
     Russian },
   { "RASMOL_CHINESE_MENU_FONT", 
     GB2312_CHARSET,
-    "GB2312_CHARSET", 
+    "GB2312_CHARSET",
     Chinese },
   { "RASMOL_JAPANESE_MENU_FONT", 
     SHIFTJIS_CHARSET,

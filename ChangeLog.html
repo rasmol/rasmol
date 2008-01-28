@@ -140,7 +140,21 @@ changes, please make them in a responsible manner, and please offer
 us the opportunity to include those changes in future versions of RasMol.
 <HR>
 <P>
+<h3>Changes from RasMol 2.7.3 to RasMol 2.7.4.1 include:</h3>
+<ul>
+  <li> Support for maps.
+  <li> Message and menu translations for Russian, Bulgarian, Japanese and Chinese.
+Our thanks to G. Pozhvanov, G. Todorov, Nan Jia, Mamoru Yamanishi and Katajima Hajime.
+  <li> Fix torsion angle calculation as per bug report and patch by Swati Jain.
+  <li> Corrections by Ladislav Michnovic to port to more platforms.
+  <li> Code to read remediated PDB entries as suggested by Huanwang Yang
+  <li> Updated icons.
+  <li> Extended export menus.
+</ul>
+<P>
+
 <h3>Changes to RasMol 2.7.4 to create RasMol 2.7.4.1:</h3>
+
 <PRE>
 
 [19/01/2008]    HJB
@@ -363,6 +377,44 @@ us the opportunity to include those changes in future versions of RasMol.
 
 </PRE>
 <P>
+<h3>Changes from RasMol 2.7.2.1.1 (the final reference release
+of RasMol 2.7.2) to RasMol 2.7.3.1 include:</h3>
+<P>
+<ul>
+  <li>Adjustment to the mouse handling for a better, more natural feel.  Our thanks
+to C. Chigbo for the suggestion.
+  <li>Correction to cif.c for blanks after an initial quote mark.
+  <li>Correction to mswin31.c to restore lost initializations of ZRange
+and DialValue[8..9].
+  <li>Modifications by Mamoru Yamanishi to Imakefile and rasmol.c 
+to use xforms
+for GUI file open. 
+This patch needs the opens source xforms 1.0.90 library by
+Steve Lamont.
+  <li>Correction to molecule.c to correct input of xyz files.  Thanks
+to Stuart Prescott.
+  <li>Revision to CPK colors by C. Chigbo.
+The new colors are called CPKNEW.  The current CPK colors remain available
+as CPK.
+  <li>Correction to negative torsion angle monitors and to
+imprecise distance and angle monitors by C. Chigbo. 
+This patch corrects the display of negative torsion angles caused by use of
+the unsigned short type, and correctys imprecise distance and angle displays.
+This extends the original patch which was just for torsion angles (torsion.patch).
+A side effect of this change is to limit the available range for distance monitors 
+to approximately 327 &Aring;ngstroms.
+  <li>Initial code for display of solid Lee-Richards molecular surfaces.
+This patch adds the basic code for display of Lee-Richards surfaces with a
+new <tt>Molecular Surface</tt> menu item, and <tt>surface molecule &lt;probe radius&gt;</tt> and
+<tt>surface solvent &lt;probe radius&gt;</tt> commands. 
+  <li>Corrections of ribbons 0, etc. commands by R. Chachra.
+With this patch, the <tt>wireframe 0</tt>, <tt>ribbon 0</tt>, <tt>cartoon 0</tt>,
+<tt>backbone 0</tt>, <tt>strands 0</tt> and <tt>trace 0</tt> commands work the same as these
+command with <tt>off</tt> instead of <tt>0</tt>.
+
+</ul>  
+
+<P>
 <h3>
 Changes to RasMol 2.7.3 to create RasMol 2.7.3.1:</H3>
 <PRE>
@@ -437,6 +489,43 @@ Changes to RasMol 2.7.2.1.1 to create RasMol 2.7.3:</H3>
 
 </PRE>
 <P>
+<h3>Changes from RasMol 2.7.1 (the final reference release
+of RasMol 2.7.2) to RasMol 2.7.2.1.1 include:</h3>
+<P>
+<UL>
+<li>Post release patches to command.c were included to fix the
+handling of load inline in the UCB multiple molecule environment.  In
+addition conditional code controlled by STRICT was disabled to restore
+operation of load inline under windows.  Thanks to Jan Reichert
+&lt;jr@imb-jena.de&gt; for pointing out these problems.  Thanks to E. Martz
+&lt;emartz@microbio.umass.edu&gt; for pointing out an error in the Spanish
+translation credits which has been corrected.
+Thanks to a report by Julien Hering, the omission of a prior fix to the MS Windows
+version was found and corrected on 7 May 2004.
+<LI>Adaption of the multilingual mods from RasMol 2.7.1.1 into Rasmol 2.7.2.1.
+<LI>Rewrite of the mouse handling and rotation logic to correct the
+problems in 2.7.2 and make the feel of 2.7.2.1
+closer to that of RasMol 2.7.1.
+<LI>Addition of French menus and messages
+<LI>Addition of Italian menus and messages
+<LI>Adoption of picking for selection of atoms, groups or chains from
+RasTop 1.3.
+<LI>Adoption of backclipping from RasTop 1.3
+<LI>Adoption of shadepower command for glassy surfaces from RasTop 1.3
+<LI>Change of the menu stereo option to rotate cross-wall-none
+<LI>Allow longer atom names (12 characters) in CIFs.
+<LI>Incorporation of some of the code from the UCB RasMol variants.
+Out thanks to Eileen Lewis and Marco Molinaro for their cooperation
+in contributing the UCB Enhanced RasMol code for incorporation
+into the RasMol 2.7 series.
+<LI>Code to represent bonds in and to alternate conformers with
+a narrowed portion in the middle of each bond.
+<LI>An attempt to fix some of the chirality reversals in some of the
+output modes.
+<LI>Fixes for some of the problems reported since the last release.
+
+</UL>
+
 
 <H3>Post-release changes to RasMol 2.7.2.1.1:</H3>
 <PRE>
@@ -1151,6 +1240,33 @@ and the full source of UCB RasMol has not yet been recovered.
 		Update printer logic.
 </PRE>
 <P>
+<h3>Changes from RasMol 2.7.0 to RasMol 2.7.1.1 include:</h3>
+<P>
+<UL>
+<LI>Introduction of a multilingual structure for RasMol.
+<LI>Population of messages and menu lists for English and Spanish.
+<LI>Upgrade of some of the Windows printer logic
+<LI>Correction of coordinate handling for Mol2 and XYZ coordinates
+<LI>Fix to the parsing of D2O.
+<LI>The ability to automatically mark non bonded atoms in 
+wireframe and stick displays.  Our thanks to R. Curtis Haltiwanger
+for suggesting this change.
+<LI>The ability to use a proportionally spaced font and to draw labels
+with heavier strokes.  Our thanks to Eric Martz for suggesting this change.
+<LI>The ability to auto-recognize PDB vs. CIF and mmCIF datasets.
+<LI>Extensive updating to the manual.  Our thanks to William McClure,
+Margaret Wong, Eric Martz and Frances Bernstein.
+<LI>Updating the canvas title with the PDB ID code and EXPDTA information,
+so models will be clearly distinguished from experimental data.
+Our thanks to Helen Berman for suggesting this change.
+<LI>The ability to report coordinates.
+<LI>Additions to the list of pre-defined colours.
+<LI>Improved accuracy of coordinates in pseudo-PDB output.
+<LI>Fixes to the centering logic.
+</UL>
+
+
+<P>
 <H3>Changes from RasMol 2.7.0.1 to create RasMol 2.7.1:</H3>
 <PRE>
 [15/07/99]	HJB	documentation
@@ -1692,7 +1808,7 @@ The complete version 2 change history is in the directory <A HREF="ChangeLog/">C
 <br />
 </CENTER>
 <HR>
-Updated 19 January 2008.<br />
+Updated 26 January 2008.<br />
 Herbert J. Bernstein<br />
 Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA<br />
 <script language="javascript" type="text/javascript">

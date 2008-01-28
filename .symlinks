@@ -2,9 +2,9 @@
 if ( ! -Le index.shtml ) then
   ln -s README.shtml index.shtml
 endif
-foreach extension ( tar.gz DEC HP LINUX MAC MSWIN RS6K SGI )
+foreach extension ( tar.gz )
   if ( ! -Le RasMol.$extension ) then
-    ln -s ../RasMol_2.7.3.1.$extension RasMol.$extension
+    ln -s ../RasMol_2.7.4.1.$extension RasMol.$extension
   endif
 end
 foreach file (*)
