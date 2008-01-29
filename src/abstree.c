@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                               RasMol 2.7.4                              *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                            19 November 2007                             *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -21,33 +20,44 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                   RasMol 2.7.4   Nov 07                                 *
  *                                                                         *
- *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
- *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
- *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
- *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
- *of Energy.                                                               *
+ * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
+ * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
+ * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
+ * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
+ * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
+ * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
+ * Institute of General Medical Sciences (NIGMS). The content is solely    *
+ * the responsibility of the authors and does not necessarily represent    * 
+ * the official views of the funding organizations.                        *
  *                                                                         *
  *                    and Incorporating Translations by                    *
- *  Author                               Item                      Language*
+ *  Author                               Item                     Language *
  *  Isabel Servan Martinez,                                                *
- *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
- *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
- *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
- *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages French   *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
- *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  *
+ *  G. Pozhvanov                         2.7.3 menus and messages Russian  *
+ *  G. Todorov                           2.7.3 menus and messages Bulgarian*
+ *  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  *
+ *  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese *
  *                                                                         *
  *                             This Release by                             *
- * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2007               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
@@ -298,23 +308,12 @@ void DeAllocateExpr( Expr *expr )
 }
 
 
-int GetElemNumber( Group __far *group, RAtom __far *aptr )
-{
-    register char ch1,ch2;
-    register char *ptr;
+int GetElemDescNumber (char etype[2]) {
 
-    ptr = ElemDesc[aptr->refno];
-    if( IsCoenzyme(group->refno) )
-    {   /* Exceptions to PDB Atom Naming! */
-        ch1 = ' ';
-    } else 
-    {   ch1 = ToUpper(ptr[0]);
-        /* Handle HG, HD etc.. in Amino Acids! */
-        if( (ch1=='H') && IsProtein(group->refno) )
-            return 1;
-    }
-    ch2 = ToUpper(ptr[1]);
-
+  register char ch1,ch2;
+  
+  ch1 = ToUpper(etype[0]);
+  ch2 = ToUpper(etype[1]);
     switch( ch1 )
     {   case(' '):  switch( ch2 )
                     {   case('B'):  return(  5 );
@@ -572,6 +571,26 @@ int GetElemNumber( Group __far *group, RAtom __far *aptr )
         case('Y'):  return( 39 );
     }
     return 0;
+	
+}
+
+int GetElemNumber( Group __far *group, RAtom __far *aptr )
+{
+    register char ch1;
+    register char *ptr;
+
+    ptr = ElemDesc[aptr->refno];
+    if( IsCoenzyme(group->refno) )
+    {   /* Exceptions to PDB Atom Naming! */
+        ch1 = ' ';
+    } else 
+    {   ch1 = ToUpper(ptr[0]);
+        /* Handle HG, HD etc.. in Amino Acids! */
+        if( (ch1=='H') && IsProtein(group->refno) )
+            return 1;
+    }
+    
+    return (GetElemDescNumber(ptr));
 }
 
 
@@ -1502,7 +1521,7 @@ char *DescribeObj( AtomRef *ptr, Selection select )
   static char buffer[BS];
   int strucflag=' ';
   
-  /* needs to be initialised with whiteespaces, expect the last one */
+  /* needs to be initialised with whitespaces, expect the last one */
   memset(buffer, ' ', bs * sizeof (char));
 
   /* identification of 'chain' */

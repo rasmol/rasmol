@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                               RasMol 2.7.4                              *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                            19 November 2007                             *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -21,33 +20,44 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                   RasMol 2.7.4   Nov 07                                 *
  *                                                                         *
- *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
- *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
- *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
- *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
- *of Energy.                                                               *
+ * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
+ * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
+ * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
+ * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
+ * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
+ * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
+ * Institute of General Medical Sciences (NIGMS). The content is solely    *
+ * the responsibility of the authors and does not necessarily represent    * 
+ * the official views of the funding organizations.                        *
  *                                                                         *
  *                    and Incorporating Translations by                    *
- *  Author                               Item                      Language*
+ *  Author                               Item                     Language *
  *  Isabel Servan Martinez,                                                *
- *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
- *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
- *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
- *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages French   *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
- *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  *
+ *  G. Pozhvanov                         2.7.3 menus and messages Russian  *
+ *  G. Todorov                           2.7.3 menus and messages Bulgarian*
+ *  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  *
+ *  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese *
  *                                                                         *
  *                             This Release by                             *
- * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2007               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
@@ -111,6 +121,35 @@
 #define DialBClip   8
 #define DialBRot    9
 
+#ifdef X11WIN
+#define DLGScale        ((FontHigh+8)/9)
+typedef struct _DLGItem {
+    int DLGtype;         /* type of the dialog item */
+    char ** text;        /* text for the dialog item */
+    int  Identifier;     /* identifier of the field */
+    int x, y, width, height, status;
+} DLGItem;
+
+#include "raswin.idm"
+#define IDD_OK 0
+
+#define DLGCTEXT        1
+#define DLGLTEXT        2
+#define DLGPUSHBUTTON   3
+#define DLGCHECKBOX     4
+#define DLGICON         5
+
+#define AboutDLGXpos  20
+#define AboutDLGWidth 260
+#define AboutDLGHeight 116
+#define AboutDLGMItem  MenuBarMax
+#define AboutDLGCount  13
+/*  WARNING:  The IDD_NOSHOW checkbox must be last */
+#define AboutDLGNOSHOWindex AboutDLGCount-1
+
+#endif
+
+
 
 
 #ifdef GRAPHICS
@@ -128,6 +167,8 @@ int MouseUpdateStatus;
 
 Pixel __huge *FBuffer;
 short __huge *DBuffer;
+short __huge *SLineBuffer;
+short __huge *DLineBuffer;
 
 Pixel Lut[LutSize];
 Byte RLut[LutSize];
@@ -142,6 +183,8 @@ LOGPALETTE __far *Palette;
 HPALETTE ColourMap;
 HGLOBAL FBufHandle;
 HGLOBAL DBufHandle;
+HGLOBAL SLineHandle;
+HGLOBAL DLineHandle;
 HGLOBAL CBufHandle;
 HBITMAP PixMap;
 HWND CanvWin;
@@ -158,6 +201,8 @@ WindowPtr CmndWin;
 THPrint PrintHand;
 Handle FBufHandle;
 Handle DBufHandle;
+Handle SLineHandle;
+Handle DLinehandle;
 Handle CBufHandle;
 #endif /* APPLEMAC */
 
@@ -174,8 +219,58 @@ Window MainWin;
 Window CanvWin;
 Window MenuWin;
 Window RootWin;
+char filaid [1025];
+char macaid [1025];
+char fillang [81];
+
 
 #endif
+
+#ifdef X11WIN
+static char * EMPTY = "";
+static char * RMG = "RasMol Molecular Graphics";
+static char * RURL = "http://www.rasmol.org/";
+static char * RVERS  = "X11 Version 2.7.3.1";
+static char * RCOP = "Copyright (C) R.Sayle 1992-1999";
+static char * RCOP2 = "Copyright (C) H. Bernstein 1998-2006";
+static char * REMAIL = "yaya@bernstein-plus-sons.com";
+static char * ROK = "OK";
+
+#ifdef USE_UNAME
+#include <sys/utsname.h>
+
+struct utsname AboutDLGUNAME;
+char _unamebuffer[81];
+static char * unamebuffer=_unamebuffer;
+#endif
+
+
+/* WARNING:  Change the definition of  AboutDLGCount if this array chnges */
+DLGItem AboutDLG[AboutDLGCount] = {
+  { DLGICON,  &EMPTY,                      -1,           16,  45,  45, 45, 0 },
+  { DLGCTEXT, &RMG,                        -1,           80,   5, 100,  8, 0 },
+  { DLGCTEXT, &RURL,                       -1,           80,  14, 100,  8, 0 },
+  { DLGCTEXT, &RCOP,                       -1,           80,  25, 100,  8, 0 },
+  { DLGCTEXT, &RVERS,                      -1,           80,  34, 100,  8, 0 },
+  { DLGCTEXT, &RCOP2,                      -1,           80,  43, 100,  8, 0 },
+  { DLGCTEXT, &REMAIL,                     -1,           60,  52, 140,  8, 0 },
+  { DLGCTEXT,
+#ifdef USE_UNAME
+  &unamebuffer,
+#else 
+  &EMPTY,
+#endif
+                                           IDD_HARDWARE, 40,  70, 180,  8, 0 },
+  { DLGCTEXT, &MsgStrs[StrWarranty],       IDD_WARRANTY,  0,  79, 260,  8, 0 },
+  { DLGPUSHBUTTON, &ROK,                   IDD_OK,      115,  95,  30, 14, 0 },
+  { DLGPUSHBUTTON, &MsgStrs[StrRegister],  IDM_REGISTER, 32,  95,  81, 14, 0 },
+  { DLGPUSHBUTTON, &MsgStrs[StrDonate],    IDM_DONATE,  147,  95,  81, 14, 0 },
+/*  WARNING:  The IDD_NOSHOW checkbox must be last */
+  { DLGCHECKBOX, &MsgStrs[StrNoShow],      IDD_NOSHOW,   32, 104, 180,  8, 0 }	
+};
+
+#endif /* X11WIN */
+
 
 #else /* GRAPHICS */
 extern double DialValue[10];
@@ -192,6 +287,9 @@ extern int MouseUpdateStatus;
 
 extern Pixel __huge *FBuffer;
 extern short __huge *DBuffer;
+extern short __huge *SLineBuffer;
+extern short __huge *DLineBuffer;
+
 
 extern Pixel Lut[LutSize];
 extern Byte RLut[LutSize];
@@ -204,6 +302,8 @@ extern Byte ULut[LutSize];
 extern LOGPALETTE __far *Palette;
 extern HPALETTE ColourMap;
 extern HGLOBAL FBufHandle;
+extern HGLOBAL SLineHandle;
+extern HGLOBAL DLineHandle;
 extern HGLOBAL DBufHandle;
 extern HGLOBAL CBufHandle;
 extern HBITMAP PixMap;
@@ -223,6 +323,16 @@ extern Handle FBufHandle;
 extern Handle DBufHandle;
 extern Handle CBufHandle;
 #endif /* APPLEMAC */
+
+#ifdef X11WIN
+extern DLGItem AboutDLG[AboutDLGCount];
+extern char filaid [1025];
+extern char macaid [1025];
+extern char fillang [81];
+
+#endif /* X11WIN */
+
+
 #endif
 
 int CreateImage( void );
@@ -251,9 +361,17 @@ int OpenDisplay( int, int );
 
 #if !defined(IBMPC) && !defined(APPLEMAC)
 int FetchEvent( int );
+void DisplayAboutDLG( void );
+void UnDisplayAboutDLG( void );
+void DrawAboutDLG( void );
 #endif
 
 #ifdef X11WIN
 void FatalGraphicsError( char *ptr );
+int getraid ( char *, size_t, char *, size_t);
+int setraid ( const char *, const char * );
+size_t DetermineApplicationIdentifier( char *, size_t );
+
+
 #endif
 

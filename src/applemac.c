@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                               RasMol 2.7.4                              *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                            19 November 2007                             *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -21,33 +20,44 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                   RasMol 2.7.4   Nov 07                                 *
  *                                                                         *
- *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
- *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
- *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
- *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
- *of Energy.                                                               *
+ * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
+ * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
+ * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
+ * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
+ * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
+ * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
+ * Institute of General Medical Sciences (NIGMS). The content is solely    *
+ * the responsibility of the authors and does not necessarily represent    * 
+ * the official views of the funding organizations.                        *
  *                                                                         *
  *                    and Incorporating Translations by                    *
- *  Author                               Item                      Language*
+ *  Author                               Item                     Language *
  *  Isabel Servan Martinez,                                                *
- *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
- *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
- *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
- *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages French   *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
- *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  *
+ *  G. Pozhvanov                         2.7.3 menus and messages Russian  *
+ *  G. Todorov                           2.7.3 menus and messages Bulgarian*
+ *  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  *
+ *  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese *
  *                                                                         *
  *                             This Release by                             *
- * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2007               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
@@ -55,6 +65,43 @@
  ***************************************************************************/
 /* applemac.c
  $Log: not supported by cvs2svn $
+ Revision 1.2  2007/11/19 03:28:39  yaya
+ Update to credits for 2.7.4 in manual and headers
+ Mask code added -- HJB
+
+ Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.6  2006/11/28 03:12:48  yaya
+ Changes for Russian and About dialog in unix
+ This is a variant tried under Mac OS X.  Changes
+ for Linux still needed.  note that more work is
+ needed on font selection. -- HJB
+
+ Revision 1.5  2006/11/01 03:23:50  yaya
+ Update NSIS windows installer for more script types and to fix
+ misplaced script instructions for data files; add document and
+ script icons directly in raswin.exe; add credit line to
+ G. A. Pozhvanov in comments for Russian translations. -- HJB
+
+ Revision 1.4  2006/10/30 15:18:12  yaya
+ Add NSIS installer, make language sticky for windows and mac
+ Set up RASMOLPATH environment variable on install -- HJB
+
+ Revision 1.3  2006/10/14 21:05:51  yaya
+ Changes for build of Mac Classic versions with Russian
+ and with new About and Help dialogs -- HJB
+
+ Revision 1.2  2006/09/17 10:53:55  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:45:39  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
+ Initial Rasmol 2.7.3 Import
+
  Revision 1.1  2004/05/07 19:46:16  yaya
  Initial revision
 
@@ -94,6 +141,9 @@
 #include <Errors.h>
 #include <Menus.h>
 #include <Fonts.h>
+#ifndef __MC68K__
+  #include <InternetConfig.h>
+#endif
 
 #ifdef __CONDITIONALMACROS__
 #include <Printing.h>
@@ -246,6 +296,307 @@ static PicHandle CreateMacPicture( void )
     return pict;
 }
 
+/* GetPreferenceString
+     retrieves the string in the STR# resource of ID sid at
+     index sind and stores it as a pascal string in buffer
+     
+     Returns the length of the string or 0 if no string is found*/
+
+int GetPreferenceString (Str255 buffer, int sid, int sind) {
+
+    OSErr pferr;
+    long pfdid;
+    short pfvid;
+    Str255 pfname;
+    FSSpec pfspec;
+    int pfrefno;
+    short oldresfile;
+    
+    buffer[0] = 0;
+    oldresfile = CurResFile();
+    pferr = FindFolder(kOnSystemDisk, kPreferencesFolderType, kDontCreateFolder, &pfvid, &pfdid);
+    if (pferr == noErr) pferr = FSMakeFSSpec(pfvid, pfdid,
+        tostr255(pfname,("RasMol_" VERSION " Settings")), &pfspec );	
+    if (pferr == noErr) pfrefno = FSpOpenResFile(&pfspec, fsRdPerm);
+    
+    if (pferr == noErr && (pferr = ResError())== noErr) {
+      GetIndString(buffer,sid,sind);
+      CloseResFile(pfrefno);
+    }
+    UseResFile(oldresfile);
+    return (pferr == noErr)?(int)buffer[0]:0;
+}
+
+
+
+/* Launch a browser with a URL */
+
+int LaunchBrowserWithURL(const char * URL) {
+
+#ifdef __MC68K__
+
+  return 1;
+
+#else
+
+  OSStatus launcherr;
+  ICInstance instance;
+  long start, end;
+  
+  if (ICStart == (void *) kUnresolvedCFragSymbolAddress
+   || ICFindConfigFile == (void *) kUnresolvedCFragSymbolAddress
+   || ICLaunchURL == (void *) kUnresolvedCFragSymbolAddress
+   || ICStop == (void *) kUnresolvedCFragSymbolAddress) return 1;
+  if ( noErr==(launcherr=ICStart(&instance,'????') ) ){ 
+    if ( noErr == (launcherr=ICFindConfigFile(instance, 0, nil))) {
+      start = 0; end = strlen(URL);
+      launcherr = ICLaunchURL(instance,"\p", URL, strlen(URL), &start, &end);
+    }
+    ICStop(instance);
+  }
+  
+  return (launcherr==noErr)?0:1;
+  
+#endif
+	
+}
+
+
+/* FindPreferenceString 
+     Finds a string in the STR# resource of ID sid that matches the
+     pascal string in buffer 
+     
+     Returns the index of the matching string or zero */
+
+int FindPreferenceString (Str255 buffer, int sid) {
+
+
+    OSErr pferr;
+    long pfdid;
+    short pfvid;
+    Str255 pfname;
+    Str255 testcase;
+    FSSpec pfspec;
+    int pfrefno;
+    short oldresfile;
+    int strlcur, strllen;
+    unsigned char * sptr;
+    SInt8  state;
+    Handle strlres;
+   
+    strlcur = 0;
+    oldresfile = CurResFile();
+    pferr = FindFolder(kOnSystemDisk, kPreferencesFolderType, kDontCreateFolder, &pfvid, &pfdid);
+    if (pferr == noErr) pferr = FSMakeFSSpec(pfvid, pfdid,
+        tostr255(pfname,("RasMol_" VERSION " Settings")), &pfspec );	
+    if (pferr == noErr) pfrefno = FSpOpenResFile(&pfspec, fsRdPerm);
+    
+    if (pferr == noErr && (pferr = ResError())== noErr) {
+      strlres = GetResource('STR#',sid);
+      strllen = 0;
+      if (ResError() == noErr && strlres) {
+        state = HGetState(strlres);
+        HLock(strlres);
+        strllen = 1+*((short *)(*strlres));
+        sptr = 2+(unsigned char *)*strlres;
+        for (strlcur = 1; strlcur <= strllen; strlcur++) {
+          if (!str255casecmp(sptr,buffer)) break;
+          sptr +=(1+*sptr);       
+        }
+        if (strlcur > strllen) strlcur = 0;
+        HSetState(strlres, state);
+        RemoveResource(strlres);
+      }
+      CloseResFile(pfrefno);
+    }
+    UseResFile(oldresfile);
+    return (pferr == noErr)?strlcur:0;
+}
+
+
+int GetMacName (Str255 buffer) {
+
+  long svers;
+  Handle macstrH;
+  SInt8  state;
+  int ssize;
+  unsigned char * src, * dst;
+  short oldresfile;
+  
+  oldresfile = CurResFile();
+  UseResFile(0);  
+  buffer[0]=0;
+  Gestalt(gestaltSystemVersion, &svers);
+  if (svers < 0x01000L) {
+    macstrH = GetResource('STR ',-16413);
+    if ( macstrH != nil ) {
+      state = HGetState(macstrH);
+      HLock(macstrH);
+      src = (unsigned char *)*macstrH;
+      dst = buffer;
+      ssize = 1+(int)*src;
+      while (ssize) { *dst++ = *src++; ssize--; }
+      HSetState(macstrH, state);
+      UseResFile(oldresfile);
+      if (buffer[0]==0) {
+        strcpy((char *)buffer+1,"UNKNOWN");
+        buffer[0] = strlen("UNKNOWN");
+      }
+      return 0;
+    }
+  } 
+  UseResFile(oldresfile);
+  return 1;
+}
+
+int GetUserName (Str255 buffer) {
+
+  long svers;
+  Handle macstrH;
+  SInt8  state;
+  int ssize;
+  unsigned char * src, * dst;
+  short oldresfile;
+  
+  oldresfile = CurResFile();
+  UseResFile(0);
+  buffer[0]=0;
+  Gestalt(gestaltSystemVersion, &svers);
+  if (svers < 0x01000L) {
+    macstrH = GetResource('STR ',-16096);
+    if ( macstrH != nil ) {
+      state = HGetState(macstrH);
+      HLock(macstrH);
+      src = (unsigned char *)*macstrH;
+      dst = buffer;
+      ssize = 1+(int)*src;
+      while (ssize) { *dst++ = *src++; ssize--; }
+      HSetState(macstrH, state);
+      UseResFile(oldresfile);
+      if (buffer[0]==0) {
+        strcpy((char *)buffer+1,"UNKNOWN");
+        buffer[0] = strlen("UNKNOWN");
+      }
+      return 0;
+    }
+  } 
+  UseResFile(oldresfile);
+  return 1;
+}
+
+
+/* SetPreferenceString
+     Inserts the pascal string in buffer into the STR# resource
+     with ID sid at index sind.  If sind is 0, the string is
+     appended to the resource.  If sind is the index of an
+     existing string, the old string is replaced by the new
+     string.
+     
+     Returns the index at which the new string is inserted,
+     or 0 if there is an error */
+
+int SetPreferenceString (Str255 buffer, int sid, int sind) {
+
+    OSErr pferr;
+    long pfdid;
+    short pfvid;
+    Str255 pfname;
+    FSSpec pfspec;
+    FCBPBRec pffcb;
+    int pfrefno;
+    int pfresult;
+    short oldresfile;
+    short strllen;
+    short strlcur;
+    int pfclose;
+    Handle oldresm;
+    Handle strlres;
+    Handle nstrlres;
+    unsigned char strllst[1025];
+    unsigned char * src, * dst, *srcsave;
+    int ssize;
+    unsigned char zero = 0;
+    SInt8   state;
+    
+    pfclose = False;
+    oldresm = LMGetTopMapHndl();
+    
+    oldresfile = CurResFile();
+    pferr = FindFolder(kOnSystemDisk, kPreferencesFolderType, kDontCreateFolder, &pfvid, &pfdid);
+    if ( pferr == noErr) pferr = FSMakeFSSpec(pfvid, pfdid,
+        tostr255(pfname,("RasMol_" VERSION " Settings")), &pfspec );	
+    if ( pferr == noErr ) pfrefno = FSpOpenResFile(&pfspec, fsRdWrPerm);
+    
+    if ( pferr == fnfErr ) {
+      FSpCreateResFile(&pfspec, 'RSML', 'pref',smRoman);
+      pferr = noErr;
+}
+
+    if (pferr == noErr && (pferr = ResError())== noErr) {
+    
+      pfclose = (LMGetTopMapHndl() != oldresm);
+      pffcb.ioNamePtr = nil;
+      pffcb.ioVRefNum = 0;
+      pffcb.ioRefNum = pfrefno;
+      pffcb.ioFCBIndx = 0;
+      if ( PBGetFCBInfoSync(&pffcb) == noErr ) {
+        pfresult = ((pffcb.ioFCBFlags & (1 << 8)) != 0);
+      } else {
+        pfresult = False;
+      }
+      strlres = GetResource('STR#',sid);
+      dst = strllst+2;
+      if (ResError() == noErr && strlres) {
+        state = HGetState(strlres);
+        HLock(strlres);
+        strllen = *((short *)(*strlres));
+        src = ((unsigned char *)*(strlres))+2;
+        for (strlcur = 1; strlcur <= strllen; strlcur++) {
+          if (strlcur == sind) {
+            srcsave = src;
+          	src = buffer;
+          }
+          ssize = (int)*src+1;
+          if ((dst-strllst)+ssize > 1024) {
+             if (pfclose)CloseResFile(pfrefno);
+             UseResFile(oldresfile);
+             return (pferr == noErr)?0:1;    
+          }
+          while (ssize) { *dst++ = *src++; ssize--;}
+          if ( strlcur == sind )  {
+            src = srcsave + ((int)*srcsave+1);
+          }
+        }
+        HSetState(strlres, state);
+        RemoveResource(strlres);
+      } else {
+        strlcur = 1;
+      }
+      while( strlcur < sind && (dst-strllst) < 1024) {
+        *dst++ = 0;
+        strlcur++;
+      }
+      if (strlcur == sind || sind == 0) {
+        src = buffer;
+        ssize = (int)*src+1;
+        if ((dst-strllst)+ssize > 1024) {
+          if (pfclose)CloseResFile(pfrefno);
+          UseResFile(oldresfile);
+          return (pferr == noErr)?0:1;    
+        }
+        while (ssize) { *dst++ = *src++; ssize--; }
+        strlcur++;	
+      }
+      *((short *)strllst) = strlcur-1;
+      	
+      pferr = PtrToHand(strllst, &nstrlres, dst-strllst);
+      AddResource(nstrlres,'STR#',sid,&zero);
+    }
+    
+    if (pfclose)CloseResFile(pfrefno);
+    UseResFile(oldresfile);
+    return (pferr == noErr)?strlcur:0;
+}
 
 int PrintImage( void )
 {
@@ -439,7 +790,7 @@ unsigned char * ReWriteStr255(unsigned char buffer[255], char* str)
     return buffer;
 }
 
-unsigned char * tostr255(unsigned char buffer[255], char* str)
+unsigned char * tostr255(unsigned char buffer[255], const char * str)
 {   unsigned char *dst;
     unsigned char *src;
 
@@ -449,7 +800,7 @@ unsigned char * tostr255(unsigned char buffer[255], char* str)
     while( *src && (dst<buffer+254) )
       *dst++ = *((unsigned char *)src++);
     buffer[0] = (unsigned char)((dst-buffer)-1);
-    *dst = (unsigned char)'\0';
+    while ((dst-buffer)<255)*dst++ = (unsigned char)'\0';
     return buffer;
 }
 
@@ -470,6 +821,8 @@ void ReDrawWindow( void )
         {   case(140):  /* Apple Menu */
               SetMenuItemText(hand,1,tostr255(buffer,MsgStrs[StrMAbout]));
               SetMenuItemText(hand,2,tostr255(buffer,MsgStrs[StrMUserM]));
+              SetMenuItemText(hand,3,tostr255(buffer,MsgStrs[StrRegister]));
+              SetMenuItemText(hand,4,tostr255(buffer,MsgStrs[StrDonate]));
               break;
                       
             case(141):  /* File Menu */

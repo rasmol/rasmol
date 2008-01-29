@@ -1,4 +1,4 @@
-RasMol 2.7.3 is a molecular graphics program intended for the visualisation 
+RasMol 2.7.4 is a molecular graphics program intended for the visualisation 
 of proteins, nucleic acids and small molecules, based on Roger Sayles' 
 RasMol_2.6. The program is aimed at display, teaching and generation of 
 publication quality images. RasMol runs on Microsoft Windows, Apple 
@@ -21,8 +21,9 @@ Version 2.6x1 Mods Copyright (C) Arne Mueller 1998
 Versions 2.5-ucb and 2.6-ucb Mods Copyright (C)
 UC Regents/ModularCHEM Consortium 1995, 1996
 RasTop 1.3 Copyright (C) Philippe Valadon 2000
-Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3 Mods
-Copyright (C) Herbert J. Bernstein 1998-2005
+Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1,
+2.7.2.1.1, 2.7.3, 2.7.4, 2.7.4.1 Mods
+Copyright (C) Herbert J. Bernstein 1998-2008
 rasmol@bernstein-plus-sons.com
 
 
@@ -60,9 +61,9 @@ version, type the RasMol command 'help oldnotice'.
 
 ?copyright
 Copyright
-                                RasMol 2.7.3
+                               RasMol 2.7.4.1
                      Molecular Graphics Visualisation Tool
-                              6 February 2005
+                    19 November 2007 (rev. 19 January 2008)
 
                       Based on RasMol 2.6 by Roger Sayle
        Biomolecular Structures Group,Glaxo Wellcome Research & Development
@@ -86,13 +87,22 @@ Copyright
                     RasMol 2.7.1.1   Jan 01
                     RasMol 2.7.2     Aug 00
                     RasMol 2.7.2.1.1 Jan 04
-                    RasMol 2.7.3     Apr 05
+                    RasMol 2.7.3     Feb 05
+                    RasMol 2.7.3.1   Apr 06
+                    RasMol 2.7.4     Nov 07
+                    RasMol 2.7.4.1   Jan 08
 
- with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,
+ RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,
  and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
  grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
  Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department
- of Energy.
+ of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,
+ N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol
+ 2.7.4 supported in part by grant 1R15GM078077-01 from the National
+ Institute of General Medical Sciences (NGMS). The content is solely
+ the responsibility of the authors and does not necessarily represent
+ the official views of the funding organizations.
+
 
                      and Incorporating Translations by
 
@@ -105,29 +115,36 @@ Copyright
 
  Jean-Pierre Demailly                 2.7.1 menus and messages French
 
- Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages Italian
- A. Davassi, M. Masullo, C. Liotto    2.7.1 help file
+ Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages
+ A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian
+
+ G. Pozhvanov                         2.7.3 menus and messages Russian
+ G. Todorov                           2.7.3 menus and messages Bulgarian
+ Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese
+ Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese
+
 
                               This Release by
    Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA
                         yaya@bernstein-plus-sons.com
-                Copyright (C) Herbert J. Bernstein 1998-2005
+                Copyright (C) Herbert J. Bernstein 1998-2008
 ?copying
 
 
-This version is based in large part on RasMol version 2.7.2.1.1, Rasmol 
+This version is based directly on RasMol version 2.7.4. on RasMol version 
+2.7.3.1, on RasMol version 2.7.3, on RasMol version 2.7.2.1.1, Rasmol 
 version 2.7.2, RasMol version 2.7.1.1 and RasTop version 1.3 and indirectly 
 on the RasMol 2.5-ucb and 2.6-ucb versions and version 2.6_CIF.2, RasMol 
 2.6x1 and RasMol_2.6.4. 
 
-RasMol 2.7.3 may be distributed under the terms of the GNU General Public 
+RasMol 2.7.4.1 may be distributed under the terms of the GNU General Public 
 License (the GPL), see 
 
  http://www.gnu.org/licenses/gpl.txt 
 
 or the file GPL or type the command 'help GPL' 
 
-or RasMol 2.7.3 may be distributed under the RASMOL license. See the file 
+or RasMol 2.7.4.1 may be distributed under the RASMOL license. See the file 
 NOTICE or type the command 'help RASLIC' 
 
 ?gpl
@@ -735,8 +752,9 @@ Version 2.6x1 Mods Copyright (C) Arne Mueller 1998
 Version 2.5-ucb, 2.6-ucb Mods
   Copyright (C) UC Regents/ModularCHEM Consortium 1995, 1996
 RasTop 1.3 Copyright (C) Philippe Valadon 2000
-Version 2.7.0. 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3 Mods
-  Copyright (C) Herbert J. Bernstein 1998-2005
+Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1,
+        2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1 Mods
+  Copyright (C) Herbert J. Bernstein 1998-2008
   (yaya@bernstein-plus-sons.com)
 
 
@@ -752,17 +770,19 @@ The commands/keywords currently recognised by RasMol are given below.
 Type "help <command>" for more information on each RasMol function.
 
 
-    backbone     background   bond         cartoon      centre
-    clipboard    colour       connect      cpk          cpknew
-    define       depth        dots         echo         english
-    exit         french       hbonds       help         italian
-    label        load         molecule     monitor      pause
-    print        quit         refresh      renumber     reset
-    restrict     ribbons      rotate       save         script
-    select       set          show         slab         source
-    spacefill    spanish      ssbonds      star         stereo
-    strands      structure    surface      trace        translate
-    unbond       wireframe    write        zap          zoom
+    backbone     background   bond         bulgarian    cartoon
+    centre       chinese      clipboard    colour       colourmode
+    connect      cpk          cpknew       define       depth
+    dots         echo         english      exit         french
+    hbonds       help         italian      japanese     label
+    load         map          molecule     monitor      notoggle
+    pause        print        quit         refresh      renumber
+    reset        restrict     ribbons      rotate       save
+    script       select       set          show         slab
+    source       spacefill    spanish      ssbonds      star
+    stereo       strands      structure    surface      trace
+    translate    unbond       wireframe    write        zap
+    zoom
 
 
 ?backbone
@@ -820,6 +840,19 @@ Rotation around a previously picked bond may be specified by the 'rotate
 bond <angle>' command, or may also be controlled with the mouse, using the 
 'bond rotate on/off' or the equivalent 'rotate bond on/off' commands. 
 
+?bulgarian
+Bulgarian
+Syntax:  Bulgarian
+
+The RasMol 'Bulgarian' command sets the menus and messages to the Bulgarian 
+versions. 
+
+This command may not work correctly unless appropriate fonts have been 
+installed. The commands 'Bulgarian', 'Chinese', 'English', 'French', 
+'Italian', 'Russian' and 'Spanish' may be used to select Bulgarian, Chinese, 
+English, French, Italian, Japanese, Russian and Spanish menus and messages 
+if the appropriate fonts have been installed. 
+
 ?cartoon
 Cartoon
 Syntax:  cartoon {<number>}
@@ -864,6 +897,19 @@ the centre of the canvas) or a centre of rotation which is placed at the
 centre of the canvas. Starting with RasMol 2.7.2, the default is to center 
 the new axis on the canvas. 
 
+?chinese
+Chinese
+Syntax:  Chinese
+
+The RasMol 'Chinese' command sets the menus and messages to the Chinese 
+versions. 
+
+This command may not work correctly unless appropriate fonts have been 
+installed. The commands 'Bulgarian', 'Chinese', 'English', 'French', 
+'Italian', 'Russian' and 'Spanish' may be used to select Bulgarian, Chinese, 
+English, French, Italian, Japanese, Russian and Spanish menus and messages 
+if the appropriate fonts have been installed. 
+
 ?clipboard
 Clipboard
 Syntax:  clipboard
@@ -901,6 +947,19 @@ connect). 'Atom' objects can also be coloured by 'alt', 'amino', 'chain',
 'user'. Hydrogen bonds can also be coloured by 'type' and dot surfaces can 
 also be coloured by 'electrostatic potential'. For more information type 
 'help colour <colour>'. 
+
+?colourmode
+?colourmode
+ColourMode
+Syntax:  colourmode {<boolean>}
+         colormode {<boolean>}
+
+ColourMode allows the user to switch between using the new 'colour' method. 
+At present, the new coloring technique is the same as the old one, but to 
+preserve compatibility for older scripts it may be wise to add a "colormode 
+on" near the top of your script somewhere, if the script was designed for 
+version 2.7.3 of RasMol or earlier. The new color method, when completed, 
+aims to fix a few bugs in the coloring routines. 
 
 ?connect
 Connect
@@ -981,16 +1040,26 @@ English
 Syntax:  English
 
 The RasMol 'English' command sets the menus and messages to the English 
-versions. The commands 'French', 'Italian' and 'Spanish' may be used to 
-select French, Italian and Spanish menus and messages. 
+versions. 
+
+This command may not work correctly unless appropriate fonts have been 
+installed. The commands 'Bulgarian', 'Chinese', 'English', 'French', 
+'Italian', 'Russian' and 'Spanish' may be used to select Bulgarian, Chinese, 
+English, French, Italian, Japanese, Russian and Spanish menus and messages 
+if the appropriate fonts have been installed. 
 
 ?french
 French
 Syntax:  French
 
 The RasMol 'French' command sets the menus and messages to the French 
-versions. The commands 'English', 'Italian' and 'Spanish' may be used to 
-select English, Italian and Spanish menus and messages. 
+versions. 
+
+This command may not work correctly unless appropriate fonts have been 
+installed. The commands 'Bulgarian', 'Chinese', 'English', 'French', 
+'Italian', 'Russian' and 'Spanish' may be used to select Bulgarian, Chinese, 
+English, French, Italian, Japanese, Russian and Spanish menus and messages 
+if the appropriate fonts have been installed. 
 
 ?hbond
 ?hbonds
@@ -1026,8 +1095,26 @@ Italian
 Syntax:  Italian
 
 The RasMol 'Italian' command sets the menus and messages to the Italian 
-versions. The commands 'English', 'French' and 'Spanish' may be used to 
-select English, French and Spanish menus and messages. 
+versions. 
+
+This command may not work correctly unless appropriate fonts have been 
+installed. The commands 'Bulgarian', 'Chinese', 'English', 'French', 
+'Italian', 'Russian' and 'Spanish' may be used to select Bulgarian, Chinese, 
+English, French, Italian, Japanese, Russian and Spanish menus and messages 
+if the appropriate fonts have been installed. 
+
+?japanese
+Japanese
+Syntax:  Japanese
+
+The RasMol 'Japanese' command sets the menus and messages to the Japanese 
+versions. 
+
+This command may not work correctly unless appropriate fonts have been 
+installed. The commands 'Bulgarian', 'Chinese', 'English', 'French', 
+'Italian', 'Russian' and 'Spanish' may be used to select Bulgarian, Chinese, 
+English, French, Italian, Japanese, Russian and Spanish menus and messages 
+if the appropriate fonts have been installed. 
 
 ?labels
 ?label
@@ -1104,6 +1191,206 @@ conventional filename. This option specifies that the coordinates of the
 molecule to load are stored in the same file as the currently executing 
 commands. 
 
+?map
+Map
+Syntax:  map {<map_selector>} {<map_subcommand> <parameters>}
+
+The RasMol 'map' commands manipulate electron density maps in coordination 
+with the display of molecules. These commands are very memory intensive and 
+may not work on machines with limited memory. Each molecule may have as many 
+maps as available memory permits. Maps may be read from files or generated 
+from Gaussian density distributions around atoms. 
+
+'map generate', to generate a map from selected atoms, 'map level', to set 
+the contouring level for selected maps, 'map load', to load a map from a 
+file, 'map mask' to designate a mask for the selected maps, 'map 
+resolution', to set the resolution for contouring selected maps, 'map 
+restrict', to select one or more maps and to disable all others, 'map save', 
+to save map information to a file, 'map select', to select one or more maps, 
+'map show', to display information about one or more maps or about the 
+parameters to be used in generating or loading the next map, 'map spacing', 
+to set the spacing betwen contour lines of selected maps, 'map spread', to 
+set the variance of the Gaussians for map generation as a fraction of the 
+atomic radius, and 'map zap' to delete previously generated or loaded maps. 
+
+The effect of 'map generate' and 'map load' commands is modified by the 'map 
+mask' command which limits the portion of the display space that can be 
+considered for display of maps. 
+
+?mapgenerate
+?map generate
+Map generate
+Syntax:  map {<map_selector>} generate dots
+         map {<map_selector>} generate mesh
+         map {<map_selector>} generate surface
+
+The RasMol 'map generate' command generates a map from whatever atoms are 
+currently selected, by summing electron densities approximated by Gaussian 
+distributions. Each Gaussian has a height proportional to the atomic number 
+of the element type of the atom and a standard deviation determined by the 
+most recently specified spread or resolution. If a spread has been given the 
+radius of the atom is multiplied by the spread to find the standard 
+deviation. The default is 2/3rds. If a resolution has been given, the spread 
+is inferred as 2/3rds of the resolution. For example, if the resolution is 
+given as 1., and the atom in question is a Carbon with a van der Waals 
+radius of 468 RasMol units (1.87 Angstroms), the inferred spead is .6667, 
+and the standard deviation of the Gaussian is taken as 1.25 Angstroms. 
+
+If no specific map was given by the map selector, the new map is given the 
+next available map number. 
+
+If a specific map was given by the map selector, the new map replaces that 
+map. If more than one map was given by the map selector, the new map 
+replaces the lowest numbered of the selected maps. In any case the new map 
+becomes the currently selected map. 
+
+The map is displayed as dots, mesh or a surface, depending on the last map 
+rendering mode selected or the mode selected on the command itself. 
+
+?maplevel
+?map level
+Map level
+Syntax:  map {<map_selector>} level {MEAN} <number>
+
+The RasMol 'map level' command sets the contour level to be used in creating 
+subsequent representations of generated or loaded maps. If the keyword MEAN 
+in used the level is relative to the mean of the map data. Otherwise the 
+level is absolute. 
+
+In general, a lower level results in a map containing more of the displayed 
+volume, while a higher level results in a map containing less of the 
+displayed volume. 
+
+?mapload
+?map load
+Map load
+Syntax:  map {<map_selector>} load <filename>
+
+The RasMol 'map load' command loads a map file into RasMol. The valid 
+formats are CCP4 map format and imgCIF format. 
+
+If no specific map was given by the map selector, the new map is given the 
+next available map number. 
+
+If a specific map was given by the map selector, the new map replaces that 
+map. If more than one map was given by the map selector, the new map 
+replaces the lowest numbered of the selected maps. In any case the new map 
+becomes the currently selected map. 
+
+The map is displayed as dots, mesh or a surface depending on the last map 
+rendering mode selected. 
+
+?mapmask
+?map mask
+Map mask
+Syntax:  map {<map_selector>} mask selected
+         map {<map_selector>} mask <number>
+         map {<map_selector>} mask none
+
+The RasMol 'map mask' command specifies a mask to be used to limit the 
+display space to be used for making representations of other maps or removes 
+an earlier mask specification. 
+
+The 'selected' option indicates that the mask is to be created from the 
+currently selected atoms. The '<number>' option indicates that the mask is 
+to be copied from the map of the number specified. The 'none' option removes 
+the previously specified mask, if any. 
+
+The map selector specifies the map or maps to which the specified mask will 
+the applied. For example, 'map next mask selected' specifies that the 
+currently selected atoms are to be used to generate a mask to be applied to 
+any maps created by subsequent 'map load' or 'map generate' commands. 
+
+Any map may be used as a mask. The portions of the mask map greater than 
+than or equal to the average value of the mask map allow the values of the 
+map being masked to be used as given. The portions of the mask map lower 
+than the average value of the mask map cause the values of the map being 
+masked to be treated as if they were equal to the lowest data value of the 
+map being masked. 
+
+?mapresolution
+?map resolution
+Map resolution
+Syntax:  map {<map_selector>} resolution <number>
+
+The RasMol 'map resolution' command specifies the resolution in RasMol units 
+or, if a number containing a decimal point is given, the resolution in 
+Angstroms to be used in generating and in representing maps. 
+
+The resolution is used at the map spacing for representations of maps, 
+indicating the separation between contour levels (see the 'map spacing' 
+command) and to infer the map spread to be used in generated maps from 
+selected atoms (see the 'map spread' command). The map spread is set to two 
+thirds of the specified resolution. 
+
+?maprestrict
+?map restrict
+Map restrict
+Syntax:  map {<map_selector>} restrict
+
+The RasMol 'map restrict' command selects particular maps to make them 
+active for subsequent map commands. This is similar to the 'map select' 
+command, but does disables the display of the maps that were not selected. 
+
+?mapsave
+?map save
+Map save
+Syntax:  map {<map_selector>} save <filename>
+
+The RasMol 'map save' command saves an imgCIF map file. 
+
+If no specific map was given by the map selector, the currently selected 
+maps and their masks are written to the file, one map and mask pair per data 
+block. 
+
+?mapselect
+?map select
+Map select
+Syntax:  map {<map_selector>} select
+
+The RasMol 'map select' command selects particular maps to make them active 
+for subsequent map commands. This is similar to the 'map restrict' command, 
+but does not disable the display of the maps that were not selected. 
+
+?mapshow
+?map show
+Map show
+Syntax:  map {<map_selector>} show
+
+The RasMol 'map show' command causes information about the maps specified by 
+the map selector to be written to the command window. 
+
+?mapspacing
+?map spacing
+Map spacing
+Syntax:  map {<map_selector>} spacing <number>
+
+The RasMol 'map spacing' command specifies the spacing to be used between 
+contour lines in creating representations of maps. The spacing is typically  
+given in Angstroms with a decimal point, but may also be specified in RasMol 
+units (250ths of an Angstom) as an integer. For maps loaded in grid 
+coordinates that spacing is parallel to the cell edges. The default spacing 
+is one half Angstrom. 
+
+?mapspread
+?map spread
+Map spread
+Syntax:  map {<map_selector>} spread <number>
+
+The RasMol 'map spread' command specifies the reciprocal of the number of 
+standard deviations per radius to be used in generating maps as sums of 
+Gaussians centered on atomic positions. The default spead is two thirds 
+(i.e. each radius covers 1.5 standard deviations). 
+
+?mapzap
+?map zap
+Map zap
+Syntax:  map {<map_selector>} zap
+
+The RasMol 'map zap' command removes the data and representations of the 
+maps specified by the map selector. The map numbers of maps that have not 
+been removed are not changed. 
+
 ?molecule
 Molecule
 Syntax:  molecule <number>
@@ -1141,6 +1428,19 @@ atom displays the distance between this atom and the previous one. The shift
 key may be used to form distance monitors between a fixed atom and several 
 consecutive positions. A distance monitor may also be removed (toggled) by 
 selecting the appropriate pair of atom end points a second time. 
+
+?notoggle
+Notoggle
+Syntax:  notoggle {<boolean>}
+
+The RasMol 'NoToggle' command enables or disables the use of the toggle 
+ability that is used by some of the other RasMol commands. When no boolean 
+value is specified, NoToggle mode is ENABLED. When NoToggle mode is ENABLED, 
+all toggle functionality is DISABLED. To turn it off, one must explicitly 
+set 'notoggle off'. 
+
+Some commands which use the toggle feature are: 'ColourMode'. More functions 
+that utilize this capability may be added at a later date. 
 
 ?pause
 Pause
@@ -1282,6 +1582,19 @@ dst pick' command. If 'rotate all true' is selected, and multiple molecules
 have been loaded, then all molecules will rotate together. In all other 
 cases, the mouseand dials control the the rotation of the molecule selected 
 by the 'molecule n' command. 
+
+?russian
+Russian
+Syntax:  Russian
+
+The RasMol 'Russian' command sets the menus and messages to the Russian 
+versions. 
+
+This command may not work correctly unless appropriate fonts have been 
+installed. The commands 'Bulgarian', 'Chinese', 'English', 'French', 
+'Italian', 'Russian' and 'Spanish' may be used to select Bulgarian, Chinese, 
+English, French, Italian, Japanese, Russian and Spanish menus and messages 
+if the appropriate fonts have been installed. 
 
 ?save
 Save
@@ -1441,8 +1754,13 @@ Spanish
 Syntax:  Spanish
 
 The RasMol 'Spanish' command sets the menus and messages to the Spanish 
-versions. The commands 'English', 'French' and 'Italian' may be used to 
-select English, French and Italian menus and messages. 
+versions. 
+
+This command may not work correctly unless appropriate fonts have been 
+installed. The commands 'Bulgarian', 'Chinese', 'English', 'French', 
+'Italian', 'Russian' and 'Spanish' may be used to select Bulgarian, Chinese, 
+English, French, Italian, Japanese, Russian and Spanish menus and messages 
+if the appropriate fonts have been installed. 
 
 ?ssbond
 ?bridges

@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                               RasMol 2.7.4                              *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                            19 November 2007                             *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -21,33 +20,44 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                   RasMol 2.7.4   Nov 07                                 *
  *                                                                         *
- *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
- *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
- *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
- *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
- *of Energy.                                                               *
+ * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
+ * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
+ * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
+ * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
+ * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
+ * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
+ * Institute of General Medical Sciences (NIGMS). The content is solely    *
+ * the responsibility of the authors and does not necessarily represent    * 
+ * the official views of the funding organizations.                        *
  *                                                                         *
  *                    and Incorporating Translations by                    *
- *  Author                               Item                      Language*
+ *  Author                               Item                     Language *
  *  Isabel Servan Martinez,                                                *
- *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
- *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
- *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
- *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages French   *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
- *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  *
+ *  G. Pozhvanov                         2.7.3 menus and messages Russian  *
+ *  G. Todorov                           2.7.3 menus and messages Bulgarian*
+ *  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  *
+ *  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese *
  *                                                                         *
  *                             This Release by                             *
- * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2007               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
@@ -55,6 +65,53 @@
  ***************************************************************************/
 /* outfile.c
  $Log: not supported by cvs2svn $
+ Revision 1.6  2008/01/05 20:56:29  yaya
+ Update handling of stereo interaction with slab
+ Enable save of CBF-style maps. -- HJB
+
+ Revision 1.5  2007/12/14 02:04:50  yaya
+ Correct Chinese data for missing line in langsel_utf.c
+ Rewrite code for handling of slab mode in stereo -- HJB
+
+ Revision 1.4  2007/11/19 03:28:39  yaya
+ Update to credits for 2.7.4 in manual and headers
+ Mask code added -- HJB
+
+ Revision 1.3  2007/07/07 21:54:31  yaya
+ Next round of preliminary updates for maps, allowing multiple maps,
+ code to set the contour level and some fixes to the languages files -- HJB
+
+ Revision 1.2  2007/07/02 12:44:39  yaya
+ Partial preliminary map code -- HJB
+
+ Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.5  2007/02/02 21:08:59  yaya
+ Remove // comments for AIX build
+ Fix signed length conflict
+ Fix array bounds violation for molecule names in multiple.c -- HJB
+
+ Revision 1.4  2006/12/03 02:53:10  yaya
+ Clean up compilation warnings in outfile.c
+ Mods for about screen under Linux -- HJB
+
+ Revision 1.3  2006/11/01 03:23:50  yaya
+ Update NSIS windows installer for more script types and to fix
+ misplaced script instructions for data files; add document and
+ script icons directly in raswin.exe; add credit line to
+ G. A. Pozhvanov in comments for Russian translations. -- HJB
+
+ Revision 1.2  2006/09/17 10:53:55  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:45:53  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
+ Initial Rasmol 2.7.3 Import
+
  Revision 1.1  2004/05/07 19:46:16  yaya
  Initial revision
 
@@ -118,8 +175,8 @@
 #include "graphics.h"
 #include "pixutils.h"
 #include "script.h"
-
-
+#include "font.h"
+#include "maps.h"
 /* #define BIGGIF */
 
 
@@ -182,6 +239,11 @@
 #define PICTendofpict       0x00ff
 #define PICTheaderop        0x0c00
 
+/* Raster3D defines */
+#define NTX 45		/* number of tiles in x direction*/
+#define NTY 32		/* number of tiles in y direction*/
+#define NPX 16		/* number of pixels per tile in x direction*/
+#define NPY 16		/* number of pixels per tile in y direction*/
 typedef void __far* PSItemPtr;
 
 
@@ -242,7 +304,6 @@ static int VectSolid;
 static int VectCol;
 
 
-
 /*=======================*/
 /*  Function Prototypes  */
 /*=======================*/
@@ -256,6 +317,14 @@ static void WriteVectStick( RAtom __far*, RAtom __far*, int, int );
 static void WriteVectWire( RAtom __far*, RAtom __far*, int, int );
 static void FetchPSItems( PSItemPtr __far*, char __far* );
 static void WritePSItems( PSItemPtr __far*, char __far*, int );
+static void WriteR3DSphere( PSItemPtr __far*, char __far*, int, int );
+static void WriteR3DItems( PSItemPtr __far*, char __far*, int, int );
+static void WriteR3DStick( RAtom __far*, RAtom __far*, int, int, int );
+static void WriteR3DMonitor( Monitor __far*, int, int );
+static void OutputR3DCharacter( Real, Real, Real, int, int, Real,Real );
+static void WriteR3DLabels( int );
+void OutputR3DFontString( Real, Real, Real, unsigned char*, int, Real );
+R3DRib __far *Add_ribdata( Real, Real, Real, Real, Real, Real, Real, Real, Real, R3DRib __far*,int, Real);
 
 static void DetermineIRISSizes( Long __far*, short __far*, int*, int* );
 static void WriteIRISHeader( Long __far*, short __far*, int, int );
@@ -267,7 +336,7 @@ void SetFileInfo( char*, OSType, OSType, short );
 
 
 
-static void FatalOutputError( char *ptr )
+void FatalOutputError( char *ptr )
 {
     InvalidateCmndLine();
     WriteString("Output Error: Unable to create file `");
@@ -310,6 +379,7 @@ static void WriteLSBLong( Card val )
     putc((int)((val>>16)&0xff),OutFile);
     putc((int)((val>>24)&0xff),OutFile);
 }
+
 #endif
 
 
@@ -1460,7 +1530,6 @@ static int VectClipContain( SphereSect *x, SphereSect *y )
     return False;
 }
 
-
 static void WriteVectSphere( PSItemPtr __far *data, char __far *type, 
                              int index )
 {
@@ -1900,6 +1969,7 @@ static void WriteVectDots( void )
     register int temp, tump;
     register int zi;
     register int i;
+    register int xp;
 
     if( LineWidth != 1.0 )
     {   fputs("1 setlinewidth\n",OutFile);
@@ -1916,13 +1986,14 @@ static void WriteVectDots( void )
 
 
             xi = (x*MatX[0]+y*MatX[1]+z*MatX[2]) + XOffset;
-            if( (xi<0.0) || (xi>=XRange) ) continue;
+            if( (xi<0.0) || ((int)rint(xi)>=View.xmax) ) continue;
             yi = (x*MatY[0]+y*MatY[1]+z*MatY[2]) + YOffset;
-            if( (yi<0.0) || (yi>=YRange) ) continue;
+            if( (yi<0.0) || ((int)rint(yi)>=View.ymax) ) continue;
 
             zi = (int)(x*MatZ[0]+y*MatZ[1]+z*MatZ[2]);
-            if( UseSlabPlane && (zi>=temp) ) continue;
-            if( UseDepthPlane && (zi<=tump) ) continue;
+            xp = rint(xi);
+            if( UseSlabPlane && (zi>=View.slbuf[xp]) ) continue;
+            if( UseDepthPlane && (zi<=View.dlbuf[xp]) ) continue;
 
             inten = (ColourDepth*(zi+ImageRadius))/ImageSize;
             WriteVectColour( ptr->col[i]+inten );
@@ -1930,6 +2001,58 @@ static void WriteVectDots( void )
         }
 }
 
+static void WriteVectMapPoints( void )
+{
+    register Real x,y,z;
+    register Real xi,yi;
+    register int inten;
+    register int temp, tump;
+    register int zi;
+    register int i;
+    register int xp;
+
+    if( LineWidth != 1.0 )
+    {   fputs("1 setlinewidth\n",OutFile);
+        LineWidth = 1.0;
+    }
+
+    temp = SlabValue - ZOffset;
+    tump = DepthValue - ZOffset;
+    if (MapInfoPtr) {
+      int imap;
+      MapPointVec __far* MapPointsPtr;
+      for (imap = 0; imap < MapInfoPtr->size; imap++) {
+        MapInfo mapinfo;
+        vector_get_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,imap);
+        MapPointsPtr = mapinfo.MapPointsPtr;
+        if (MapPointsPtr) {
+          for (i= 0; i < MapPointsPtr->size; i++) {
+            x = (MapPointsPtr->array[i]).xpos;
+            y = (MapPointsPtr->array[i]).xpos;
+            z = (MapPointsPtr->array[i]).xpos;
+        
+            xi = (x*MatX[0]+y*MatX[1]+z*MatX[2]) + XOffset;
+            if( (xi<0.0) || ((int)rint(xi)>=View.xmax) ) continue;
+            yi = (x*MatY[0]+y*MatY[1]+z*MatY[2]) + YOffset;
+            if( (yi<0.0) || ((int)rint(yi)>=View.ymax) ) continue;
+
+            zi = (int)(x*MatZ[0]+y*MatZ[1]+z*MatZ[2]);
+            xp = rint(xi);
+            if( UseSlabPlane && (zi>=View.slbuf[xp]) ) continue;
+            if( UseDepthPlane && (zi<=View.dlbuf[xp]) ) continue;
+
+            inten = (ColourDepth*(zi+ImageRadius))/ImageSize;
+            WriteVectColour( (MapPointsPtr->array[i]).col+inten );
+            fprintf(OutFile,"%g %g Dot\n",xi,yi);
+          }
+        }
+      }
+    }
+}
+
+static void WriteVectMapBonds( void) {
+	
+}
 
 static void WriteVectLabels( void )
 {
@@ -1982,7 +2105,7 @@ static void WriteVectMonitors( void )
     {   s = ptr->src;
         d = ptr->dst;
 
-        if( ZValid( (s->z+d->z)/2 ) && ZBack( (s->z+d->z)/2 ))
+        if( ZBValid( (s->x+d->x)/2,(s->z+d->z)/2 ) )
         {   x = (s->x+d->x)/2;
             y = (s->y+d->y)/2;
  
@@ -2035,6 +2158,10 @@ static Long CountPSItems( void )
             if( bptr->flag&DrawBondFlag && (!UseClipping ||
                 !ClipVectBond(bptr->srcatom,bptr->dstatom)) )
                     result++;
+    if( DrawRibbon)
+	for(chain=Database->clist;chain;chain=chain->cnext)
+		if(chain->glist)
+			result++;	
 
     ForEachBack 
         if( bptr->flag&DrawBondFlag && (!UseClipping ||
@@ -2077,6 +2204,7 @@ static void FetchPSItems( PSItemPtr __far *data, char __far *type )
     register Monitor *mptr;
     register int i,flag;
 
+
     i = 0;
     if( DrawAtoms || DrawStars )
         ForEachAtom
@@ -2093,6 +2221,17 @@ static void FetchPSItems( PSItemPtr __far *data, char __far *type )
             {   type[i] = PSBond;
                 data[i++] = bptr;
             } 
+	
+    if( DrawRibbon )
+    {
+	for( chain = Database->clist; chain; chain=chain->cnext)
+		if( chain->glist )
+		{
+			type[i]= PSRibbon;
+			data[i++]= chain;
+		}
+    }
+		
 
     ForEachBack
        if( bptr->flag&DrawBondFlag && (!UseClipping ||
@@ -2133,55 +2272,6 @@ static void FetchPSItems( PSItemPtr __far *data, char __far *type )
 }
 
 
-static void WritePSItems( PSItemPtr __far *data, char __far *type, int count )
-{
-    register Monitor __far *monit;
-    register HBond __far *hbond;
-    register Bond __far *bond;
-    register RAtom __far *src;
-    register RAtom __far *dst;
-    register int i;
-
-    for( i=0; i<count; i++ )
-        switch( type[i] )
-        {   case(PSAtom):   WriteVectSphere(data,type,i);
-                            break;
-
-            case(PSBond):   bond = (Bond __far*)data[i];
-                            src = bond->srcatom;
-                            dst = bond->dstatom;
-
-                            if( bond->flag & WireFlag )
-                            {   WriteVectWire(src,dst,bond->col,False);
-                            } else if( bond->flag & CylinderFlag )
-                            {   WriteVectStick(src,dst,bond->col,bond->radius);
-                            } else /* bond->flag & DashFlag */
-                                WriteVectWire(src,dst,bond->col,True);
-                            break;
-
-            case(PSSSBond): 
-            case(PSHBond):  hbond = (HBond __far*)data[i];
-                            if( (type[i]==PSHBond)? HBondMode : SSBondMode )
-                            {   src = hbond->srcCA;
-                                dst = hbond->dstCA;
-                            } else
-                            {   src = hbond->src;
-                                dst = hbond->dst;
-                            }
-
-                            if( hbond->flag & WireFlag )
-                            {   WriteVectWire(src,dst,hbond->col,True);
-                            } else /* bond->flag & CylinderFlag */
-                                WriteVectStick(src,dst,hbond->col,
-                                                       hbond->radius);
-                            break;
-
-            case(PSMonit):  monit = (Monitor __far*)data[i];
-                            WriteVectWire(monit->src,monit->dst,
-                                          monit->col,True);
-                            break;
-        }
-}
 
 
 int WriteVectPSFile( char *name )
@@ -2358,6 +2448,8 @@ int WriteVectPSFile( char *name )
 
     if( DotPtr )
         WriteVectDots();
+    if( MapInfoPtr)
+        WriteVectMapPoints();
     if( DrawMonitDistance && MonitList )
         WriteVectMonitors();
     if( LabelList )
@@ -2380,6 +2472,1653 @@ int WriteVectPSFile( char *name )
     return(True);
 }
 
+static void WritePSItems( PSItemPtr __far *data, char __far *type, int count )
+{
+    register Monitor __far *monit;
+    register HBond __far *hbond;
+    register Bond __far *bond;
+    register RAtom __far *src;
+    register RAtom __far *dst;
+    register int i;
+
+    for( i=0; i<count; i++ )
+        switch( type[i] )
+        {   case(PSAtom):   WriteVectSphere(data,type,i);
+                            break;
+
+            case(PSBond):   bond = (Bond __far*)data[i];
+                            src = bond->srcatom;
+                            dst = bond->dstatom;
+
+                            if( bond->flag & WireFlag )
+                            {   WriteVectWire(src,dst,bond->col,False);
+                            } else if( bond->flag & CylinderFlag )
+                            {   WriteVectStick(src,dst,bond->col,bond->radius);
+                            } else /* bond->flag & DashFlag */
+                                WriteVectWire(src,dst,bond->col,True);
+                            break;
+
+            case(PSSSBond): 
+            case(PSHBond):  hbond = (HBond __far*)data[i];
+                            if( (type[i]==PSHBond)? HBondMode : SSBondMode )
+                            {   src = hbond->srcCA;
+                                dst = hbond->dstCA;
+                            } else
+                            {   src = hbond->src;
+                                dst = hbond->dst;
+                            }
+
+                            if( hbond->flag & WireFlag )
+                            {   WriteVectWire(src,dst,hbond->col,True);
+                            } else /* bond->flag & CylinderFlag */
+                                WriteVectStick(src,dst,hbond->col,
+                                                       hbond->radius);
+                            break;
+
+            case(PSMonit):  monit = (Monitor __far*)data[i];
+                            WriteVectWire(monit->src,monit->dst,
+                                          monit->col,True);
+                            break;
+        }
+}
+
+
+
+/****************************************************************************/
+/*                           Writing a Raster3D file                        */
+/****************************************************************************/
+
+#define R3Dcoord(xorg,yorg,zorg,xtemp,ytemp,ztemp,xnew,ynew,znew) {\
+		xtemp= (Real)((xorg) - CenX) ; \
+		ytemp= (Real)((yorg) - CenY) ; \
+		ztemp= (Real)((zorg) - CenZ) ; \
+		xnew =        ((xtemp)*MatX[0] + (ytemp)*MatX[1] + (ztemp)*MatX[2] + ((Real)(XOffset-XRange/2)))/(Real)(scale); \
+		ynew = InvertY((xtemp)*MatY[0] + (ytemp)*MatY[1] + (ztemp)*MatY[2] + ((Real)(YOffset-YRange/2)))/(Real)(scale); \
+		znew =        ((xtemp)*MatZ[0] + (ytemp)*MatZ[1] + (ztemp)*MatZ[2] + ((Real)(ZOffset-ZRange/2)))/(Real)(scale); }
+
+#define R3DcoordC(xorgC,yorgC,zorgC,xnew,ynew,znew) {\
+		xnew =        ((xorgC)*MatX[0] + (yorgC)*MatX[1] + (zorgC)*MatX[2] + ((Real)(XOffset-XRange/2)))/(Real)(scale); \
+		ynew = InvertY((xorgC)*MatY[0] + (yorgC)*MatY[1] + (zorgC)*MatY[2] + ((Real)(YOffset-YRange/2)))/(Real)(scale); \
+		znew =        ((xorgC)*MatZ[0] + (yorgC)*MatZ[1] + (zorgC)*MatZ[2] + ((Real)(ZOffset-ZRange/2)))/(Real)(scale); }
+ 	
+
+static void WriteR3DSphere( PSItemPtr __far *data, char __far *type, 
+                             int index, int scale)
+{
+	register RAtom __far *ptr;
+	register Real x, y, z;			/* coordinates after rotation and translation */
+	register Real x_sc, y_sc, z_sc;		/* coordinates scaled from Rasmol to Raster3d */
+	register Real rad;
+	register ShadeDesc *shade;
+
+
+	ptr = (RAtom __far*)data[index];
+	
+	R3Dcoord(ptr->xorg+ptr->fxorg,ptr->yorg+ptr->fyorg,ptr->zorg+ptr->fzorg,x_sc,y_sc,z_sc,x,y,z);
+
+	rad =  Scale*(Real)(ptr->radius)/scale;
+
+	/*i = ptr->col + ColourMask;*/
+	shade = Shade + Colour2Shade(ptr->col);
+
+	fprintf(OutFile,"2 \n");
+	fprintf(OutFile,"%.5f %.5f %.5f %.5f ", x, y, z, rad);
+	fprintf(OutFile,"%g %g %g\n",(Real)(shade->r)/255.0,
+			   (Real)(shade->g)/255.0 ,(Real)(shade->b)/255.0);
+}
+
+static void R3DSphere( int x, int y, int z, int radius, int col, int scale)
+{
+	register Real x1, y1, z1;			/* coordinates after rotation and translation*/
+	register Real x_sc, y_sc, z_sc;		/* coordinates scaled from Rasmol to Raster3d*/
+	register Real rad;
+	register ShadeDesc *shade;
+
+
+	R3Dcoord(x,y,z,x_sc,y_sc,z_sc,x1,y1,z1);
+
+	rad =  Scale*(Real)(radius)/scale;
+
+	/*i = col + ColourMask;*/
+	shade = Shade + Colour2Shade(col);
+
+	fprintf(OutFile,"2 \n");
+	fprintf(OutFile,"%.5f %.5f %.5f %.5f ", (double)x, (double)y, (double)z, rad);
+	fprintf(OutFile,"%g %g %g\n", 
+	    (double) (shade->r)/255.0,
+	    (double) (shade->g)/255.0, 
+	    (double) (shade->b)/255.0);
+}
+
+static void R3DCylinder( int x1, int y1, int z1, int x2, int y2, int z2, int col, int scale )
+{
+
+	register Real src_x_sc, src_y_sc, src_z_sc;
+	register Real dst_x_sc, dst_y_sc, dst_z_sc;
+	register Real src_x, src_y, src_z;
+	register Real dst_x, dst_y, dst_z, bond_rad;
+	register ShadeDesc *shade;
+	
+	R3Dcoord(x1,y1,z1,src_x_sc,src_y_sc,src_z_sc,src_x,src_y,src_z);
+	R3Dcoord(x2,y2,z2,dst_x_sc,dst_y_sc,dst_z_sc,dst_x,dst_y,dst_z);
+
+	bond_rad = 0.01;
+
+	/*i = col + ColourMask;*/
+	shade = Shade + Colour2Shade(col);
+
+	fprintf(OutFile,"3 \n");
+        fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+					,src_x, src_y, src_z, bond_rad, dst_x, dst_y, dst_z);
+	fprintf(OutFile,"%g %g %g\n",(Real)(shade->r)/255.0, (Real)(shade->g)/255.0, (Real)(shade->b)/255.0);
+}
+
+static void WriteR3DStick( RAtom __far *src, RAtom __far *dst, 
+                            int col, int rad, int scale )
+{
+
+	register int col1, col2;
+
+	register Real src_x_sc, src_y_sc, src_z_sc;
+	register Real dst_x_sc, dst_y_sc, dst_z_sc;
+	register Real src_x, src_y, src_z;
+	register Real dst_x, dst_y, dst_z, bond_rad;
+	register Real mid_x, mid_y, mid_z;
+	register ShadeDesc *shade;
+ 
+	
+	R3Dcoord(src->xorg + src->fxorg,src->yorg + src->fyorg,src->zorg + src->fzorg,src_x_sc,src_y_sc,src_z_sc,src_x,src_y,src_z);
+	R3Dcoord(dst->xorg + dst->fxorg,dst->yorg + dst->fyorg,dst->zorg + dst->fzorg,dst_x_sc,dst_y_sc,dst_z_sc,dst_x,dst_y,dst_z);
+
+
+	bond_rad = Scale*(Real)(rad)/scale;
+
+
+
+	if( !rad )
+	{
+		WriteR3DStick(src,dst,col,10,scale);
+	        return;
+	}
+
+	if( !col )
+    	{
+		mid_x=(src_x+dst_x)/2;
+		mid_y=(src_y+dst_y)/2;
+		mid_z=(src_z+dst_z)/2;
+
+		col1 = src->col;
+	        col2 = dst->col;
+
+	        /*i = col1 + ColourMask;*/
+			shade = Shade + Colour2Shade(col1);
+
+		fprintf(OutFile,"3 \n");
+	  	fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+							,src_x,src_y,src_z,bond_rad,mid_x,mid_y,mid_z);
+	        fprintf(OutFile,"%g ",(Real)(shade->r)/255.0);
+	        fprintf(OutFile,"%g ",(Real)(shade->g)/255.0);
+	        fprintf(OutFile,"%g \n",(Real)(shade->b)/255.0);
+
+        	/* i = col2 + ColourMask; */
+			shade = Shade + Colour2Shade(col2);
+
+		fprintf(OutFile,"3 \n");
+        	fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+							,mid_x,mid_y,mid_z,bond_rad,dst_x,dst_y,dst_z);
+	        fprintf(OutFile,"%g ",(Real)(shade->r)/255.0);
+        	fprintf(OutFile,"%g ",(Real)(shade->g)/255.0);
+	        fprintf(OutFile,"%g \n",(Real)(shade->b)/255.0);
+	}
+	else
+	{
+	 	/* i = col + ColourMask; */
+	    shade = Shade + Colour2Shade(col);
+
+		fprintf(OutFile,"3 \n");
+        	fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+							,src_x,src_y,src_z,bond_rad,dst_x,dst_y,dst_z);
+	        fprintf(OutFile,"%g ",(Real)(shade->r)/255.0);
+        	fprintf(OutFile,"%g ",(Real)(shade->g)/255.0);
+	        fprintf(OutFile,"%g \n",(Real)(shade->b)/255.0);
+	}
+}
+
+static void WriteR3DMonitor( Monitor __far* monit, int rad, int scale )
+{
+
+	RAtom __far *src;
+	RAtom __far *dst;
+
+	register int col,col1, col2;
+	register int num_of_dots,j;
+	register Real length, dot_length;
+
+	register Real src_x_sc, src_y_sc, src_z_sc;
+	register Real dst_x_sc, dst_y_sc, dst_z_sc;
+	register Real x_incr, y_incr, z_incr;
+	register Real src_x, src_y, src_z;
+	register Real dst_x, dst_y, dst_z, bond_rad;
+	register Real mid_x, mid_y, mid_z;
+	register Real tmp_x, tmp_y, tmp_z;
+	register Real mid_xdist, mid_ydist, mid_zdist;
+	register Real mid_x_sc, mid_y_sc, mid_z_sc;
+	register Real distance;
+	static unsigned char name[22];
+	int units=128;
+	register ShadeDesc *shade;
+	
+
+	src = monit->src;
+	dst = monit->dst;
+        col = monit->col;	
+ 	distance =(Real)monit->dist/100;
+
+	R3Dcoord(src->xorg + src->fxorg,src->yorg + src->fyorg,src->zorg + src->fzorg,src_x_sc,src_y_sc,src_z_sc,src_x,src_y,src_z);
+	R3Dcoord(dst->xorg + dst->fxorg,dst->yorg + dst->fyorg,dst->zorg + dst->fzorg,dst_x_sc,dst_y_sc,dst_z_sc,dst_x,dst_y,dst_z);
+	
+	bond_rad = Scale*(Real)(rad)/scale;
+	dot_length = 0.01;
+
+	
+	if(!rad )
+	{
+		WriteR3DMonitor(monit,10,scale);
+	        return;
+	}
+
+	if(!col)
+	{
+		col1 = src->col;
+		col2 = dst->col;
+	}
+	else
+		col1=col2=col;
+
+
+	length=sqrt((src_x-dst_x)*(src_x-dst_x) + (src_y-dst_y)*(src_y-dst_y)+
+						 (src_z-dst_z)*(src_z-dst_z));
+	
+	x_incr=dot_length*(dst_x-src_x)/length;
+	y_incr=dot_length*(dst_y-src_y)/length;
+	z_incr=dot_length*(dst_z-src_z)/length;
+
+	mid_x=(src_x+dst_x)/2;
+	mid_y=(src_y+dst_y)/2;
+	mid_z=(src_z+dst_z)/2;
+
+	tmp_x=mid_x+x_incr/2;
+	tmp_y=mid_y+y_incr/2;
+	tmp_z=mid_z+z_incr/2;
+	num_of_dots=length/dot_length;
+
+	for(j=0;j<num_of_dots/4;j++)
+	{
+	 	/* i = col2 + ColourMask; */
+		shade = Shade + Colour2Shade(col2);
+
+
+		fprintf(OutFile,"3 \n");
+        	fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+			,tmp_x,tmp_y,tmp_z,bond_rad,(tmp_x+x_incr),(tmp_y+y_incr),(tmp_z+z_incr));
+	        fprintf(OutFile,"%g ",(Real)(shade->r)/255.0);
+        	fprintf(OutFile,"%g ",(Real)(shade->g)/255.0);
+	        fprintf(OutFile,"%g \n",(Real)(shade->b)/255.0);
+
+		tmp_x=tmp_x+ 2*x_incr;	
+		tmp_y=tmp_y+ 2*y_incr;
+		tmp_z=tmp_z+ 2*z_incr;
+		
+	}
+
+	tmp_x=mid_x-x_incr/2;
+	tmp_y=mid_y-y_incr/2;
+	tmp_z=mid_z-z_incr/2;
+
+	for(j=0;j<num_of_dots/4;j++)
+	{
+	 	/* i = col1 + ColourMask;*/
+		shade = Shade + Colour2Shade(col1);
+
+		fprintf(OutFile,"3 \n");
+        	fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+			,tmp_x,tmp_y,tmp_z,bond_rad,(tmp_x-x_incr),(tmp_y-y_incr),(tmp_z-z_incr));
+	        fprintf(OutFile,"%g ",(Real)(shade->r)/255.0);
+        	fprintf(OutFile,"%g ",(Real)(shade->g)/255.0);
+	        fprintf(OutFile,"%g \n",(Real)(shade->b)/255.0);
+
+		tmp_x=tmp_x-2*x_incr;	
+		tmp_y=tmp_y-2*y_incr;
+		tmp_z=tmp_z-2*z_incr;
+		
+	}
+
+	if(DrawMonitDistance)
+	{
+		if(monit-> monmode == PickDist)
+			units=127;
+		else if(monit-> monmode == PickAngle)
+			units=128;
+		if(monit-> monmode == PickTorsn)
+			units=128;
+
+		sprintf((char *)name,"%.2f%c",distance,units);
+		
+		R3Dcoord((src->xorg + src->fxorg + dst->xorg + dst->fxorg)/2,(src->yorg + src->fyorg + dst->yorg + dst->fyorg)/2,(src->zorg + src->fzorg + dst->zorg + dst->fzorg)/2,mid_x_sc,mid_y_sc,mid_z_sc,mid_xdist,mid_ydist,mid_zdist);
+
+
+		OutputR3DFontString(mid_xdist,mid_ydist,mid_zdist,name,col1,scale);
+	}
+
+}
+
+static void WriteR3DLabels(int scale)
+{
+	register Chain __far *chain;
+	register Group __far *group;
+	register RAtom __far *aptr;
+	register Label *label;
+	register Real lab_x, lab_y, lab_z;
+	register Real x_sc, y_sc, z_sc;
+	auto unsigned char buffer[80];
+	static unsigned char name[22];
+
+
+/*    if( UseLabelCol )
+    {   if( BackR || BackG || BackB )
+        {   fprintf(OutFile,"%g %g %g setrgbcolor\n",
+                    LabR/250.0, LabG/250.0, LabB/250.0);
+        } else fputs("0 setgray\n",OutFile);
+    } else VectCol = 0;
+*/
+	ForEachAtom
+		if( aptr->label )
+		{
+/*			if( !UseLabelCol && (aptr->col!=VectCol) )*/
+/*				WriteVectColour( aptr->col );*/
+
+			label = (Label*)aptr->label;
+			FormatLabel(chain,group,aptr,label->label,buffer);
+			sprintf((char *)name,"%s",buffer);
+
+	        R3Dcoord(aptr->xorg + aptr->fxorg,aptr->yorg + aptr->fyorg,aptr->zorg + aptr->fzorg,x_sc,y_sc,z_sc,lab_x,lab_y,lab_z);
+	
+			OutputR3DFontString(lab_x, lab_y, lab_z,name,aptr->col,scale);
+		}
+}
+
+static void OutputR3DCharacter( Real x, Real y, Real z, int glyph, int col,Real scale, Real r3d_font_scale)
+{
+	register char *ptr;
+	register Real sx,sy;
+	register Real ex,ey;
+	register Real out_x1, out_y1, out_z, out_x2, out_y2;
+	register ShadeDesc *shade;
+	
+	ex = x; ey = y;
+
+	/*i = col + ColourMask;*/
+	shade = Shade + Colour2Shade(col);
+	ptr = VectFont[glyph];
+
+	while( *ptr )
+	{
+		/* Uppercase test */
+	        if( ptr[0] < 'a' )
+        	{ 
+			sx = x + r3d_font_scale*FontDimen[ptr[0]-'A'];
+			sy = y + InvertY(r3d_font_scale*FontDimen[ptr[1]-'a']);
+	        	ptr += 2;
+		}
+		else
+        	{	
+			sx = ex;
+	  		sy = ey;
+	        }
+		
+	        ex = x + r3d_font_scale*FontDimen[ptr[0]-'a'];
+	        ey = y + InvertY(r3d_font_scale*FontDimen[ptr[1]-'a']);
+
+		out_x1 =  sx;	
+		out_x2 =  ex;	
+		out_y1 = InvertY(sy);
+		out_y2 = InvertY(ey);
+		out_z  = 1.36;
+
+		fprintf(OutFile,"3 \n");
+
+	        if (FontStroke < 1 )
+	        	fprintf(OutFile,"%.5f %.5f %.5f 0.001 %.5f %.5f %.5f 0.00 "
+						,out_x1,out_y1,out_z,out_x2,out_y2,out_z);
+		else
+	        	fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+						,out_x1,out_y1,out_z,FontStroke*0.002,out_x2,out_y2,out_z);
+	
+	        fprintf(OutFile,"%g ",(Real)(shade->r)/255.0);
+        	fprintf(OutFile,"%g ",(Real)(shade->g)/255.0);
+	        fprintf(OutFile,"%g \n",(Real)(shade->b)/255.0);
+
+        	ptr += 2;
+	}
+}
+
+void OutputR3DFontString( Real x, Real y, Real z, unsigned char *label, int col, Real scale )
+{
+	register Real r3d_font_scale =0.0015;
+
+	while( *label )
+        {
+		OutputR3DCharacter(x,y,z,(*label-32),col,scale,r3d_font_scale);
+        	x += r3d_font_scale * FontWid[(*label-32)]+ r3d_font_scale * FontStroke;
+	       	label++;
+        }
+}
+
+/*==============================*/
+/*  Ribbon & Cartoon Functions  */
+/*==============================*/
+ 
+/* SplineCount is either 1, 2, 3, 4, 5 or 9! */
+
+void R3DStrandRibbon( Knot __far *src, Knot __far *dst, int col1, int col2, Real scale )
+{
+    register int hsx, hsy, hsz;
+    register int hdx, hdy, hdz;
+    register int qsx, qsy, qsz;
+    register int qdx, qdy, qdz;
+    register int col;
+
+    register Real x1, y1, z1;
+    register Real x2, y2, z2;
+    register Real src_x, src_y, src_z;
+    register Real dst_x, dst_y, dst_z;
+    register Real bond_rad;
+	register ShadeDesc *shade;
+	
+    bond_rad=0.003; 
+
+    if( SplineCount != 4 )
+    {   if( SplineCount == 1 ) 
+        {	
+		R3Dcoord(src->px,src->py,src->pz,x1,y1,z1,src_x,src_y,src_z);
+		R3Dcoord(dst->px,dst->py,dst->pz,x2,y2,z2,dst_x,dst_y,dst_z);
+ 	
+		/* i = col2 + ColourMask; */
+		shade = Shade + Colour2Shade(col2);
+
+		fprintf(OutFile,"3 \n");
+        	fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+					, src_x, src_y, src_z, bond_rad, dst_x, dst_y, dst_z);
+	        fprintf(OutFile,"%g %g %g\n", (Real)(shade->r)/255.0, (Real)(shade->g)/255.0, (Real)(shade->b)/255.0);
+
+            	return;
+
+        }
+	else if( SplineCount != 2 )
+	{
+
+		R3Dcoord(src->px,src->py,src->pz,x1,y1,z1,src_x,src_y,src_z);
+		R3Dcoord(dst->px,dst->py,dst->pz,x2,y2,z2,dst_x,dst_y,dst_z);
+
+	 	/* i = col1 + ColourMask; */
+		shade = Shade + Colour2Shade(col1);
+
+		fprintf(OutFile,"3 \n");
+        	fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+						, src_x, src_y, src_z, bond_rad, dst_x, dst_y, dst_z);
+	        fprintf(OutFile,"%g %g %g\n", (Real)(shade->r)/255.0, (Real)(shade->g)/255.0, (Real)(shade->b)/255.0);
+	}
+
+		R3Dcoord(src->px + src->wx,src->py  + src->wy,src->pz + src->wz,x1,y1,z1,src_x,src_y,src_z);
+		R3Dcoord(dst->px + dst->wx,dst->py  + dst->wy,dst->pz + dst->wz,x2,y2,z2,dst_x,dst_y,dst_z);
+
+
+	 	/* i = col2 + ColourMask; */
+		shade = Shade + Colour2Shade(col2);
+
+		fprintf(OutFile,"3 \n");
+        	fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+						, src_x, src_y, src_z, bond_rad, dst_x, dst_y, dst_z);
+	        fprintf(OutFile,"%g %g %g\n", (Real)(shade->r)/255.0, (Real)(shade->g)/255.0, (Real)(shade->b)/255.0);
+
+
+		R3Dcoord(src->px  - src->wx,src->py - src->wy,src->pz - src->wz,x1,y1,z1,src_x,src_y,src_z);
+		R3Dcoord(dst->px  - dst->wx,dst->py - dst->wy,dst->pz - dst->wz,x2,y2,z2,dst_x,dst_y,dst_z);
+
+	 	/* i = col2 + ColourMask; */
+		shade = Shade + Colour2Shade(col2);
+
+		fprintf(OutFile,"3 \n");
+        	fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+						, src_x, src_y, src_z, bond_rad, dst_x, dst_y, dst_z);
+	        fprintf(OutFile,"%g %g %g\n", (Real)(shade->r)/255.0, (Real)(shade->g)/255.0, (Real)(shade->b)/255.0);
+
+
+        if( SplineCount<=3 ) return;
+
+        hsx = src->wx/2;  hsy = src->wy/2;  hsz = src->wz/2;
+        hdx = dst->wx/2;  hdy = dst->wy/2;  hdz = dst->wz/2;
+	
+		R3Dcoord(src->px  + hsx,src->py + hsy,src->pz + hsz,x1,y1,z1,src_x,src_y,src_z);
+		R3Dcoord(dst->px  + hdx,dst->py + hdy,dst->pz + hdz,x2,y2,z2,dst_x,dst_y,dst_z);
+
+
+	 	/* i = col1 + ColourMask; */
+		shade = Shade + Colour2Shade(col1);
+
+		fprintf(OutFile,"3 \n");
+        	fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+						, src_x, src_y, src_z, bond_rad, dst_x, dst_y, dst_z);
+	        fprintf(OutFile,"%g %g %g\n", (Real)(shade->r)/255.0, (Real)(shade->g)/255.0, (Real)(shade->b)/255.0);
+	
+		R3Dcoord(src->px  - hsx,src->py - hsy,src->pz - hsz,x1,y1,z1,src_x,src_y,src_z);
+		R3Dcoord(dst->px  - hdx,dst->py - hdy,dst->pz - hdz,x2,y2,z2,dst_x,dst_y,dst_z);
+
+	 	/* i = col1 + ColourMask; */
+		shade = Shade + Colour2Shade(col1);
+
+		fprintf(OutFile,"3 \n");
+        	fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+						, src_x, src_y, src_z, bond_rad, dst_x, dst_y, dst_z);
+	        fprintf(OutFile,"%g %g %g\n", (Real)(shade->r)/255.0, (Real)(shade->g)/255.0, (Real)(shade->b)/255.0);
+
+
+        if( SplineCount==5 ) 
+            return;
+
+        col = col1;
+
+    } else /* SplineCount == 4 */
+    {   hsx = src->wx/2;  hsy = src->wy/2;  hsz = src->wz/2;
+        hdx = dst->wx/2;  hdy = dst->wy/2;  hdz = dst->wz/2;
+        col = col2;
+    }
+
+    qsx = hsx/2;  qsy = hsy/2;  qsz = hsz/2;
+    qdx = hdx/2;  qdy = hdy/2;  qdz = hdz/2;
+
+	R3Dcoord(src->px  + hsx + qsx,src->py + hsy + qsy,src->pz + hsz + qsy,x1,y1,z1,src_x,src_y,src_z);
+	R3Dcoord(dst->px  + hdx + qdx,dst->py + hdy + qdy,dst->pz + hdz + qdz,x2,y2,z2,dst_x,dst_y,dst_z);
+
+
+    /* i = col + ColourMask; */
+	shade = Shade + Colour2Shade(col);
+
+    fprintf(OutFile,"3 \n");
+    fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+    			, src_x, src_y, src_z, bond_rad, dst_x, dst_y, dst_z);
+    fprintf(OutFile,"%g %g %g\n", (Real)(shade->r)/255.0, (Real)(shade->g)/255.0, (Real)(shade->b)/255.0);
+
+	R3Dcoord(src->px  + hsx - qsx,src->py + hsy - qsy,src->pz + hsz - qsy,x1,y1,z1,src_x,src_y,src_z);
+	R3Dcoord(dst->px  + hdx - qdx,dst->py + hdy - qdy,dst->pz + hdz - qdz,x2,y2,z2,dst_x,dst_y,dst_z);
+
+    /* i = col1 + ColourMask; */
+	shade = Shade + Colour2Shade(col1);
+
+    fprintf(OutFile,"3 \n");
+    fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+			, src_x, src_y, src_z, bond_rad, dst_x, dst_y, dst_z);
+    fprintf(OutFile,"%g %g %g\n", (Real)(shade->r)/255.0, (Real)(shade->g)/255.0, (Real)(shade->b)/255.0);	
+	
+	R3Dcoord(src->px  - hsx + qsx,src->py - hsy + qsy,src->pz - hsz + qsy,x1,y1,z1,src_x,src_y,src_z);
+	R3Dcoord(dst->px  - hdx + qdx,dst->py - hdy + qdy,dst->pz - hdz + qdz,x2,y2,z2,dst_x,dst_y,dst_z);
+
+
+    /* i = col1 + ColourMask; */
+	shade = Shade + Colour2Shade(col1);
+
+    fprintf(OutFile,"3 \n");
+    fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+			, src_x, src_y, src_z, bond_rad, dst_x, dst_y, dst_z);
+    fprintf(OutFile,"%g %g %g\n", (Real)(shade->r)/255.0, (Real)(shade->g)/255.0, (Real)(shade->b)/255.0);
+
+	R3Dcoord(src->px  - hsx - qsx,src->py - hsy - qsy,src->pz - hsz - qsy,x1,y1,z1,src_x,src_y,src_z);
+	R3Dcoord(dst->px  - hdx - qdx,dst->py - hdy - qdy,dst->pz - hdz - qdz,x2,y2,z2,dst_x,dst_y,dst_z);
+
+
+    /* i = col + ColourMask; */
+	shade = Shade + Colour2Shade(col);
+
+    fprintf(OutFile,"3 \n");
+    fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f 0.00 "
+			, src_x, src_y, src_z, bond_rad, dst_x, dst_y, dst_z);
+    fprintf(OutFile,"%g %g %g\n", (Real)(shade->r)/255.0, (Real)(shade->g)/255.0, (Real)(shade->b)/255.0);
+}
+
+
+/*
+void SolidRibbon2( Knot __far *src, Knot __far *dst, int col1, int col2 )
+{
+    register int dx,dy;
+    register int col;
+    static Poly p;
+
+    p.count = 3;
+    p.v[0].x = src->px+src->wx;  
+    p.v[0].y = src->py+src->wy;  
+    p.v[0].z = src->pz+src->wz;
+    p.v[1].x = dst->px-dst->wx;  
+    p.v[1].y = dst->py-dst->wy;  
+    p.v[1].z = dst->pz-dst->wz;
+
+    dx = p.v[1].x - p.v[0].x;
+    dy = p.v[1].y - p.v[0].y;
+
+    p.v[2].x = dst->px+dst->wx;
+    p.v[2].y = dst->py+dst->wy;  
+    p.v[2].z = dst->pz+dst->wz;
+
+#ifdef INVERT
+    col = ( dst->wx*dy > dst->wy*dx )? col2 : col1;
+#else
+    col = ( dst->wx*dy < dst->wy*dx )? col2 : col1;
+#endif
+    p.v[0].inten = src->vinten+col;
+    p.v[1].inten = dst->vinten+col;
+    p.v[2].inten = dst->vinten+col;
+
+    ClipPolygon( &p );
+
+    p.v[2].x = src->px-src->wx;  
+    p.v[2].y = src->py-src->wy;  
+    p.v[2].z = src->pz-src->wz;
+
+#ifdef INVERT
+    col = ( src->wx*dy > src->wy*dx )? col2 : col1;
+#else
+    col = ( src->wx*dy < src->wy*dx )? col2 : col1;
+#endif
+
+    p.v[0].inten = src->vinten+col;
+    p.v[1].inten = dst->vinten+col;
+    p.v[2].inten = src->vinten+col;
+    ClipPolygon( &p );
+}
+*/
+
+/*void normals(Real p1_x, Real p1_y, Real p1_z, Real p2_x, Real p2_y, Real p2_z,
+	     Real p3_x, Real p3_y, Real p3_z, Real $res_x, Real $res_y, Real $res_z)
+
+{
+
+    vect1_x = p1_x - p2_x;
+    vect1_y = p1_y - p2_y;
+    vect1_z = p1_z - p2_z;
+
+    vect2_x = p1_x - p3_x;
+    vect2_y = p1_y - p3_y;
+    vect2_z = p1_z - p3_z;
+
+    nor1_x= vect1_y*vect2_z - vect1_z*vect2_y;
+    nor1_y= vect1_z*vect2_x - vect1_x*vect2_z;
+    nor1_z= vect1_x*vect2_y - vect1_y*vect2_x;
+
+    if( (vect1_x*vect2_x + vect1_y*vect2_y + vect1_z*vect2_z) < 0 )
+    {
+	nor1_x = - nor1_x;
+	nor1_y = - nor1_y;
+	nor1_z = - nor1_z;
+
+    }
+}*/
+
+
+#ifdef UNUSED
+void CalculateVInten( Knot *ptr )
+{
+    register Real inten;
+ 
+    if( !ptr->vsize )
+        ptr->vsize = isqrt( (Long)ptr->vnx*ptr->vnx +
+                            (Long)ptr->vny*ptr->vny +
+                            (Long)ptr->vnz*ptr->vnz ) + 1;
+ 
+#ifdef ORIGINAL
+    inten = LightDot(ptr->vnx,-InvertY(ptr->vny),ptr->vnz);
+    inten /= ptr->vsize*LightLength;
+#else
+    inten = (Real)ptr->vnz/ptr->vsize;
+#endif
+ 
+    if( ptr->vnz < 0 ) inten = -inten;
+ 
+    if( inten > 0.0 )
+    {   ptr->vinten = (char)(ColourMask*inten);
+    } else ptr->vinten = 0;
+}
+ 
+
+void CalculateHInten( Knot *ptr )
+{
+    register Real inten;
+ 
+    /* The intensity of the sides of a protein cartoon
+     * may be calculated using ptr->cx,cy,cz and this
+     * should save interpolating ptr->hnx,hny,hnz!
+     */
+ 
+    if( !ptr->hsize )
+        ptr->hsize = isqrt( (Long)ptr->hnx*ptr->hnx +
+                            (Long)ptr->hny*ptr->hny +
+                            (Long)ptr->hnz*ptr->hnz ) + 1;
+ 
+#ifdef ORIGINAL
+    inten = LightDot(ptr->hnx,-InvertY(ptr->hny),ptr->hnz);
+    inten /= ptr->hsize*LightLength;
+#else
+    inten = (Real)ptr->hnz / ptr->hsize;
+#endif
+
+    if( ptr->hnz < 0 ) inten = -inten;
+ 
+    if( inten > 0.0 )
+    {   ptr->hinten = (char)(ColourMask*inten);
+    } else ptr->hinten = 0;
+}
+
+#endif
+
+void Cartoon_ribdata( Knot __far *src, Knot __far *dst, R3DRib __far** front, R3DRib __far** back, 
+				R3DRib __far** side1, R3DRib __far** side2, int col, Real scale)
+{
+    Real x1, x2, x3, x4;
+    Real y1, y2, y3, y4;
+    Real z1, z2, z3, z4;
+
+/* top surface*/
+    x1= src->px + src->wx + src->dx;
+    y1= src->py + src->wy + src->dy;	
+    z1= src->pz + src->wz + src->dz;
+
+    x2= dst->px + dst->wx + dst->dx;	
+    y2= dst->py + dst->wy + dst->dy;	
+    z2= dst->pz + dst->wz + dst->dz;
+
+    x3= dst->px - dst->wx + dst->dx;	
+    y3= dst->py - dst->wy + dst->dy;	
+    z3= dst->pz - dst->wz + dst->dz;
+
+    x4= src->px - src->wx + src->dx;
+    y4= src->py - src->wy + src->dy;	
+    z4= src->pz - src->wz + src->dz;
+
+    *front = Add_ribdata(x1, y1, z1, x4, y4, z4, x2, y2, z2,*front, col, scale); 
+    *front = Add_ribdata(x4, y4, z4, x2, y2, z2, x3, y3, z3,*front, col, scale); 
+
+/* bottom surface*/
+    x1= src->px + src->wx - src->dx;
+    y1= src->py + src->wy - src->dy;	
+    z1= src->pz + src->wz - src->dz;
+
+    x2= dst->px + dst->wx - dst->dx;	
+    y2= dst->py + dst->wy - dst->dy;	
+    z2= dst->pz + dst->wz - dst->dz;
+
+    x3= dst->px - dst->wx - dst->dx;	
+    y3= dst->py - dst->wy - dst->dy;	
+    z3= dst->pz - dst->wz - dst->dz;
+
+    x4= src->px - src->wx - src->dx;
+    y4= src->py - src->wy - src->dy;	
+    z4= src->pz - src->wz - src->dz;
+
+    *back = Add_ribdata(x1, y1, z1, x4, y4, z4, x2, y2, z2,*back, col, scale); 
+    *back = Add_ribdata(x4, y4, z4, x2, y2, z2, x3, y3, z3,*back, col, scale); 
+
+/*side1*/
+    x1 = src->px + src->wx + src->dx;  
+    y1 = src->py + src->wy + src->dy;  
+    z1 = src->pz + src->wz + src->dz;
+
+    x2 = dst->px + dst->wx + dst->dx;  
+    y2 = dst->py + dst->wy + dst->dy;  
+    z2 = dst->pz + dst->wz + dst->dz;
+
+    x3 = dst->px + dst->wx - dst->dx;
+    y3 = dst->py + dst->wy - dst->dy;  
+    z3 = dst->pz + dst->wz - dst->dz;
+
+    x4 = src->px + src->wx - src->dx;  
+    y4 = src->py + src->wy - src->dy;  
+    z4 = src->pz + src->wz - src->dz;
+
+    *side1 = Add_ribdata(x1, y1, z1, x4, y4, z4, x2, y2, z2,*side1, col, scale); 
+    *side1 = Add_ribdata(x4, y4, z4, x2, y2, z2, x3, y3, z3,*side1, col, scale); 
+
+/*side2*/
+
+    x1 = src->px - src->wx + src->dx;  
+    y1 = src->py - src->wy + src->dy;  
+    z1 = src->pz - src->wz + src->dz;
+
+    x2 = dst->px - dst->wx + dst->dx;  
+    y2 = dst->py - dst->wy + dst->dy;  
+    z2 = dst->pz - dst->wz + dst->dz;
+
+    x3 = dst->px - dst->wx - dst->dx;
+    y3 = dst->py - dst->wy - dst->dy;  
+    z3 = dst->pz - dst->wz - dst->dz;
+
+    x4 = src->px - src->wx - src->dx;  
+    y4 = src->py - src->wy - src->dy;  
+    z4 = src->pz - src->wz - src->dz;
+
+    *side2 = Add_ribdata(x1, y1, z1, x4, y4, z4, x2, y2, z2,*side2, col, scale); 
+    *side2 = Add_ribdata(x4, y4, z4, x2, y2, z2, x3, y3, z3,*side2, col, scale); 
+}
+
+R3DRib __far * Poly_ribdata( Knot __far *src, Knot __far *dst, R3DRib __far* curdata, int col, Real scale)
+{
+    Real x1, x2, x3, x4;
+    Real y1, y2, y3, y4;
+    Real z1, z2, z3, z4;
+
+    x1= src->px + src->wx;
+    y1= src->py + src->wy;	
+    z1= src->pz + src->wz;
+
+    x2= dst->px + dst->wx;	
+    y2= dst->py + dst->wy;	
+    z2= dst->pz + dst->wz;
+
+    x3= dst->px - dst->wx;	
+    y3= dst->py - dst->wy;	
+    z3= dst->pz - dst->wz;
+
+    x4= src->px - src->wx;
+    y4= src->py - src->wy;	
+    z4= src->pz - src->wz;
+
+    curdata = Add_ribdata(x1, y1, z1, x4, y4, z4, x2, y2, z2, curdata, col, scale); 
+    curdata = Add_ribdata(x4, y4, z4, x2, y2, z2, x3, y3, z3, curdata, col, scale); 
+    return curdata;
+}
+
+R3DRib __far *Add_ribdata( Real in_x1, Real in_y1, Real in_z1, Real in_x2, Real in_y2, Real in_z2,
+			    Real in_x3, Real in_y3, Real in_z3, R3DRib __far* curdata,int col, Real scale)
+{
+    Real n1_x, n1_y, n1_z;
+    Real vect1_x, vect1_y, vect1_z; 
+    Real vect2_x, vect2_y, vect2_z; 
+
+    R3DRib __far *xtemp;
+    xtemp = (R3DRib __far *)malloc(sizeof(R3DRib));
+
+    R3DcoordC((Real)(in_x1),(Real)(in_y1),(Real)(in_z1),xtemp->x1,xtemp->y1,xtemp->z1);
+    R3DcoordC((Real)(in_x2),(Real)(in_y2),(Real)(in_z2),xtemp->x2,xtemp->y2,xtemp->z2);
+    R3DcoordC((Real)(in_x3),(Real)(in_y3),(Real)(in_z3),xtemp->x3,xtemp->y3,xtemp->z3);
+	
+    /* xtemp->x1= Scale*(Real)(in_x1)/scale;
+    xtemp->y1= InvertY(Scale*(Real)(in_y1)/scale);	
+    xtemp->z1= Scale*(Real)(in_z1)/scale;
+
+    xtemp->x2= Scale*(Real)(in_x2)/scale;	
+    xtemp->y2= InvertY(Scale*(Real)(in_y2)/scale);	
+    xtemp->z2= Scale*(Real)(in_z2)/scale;
+
+    xtemp->x3= Scale*(Real)(in_x3)/scale;	
+    xtemp->y3= InvertY(Scale*(Real)(in_y3)/scale);	
+    xtemp->z3= Scale*(Real)(in_z3)/scale; */
+
+
+    vect1_x= xtemp->x3 - xtemp->x1;
+    vect1_y= xtemp->y3 - xtemp->y1;
+    vect1_z= xtemp->z3 - xtemp->z1;
+
+    vect2_x= xtemp->x2 - xtemp->x1;
+    vect2_y= xtemp->y2 - xtemp->y1;
+    vect2_z= xtemp->z2 - xtemp->z1;
+
+    n1_x= vect1_y*vect2_z - vect1_z*vect2_y;
+    n1_y= vect1_z*vect2_x - vect1_x*vect2_z;
+    n1_z= vect1_x*vect2_y - vect1_y*vect2_x;
+
+    xtemp->norm1_x = xtemp->norm2_x = xtemp->norm3_x = n1_x;	
+    xtemp->norm1_y = xtemp->norm2_y = xtemp->norm3_y = n1_y;	
+    xtemp->norm1_z = xtemp->norm2_z = xtemp->norm3_z = n1_z;	
+    xtemp->col = col;
+
+    xtemp->next = curdata; 
+    return xtemp;
+}
+
+void R3DSolidRib(R3DRib __far *ribdata)
+{
+
+	Real	x_av, y_av, z_av;
+	R3DRib __far *beg_ribdata;
+	register ShadeDesc *shade;
+
+	beg_ribdata = ribdata; 
+	if (!ribdata) return;
+
+	for(;ribdata->next;ribdata=ribdata->next)
+	{
+		if((ribdata->norm1_x*ribdata->next->norm1_x + ribdata->norm1_y*ribdata->next->norm1_y
+				+ ribdata->norm1_z*ribdata->next->norm1_z) < 0 )
+	  	{
+		     ribdata->next->norm1_x = ribdata->next->norm2_x = ribdata->next->norm3_x =
+								- ribdata->next->norm1_x;
+		     ribdata->next->norm1_y = ribdata->next->norm2_y = ribdata->next->norm3_y =
+							 	- ribdata->next->norm1_y;
+		     ribdata->next->norm1_z = ribdata->next->norm2_z = ribdata->next->norm3_z =
+							 	- ribdata->next->norm1_z;
+		}
+        }
+
+	ribdata= beg_ribdata;
+
+	for(;ribdata->next->next;ribdata=ribdata->next)
+	{
+	  x_av= (ribdata->norm1_x + ribdata->next->norm2_x + ribdata->next->next->norm3_x)/3;
+ 	  y_av= (ribdata->norm1_y + ribdata->next->norm2_y + ribdata->next->next->norm3_y)/3;
+	  z_av= (ribdata->norm1_z + ribdata->next->norm2_z + ribdata->next->next->norm3_z)/3;
+
+	  ribdata->norm1_x = ribdata->next->norm2_x = ribdata->next->next->norm3_x = x_av;
+ 	  ribdata->norm1_y = ribdata->next->norm2_y = ribdata->next->next->norm3_y = y_av;
+	  ribdata->norm1_z = ribdata->next->norm2_z = ribdata->next->next->norm3_z = z_av;
+	}
+
+	for( ;beg_ribdata; beg_ribdata = beg_ribdata->next)
+	{
+		fprintf(OutFile,"1\n");
+		fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f %.5f %.5f "
+			,beg_ribdata->x1, beg_ribdata->y1, beg_ribdata->z1
+			,beg_ribdata->x2, beg_ribdata->y2, beg_ribdata->z2
+			,beg_ribdata->x3, beg_ribdata->y3, beg_ribdata->z3);
+
+	    /* i = beg_ribdata->col + ColourMask; */
+		shade = Shade + Colour2Shade(beg_ribdata->col);
+	    fprintf(OutFile,"%g %g %g\n", (Real)(shade->r)/255.0, (Real)(shade->g)/255.0, (Real)(shade->b)/255.0);
+
+		fprintf(OutFile,"7\n");
+		fprintf(OutFile,"%.5f %.5f %.5f %.5f %.5f %.5f %.5f %.5f %.5f\n "
+			,beg_ribdata->norm1_x, beg_ribdata->norm1_y, beg_ribdata->norm1_z
+			,beg_ribdata->norm2_x, beg_ribdata->norm2_y, beg_ribdata->norm2_z
+			,beg_ribdata->norm3_x, beg_ribdata->norm3_y, beg_ribdata->norm3_z);
+	}
+
+}
+
+
+void WriteR3DRibbon( Chain  __far *chain, Real scale )
+{
+    register Group __far *group;
+    register RAtom __far *captr;
+    register RAtom __far *o1ptr;
+    register RAtom __far *o2ptr;
+    register RAtom __far *next;
+ 
+    register int prev, wide;
+    register int col1,col2;
+    register int bx,by,bz;
+    register int dx,dy,dz;
+    register int arrow;
+    register int size;
+    R3DRib __far *ribdata;
+    R3DRib __far *front, *back, *side1, *side2;
+    int  cartoon_flag;
+
+    static Knot mid1, mid2, mid3;
+    static Knot knot1, knot2;
+ 
+
+    cartoon_flag = 0;
+    ribdata = front = back = side1 = side2 =NULL;
+    prev = False;
+    group = chain->glist;
+
+    if( IsProtein(group->refno) )
+    	captr = FindGroupAtom(group,1);
+    else 
+	captr = FindGroupAtom(group,7);
+ 
+
+    while( group->gnext )
+    { 
+	if( IsProtein(group->gnext->refno) )
+        { 
+		next = FindGroupAtom(group->gnext,1);
+        	o1ptr = FindGroupAtom(group,3);
+        } else /* Nucleic Acid */
+        {
+		next = FindGroupAtom(group->gnext,7);
+	        o1ptr = FindGroupAtom(group->gnext,10);
+        }
+ 
+        /* When not to have a control point! */
+        if( !next || !captr || !o1ptr || (next->flag&BreakFlag) ||
+            !((group->flag|group->gnext->flag)&DrawKnotFlag) )
+        {
+		group = group->gnext;
+	        captr = next;
+        	prev = False;
+	        continue;
+        }
+ 
+        knot2.tx = next->xorg - captr->xorg + next->fxorg - captr->fxorg ;
+        knot2.ty = next->yorg - captr->yorg + next->fyorg - captr->fyorg;
+        knot2.tz = next->zorg - captr->zorg + next->fzorg - captr->fzorg;
+ 
+        if( IsProtein(group->refno) )
+        {   bx = o1ptr->xorg - captr->xorg + o1ptr->fxorg - captr->fxorg;
+            by = o1ptr->yorg - captr->yorg + o1ptr->fyorg - captr->fyorg;
+            bz = o1ptr->zorg - captr->zorg + o1ptr->fzorg - captr->fzorg;
+ 
+        } else /* Nucleic Acid */
+        {   o2ptr = FindGroupAtom(group,8);
+            if( o2ptr && !FindGroupAtom(group,17) )
+            {   /* Deoxyribonucleic Acid */
+                bx = (o1ptr->xorg + o2ptr->xorg)/2 - captr->xorg + (o1ptr->fxorg + o2ptr->fxorg)/2 - captr->fxorg;
+                by = (o1ptr->yorg + o2ptr->yorg)/2 - captr->yorg + (o1ptr->fyorg + o2ptr->fyorg)/2 - captr->fyorg;
+                bz = (o1ptr->zorg + o2ptr->zorg)/2 - captr->zorg + (o1ptr->fzorg + o2ptr->fzorg)/2 - captr->fzorg;
+            } else
+	    {   /* Ribonucleic Acid */
+                bx = o1ptr->xorg - captr->xorg + o1ptr->fxorg - captr->fxorg;
+                by = o1ptr->yorg - captr->yorg + o1ptr->fyorg - captr->fyorg;
+                bz = o1ptr->zorg - captr->zorg + o1ptr->fzorg - captr->fzorg;
+            }
+        }
+
+        knot2.px = (captr->xorg + next->xorg)/2 + (captr->fxorg + next->fxorg)/2;
+        knot2.py = (captr->yorg + next->yorg)/2 + (captr->fyorg + next->fyorg)/2;
+        knot2.pz = (captr->zorg + next->zorg)/2 + (captr->fzorg + next->fzorg)/2;
+ 
+        /* c := a x b */
+        knot2.vnx = knot2.ty*bz*Scale*Scale - knot2.tz*by*Scale*Scale;
+        knot2.vny = knot2.tz*bx*Scale*Scale - knot2.tx*bz*Scale*Scale;
+        knot2.vnz = knot2.tx*by*Scale*Scale - knot2.ty*bx*Scale*Scale;
+
+        if( (group->struc&group->gnext->struc) & HelixFlag )
+        {   /* Compensate for narrowing of helices! */
+            size = isqrt((Long)knot2.vnx*knot2.vnx +
+                         (Long)knot2.vny*knot2.vny +
+                         (Long)knot2.vnz*knot2.vnz);
+            knot2.vsize = size;
+ 
+            if( size )
+            {   /* 1.00 Angstrom Displacement */
+                wide = 250; 
+#ifdef INVERT
+				knot2.px += (int)(((Long)wide*knot2.vnx)/size);
+                knot2.py += (int)(((Long)wide*knot2.vny)/size);
+                knot2.pz += (int)(((Long)wide*knot2.vnz)/size);
+
+#else
+                knot2.px -= (int)(((Long)wide*knot2.vnx)/size);
+                knot2.py -= (int)(((Long)wide*knot2.vny)/size);
+                knot2.pz -= (int)(((Long)wide*knot2.vnz)/size);
+
+#endif
+            }
+        } else knot2.vsize = 0;
+
+        if( !(group->flag&group->gnext->flag&TraceFlag) )
+        {   /* d := c x a */
+            dx = (int)(((Long)knot2.vny*knot2.tz -
+                        (Long)knot2.vnz*knot2.ty)/96);
+            dy = (int)(((Long)knot2.vnz*knot2.tx -
+                        (Long)knot2.vnx*knot2.tz)/96);
+            dz = (int)(((Long)knot2.vnx*knot2.ty -
+                        (Long)knot2.vny*knot2.tx)/96);
+            knot2.hsize = isqrt((Long)dx*dx + (Long)dy*dy + (Long)dz*dz);
+ 
+            /* Handle Carbonyl Oxygen Flip */
+            if( prev && (((Long)knot1.hnx*dx +
+                          (Long)knot1.hny*dy +
+                          (Long)knot1.hnz*dz)<0) )
+            {   knot2.hnx = -dx;   knot2.vnx = -knot2.vnx;
+                knot2.hny = -dy;   knot2.vny = -knot2.vny;
+                knot2.hnz = -dz;   knot2.vnz = -knot2.vnz;
+            } else
+            {   knot2.hnx = dx;
+                knot2.hny = dy;
+                knot2.hnz = dz;
+            }
+ 
+            arrow = False;
+            if( group->flag&CartoonFlag )
+            {
+		if( DrawBetaArrows && (group->struc&SheetFlag) &&
+                    !(group->gnext->struc&SheetFlag) )
+                { 
+			wide = (3*group->width)>>1;
+                	arrow = True;
+                } else
+			wide = group->width;
+
+            } else if( group->flag & WideKnotFlag )
+            {
+		/* Average Ribbon Width */
+                if( group->gnext->flag & WideKnotFlag )
+                	wide = (group->width+group->gnext->width)>>1;
+                else if( group->gnext->flag & CartoonFlag )
+                	wide = group->gnext->width;
+                else
+			wide = group->width;
+
+            } else wide = group->gnext->width;
+ 
+
+            if( knot2.hsize && !arrow )
+            {   size = knot2.hsize;
+                knot2.wx = (int)(((Long)wide*knot2.hnx)/size);
+                knot2.wy = (int)(((Long)wide*knot2.hny)/size);
+                knot2.wz = (int)(((Long)wide*knot2.hnz)/size);
+                knot2.wide = (short)wide;
+            } else
+            {   knot2.wide = 0;
+                knot2.wx = 0;
+                knot2.wy = 0;
+                knot2.wz = 0;
+            }
+ 
+            if( group->flag & CartoonFlag )
+                if( prev && (knot1.wide!=wide) && knot1.hsize )
+                {   size = knot1.hsize;
+                    knot1.wx = (int)(((Long)wide*knot1.hnx)/size);
+                    knot1.wy = (int)(((Long)wide*knot1.hny)/size);
+                    knot1.wz = (int)(((Long)wide*knot1.hnz)/size);
+                }
+ 
+            if( (group->flag|group->gnext->flag)&CartoonFlag )
+            {   CalculateVInten( &knot2 );
+                CalculateHInten( &knot2 );
+ 
+                size = knot2.vsize;
+                wide = (int)(CartoonHeight);
+
+                knot2.dx = (int)(((Long)wide*knot2.vnx)/size);
+                knot2.dy = (int)(((Long)wide*knot2.vny)/size);
+                knot2.dz = (int)(((Long)wide*knot2.vnz)/size);
+            } else if( (group->flag|group->gnext->flag)&RibbonFlag )
+               {} CalculateVInten( &knot2 );
+        }
+ 
+        if( !(col1 = group->col1) )
+            col1 = captr->col;
+ 
+        if( prev )
+        {   /* Approximate spline segment with plane! */
+ 
+            /* Calculate Hermite Spline Points */
+            mid1.px = (int)(((Long)54*knot1.px + (Long)9*knot1.tx +
+                             (Long)10*knot2.px - (Long)3*knot2.tx)/64);
+            mid1.py = (int)(((Long)54*knot1.py + (Long)9*knot1.ty +
+                             (Long)10*knot2.py - (Long)3*knot2.ty)/64);
+            mid1.pz = (int)(((Long)54*knot1.pz + (Long)9*knot1.tz +
+                             (Long)10*knot2.pz - (Long)3*knot2.tz)/64);
+ 
+            mid2.px = (int)(((Long)4*knot1.px + knot1.tx +
+                             (Long)4*knot2.px - knot2.tx)/8);
+            mid2.py = (int)(((Long)4*knot1.py + knot1.ty +
+                             (Long)4*knot2.py - knot2.ty)/8);
+            mid2.pz = (int)(((Long)4*knot1.pz + knot1.tz +
+                             (Long)4*knot2.pz - knot2.tz)/8);
+ 
+            mid3.px = (int)(((Long)10*knot1.px + (Long)3*knot1.tx +
+                             (Long)54*knot2.px - (Long)9*knot2.tx)/64);
+            mid3.py = (int)(((Long)10*knot1.py + (Long)3*knot1.ty +
+                             (Long)54*knot2.py - (Long)9*knot2.ty)/64);
+            mid3.pz = (int)(((Long)10*knot1.pz + (Long)3*knot1.tz +
+                             (Long)54*knot2.pz - (Long)9*knot2.tz)/64);
+ 
+            if( group->flag & TraceFlag )
+            {   
+		wide = (int)(group->width);
+		R3DCylinder(knot1.px+CenX, knot1.py+CenY, knot1.pz+CenZ,
+                              mid1.px+CenX, mid1.py+CenY, mid1.pz+CenZ, col1, scale );
+		R3DCylinder(mid1.px+CenX, mid1.py, mid1.pz,
+                              mid2.px+CenX, mid2.py+CenY, mid2.pz+CenZ, col1, scale );
+		R3DCylinder(mid2.px+CenX, mid2.py, mid2.pz,
+                              mid3.px+CenX, mid3.py+CenY, mid3.pz+CenZ, col1, scale );
+		R3DCylinder(mid3.px+CenX, mid3.py, mid3.pz,
+                              knot2.px+CenX, knot2.py+CenY, knot2.pz+CenZ, col1, scale );
+
+            } else if( group->flag & DotsFlag )
+            {
+		wide = (int)(group->width);
+		R3DSphere(knot1.px+CenX, knot1.py+CenY, knot1.pz+CenZ, wide, col1,scale);
+		R3DSphere(mid2.px+CenX, mid2.py+CenY, mid2.pz+CenZ, wide, col1,scale);
+
+            } else
+            {   /* Calculate Hermite Spline Widths */
+                mid1.wx = (27*knot1.wx + 5*knot2.wx)/32;
+                mid1.wy = (27*knot1.wy + 5*knot2.wy)/32;
+                mid1.wz = (27*knot1.wz + 5*knot2.wz)/32;
+ 
+                mid2.wx = (knot1.wx + knot2.wx)/2;
+                mid2.wy = (knot1.wy + knot2.wy)/2;
+                mid2.wz = (knot1.wz + knot2.wz)/2;
+ 
+                mid3.wx = (5*knot1.wx + 27*knot2.wx)/32;
+                mid3.wy = (5*knot1.wy + 27*knot2.wy)/32;
+                mid3.wz = (5*knot1.wz + 27*knot2.wz)/32;
+ 
+                /* Draw the Spline Segments */
+                if( group->flag & (StrandFlag|DashStrandFlag) )
+                { 
+			if( !(col2 = group->col2) )
+                        	col2 = captr->col;
+			
+			R3DStrandRibbon( &knot1, &mid1,  col1, col2, scale );
+                        R3DStrandRibbon( &mid1,  &mid2,  col1, col2, scale );
+                        R3DStrandRibbon( &mid2,  &mid3,  col1, col2, scale );
+                        R3DStrandRibbon( &mid3,  &knot2, col1, col2, scale );
+                    
+                } else /* Ribbon or Cartoon! */
+                {   mid1.vsize = 0;
+                    mid1.vnx = (int)(((Long)27*knot1.vnx +
+                                      (Long) 5*knot2.vnx)/32);
+                    mid1.vny = (int)(((Long)27*knot1.vny +
+                                      (Long) 5*knot2.vny)/32);
+                    mid1.vnz = (int)(((Long)27*knot1.vnz +
+                                      (Long) 5*knot2.vnz)/32);
+                    CalculateVInten( &mid1 );
+ 
+                    mid2.vsize = 0;
+                    mid2.vnx = (knot1.vnx + knot2.vnx)/2;
+                    mid2.vny = (knot1.vny + knot2.vny)/2;
+                    mid2.vnz = (knot1.vnz + knot2.vnz)/2;
+                    CalculateVInten( &mid2 );
+ 
+                    mid3.vsize = 0;
+                    mid3.vnx = (int)(((Long) 5*knot1.vnx +
+                                      (Long)27*knot2.vnx)/32);
+                    mid3.vny = (int)(((Long) 5*knot1.vny +
+                                      (Long)27*knot2.vny)/32);
+                    mid3.vnz = (int)(((Long) 5*knot1.vnz +
+                                      (Long)27*knot2.vnz)/32);
+                    CalculateVInten( &mid3 );
+ 
+                    if( group->flag & RibbonFlag )
+                    {   if( group->struc & HelixFlag )
+                        {   if( !(col2 = group->col2) )
+                                col2 = captr->col;                          
+                        } else col2 = col1;
+                        
+                        if( col1 != col2 )
+                        {
+/*			    SolidRibbon2( &knot1, &mid1,  col1, col2 );
+                            SolidRibbon2( &mid1,  &mid2,  col1, col2 );
+                            SolidRibbon2( &mid2,  &mid3,  col1, col2 );
+                            SolidRibbon2( &mid3,  &knot2, col1, col2 );*/
+                        } else
+                        { 
+ 			    ribdata = Poly_ribdata( &knot1, &mid1, ribdata, col1, scale );  
+			    ribdata = Poly_ribdata( &mid1,  &mid2, ribdata, col1, scale );
+			    ribdata = Poly_ribdata( &mid2,  &mid3, ribdata, col1, scale );
+			    ribdata = Poly_ribdata( &mid3, &knot2, ribdata, col1, scale );
+                        }
+                    } else /* Cartoon! */
+                    {   /* Calculate Spline Heights */
+                        wide = (int)(CartoonHeight);
+ 
+                        size = mid1.vsize;
+                        mid1.dx = (int)(((Long)wide*mid1.vnx)/size);
+                        mid1.dy = (int)(((Long)wide*mid1.vny)/size);
+                        mid1.dz = (int)(((Long)wide*mid1.vnz)/size);
+ 
+                        size = mid2.vsize;
+                        mid2.dx = (int)(((Long)wide*mid2.vnx)/size);
+                        mid2.dy = (int)(((Long)wide*mid2.vny)/size);
+                        mid2.dz = (int)(((Long)wide*mid2.vnz)/size);
+ 
+                        size = mid3.vsize;
+                        mid3.dx = (int)(((Long)wide*mid3.vnx)/size);
+                        mid3.dy = (int)(((Long)wide*mid3.vny)/size);
+                        mid3.dz = (int)(((Long)wide*mid3.vnz)/size);
+ 
+                        /* Calculate Surface Intensity */
+                        mid1.hsize = 0;
+                        mid1.hnx = (int)(((Long)27*knot1.hnx +
+                                          (Long) 5*knot2.hnx)/32);
+                        mid1.hny = (int)(((Long)27*knot1.hny +
+                                          (Long) 5*knot2.hny)/32);
+                        mid1.hnz = (int)(((Long)27*knot1.hnz +
+                                          (Long) 5*knot2.hnz)/32);
+                        CalculateHInten( &mid1 );
+ 
+                        mid2.hsize = 0;
+                        mid2.hnx = (knot1.hnx + knot2.hnx)/2;
+                        mid2.hny = (knot1.hny + knot2.hny)/2;
+                        mid2.hnz = (knot1.hnz + knot2.hnz)/2;
+                        CalculateHInten( &mid2 );
+ 
+                        mid3.hsize = 0;
+                        mid3.hnx = (int)(((Long) 5*knot1.hnx +
+                                          (Long)27*knot2.hnx)/32);
+                        mid3.hny = (int)(((Long) 5*knot1.hny +
+                                          (Long)27*knot2.hny)/32);
+                        mid3.hnz = (int)(((Long) 5*knot1.hnz +
+                                          (Long)27*knot2.hnz)/32);
+                        CalculateHInten( &mid3 );
+ 
+			cartoon_flag = 1;
+			Cartoon_ribdata( &knot1, &mid1, &front, &back, &side1, &side2, col1, scale );  
+			Cartoon_ribdata( &mid1,  &mid2, &front, &back, &side1, &side2, col1, scale );  
+			Cartoon_ribdata( &mid2,  &mid3, &front, &back, &side1, &side2, col1, scale );  
+			Cartoon_ribdata( &mid3, &knot2, &front, &back, &side1, &side2, col1, scale );  
+                    }
+                }
+            }
+        } else if( group == chain->glist )
+        {   knot1 = knot2;
+            knot1.px = captr->xorg + captr->fxorg- CenX;
+            knot1.py = captr->yorg + captr->fyorg - CenY;
+            knot1.pz = captr->zorg + captr->fzorg - CenZ;
+ 
+            if( group->flag & RibbonFlag )
+            {
+		ribdata=Poly_ribdata(&knot1, &knot2, ribdata, col1, scale);    
+
+            } else if( group->flag & RibbonFlag )
+            {  
+		Cartoon_ribdata( &knot1, &knot2, &front, &back, &side1, &side2, col1, scale );  
+
+            } else if( group->flag & (StrandFlag|DashStrandFlag) )
+            {
+		if( !(col2 = group->col2) )
+                	col2 = captr->col;
+
+                R3DStrandRibbon( &knot1,  &knot2, col1, col2, scale);
+
+            } else if( group->flag & TraceFlag )
+	    {	
+
+		R3DCylinder(knot1.px+CenX, knot1.py+CenY, knot1.pz+CenZ,
+                            knot2.px+CenX, knot2.py+CenY, knot2.pz+CenZ, col1, scale);
+
+            } else if( group->flag & DotsFlag )
+            {  
+		wide = (int)(group->width);
+		R3DSphere(knot1.px+CenX,knot1.py+CenY,knot1.pz+CenZ,wide,col1,scale);
+            }
+            prev = True;
+        } else prev = True;
+        group = group->gnext;
+        captr = next;
+ 
+        knot1 = knot2;
+    }
+ 
+    if( prev )
+    {   if( !(col1 = group->col1) )
+            col1 = captr->col;
+ 
+        if( group->flag & CartoonFlag )
+        {   /* Test for arrow head! */
+            if( DrawBetaArrows && (group->struc&SheetFlag) )
+            {
+		wide = (3*group->width)>>1;
+                knot2.px = captr->xorg + captr->fxorg + (knot2.tx/2) - CenX;
+                knot2.py = captr->yorg + captr->fyorg + (knot2.ty/2) - CenY;
+                knot2.pz = captr->zorg + captr->fyorg + (knot2.tz/2) - CenZ;
+ 
+                arrow = True;
+            } else
+            {  
+		wide = group->width;
+                knot2.px = captr->xorg + captr->fxorg - CenX;
+                knot2.py = captr->yorg + captr->fyorg - CenY;
+                knot2.pz = captr->zorg + captr->fzorg - CenZ;
+                arrow = False;
+            }
+ 
+            if( (knot1.wide!=wide) && knot1.hsize )
+            {   size = knot1.hsize;
+                knot1.wx = (int)(((Long)wide*knot1.hnx)/size);
+                knot1.wy = (int)(((Long)wide*knot1.hny)/size);
+                knot1.wz = (int)(((Long)wide*knot1.hnz)/size);
+ 
+                if( !arrow )
+                {   knot2.wx = knot1.wx;
+                    knot2.wy = knot1.wy;
+                    knot2.wz = knot1.wz;
+                } else
+                {   knot2.wx = 0;
+                    knot2.wy = 0;
+                    knot2.wz = 0;
+                }
+            } else if( arrow )
+            {   knot2.wx = 0;
+                knot2.wy = 0;
+                knot2.wz = 0;
+            }
+ 
+	Cartoon_ribdata( &knot1, &knot2, &front, &back, &side1, &side2, col1, scale );  
+
+        } else /* !Cartoon */
+        {   knot2.px = captr->xorg + captr->fxorg - CenX;
+            knot2.py = captr->yorg + captr->fyorg - CenY;
+            knot2.pz = captr->zorg + captr->fzorg - CenZ;
+ 
+            if( group->flag & RibbonFlag )
+            {
+		ribdata= Poly_ribdata(&knot1, &knot2, ribdata, col1, scale);    
+
+            } else if( group->flag & (StrandFlag|DashStrandFlag) )
+            {  
+			if( !(col2 = group->col2) )
+                	 col2 = captr->col;
+
+            	R3DStrandRibbon(&knot1, &knot2, col1, col2, scale);
+
+            } else if( group->flag & TraceFlag )
+            { 
+			R3DCylinder(knot1.px+CenX, knot1.py+CenY, knot1.pz+CenZ,
+                            knot2.px+CenX, knot2.py+CenY, knot2.pz+CenZ, col1, scale);
+
+            } else if( group->flag & DotsFlag )
+            { 
+			wide = (int)(group->width);
+			R3DSphere(knot1.px+CenX,knot1.py+CenY,knot1.pz+CenZ,wide,col1,scale);
+  	        R3DSphere(knot2.px+CenX,knot2.py+CenX,knot2.pz+CenX,wide,col1,scale);
+            }   
+        }
+    }
+
+	if( group->flag & RibbonFlag )
+	{
+		R3DSolidRib(ribdata);
+	}
+	else if(cartoon_flag)
+	{
+		R3DSolidRib(front);
+		R3DSolidRib(back);
+		R3DSolidRib(side1);
+		R3DSolidRib(side2);
+	}
+}
+ 
+
+
+static void WriteR3DItems( PSItemPtr __far *data, char __far *type, int count,int scale )
+{
+	register Monitor __far *monit;
+	register HBond __far *hbond;
+	register Bond __far *bond;
+	register RAtom __far *src;
+	register RAtom __far *dst;
+	register Chain __far *chain;
+	register int i;
+	
+
+	for( i=0; i<count; i++ )
+		switch( type[i] )
+		{
+			case(PSAtom): 
+				WriteR3DSphere(data,type,i,scale);
+			break;
+
+			case(PSBond): 
+				bond = (Bond __far*)data[i];
+				src = bond->srcatom;
+				dst = bond->dstatom;
+
+				if( bond->flag & WireFlag )
+					WriteR3DStick(src,dst,bond->col,10,scale);
+
+				else if( bond->flag & CylinderFlag )
+					WriteR3DStick(src,dst,bond->col,bond->radius,scale);    
+
+                           	else /* bond->flag & DashFlag */
+	                        	WriteR3DStick(src,dst,bond->col,bond->radius,scale);
+			break;
+
+			case(PSSSBond): 
+			case(PSHBond):
+				hbond = (HBond __far*)data[i];
+				if( (type[i]==PSHBond)? HBondMode : SSBondMode )
+				{
+					src = hbond->srcCA;
+					dst = hbond->dstCA;
+				}
+				else
+				{
+					src = hbond->src;
+					dst = hbond->dst;
+				}
+
+				if( hbond->flag & WireFlag )
+					WriteR3DStick(src,dst,hbond->col,10,scale);
+
+				else /* bond->flag & CylinderFlag */
+					WriteR3DStick(src,dst,hbond->col,hbond->radius,scale);    
+			break;
+
+			case(PSMonit):
+				monit = (Monitor __far*)data[i];
+				WriteR3DMonitor(monit,10,scale);
+			break;
+
+			case(PSRibbon):
+				chain = (Chain __far*)data[i];
+				WriteR3DRibbon(chain, scale);
+			break;
+
+      }
+}
+
+
+int WriteR3DFile( char* name)
+{
+	register int scale;
+	register Long count;
+
+	PSItemPtr __far *data;
+	char __far *type;
+
+	count = CountPSItems();
+	if( !count ) return( True );
+
+
+#ifdef IBMPC
+	if( count > 16383 )
+	{
+		InvalidateCmndLine();
+		WriteString("Output Error: Too many objects!\n");
+		return( False );
+	}
+#endif
+   
+   scale = XRange;
+   if (YRange > scale) scale= YRange;
+
+	/* Allocate arrays for objects! */
+	data = (PSItemPtr __far*)_fmalloc((size_t)count*sizeof(PSItemPtr));
+	type = (char __far*)_fmalloc((size_t)count*sizeof(char));
+	if( !data || !type )
+	{
+		InvalidateCmndLine();
+		WriteString("Output Error: Not enough memory to create raster3d!\n");
+
+		if( data ) _ffree( data );
+		if( type ) _ffree( type );
+		return( False );
+	}
+
+
+	OutFile = fopen(name,"w");
+	if( !OutFile )
+	{
+		FatalOutputError(name);
+		return(False);
+	}
+
+ 
+	/* creating the R3D header */
+   
+	fprintf(OutFile,"Raster3d file: %s   Creator: RasMol Version %s\n",name,VERSION);
+	fprintf(OutFile,"%d %d		tiles in x,y\n",NTX, NTY);
+	fprintf(OutFile,"%d %d		pixels (x,y) per tile\n",NPX, NPY);
+	fprintf(OutFile,"4		anti-aliasing level 4; 3X3->2X2\n");
+	fprintf(OutFile,"%.2f %.2f %.2f		background color\n",BackR/255.0,BackG/255.0,BackB/255.0);
+	fprintf(OutFile,"F		shadows cast\n");
+	if (FakeSpecular) {
+	fprintf(OutFile,"10		Phong power\n");
+	fprintf(OutFile,"0.10		secondary light contribution\n");
+	fprintf(OutFile,"0.05		ambient light contribution\n");
+	fprintf(OutFile,"0.50		specular reflection component\n");
+	} else {
+	fprintf(OutFile,"25		Phong power\n");
+	fprintf(OutFile,"0.25		secondary light contribution\n");
+	fprintf(OutFile,"0.05		ambient light contribution\n");
+	fprintf(OutFile,"0.25		specular reflection component\n");
+	}
+	fprintf(OutFile,"0.0		eye position\n");
+	fprintf(OutFile,"1 1 1		main light source position( from over right shoulder)\n");
+	fprintf(OutFile,"%f %f %f 0		view matrix for coordinate transformations\n",
+									   1.0, 0.0, 0.0);
+	fprintf(OutFile,"%f %f %f 0\n",    0.0, 1.0, 0.0);
+	fprintf(OutFile,"%f %f %f 0\n",    0.0, 0.0, 1.0);
+	fprintf(OutFile,"%f %f %f %f		translation\n",
+                                          0.0, 0.0, 0.0,
+                                           1.0); 
+	fprintf(OutFile,"3\n*\n*\n*\n");
+	if (UseDepthPlane) {
+  	  fprintf(OutFile,"16\nBACKCLIP %f\n", (Real)(DepthValue-ZRange/2+1)/(Real)scale);
+	}
+	if (UseSlabPlane) {
+	  fprintf(OutFile,"16\nFRONTCLIP %f\n", (Real)(SlabValue-ZRange/2-1)/(Real)scale);
+	}
+
+
+	FetchPSItems(data,type);
+
+	if( count>1 )
+		DepthSort(data,type,(int)count);
+
+	WriteR3DItems(data,type,(int)count,scale);
+
+
+/*
+    if( !VectSolid )
+    {   fputs("[] 0 setdash\n",OutFile);
+        VectSolid = True;
+    }
+
+    if( DotPtr )
+        WriteVectDots();
+    if( DrawMonitDistance && MonitList )
+        WriteVectMonitors();
+*/
+
+	if( LabelList )
+		WriteR3DLabels(scale);
+
+
+	fclose(OutFile);
+
+#ifdef APPLEMAC
+	/* Avoid ANSI trigraph problems! */
+	SetFileInfo(name,'vgrd','TEXT',134);
+#endif
+
+	_ffree( data );
+	_ffree( type );
+	return(True);
+}
 
 
 /*==================================*/
@@ -2901,8 +4640,6 @@ int WriteIRISFile( char *name )
 #endif
     return True;
 }
-
-
 
 void InitialiseOutFile( void )
 {

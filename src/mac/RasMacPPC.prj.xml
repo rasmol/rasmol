@@ -1122,6 +1122,13 @@
                     <FILEKIND>Text</FILEKIND>
                     <FILEFLAGS>Debug</FILEFLAGS>
                 </FILE>
+                <FILE>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>InternetConfigLib</PATH>
+                    <PATHFORMAT>Unix</PATHFORMAT>
+                    <FILEKIND>Library</FILEKIND>
+                    <FILEFLAGS>Debug</FILEFLAGS>
+                </FILE>
             </FILELIST>
             <LINKORDER>
                 <FILEREF>
@@ -1272,6 +1279,11 @@
                 <FILEREF>
                     <PATHTYPE>Name</PATHTYPE>
                     <PATH>RasMac.r</PATH>
+                    <PATHFORMAT>Unix</PATHFORMAT>
+                </FILEREF>
+                <FILEREF>
+                    <PATHTYPE>Name</PATHTYPE>
+                    <PATH>InternetConfigLib</PATH>
                     <PATHFORMAT>Unix</PATHFORMAT>
                 </FILEREF>
             </LINKORDER>
@@ -1469,6 +1481,12 @@
                 </FILEREF>
             </GROUP>
         </GROUP>
+        <FILEREF>
+            <TARGETNAME>RasMac_PPC</TARGETNAME>
+            <PATHTYPE>Name</PATHTYPE>
+            <PATH>InternetConfigLib</PATH>
+            <PATHFORMAT>Unix</PATHFORMAT>
+        </FILEREF>
     </GROUPLIST>
 
 </PROJECT>

@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                               RasMol 2.7.4                              *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                            19 November 2007                             *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -21,33 +20,44 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                   RasMol 2.7.4   Nov 07                                 *
  *                                                                         *
- *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
- *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
- *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
- *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
- *of Energy.                                                               *
+ * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
+ * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
+ * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
+ * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
+ * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
+ * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
+ * Institute of General Medical Sciences (NIGMS). The content is solely    *
+ * the responsibility of the authors and does not necessarily represent    * 
+ * the official views of the funding organizations.                        *
  *                                                                         *
  *                    and Incorporating Translations by                    *
- *  Author                               Item                      Language*
+ *  Author                               Item                     Language *
  *  Isabel Servan Martinez,                                                *
- *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
- *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
- *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
- *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages French   *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
- *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  *
+ *  G. Pozhvanov                         2.7.3 menus and messages Russian  *
+ *  G. Todorov                           2.7.3 menus and messages Bulgarian*
+ *  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  *
+ *  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese *
  *                                                                         *
  *                             This Release by                             *
- * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2007               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
@@ -55,6 +65,55 @@
  ***************************************************************************/
 /* render.c
  $Log: not supported by cvs2svn $
+ Revision 1.9  2008/01/29 04:12:11  yaya
+ Post release cleanup of problems discovered. -- HJB
+
+ Revision 1.8  2008/01/05 20:56:29  yaya
+ Update handling of stereo interaction with slab
+ Enable save of CBF-style maps. -- HJB
+
+ Revision 1.7  2007/12/14 02:04:50  yaya
+ Correct Chinese data for missing line in langsel_utf.c
+ Rewrite code for handling of slab mode in stereo -- HJB
+
+ Revision 1.6  2007/11/19 03:28:39  yaya
+ Update to credits for 2.7.4 in manual and headers
+ Mask code added -- HJB
+
+ Revision 1.5  2007/10/23 02:27:55  yaya
+ Preliminary mods for revised PDB format derived from Rutgers mods.
+ Partial changes for map tangles -- HJB
+
+ Revision 1.4  2007/07/14 14:09:03  yaya
+ Update to command.c to add load option for maps
+ Introduce display to map bonds
+
+ Revision 1.3  2007/07/07 21:54:31  yaya
+ Next round of preliminary updates for maps, allowing multiple maps,
+ code to set the contour level and some fixes to the languages files -- HJB
+
+ Revision 1.2  2007/07/02 12:44:39  yaya
+ Partial preliminary map code -- HJB
+
+ Revision 1.1.1.1  2007/03/01 01:16:32  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.3  2006/11/01 03:23:51  yaya
+ Update NSIS windows installer for more script types and to fix
+ misplaced script instructions for data files; add document and
+ script icons directly in raswin.exe; add credit line to
+ G. A. Pozhvanov in comments for Russian translations. -- HJB
+
+ Revision 1.2  2006/09/17 10:53:56  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:45:59  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.2  2006/06/19 22:06:41  todorovg
+ Rasmol 2.7.3.1
+
  Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
  Initial Rasmol 2.7.3 Import
 
@@ -135,6 +194,7 @@
 #include "multiple.h" /* [GSG 11/9/95] */
 #include "vector.h"
 #include "wbrotate.h"
+#include "maps.h"
 
 /* Avoid PowerPC Errors! */
 #ifdef INFINITY
@@ -420,16 +480,29 @@ void ReAllocBuffers( void )
     register long len, temp;
 
 #ifdef MSWIN
+    temp = (long)XRange*sizeof(short)+32;
+    if( SLineHandle ) GlobalFree(SLineHandle);
+    SLineHandle = GlobalAlloc(GMEM_MOVEABLE,temp);
+    if( !SLineHandle ) FatalRenderError("slab line buffer");
+    if( DLineHandle ) GlobalFree(DLineHandle);
+    DLineHandle = GlobalAlloc(GMEM_MOVEABLE,temp);
+    if( !DLineHandle ) FatalRenderError("depth line buffer");
     temp = (long)XRange*YRange*sizeof(short)+32;
     if( DBufHandle ) GlobalFree(DBufHandle);
     DBufHandle = GlobalAlloc(GMEM_MOVEABLE,temp);
     if( !DBufHandle ) FatalRenderError("depth buffer");
 #else
+    temp = (long)XRange*sizeof(short)+32;
+    if( SLineBuffer ) _ffree( SLineBuffer );
+    SLineBuffer = (short*)_fmalloc( temp );
+    if( !SLineBuffer ) FatalRenderError("slab line buffer");
+    if( DLineBuffer ) _ffree( DLineBuffer );
+    DLineBuffer = (short*)_fmalloc( temp );
+    if( !DLineBuffer ) FatalRenderError("depth line buffer");
     temp = (long)XRange*YRange*sizeof(short)+32;
     if( DBuffer ) _ffree( DBuffer );
     DBuffer = (short*)_fmalloc( temp );
     if( !DBuffer ) FatalRenderError("depth buffer");
-    temp = (long)XRange*YRange*sizeof(int)+32;
 #endif
     DBClear=False;
 
@@ -1291,14 +1364,14 @@ static void DisplayBoxes( void )
 	if( DrawAxes )
 	{   /* Line (MinX,0,0) to (MaxX,0,0) */
             x = XOffset+dxx;  y = YOffset+dxy;  z = ZOffset+dxz;
-            if( ZValid(z) && ZBack(z) ) DisplayRasString(x+2,y,z,
+            if( ZBValid(x,z) ) DisplayRasString(x+2,y,z,
               (unsigned char *)"X",BoxCol);
 	    ClipTwinLine(XOffset-dxx,YOffset-dxy,ZOffset-dxz,
                          x,y,z,BoxCol,BoxCol,' ');
 
 	    /* Line (0,MinY,0) to (0,MaxY,0) */
             x = XOffset+dyx;  y = YOffset+dyy;  z = ZOffset+dyz;
-            if( ZValid(z) && ZBack(z) ) DisplayRasString(x+2,y,z,
+            if( ZBValid(x,z) ) DisplayRasString(x+2,y,z,
               (unsigned char *)"Y",BoxCol);
 	    ClipTwinLine(XOffset-dyx,YOffset-dyy,ZOffset-dyz, 
 			 x,y,z,BoxCol,BoxCol,' ');
@@ -1306,7 +1379,7 @@ static void DisplayBoxes( void )
 
 	    /* Line (0,0,MinZ) to (0,0,MaxZ) */
             x = XOffset-dzx;  y = YOffset-dzy;  z = ZOffset-dzz;
-            if( ZValid(z) && ZBack(z) ) DisplayRasString(x+2,y,z,
+            if( ZBValid(x,z) ) DisplayRasString(x+2,y,z,
               (unsigned char *)"Z",BoxCol);
 	    ClipTwinLine(XOffset+dzx,YOffset+dzy,ZOffset+dzz, 
 			 x,y,z,BoxCol,BoxCol,' ');
@@ -1569,6 +1642,11 @@ static void RenderFrame( void )
                         DisplayRibbon( chain );
 
 	    if( DotPtr ) DisplaySurface();
+	    if( MapInfoPtr ) {
+	      DisplayMapPoints();
+	      DisplayMapBonds();
+	      DisplayMapTangles();
+	    }
 	    if( LabelList ) DisplayLabels();
             if( MonitList ) DisplayMonitors();
 	    DisplayHBonds( Database->slist, SSBondMode );
@@ -1586,8 +1664,10 @@ static void RenderFrame( void )
 
 static void DrawFrameOne( void )
 {
-    register double temp;
+    register double temp, kemp;
     register int wide;
+    register int ii;
+    double theta,costheta,tantheta;
 
     if( !Database ) 
 	return;
@@ -1599,14 +1679,25 @@ static void DrawFrameOne( void )
 		CreateVoxelData( SphereFlag );
     }
 
+#ifdef MSWIN
+    /* Lock Buffers into Memory */
+    FBuffer = (Pixel __huge*)GlobalLock(FBufHandle);
+    DBuffer = (short __huge*)GlobalLock(DBufHandle);
+    SLineBuffer = (short __huge*)GlobalLock(SLineHandle);
+    DLineBuffer = (short __huge*)GlobalLock(DLineHandle);
+#endif
+
     if( UseDepthPlane )
     {   DepthValue = (int)(DialValue[DialBClip]*ImageRadius)+ZOffset;
         UseClipping = True;
+        for (ii=0; ii < XRange; ii++) DLineBuffer[ii] = DepthValue;
     }   else UseClipping = UseScreenClip;
+
     if( UseSlabPlane )
     {   SlabValue = (int)(DialValue[DialSlab]*ImageRadius)+ZOffset;
 	    SlabInten = (int)(ColourMask*LightZComp/LightLength);
-	    SliceValue = SlabValue+16;
+	    SliceValue = 16;
+        for (ii=0; ii < XRange; ii++) SLineBuffer[ii] = SlabValue;
 	    UseClipping = True;
     } else UseClipping = UseScreenClip;
 
@@ -1618,29 +1709,48 @@ static void DrawFrameOne( void )
     } else
 		ShiftS = 0;
 
-#ifdef MSWIN
-    /* Lock Buffers into Memory */
-    FBuffer = (Pixel __huge*)GlobalLock(FBufHandle);
-    DBuffer = (short __huge*)GlobalLock(DBufHandle);
-#endif
 
     /* Common View Elements */
     View.yskip = XRange;
     View.ymax = YRange;
     View.fbuf = FBuffer;
     View.dbuf = DBuffer;
+    View.slbuf = SLineBuffer;
+    View.dlbuf = DLineBuffer;
 
     if( UseStereo )
     {
         temp = StereoAngle/180.0;
+        theta = -PI*temp/2.;
+        costheta = cos(theta);
+        tantheta = tan(theta);
         wide = XRange>>1;
 
         /* Create 'Left' View structure */
         View.shift = 0;
         View.xmax = wide;
         View.offmax = 2*wide*YRange;
+        
+        if( UseSlabPlane ){
+          for (ii=0; ii<wide; ii++) {
+            kemp = (double)SlabValue+rint(((double)(wide/2-ii))*tantheta);
+            if (kemp > (double)ZRange-1) kemp = ZRange-1;
+            if (kemp < 0.) kemp=0.;
+            View.slbuf[ii] = (short)kemp;
+          }
+        }
+        if( UseDepthPlane ) { 
+          for (ii=0; ii<wide; ii++) {
+            kemp = (double)DepthValue+rint(((double)(wide/2-ii))*tantheta);
+            if (kemp > (double)ZRange-1) kemp = ZRange-1;
+            if (kemp < 0.) kemp=0.;
+            View.dlbuf[ii] = (short)kemp;
+          }
+        }
+        SliceValue = rint(16./costheta);
 
-        DialValue[DialRY] -= temp;
+        /*  DialValue[DialRY] -= temp; */
+        WRotStereo = -temp/2.;
         ReDrawFlag |= RFRotateY;
         ApplyTransform();
         RenderFrame();
@@ -1649,8 +1759,28 @@ static void DrawFrameOne( void )
         View.shift = wide;
         View.xmax = wide;
         View.offmax = 2*wide*YRange;
+        View.slbuf += wide;
+        View.dlbuf += wide;
 
-        DialValue[DialRY] += temp;
+        if( UseSlabPlane ){
+          for (ii=0; ii<wide; ii++) {
+            kemp = (double)SlabValue-rint(((double)(wide/2-ii))*tantheta);
+            if (kemp > (double)ZRange-1) kemp = ZRange-1;
+            if (kemp < 0.) kemp=0.;
+            View.slbuf[ii] = (short)kemp;
+          }
+        }
+        if( UseDepthPlane ) { 
+          for (ii=0; ii<wide; ii++) {
+            kemp = (double)DepthValue-rint(((double)(wide/2-ii))*tantheta);
+            if (kemp > (double)ZRange-1) kemp = ZRange-1;
+            if (kemp < 0.) kemp=0.;
+            View.dlbuf[ii] = (short)kemp;
+          }
+        }
+
+        /* DialValue[DialRY] += temp; */
+        WRotStereo = temp/2.;
         ReDrawFlag |= RFRotateY;
         ApplyTransform();
         RenderFrame();
@@ -1660,6 +1790,8 @@ static void DrawFrameOne( void )
         View.shift = 0;
         View.xmax = XRange;
         View.offmax = XRange*YRange;
+        WRotStereo = 0.;
+        if (WLastRS != 0.) ApplyTransform();
         RenderFrame();
     }
 
@@ -1667,6 +1799,8 @@ static void DrawFrameOne( void )
     /* Unlock Buffers */
     GlobalUnlock(FBufHandle);
     GlobalUnlock(DBufHandle);
+    GlobalUnlock(SLineHandle);
+    GlobalUnlock(DLineHandle);
 #endif
     DBClear = False;
     FBClear = False;
@@ -1816,17 +1950,14 @@ static void IdentifyAtom( int xpos, int ypos )
 		    if( SlabMode && (dz >= -rad) )
 		    {   wide = pythag(aptr->irad,AbsFun(dz));
 			if( (dy<=wide) && (dx<=pythag(wide,dy)) )
-			{   if( SlabMode == SlabFinal )
-			    {   dpth = SliceValue;
-				new = True;
-			    } else if( SlabMode == SlabHollow )
+			{   if( SlabMode == SlabHollow )
 			    {   dpth = aptr->z-pythag(rad,dx);
 				new = !IdentFound || (dpth>IdentDepth);
 			    } else if( SlabMode != SlabHalf )
 			    {   /* SlabClose, SlabSection */
-				dpth = dx*dx+dy*dy+dz*dz+SliceValue;
+				dpth = dx*dx+dy*dy+dz*dz+SlabValue+SliceValue;
 				if( IdentFound )
-				{   new = (IdentDepth<SliceValue) 
+				{   new = (IdentDepth<SlabValue+SliceValue) 
 					  || (dpth<IdentDepth);
 				} else new=True;
 			    }
@@ -1862,8 +1993,8 @@ static void IdentifyAtom( int xpos, int ypos )
     if( !IdentFound || (IdentDist>=50) )
     {   /* Reset Pick Atom! */
         QChain = (void __far*)0;
-	QGroup = (void __far*)0;
-	QAtom = (void __far*)0;
+        QGroup = (void __far*)0;
+        QAtom = (void __far*)0;
     } else break; /* [GSG 11/10/95] */
     } /* [GSG 11/10/95] */
 
@@ -2321,6 +2452,8 @@ void InitialiseRenderer( void )
 #if defined(MSWIN) || defined(APPLEMAC)
     FBufHandle = NULL;
     DBufHandle = NULL;
+    SLineHandle = NULL;
+    DLineHandle = NULL;
 #endif
 
 #if defined(IBMPC) || defined(APPLEMAC)

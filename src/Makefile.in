@@ -88,20 +88,20 @@
 # For Sun OpenWindows, add "-I/usr/openwin/include" to CFLAGS
 
 CC = gcc
-CFLAGS = -g -O2 -finline-functions -D_USE_RASMOL_H_
+CFLAGS = -g -O2 -finline-functions -D_USE_RASMOL_H_ -I$(CBFLIBDIR)/include
 
 
-#CFLAGS_sun4     = -O4
-#CFLAGS_sun3     = -O4 -f68881
-#CFLAGS_hp9000   = -O +bfpa
-#CFLAGS_sequent  = -O -f1167
-#CFLAGS_mips     = -O2 -Olimit 800
-#CFLAGS_gcc2.0   = -O2 -funroll-all-loops
-#CFLAGS_esv      = -O2 -Olimit 800 -systype bsd43
-#CFLAGS_hpux9    = -Ae +O2 +Onolimit
-#CFLAGS_hpux9new = -Ae +O4 +Onolimit +Oconservative +ESlit -I/usr/include/X11R5
-#CFLAGS_sgi      = -O2 -xansi -DFUNCPROTO
-#CFLAGS_gcc      = -O -fomit-frame-pointer -fstrength-reduce -finline-functions
+#CFLAGS_sun4     = -O4 -I$(CBFLIBDIR)/include
+#CFLAGS_sun3     = -O4 -f68881 -I$(CBFLIBDIR)/include
+#CFLAGS_hp9000   = -O +bfpa -I$(CBFLIBDIR)/include
+#CFLAGS_sequent  = -O -f1167 -I$(CBFLIBDIR)/include
+#CFLAGS_mips     = -O2 -Olimit 800 -I$(CBFLIBDIR)/include
+#CFLAGS_gcc2.0   = -O2 -funroll-all-loops -I$(CBFLIBDIR)/include
+#CFLAGS_esv      = -O2 -Olimit 800 -systype bsd43 -I$(CBFLIBDIR)/include
+#CFLAGS_hpux9    = -Ae +O2 +Onolimit -I$(CBFLIBDIR)/include
+#CFLAGS_hpux9new = -Ae +O4 +Onolimit +Oconservative +ESlit -I/usr/include/X11R5 -I$(CBFLIBDIR)/include
+#CFLAGS_sgi      = -O2 -xansi -DFUNCPROTO -I$(CBFLIBDIR)/include
+#CFLAGS_gcc      = -O -fomit-frame-pointer -fstrength-reduce -finline-functions -I$(CBFLIBDIR)/include
 
 # For Debugging use LFLAGS = 
 LFLAGS = -s
@@ -153,9 +153,19 @@ TXTINCS = $(INCS)
 TXTSRCS = rastxt.c $(SRCS)
 TXTOBJS = rastxt.to $(TOBJS)
 
+$(CBFLIBDIR):
+		(cd $(CBFLIB_TARBALLDIR);\
+		  wget $(CBFLIB_TARBALL_URL);\
+		  gunzip < $(CBFLIB_TARBALL) | tar xvf -)
+		  
+$(CBFLIBDIR)/lib/libcbf.a: $(CBFLIBDIR)
+		(cd $(CBFLIB_TARBALLDIR); make lib/libcbf.a)
+		  
+		  
+
 all:		postdownload rasmol rastxt
 
-rasmol:		postdownload $(X11OBJS)
+rasmol:		postdownload $(X11OBJS) $(CBFLIBDIR)/lib/libcbf.a
 		$(CC) -o rasmol $(LFLAGS) $(X11OBJS) $(X11LIBS)
 		chmod 755 rasmol
 

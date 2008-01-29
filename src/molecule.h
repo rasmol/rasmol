@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                               RasMol 2.7.4                              *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                            19 November 2007                             *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -21,33 +20,44 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                   RasMol 2.7.4   Nov 07                                 *
  *                                                                         *
- *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
- *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
- *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
- *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
- *of Energy.                                                               *
+ * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
+ * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
+ * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
+ * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
+ * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
+ * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
+ * Institute of General Medical Sciences (NIGMS). The content is solely    *
+ * the responsibility of the authors and does not necessarily represent    * 
+ * the official views of the funding organizations.                        *
  *                                                                         *
  *                    and Incorporating Translations by                    *
- *  Author                               Item                      Language*
+ *  Author                               Item                     Language *
  *  Isabel Servan Martinez,                                                *
- *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
- *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
- *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
- *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages French   *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
- *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  *
+ *  G. Pozhvanov                         2.7.3 menus and messages Russian  *
+ *  G. Todorov                           2.7.3 menus and messages Bulgarian*
+ *  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  *
+ *  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese *
  *                                                                         *
  *                             This Release by                             *
- * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2007               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
@@ -55,6 +65,36 @@
  ***************************************************************************/
 /* molecule.h
  $Log: not supported by cvs2svn $
+ Revision 1.4  2007/11/19 03:28:39  yaya
+ Update to credits for 2.7.4 in manual and headers
+ Mask code added -- HJB
+
+ Revision 1.3  2007/10/23 02:27:55  yaya
+ Preliminary mods for revised PDB format derived from Rutgers mods.
+ Partial changes for map tangles -- HJB
+
+ Revision 1.2  2007/07/02 12:44:39  yaya
+ Partial preliminary map code -- HJB
+
+ Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.3  2006/11/01 03:23:50  yaya
+ Update NSIS windows installer for more script types and to fix
+ misplaced script instructions for data files; add document and
+ script icons directly in raswin.exe; add credit line to
+ G. A. Pozhvanov in comments for Russian translations. -- HJB
+
+ Revision 1.2  2006/09/17 10:53:55  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:45:51  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
+ Initial Rasmol 2.7.3 Import
+
  Revision 1.1  2004/05/07 19:46:16  yaya
  Initial revision
 
@@ -89,34 +129,33 @@
 #define MAXMASK 40
 #define MAXELEM 1024
 #define MINELEM 29
-#define MAXRES  100
-#define MINRES  54
+#define MAXRES  104
+#define MINRES  59
 #define CIS     90  /* max. omega-angle to form a cis-peptide bond */
 
 
 #define IsAmino(x)       ((x)<=23)
-#define IsAminoNucleo(x) ((x)<=42)
-#define IsNucleo(x)      (((x)>=24) && ((x)<=42))
+#define IsAminoNucleo(x) ((x)<=42 || ((x)>=54 && (x)<=58))
+#define IsNucleo(x)      ((((x)>=24) && ((x)<=42)) || ((x)>=54 && (x)<=58))
 #define IsProtein(x)     (((x)<=23) || (((x)>=43) && ((x)<=45)))
-#define IsDNA(x)         (((x)>=24) && ((x)<=27))
+#define IsDNA(x)         ((((x)>=24) && ((x)<=27))||  ((x)>=54 && (x)<=58))
 #define IsSolvent(x)     (((x)>=46) && ((x)<=49))
 #define IsWater(x)       (((x)==46) || ((x)==47))
 #define IsIon(x)         (((x)==48) || ((x)==49))
 
 #define IsPyrimidine(x)  (IsCytosine(x) || IsThymine(x))
 #define IsPurine(x)      (IsAdenine(x) || IsGuanine(x))
-#define IsRNA(x)         (IsNucleo(x) && !IsThymine(x))
+#define IsRNA(x)         ((((x)>=24) && ((x)<=26)) || ((x)>=28 && (x)<=42))
 #define NucleicCompl(x)  ((x)^3)
 
 
 #define IsProline(x)     ((x)==11)
 #define IsCysteine(x)    ((x)==17)
-#define IsAdenine(x)     ((x)==24)
-#define IsCytosine(x)    ((x)==25)
-#define IsGuanine(x)     ((x)==26)
-#define IsThymine(x)     ((x)==27)
 
-
+#define IsAdenine(x)     ((x)==24 || (x)==54)
+#define IsCytosine(x)    ((x)==25 || (x)==55 )
+#define IsGuanine(x)     ((x)==26 || (x)==56 )
+#define IsThymine(x)     ((x)==27 || (x)==57 )
 
 #define IsAlphaCarbon(x)     ((x)==1)
 #define IsSugarPhosphate(x)  ((x)==7)
@@ -246,7 +285,7 @@ typedef struct _SurfBond {
 
 typedef struct _Group {
         struct _Group __far *gnext;       /* Linked list of groups */
-        RAtom __far *alist;                /* Linked list of atoms  */
+        RAtom __far *alist;               /* Linked list of atoms  */
         short serno;                      /* Group serial number   */
         short sserno;                     /* Secondary serial no.  */ 
         short width;                      /* Ribbon Width          */
@@ -288,8 +327,8 @@ typedef struct _HBond {
         short energy;                     /* Hydrogen bond energy     */
         short radius;                     /* World Radius             */
         short irad;                       /* Image Radius             */
-        short aradius;                    /* World Alt Radius      */
-        short iarad;                      /* Image Alt Radius      */
+        short aradius;                    /* World Alt Radius         */
+        short iarad;                      /* Image Alt Radius         */
         Char offset;                      /* Signed Offset            */
         short flag;                       /* Database flags           */
         Byte col;                         /* Hydrogen bond colour     */
@@ -415,7 +454,14 @@ char Residue[MAXRES][4] = {
     /*=================*/
           "UNK", "ACE", "FOR", "HOH",
           "DOD", "SO4", "PO4", "NAD",
-          "COA", "NAP", "NDP"  };
+          "COA", "NAP", "NDP",
+          
+    /*==========================================*/
+    /*  DNA Nucleotides PDB Revision, Jul 2007  */
+    /*==========================================*/
+    
+         " DA", " DC", " DG", " DT"," DI" 
+};
 
 
 /* Avoid SGI Compiler Warnings! */
@@ -556,6 +602,7 @@ int FindResNo( char* );
 
 RAtom __far *CreateAtom( void );
 RAtom __far *FindGroupAtom( Group __far*, int );
+void ProcessAtomType( RAtom __far*, char[2] );
 void ProcessAtom( RAtom __far* );
 
 int NewAtomType( char* );

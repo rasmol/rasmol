@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                               RasMol 2.7.4                              *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                            19 November 2007                             *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -21,33 +20,44 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                   RasMol 2.7.4   Nov 07                                 *
  *                                                                         *
- *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
- *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
- *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
- *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
- *of Energy.                                                               *
+ * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
+ * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
+ * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
+ * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
+ * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
+ * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
+ * Institute of General Medical Sciences (NIGMS). The content is solely    *
+ * the responsibility of the authors and does not necessarily represent    * 
+ * the official views of the funding organizations.                        *
  *                                                                         *
  *                    and Incorporating Translations by                    *
- *  Author                               Item                      Language*
+ *  Author                               Item                     Language *
  *  Isabel Servan Martinez,                                                *
- *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
- *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
- *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
- *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages French   *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
- *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  *
+ *  G. Pozhvanov                         2.7.3 menus and messages Russian  *
+ *  G. Todorov                           2.7.3 menus and messages Bulgarian*
+ *  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  *
+ *  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese *
  *                                                                         *
  *                             This Release by                             *
- * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2007               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
@@ -55,6 +65,62 @@
  ***************************************************************************/
 /* tokens.c
  $Log: not supported by cvs2svn $
+ Revision 1.10  2007/12/06 18:47:10  hk0i
+ added NoToggle and ColourMode commands + messages (translations needed), README for lang files, script to generate all langsel files (uses previous scripts).
+
+ Revision 1.9  2007/11/19 03:28:40  yaya
+ Update to credits for 2.7.4 in manual and headers
+ Mask code added -- HJB
+
+ Revision 1.8  2007/11/13 03:22:17  yaya
+ Changes to support map selectors.  Needs more work. -- HJB
+
+ Revision 1.7  2007/09/06 12:11:26  yaya
+ Changes for map resolution -- HJB
+
+ Revision 1.6  2007/09/03 14:25:10  yaya
+ Upload of more of the map load and map generate commands -- HJB
+
+ Revision 1.5  2007/08/03 02:02:34  yaya
+ Add MEAN to map level command, and move the various map settings
+ under the map command, and set the defaults to make a nice map
+ on a default generate (spread .1667, level mean, spacing .5) -- HJB
+
+ Revision 1.4  2007/07/09 13:57:06  yaya
+ Add spacing and spread commands -- HJB
+
+ Revision 1.3  2007/07/07 21:54:31  yaya
+ Next round of preliminary updates for maps, allowing multiple maps,
+ code to set the contour level and some fixes to the languages files -- HJB
+
+ Revision 1.2  2007/07/02 12:44:39  yaya
+ Partial preliminary map code -- HJB
+
+ Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.4  2006/11/28 03:12:48  yaya
+ Changes for Russian and About dialog in unix
+ This is a variant tried under Mac OS X.  Changes
+ for Linux still needed.  note that more work is
+ needed on font selection. -- HJB
+
+ Revision 1.3  2006/11/01 03:23:51  yaya
+ Update NSIS windows installer for more script types and to fix
+ misplaced script instructions for data files; add document and
+ script icons directly in raswin.exe; add credit line to
+ G. A. Pozhvanov in comments for Russian translations. -- HJB
+
+ Revision 1.2  2006/09/17 10:53:56  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:46:01  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
+ Initial Rasmol 2.7.3 Import
+
  Revision 1.2  2004/09/29 22:39:14  chigboc
  *** empty log message ***
 
@@ -114,6 +180,7 @@ int LookUpKeyword( char *ptr )
         ATOMS                AtomTok
         AXES                 AxesTok
         AXIS                 AxesTok
+        AVERAGE              MeanTok
       */
         case('A'):
             switch(*ptr++) {
@@ -188,6 +255,12 @@ int LookUpKeyword( char *ptr )
                         return( AxesTok );
                     } else if( !strcmp(ptr,"IS") ) {
                         return( AxesTok );
+                    }
+                    break;
+                    
+            	case('V'):
+            	    if( !strcmp(ptr,"ERAGE") )  {
+            	        return( MeanTok );
                     }
                     break;
 
@@ -275,7 +348,9 @@ int LookUpKeyword( char *ptr )
                 case('U'):
                     if( !strcmp(ptr,"RIED") ) {
                         return( BuriedTok );
-                    }
+                    } else if ( !strcmp(ptr,"LGARIAN") ) {
+			    return ( BulgarianTok );
+		    }
                     break;
 
             }
@@ -298,22 +373,26 @@ int LookUpKeyword( char *ptr )
         CHARGED              ChargedTok
         CHARGES              ChargeTok
         CHARMM               CharmmTok
+        CHINESE              ChineseTok
         CIF                  CIFTok
         CISANGLE             CisAngleTok
         CISBONDED            CisBondedTok
         CLIPBOARD            ClipboardTok
         COLOR                ColourTok
+		COLORMODE            ColourModeTok
         COLORS               ColourTok
         COLOUR               ColourTok
+		COLOURMODE           ColourModeTok
         COLOURS              ColourTok
         CONNECT              ConnectTok
+        CONTOUR              ContourTok (LevelTok)
         COORDINATE           CoordTok
         COORDINATES          CoordTok
         COORD                CoordTok
         COORDS               CoordTok
         COPY                 CopyTok
         CPK                  CPKTok
-	CPKNEW               CpkNewTok
+        CPKNEW               CpkNewTok
         CYAN                 CyanTok
         CYCLIC               CyclicTok
         CYSTINE              CystineTok
@@ -362,6 +441,8 @@ int LookUpKeyword( char *ptr )
                         return( ChargeTok );
                     } else if( !strcmp(ptr,"ARMM") ) {
                         return( CharmmTok );
+                    } else if( !strcmp(ptr,"INESE") ) {
+                        return( ChineseTok );
                     }
                     break;
 
@@ -384,14 +465,20 @@ int LookUpKeyword( char *ptr )
                 case('O'):
                     if( !strcmp(ptr,"LOR") ) {
                         return( ColourTok );
+					} else if( !strcmp(ptr,"LORMODE") ) {
+						return( ColourModeTok );
                     } else if( !strcmp(ptr,"LORS") ) {
                         return( ColourTok );
                     } else if( !strcmp(ptr,"LOUR") ) {
                         return( ColourTok );
+					} else if( !strcmp(ptr,"LOURMODE") ) {
+						return( ColourModeTok );
                     } else if( !strcmp(ptr,"LOURS") ) {
                         return( ColourTok );
                     } else if( !strcmp(ptr,"NNECT") ) {
                         return( ConnectTok );
+                    } else if( !strcmp(ptr,"NTOUR") ) {
+                        return( ContourTok );
                     } else if( !strcmp(ptr,"ORDINATE") ) {
                         return( CoordTok );
                     } else if( !strcmp(ptr,"ORDINATES") ) {
@@ -639,6 +726,7 @@ int LookUpKeyword( char *ptr )
 
       /*
         GAUSSIAN             GaussianTok
+        GENERATE             GenerateTok   
         GIF                  GIFTok
         GIRO                 TurnTok
         GIROS                TurnTok
@@ -658,6 +746,12 @@ int LookUpKeyword( char *ptr )
                 case('A'):
                     if( !strcmp(ptr,"USSIAN") ) {
                         return( GaussianTok );
+                    }
+                    break;
+
+                case('E'):
+                    if( !strcmp(ptr,"NERATE") ) {
+                        return( GenerateTok );
                     }
                     break;
 
@@ -834,12 +928,15 @@ int LookUpKeyword( char *ptr )
             break;
 
       /*
+        JAPANESE             JAPANESETok
         JPEG                 JPEGTok
       */
 
         case('J'):
             if( !strcmp(ptr,"PEG") ) {
                 return( JPEGTok );
+            } else if( !strcmp(ptr,"APANESE") ) {
+                return( JapaneseTok );
             }
             break;
 
@@ -857,6 +954,7 @@ int LookUpKeyword( char *ptr )
         LABEL                LabelTok
         LABELS               LabelTok
         LARGE                LargeTok
+        LEVEL                LevelTok (ContourTok)
         LIGAND               LigandTok
         LIGANDS              LigandTok
         LOAD                 LoadTok
@@ -873,6 +971,12 @@ int LookUpKeyword( char *ptr )
                         return( LargeTok );
                     }
                     break;
+                    
+            	case('E'):
+            	    if( !strcmp(ptr,"VEL") ){
+            	        return( LevelTok);
+            	    }
+            	    break;
 
                 case('I'):
                     if( !strcmp(ptr,"GAND") ) {
@@ -895,15 +999,20 @@ int LookUpKeyword( char *ptr )
         MACROMODEL           MacroModelTok
         MAGENTA              MagentaTok
         MAINCHAIN            MainChainTok
+        MAP                  MapTok
+        MASK                 MaskTok
         MDL                  MDLTok
+        MEAN                 MeanTok
         MEDIUM               MediumTok
         MENUS                MenusTok
+        MESH                 WireframeTok
+        MIRROR               MirrorTok
         MMDB                 MMDBTok
         MODEL                ModelTok
         MOL2                 Mol2Tok
         MOLECULE             MoleculeTok
         MOLSCRIPT            MolScriptTok
-        MOLSURF		     MolSurfTok
+        MOLSURF	             MolSurfTok
         MONITOR              MonitorTok
         MONITORS             MonitorTok
         MONO                 MonoTok
@@ -924,6 +1033,10 @@ int LookUpKeyword( char *ptr )
                         return( MagentaTok );
                     } else if( !strcmp(ptr,"INCHAIN") ) {
                         return( MainChainTok );
+                    } else if( !strcmp(ptr,"P") ) {
+                        return( MapTok );
+                    } else if( !strcmp(ptr,"SK") ) {
+                        return( MaskTok );
                     }
                     break;
 
@@ -934,10 +1047,20 @@ int LookUpKeyword( char *ptr )
                     break;
 
                 case('E'):
-                    if( !strcmp(ptr,"DIUM") ) {
+                    if( !strcmp(ptr,"AN") ) {
+                        return( MeanTok );
+                    } else if( !strcmp(ptr,"DIUM") ) {
                         return( MediumTok );
                     } else if( !strcmp(ptr,"NUS") ) {
                         return( MenusTok );
+                    } else if( !strcmp(ptr,"SH") ) {
+                    	return( WireframeTok );
+                    }
+                    break;
+
+                case('I'):
+                    if( !strcmp(ptr,"RROR") ) {
+                        return( MirrorTok );
                     }
                     break;
 
@@ -986,11 +1109,14 @@ int LookUpKeyword( char *ptr )
         NASTRO               RibbonTok 
         NASTRI               RibbonTok 
         NEGATIVE             AcidicTok
+        NEW                  NewTok
         NEUTRAL              NeutralTok
+        NEXT                 NextTok
         NMRPDB               NMRPDBTok
         NONE                 NoneTok
         NORMAL               NormalTok
         NOT                  NotTok
+		NOTOGGLE             NoToggleTok
         NUCLEIC              NucleicTok
       */
 
@@ -1005,8 +1131,12 @@ int LookUpKeyword( char *ptr )
                 case('E'):
                     if( !strcmp(ptr,"GATIVE") ) {
                         return( AcidicTok );
+                    } else if( !strcmp(ptr,"W") ) {
+                        return( NewTok );
                     } else if( !strcmp(ptr,"UTRAL") ) {
                         return( NeutralTok );
+                    } else if( !strcmp(ptr,"XT") ) {
+                        return( NextTok );
                     }
                     break;
 
@@ -1023,6 +1153,8 @@ int LookUpKeyword( char *ptr )
                         return( NormalTok );
                     } else if( (*ptr=='T') && !ptr[1] ) {
                         return( NotTok );
+					} else if( !strcmp(ptr,"TOGGLE") ) {
+						return( NoToggleTok );
                     }
                     break;
 
@@ -1114,7 +1246,7 @@ int LookUpKeyword( char *ptr )
                     }
                     break;
 
-	        case('H'):
+                case('H'):
                     if( !strcmp(ptr,"IPSI") ) {
                         return( PhiPsiTok );
                     } 
@@ -1214,6 +1346,7 @@ int LookUpKeyword( char *ptr )
             break;
 
       /*
+        R3D                  Raster3DTok
         RADIUS               RadiusTok
         RAMACHAN             RamachanTok
         RAMACHANDRANDATAFILE RamachanTok
@@ -1222,6 +1355,7 @@ int LookUpKeyword( char *ptr )
         RAMPRINT             RamPrintTok
         RASMAC               RasMolTok
         RASMOL               RasMolTok
+        RASTER3D             Raster3DTok
         RASWIN               RasMolTok
         RDF                  RamachanTok
         RED                  RedTok
@@ -1235,6 +1369,7 @@ int LookUpKeyword( char *ptr )
         RESIDUENUMBER        ResNoTok
         RESIZE               ResizeTok
         RESNO                ResNoTok
+        RESOLUTION           ResolutionTok
         RESTRICT             RestrictTok
         RGB                  IRISTok
         RIBBON               RibbonTok
@@ -1253,6 +1388,12 @@ int LookUpKeyword( char *ptr )
 
         case('R'):
             switch(*ptr++) {
+            	case('3'):
+            	    if( !strcmp(ptr,"D") ) {
+            	    	return( Raster3DTok );
+            	    }
+            	    break;
+            	    
                 case('A'):
                     if( !strcmp(ptr,"DIUS") ) {
                         return( RadiusTok );
@@ -1270,6 +1411,8 @@ int LookUpKeyword( char *ptr )
                         return( RasMolTok );
                     } else if( !strcmp(ptr,"SMOL") ) {
                         return( RasMolTok );
+                    } else if( !strcmp(ptr,"STER3D") )  {
+                    	return( Raster3DTok);
                     } else if( !strcmp(ptr,"SWIN") ) {
                         return( RasMolTok );
                     }
@@ -1304,6 +1447,8 @@ int LookUpKeyword( char *ptr )
                         return( ResizeTok );
                     } else if( !strcmp(ptr,"SNO") ) {
                         return( ResNoTok );
+                    } else if( !strcmp(ptr,"SOLUTION") ) {
+                        return( ResolutionTok );
                     } else if( !strcmp(ptr,"STRICT") ) {
                         return( RestrictTok );
                     }
@@ -1354,6 +1499,12 @@ int LookUpKeyword( char *ptr )
                         return( RamPrintTok );
                     }
                     break;
+
+                case('U'):
+                    if( !strcmp(ptr,"SSIAN") ) {
+                        return( RussianTok );
+                    }
+                    break;
             }
             break;
 
@@ -1366,7 +1517,7 @@ int LookUpKeyword( char *ptr )
         SEAGREEN             SeaGreenTok
         SELECT               SelectTok
         SELECTED             SelectedTok
-        SELECTION            SelectionTok
+        SELECTION            SelectedTok
         SEQUENCE             SequenceTok
         SET                  SetTok
         SHADEPOWER           ShadePowerTok
@@ -1387,9 +1538,11 @@ int LookUpKeyword( char *ptr )
         SOLVENTS             SolventTok
         SOURCE               SourceTok
         SPACEFILL            SpacefillTok
+        SPACING              SpacingTok
         SPANISH              SpanishTok
         SPECPOWER            SpecPowerTok
         SPECULAR             SpecularTok
+        SPREAD               SpreadTok (WidthTok)
         SSBOND               SSBondTok
         SSBONDS              SSBondTok
         STAR                 StarTok
@@ -1501,12 +1654,16 @@ int LookUpKeyword( char *ptr )
                 case('P'):
                     if( !strcmp(ptr,"ACEFILL") ) {
                         return( SpacefillTok );
+                    } else if( !strcmp(ptr,"ACING") ) {
+                        return( SpacingTok );
                     } else if( !strcmp(ptr,"ANISH") ) {
                         return( SpanishTok );
                     } else if( !strcmp(ptr,"ECPOWER") ) {
                         return( SpecPowerTok );
                     } else if( !strcmp(ptr,"ECULAR") ) {
                         return( SpecularTok );
+                    } else if( !strcmp(ptr,"READ") ) {
+                        return( SpreadTok );
                     }
                     break;
 
@@ -1700,6 +1857,7 @@ int LookUpKeyword( char *ptr )
         WATER                WaterTok
         WATERS               WaterTok
         WHITE                WhiteTok
+        WIDTH                WidthTok (SpreadTok)
         WIREFRAME            WireframeTok
         WITHIN               WithinTok
         WRITE                WriteTok
@@ -1724,7 +1882,9 @@ int LookUpKeyword( char *ptr )
                     break;
 
                 case('I'):
-                    if( !strcmp(ptr,"REFRAME") ) {
+                    if( !strcmp(ptr,"DTH") ) {
+                        return( WidthTok );
+                    } else if( !strcmp(ptr,"REFRAME") ) {
                         return( WireframeTok );
                     } else if( !strcmp(ptr,"THIN") ) {
                         return( WithinTok );

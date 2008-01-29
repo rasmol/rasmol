@@ -1,9 +1,10 @@
 <!doctype html public "-//IETF//DTD HTML 2.0//EN">
 <HTML>
 <HEAD>
-<title>RasMol V2.7.3 Manual</title>
+<title>RasMol V2.7.4 Manual</title>
 </HEAD>
 <BODY BACKGROUND="../html_graphics/rasmolwallpaper.jpg">
+<font face="Helvetica,Arial,Times" size=3>
 <a href="http://www.iucr.org/iucr-top/welcome.html">
 <img alt="[IUCr Home Page]" src="../html_graphics/iucrhome.jpg"></a>
 <a href="http://www.iucr.org/iucr-top/cif/home.html">
@@ -15,174 +16,59 @@ ALT="[RasMol]"></A>
 | <a href="http://www.OpenrasMol.org">OpenRasMol</a> |
 <A href="../README.html#Copying">Copying and Distribution</A> |
 <A href="../README.html#Contents">Contents</A> |
-<A href="../INSTALL.html">Installation Instructions</A> |<BR>
+<A href="../INSTALL.html">Installation Instructions</A> |<br />
 | <A href="../ChangeLog.html">Changes</A> |
 <A href="../TODO.html">Things To Do</A> |
 <A href="../README.html#Introduction">Introduction</A> |
-<A href="../README.html#CodeAndBinaries">Source Code and Binaries</A> |<BR>
+<A href="../README.html#CodeAndBinaries">Source Code and Binaries</A> |<br />
 | <A href="rasmol.html">RasMol Manual</A> |
 <a href="esrasmol27.html">Spanish Translation of RasMol Manual</a> |
-<a href="itrasmol.hlp">Italian Translation of RasMol Help File</a> |<BR>
-<a href="../README.html">Release README</A> |<BR>
+<a href="itrasmol.hlp">Italian Translation of RasMol Help File</a> |<br />
+| <a href=http://www.rasmol.org/donate.shtml>Donate to Support RasMol</a> |
+<a href="../README.html">Release README</A> |
+<a href=http://www.rasmol.org/register.shtml>Register your RasMol</a> |
+<br />
 </CENTER>
 
 
 <font color="#0808A0">
 <H1 ALIGN=CENTER>Manual<BR>
-RasMol 2.7.3</H1>
+RasMol 2.7.4.1</H1>
 <center>
-<table border=0 callpadding=3 cellspacing=0>
+<table celpadding=0>
 <tr>
-<td rowspan=9><IMG  SRC="../html_graphics/rasmollogo.jpg" ALT="RasMol"><BR>
-<td colspan=11 bgcolor="#C0C0FF">&nbsp;
-<tr>
-<td rowspan=7 bgcolor="#C0C0FF">&nbsp;
-<th valign="bottom">Version
-<td rowspan=7 bgcolor="#C0C0FF">&nbsp;
-<th align="center">MAC PPC<br>binaries
-<td rowspan=7 bgcolor="#C0C0FF">&nbsp;
-<th align="center">MSWIN<br>binaries
-<th align="center">RasWin<br>Help File
-<td rowspan=7 bgcolor="#C0C0FF">&nbsp;
-<th align="center">LINUX<br>binaries
-<th align="center">RasMol<br>Help File
-<td rowspan=7 bgcolor="#C0C0FF">&nbsp;
-
-
-<tr><td><a href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.1/README.html">2.7.1</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.MAC/RasMac_PPC_8BIT.bin">8</a>
-&nbsp;&nbsp;&nbsp;
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.MAC/RasMac_PPC_32BIT.bin">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.MSWIN/raswin.exe"
-TYPE="application/octet-stream">8</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1/doc/raswin.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.1/doc/raswin.hlp.gz" TYPE="application/octet-stream">gz</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1/RasMol.LINUX/RedHat_6.0/i386/rasmol_8BIT"
-TYPE="application/octet-stream">8</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1/RasMol.LINUX/RedHat_6.0/i386/rasmol_16BIT"
-TYPE="application/octet-stream">16</a>
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1/RasMol.LINUX/RedHat_6.0/i386/rasmol_32BIT"
-TYPE="application/octet-stream">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1/doc/rasmol.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.1/doc/rasmol.hlp.gz" TYPE="application/octet-stream">gz</a>
-<tr><td><a href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.1.1/README.html"><b>2.7.1.1</b></a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1.MAC/RasMac_PPC_8BIT.bin">8</a>
-&nbsp;&nbsp;&nbsp;
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1.MAC/RasMac_PPC_32BIT.bin">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1.MSWIN/raswin.exe"
-TYPE="application/octet-stream">8</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1/doc/raswin.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.1.1/doc/raswin.hlp.gz" TYPE="application/octet-stream">gz
-</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1/RasMol.LINUX/Mandrake_7.2/i586/rasmol_8BIT" TYPE="application/octet-stream">8</a>
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1/RasMol.LINUX/Mandrake_7.2/i586/rasmol_16BIT" TYPE="application/octet-stream">16</a>
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1/RasMol.LINUX/Mandrake_7.2/i586/rasmol_32BIT" TYPE="application/octet-stream">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.1.1/doc/rasmol.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.1.1/doc/rasmol.hlp.gz" TYPE="application/octet-stream">gz</a>
-
-<tr><td><a href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2/README.html">2.7.2</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.MAC/RasMac_PPC_8BIT.bin">8</a>
-&nbsp;&nbsp;&nbsp;
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.MAC/RasMac_PPC_32BIT.bin">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.MSWIN/raswin.exe"
-TYPE="application/octet-stream">8</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2/doc/raswin.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2/doc/raswin.hlp.gz" TYPE="application/octet-stream">gz</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2/RasMol.LINUX/Mandrake_7.1/i386/rasmol_8BIT"
-TYPE="application/octet-stream">8</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2/RasMol.LINUX/Mandrake_7.1/i386/rasmol_16BIT"
-TYPE="application/octet-stream">16</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2/RasMol.LINUX/Mandrake_7.1/i386/rasmol_32BIT"
-TYPE="application/octet-stream">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2/doc/rasmol.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2/doc/rasmol.hlp.gz" TYPE="application/octet-stream">gz</a>
-<tr><td><a href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2.1/README.html"><b>2.7.2.1</b></a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.MAC/RasMac_PPC_8BIT.bin">8</a>
-&nbsp;&nbsp;&nbsp;
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.MAC/RasMac_PPC_32BIT.bin">32</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.MSWIN/raswin.exe"
-TYPE="application/octet-stream">8</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1/doc/raswin.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2.1/doc/raswin.hlp.gz" TYPE="application/octet-stream">gz</a>
-<td align="center">
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1/RasMol.LINUX/Mandrake_7.2/i386/rasmol_8BIT"
-TYPE="application/octet-stream">8</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1/RasMol.LINUX/Mandrake_7.2/i386/rasmol_16BIT"
-TYPE="application/octet-stream">16</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1/RasMol.LINUX/Mandrake_7.2/i386/rasmol_32BIT"
-TYPE="application/octet-stream">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1/doc/rasmol.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2.1/doc/rasmol.hlp.gz" TYPE="application/octet-stream">gz</a>
-
-<tr><td><a href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2.1.1/README.html"><b>2.7.2.1.1</b></a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1.MAC/RasMac_PPC_8BIT.bin">8</a>
-&nbsp;&nbsp;&nbsp;
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1.MAC/RasMac_PPC_32BIT.bin">32</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1.MSWIN/raswin.exe"
-TYPE="application/octet-stream">8</a> <td align="center">
-
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1/doc/raswin.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2.1.1/doc/raswin.hlp.gz" TYPE="application/octet-stream">gz</a>
-<td align="center">
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1/RasMol.LINUX/RedHat_7/i386/rasmol_8BIT"
-TYPE="application/octet-stream">8</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1/RasMol.LINUX/RedHat_7/i386/rasmol_16BIT"
-TYPE="application/octet-stream">16</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1/RasMol.LINUX/RedHat_7/i386/rasmol_32BIT"
-TYPE="application/octet-stream">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.2.1.1/doc/rasmol.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.2.1.1/doc/rasmol.hlp.gz" TYPE="application/octet-stream">gz</a >
-
-<tr><td><a href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.3/README.html"><b>2.7.3</b></a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3.MAC/RasMac_PPC_8BIT.bin">8</a>
-&nbsp;&nbsp;&nbsp;
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3.MAC/RasMac_PPC_32BIT.bin">32</a>
-<td align="center">
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3.MSWIN/raswin.exe"
-TYPE="application/octet-stream">8</a> <td align="center">
-
-<A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3/doc/raswin.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.3/doc/raswin.hlp.gz" TYPE="application/octet-stream">gz</a>
-<td align="center">
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3/RasMol.LINUX/Mandrake_9/i386/rasmol_8BIT"
-TYPE="application/octet-stream">8</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3/RasMol.LINUX/Mandrake_9/i386/rasmol_16BIT"
-TYPE="application/octet-stream">16</a>
-<A
-HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3/RasMol.LINUX/Mandrake_9/i386/rasmol_32BIT"
-TYPE="application/octet-stream">32</a>
-<td align="center"><A HREF="http://www.bernstein-plus-sons.com/cgi-bin/yaya/decomp.cgi/software/RasMol_2.7.3/doc/rasmol.hlp"
-TYPE="application/octet-stream">raw</a>&nbsp;<A HREF="http://www.bernstein-plus-sons.com/software/RasMol_2.7.3/doc/rasmol.hlp.gz" TYPE="application/octet-stream">gz</a >
-<tr><td colspan=11 bgcolor="#C0C0FF" align=center>See <A href="#CodeAndBinaries">Source Code and Binaries</A> for more.
-
+<td valign=top bgcolor="#A0FFFF"><font face="Helvetica,Arial,Times" size=2>
+<ul>
+<li><a href=http://www.rasmol.org/software/RasMol_Latest_Windows_Installer.exe>RasMol
+Latest Windows Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;<br />
+<li><a href=http://www.rasmol.org/software/RasMol_Latest.tar.gz>RasMol
+Latest Source Tarball </a><br />&nbsp;<br />
+<li><a href=http://www.rasmol.org/software/RasMol_Latest_Manual.html>RasMol
+Latest Manual </a><br />&nbsp;<br />
+<li><a href=http://www.rasmol.org/donate.shtml>Donate to Support RasMol </a><br />
+<li><a href=http://www.rasmol.org/register.shtml>Register your RasMol</a><br />
+</ul>
+</font>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<td><IMG  SRC="html_graphics/rasmollogo.jpg" ALT="RasMol">
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<td valign=top bgcolor="#FFFFA0"><font face="Helvetica,Arial,Times" size=2>
+<ul>
+<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.1_Windows_Installer.exe>RasMol
+2.7.4.1 Windows Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;<br />
+<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.1_Windows_Installer.exe>RasMol
+2.7.4.1 Source Tarball</a><br />&nbsp;<br />
+<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.1_Manual.html>RasMol
+2.7.4.1 Manual</a><br />&nbsp;<br />
+<li><a href=http://www.rasmol.org/donate.shtml>Donate to Support RasMol </a><br />
+<li><a href=http://www.rasmol.org/register.shtml>Register your RasMol</a><br />
+</ul>
+</font>
 </table>
 </center>
 <H3 ALIGN=CENTER>
 Molecular Graphics Visualisation Tool<BR>
-6 February 2005<BR>
+19 November 2007 (rev. 19 January 2008)<br />
 </H3>
 </font><font color="#000000">
 <CENTER>
@@ -208,15 +94,22 @@ and Based on Mods by
 RasMol 2.7.1 June 1999<br>RasMol 2.7.1.1 January 2001<BR>
 RasMol 2.7.2 August 2000<br>RasMol 2.7.2.1 April 2001<BR>
 RasMol 2.7.2.1.1 January 2004<br>RasMol 2.7.3 February 2005<BR>
-<td valign="top">&#169 Herbert J. Bernstein 1998-2005
+RasMol 2.7.3.1 Apr 06<br>RasMol 2.7.4 November 2007<br>
+RasMol 2.7.4.1 January 2008<br>
+<td valign="top">&#169 Herbert J. Bernstein 1998-2008
 </table>
 </CENTER>
 <P>
-with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,
-and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
-grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
-Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department
-of Energy.
+ RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,
+ and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
+ grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
+ Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department
+ of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,
+ N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol
+ 2.7.4 supported in part by grant 1R15GM078077-01 from the National
+ Institute of General Medical Sciences (NIGMS). The content is solely
+ the responsibility of the authors and does not necessarily represent
+ the official views of the funding organizations.
 <P>
 <CENTER>
 and Incorporating Translations by
@@ -230,7 +123,11 @@ and Incorporating Translations by
 <tr><td>Giuseppe Martini, Giovanni Paolella,<br>A. Davassi, M. Masullo, C. Liotto
 <td valign="top">2.7.1 menus and messages<br>
 2.7.1 help file<td valign="top">Italian
-<tr border=3>
+<tr><td>G. Pozhvanov<td valign="top">2.7.3 menus and messages<td>Russian
+<tr><td>G. Todorov<td valign="top">2.7.3 menus and messages<td>Bulgarian
+<tr><td>Nan Jia, G. Todorov<td valign="top">2.7.3 menus and messages<td>Chinese
+<tr><td>Mamoru Yamanishi, Katajima Hajime<td valign="top">2.7.3 menus and messages<td>Japanese
+<tr>
 <tr>
 </table>
 </CENTER>
@@ -251,7 +148,7 @@ Bernstein + Sons, P.O. Box 177, Bellport, NY, USA<BR>
 yaya&#64;bernstein-plus-sons&#46;com
 </noscript>
 <BR>
-Copyright &#169; Herbert J. Bernstein 1998-2005<BR>
+Copyright &#169; Herbert J. Bernstein 1998-2008<BR>
 </CENTER>
 <P>
 The original RasMol manual was created by Roger Sayle.  In July 1996,
@@ -269,7 +166,7 @@ August 2000 for RasMol version 2.7.2, January 2001 for RasMol
 version 2.7.1.1, April 2001 for RasMol version 2.7.2.1 and
 February 2005 for RasMol version 2.7.3.
 <p>
-<CENTER>Documentation Last Updated 19 April 2005<br>
+<CENTER>Documentation Last Updated 12 November 2007<br>
 Edited by Herbert J. Bernstein and Frances C. Bernstein
 </CENTER>
 
@@ -305,7 +202,9 @@ THIS IS A PRELIMINARY RELEASE INVOLVING EXTENSIVE MODIFICATIONS<BR>
 <HR>
 <H2 ALIGN=CENTER>IMPORTANT</H2>
 <P>
-This version is based in directly on RasMol version 2.7.2.1.1,
+This version is based directly on RasMol version 2.7.4,
+on RasMol version 2.7.3.1,
+on RasMol vesion 2.7.3, on RasMol version 2.7.2.1.1,
 on RasMol version 2.7.2, on RasMol version 2.7.1, on RasMol
 version 2.6_CIF.2, on RasMol version 2.6x1, on RasMol version
 2.6.4, and RasMol 2.5-ucb and 2.6-ucb.
@@ -340,54 +239,60 @@ license terms (GPL or RASLIC).
 <tr><td><a href="#backbone">Backbone</a>
 <td><a href="#background">Background</a>
 <td><a href="#bond">Bond</a>
+<td><a href="#bulgarian">Bulgarian</a>
 <td><a href="#cartoon">Cartoon</a>
 <td><a href="#centre">Centre</a>
+<td><a href="#chinese">Chinese</a>
 <td><a href="#clipboard">Clipboard</a>
-<td><a href="#colour">Colour</a>
+<tr><td><a href="#colour">Colour</a>
+<td><a href="#colourmode">ColourMode</a>
 <td><a href="#connect">Connect</a>
-<tr><td><a href="#spacefill">CPK</a>
+<td><a href="#spacefill">CPK</a>
 <td><a href="#cpknew">CPKnew</a>
 <td><a href="#define">Define</a>
 <td><a href="#depth">Depth</a>
 <td><a href="#dots">Dots</a>
-<td><a href="#echo">Echo</a>
+<tr><td><a href="#echo">Echo</a>
 <td><a href="#english">English</a>
 <td><a href="#quit">Exit</a>
-<tr><td><a href="#french">French</a>
+<td><a href="#french">French</a>
 <td><a href="#hbonds">HBonds</a>
 <td><a href="#help">Help</a>
 <td><a href="#italian">Italian</a>
-<td><a href="#label">Label</a>
+<td><a href="#japanese">Japanese</a>
+<tr><td><a href="#label">Label</a>
 <td><a href="#load">Load</a>
+<td><a href="#map">Map</a>
 <td><a href="#molecule">Molecule</a>
 <td><a href="#monitor">Monitor</a>
-<tr><td><a href="#pause">Pause</a>
+<td><a href="#notoggle">NoToggle</a>
+<td><a href="#pause">Pause</a>
 <td><a href="#print">Print</a>
-<td><a href="#quit">Quit</a>
+<tr><td><a href="#quit">Quit</a>
 <td><a href="#refresh">Refresh</a>
 <td><a href="#renumber">Renumber</a>
 <td><a href="#reset">Reset</a>
 <td><a href="#restrict">Restrict</a>
 <td><a href="#ribbons">Ribbons</a>
-<tr><td><a href="#rotate">Rotate</a>
+<td><a href="#rotate">Rotate</a>
 <td><a href="#save">Save</a>
-<td><a href="#script">Script</a>
+<tr><td><a href="#script">Script</a>
 <td><a href="#select">Select</a>
 <td><a href="#set">Set</a>
 <td><a href="#show">Show</a>
 <td><a href="#slab">Slab</a>
 <td><a href="#script">Source</a>
-<tr><td><a href="#spacefill">Spacefill</a>
+<td><a href="#spacefill">Spacefill</a>
 <td><a href="#spanish">Spanish</a>
-<td><a href="#ssbonds">SSBonds</a>
+<tr><td><a href="#ssbonds">SSBonds</a>
 <td><a href="#star">Star</a>
 <td><a href="#stereo">Stereo</a>
 <td><a href="#strands">Strands</a>
 <td><a href="#structure">Structure</a>
 <td><a href="#surface">Surface</a>
-<tr><td><a href="#trace">Trace</a>
+<td><a href="#trace">Trace</a>
 <td><a href="#translate">Translate</a>
-<td><a href="#unbond">UnBond</a>
+<tr><td><a href="#unbond">UnBond</a>
 <td><a href="#wireframe">Wireframe</a>
 <td><a href="#write">Write</a>
 <td><a href="#zap">Zap</a>
@@ -447,8 +352,8 @@ license terms (GPL or RASLIC).
 <BR>Versions 2.5-ucb and 2.6-ucb Mods Copyright &#169;
 UC Regents/ModularCHEM Consortium 1995, 1996
 <BR>RasTop 1.3 Copyright &#169; Philippe Valadon 2000
-<BR>Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3 Mods
-Copyright &#169; Herbert J. Bernstein 1998-2005
+<BR>Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1 Mods
+Copyright &#169; Herbert J. Bernstein 1998-2009
 <BR><address><a href="mailto:rasmol@rasmol.org">rasmol@rasmol.org</a></address>
 <p>
 All rights reserved. Use of copyright notice does not imply publication or
@@ -501,12 +406,14 @@ or an earlier version, type the RasMol command
 <p><hr>
 <a name="chcopying"><h2>Copying</h2></a>
 <p>
-This version is based in large part on RasMol version 2.7.2.1.1,
-Rasmol version 2.7.2, RasMol version 2.7.1.1 and RasTop
-version 1.3 and indirectly on the RasMol 2.5-ucb and 2.6-ucb
-versions and version 2.6_CIF.2, RasMol 2.6x1 and RasMol_2.6.4.
+This version is based directly on RasMol version 2.7.4.
+on RasMol version 2.7.3.1, on RasMol version 2.7.3,
+on RasMol version 2.7.2.1.1, Rasmol version 2.7.2, RasMol
+version 2.7.1.1 and RasTop version 1.3 and indirectly on
+the RasMol 2.5-ucb and 2.6-ucb versions and version
+2.6_CIF.2, RasMol 2.6x1 and RasMol_2.6.4.
 <p>
-RasMol 2.7.3 may be distributed under the terms of the GNU
+RasMol 2.7.4.1 may be distributed under the terms of the GNU
 General Public License (the GPL), see
 <p>
           http://www.gnu.org/licenses/gpl.txt
@@ -514,7 +421,7 @@ General Public License (the GPL), see
 or the file GPL or type the command
 '<a href="#GPL"><tt><b>help GPL</b></tt></a>'
 <p>
-or RasMol 2.7.3 may be distributed under the RASMOL license.
+or RasMol 2.7.4.1 may be distributed under the RASMOL license.
 See the file NOTICE
 or type the command
 '<a href="#RASLIC"><tt><b>help RASLIC</b></tt></a>'
@@ -1702,59 +1609,64 @@ The commands/keywords currently recognised by RasMol are given below.
 <tr><td><a href="#backbone">Backbone</a>
 <td><a href="#background">Background</a>
 <td><a href="#bond">Bond</a>
+<td><a href="#bulgarian">Bulgarian</a>
 <td><a href="#cartoon">Cartoon</a>
 <td><a href="#centre">Centre</a>
+<td><a href="#chinese">Chinese</a>
 <td><a href="#clipboard">Clipboard</a>
-<td><a href="#colour">Colour</a>
+<tr><td><a href="#colour">Colour</a>
+<td><a href="#colourmode">ColourMode</a>
 <td><a href="#connect">Connect</a>
-<tr><td><a href="#spacefill">CPK</a>
+<td><a href="#spacefill">CPK</a>
 <td><a href="#cpknew">CPKnew</a>
 <td><a href="#define">Define</a>
 <td><a href="#depth">Depth</a>
 <td><a href="#dots">Dots</a>
-<td><a href="#echo">Echo</a>
+<tr><td><a href="#echo">Echo</a>
 <td><a href="#english">English</a>
 <td><a href="#quit">Exit</a>
-<tr><td><a href="#french">French</a>
+<td><a href="#french">French</a>
 <td><a href="#hbonds">HBonds</a>
 <td><a href="#help">Help</a>
 <td><a href="#italian">Italian</a>
-<td><a href="#label">Label</a>
+<td><a href="#Japanese">Japanese</a>
+<tr><td><a href="#label">Label</a>
 <td><a href="#load">Load</a>
+<td><a href="#map">Map</a>
 <td><a href="#molecule">Molecule</a>
 <td><a href="#monitor">Monitor</a>
-<tr><td><a href="#pause">Pause</a>
+<td><a href="#notoggle">NoToggle</a>
+<td><a href="#pause">Pause</a>
 <td><a href="#print">Print</a>
-<td><a href="#quit">Quit</a>
+<tr><td><a href="#quit">Quit</a>
 <td><a href="#refresh">Refresh</a>
 <td><a href="#renumber">Renumber</a>
 <td><a href="#reset">Reset</a>
 <td><a href="#restrict">Restrict</a>
 <td><a href="#ribbons">Ribbons</a>
-<tr><td><a href="#rotate">Rotate</a>
+<td><a href="#rotate">Rotate</a>
 <td><a href="#save">Save</a>
-<td><a href="#script">Script</a>
+<tr><td><a href="#script">Script</a>
 <td><a href="#select">Select</a>
 <td><a href="#set">Set</a>
 <td><a href="#show">Show</a>
 <td><a href="#slab">Slab</a>
 <td><a href="#script">Source</a>
-<tr><td><a href="#spacefill">Spacefill</a>
+<td><a href="#spacefill">Spacefill</a>
 <td><a href="#spanish">Spanish</a>
-<td><a href="#ssbonds">SSBonds</a>
+<tr><td><a href="#ssbonds">SSBonds</a>
 <td><a href="#star">Star</a>
 <td><a href="#stereo">Stereo</a>
 <td><a href="#strands">Strands</a>
 <td><a href="#structure">Structure</a>
 <td><a href="#surface">Surface</a>
-<tr><td><a href="#trace">Trace</a>
+<td><a href="#trace">Trace</a>
 <td><a href="#translate">Translate</a>
-<td><a href="#unbond">UnBond</a>
+<tr><td><a href="#unbond">UnBond</a>
 <td><a href="#wireframe">Wireframe</a>
 <td><a href="#write">Write</a>
 <td><a href="#zap">Zap</a>
 <td><a href="#zoom">Zoom</a>
-<td colspan=1>
 </table>
 </center><hr>
 <a name="backbone"><h3>Backbone</h3></a><p>
@@ -1844,6 +1756,28 @@ or the equivalent
 '<a href="#rotate"><tt><b>rotate bond on/off</b></tt></a>'
 commands.
 <p><hr>
+<a name="bulgarian"><h3>Bulgarian</h3></a><p>
+<pre>
+Syntax:  Bulgarian
+</pre><p>
+The RasMol
+'<tt><b>Bulgarian</b></tt>'
+command sets the menus and messages to the Bulgarian versions.
+<p>
+This command may not work correctly unless appropriate fonts
+have been installed.  The commands
+'<a href="#bulgarian"><tt><b>Bulgarian</b></tt></a>',
+'<a href="#chinese"><tt><b>Chinese</b></tt></a>',
+'<a href="#english"><tt><b>English</b></tt></a>',
+'<a href="#french"><tt><b>French</b></tt></a>',
+'<a href="#italian"><tt><b>Italian</b></tt></a>',
+'<a href="#russian"><tt><b>Russian</b></tt></a>'
+and
+'<a href="#spanish"><tt><b>Spanish</b></tt></a>'
+may be used to select Bulgarian, Chinese, English, French,
+Italian, Japanese, Russian and Spanish menus and messages if the
+appropriate fonts have been installed.
+<p><hr>
 <a name="cartoon"><h3>Cartoon</h3></a><p>
 <pre>
 Syntax:  cartoon {&lt;number&gt;}
@@ -1912,6 +1846,28 @@ necessarily in the centre of the canvas) or a centre of rotation
 which is placed at the centre of the canvas.  Starting with
 RasMol 2.7.2, the default is
 to center the new axis on the canvas.
+<p><hr>
+<a name="chinese"><h3>Chinese</h3></a><p>
+<pre>
+Syntax:  Chinese
+</pre><p>
+The RasMol
+'<tt><b>Chinese</b></tt>'
+command sets the menus and messages to the Chinese versions.
+<p>
+This command may not work correctly unless appropriate fonts
+have been installed.  The commands
+'<a href="#bulgarian"><tt><b>Bulgarian</b></tt></a>',
+'<a href="#chinese"><tt><b>Chinese</b></tt></a>',
+'<a href="#english"><tt><b>English</b></tt></a>',
+'<a href="#french"><tt><b>French</b></tt></a>',
+'<a href="#italian"><tt><b>Italian</b></tt></a>',
+'<a href="#russian"><tt><b>Russian</b></tt></a>'
+and
+'<a href="#spanish"><tt><b>Spanish</b></tt></a>'
+may be used to select Bulgarian, Chinese, English, French,
+Italian, Japanese, Russian and Spanish menus and messages if the
+appropriate fonts have been installed.
 <p><hr>
 <a name="clipboard"><h3>Clipboard</h3></a><p>
 <pre>
@@ -1982,6 +1938,20 @@ and dot surfaces can also be coloured by
 For more information type
 '<a href="#chcolours"><tt><b>help colour &lt;colour&gt;</b></tt></a>'.
 <p><hr>
+<a name="colourmode"><h3>ColourMode</h3></a><p>
+<pre>
+Syntax:  colourmode {&lt;boolean&gt;}
+         colormode {&lt;boolean&gt;}
+</pre><p>
+ColourMode allows the user to switch between using the new
+'<a href="#colour"><tt><b>colour</b></tt></a>'
+method. At present, the new coloring technique is the same as
+the old one, but to preserve compatibility for older scripts
+it may be wise to add a &quot;colormode on&quot; near the top of your
+script somewhere, if the script was designed for version 2.7.3
+of RasMol or earlier. The new color method, when completed,
+aims to fix a few bugs in the coloring routines.
+<p>
 <a name="connect"><h3>Connect</h3></a><p>
 <pre>
 Syntax:  connect {&lt;boolean&gt;}
@@ -2088,12 +2058,20 @@ Syntax:  English
 The RasMol
 '<tt><b>English</b></tt>'
 command sets the menus and messages to the English versions.
-The commands
+<p>
+This command may not work correctly unless appropriate fonts
+have been installed.  The commands
+'<a href="#bulgarian"><tt><b>Bulgarian</b></tt></a>',
+'<a href="#chinese"><tt><b>Chinese</b></tt></a>',
+'<a href="#english"><tt><b>English</b></tt></a>',
 '<a href="#french"><tt><b>French</b></tt></a>',
-'<a href="#italian"><tt><b>Italian</b></tt></a>'
+'<a href="#italian"><tt><b>Italian</b></tt></a>',
+'<a href="#russian"><tt><b>Russian</b></tt></a>'
 and
 '<a href="#spanish"><tt><b>Spanish</b></tt></a>'
-may be used to select French, Italian and Spanish menus and messages.
+may be used to select Bulgarian, Chinese, English, French,
+Italian, Japanese, Russian and Spanish menus and messages if the
+appropriate fonts have been installed.
 <p><hr>
 <a name="french"><h3>French</h3></a><p>
 <pre>
@@ -2102,12 +2080,20 @@ Syntax:  French
 The RasMol
 '<tt><b>French</b></tt>'
 command sets the menus and messages to the French versions.
-The commands
+<p>
+This command may not work correctly unless appropriate fonts
+have been installed.  The commands
+'<a href="#bulgarian"><tt><b>Bulgarian</b></tt></a>',
+'<a href="#chinese"><tt><b>Chinese</b></tt></a>',
 '<a href="#english"><tt><b>English</b></tt></a>',
-'<a href="#italian"><tt><b>Italian</b></tt></a>'
+'<a href="#french"><tt><b>French</b></tt></a>',
+'<a href="#italian"><tt><b>Italian</b></tt></a>',
+'<a href="#russian"><tt><b>Russian</b></tt></a>'
 and
 '<a href="#spanish"><tt><b>Spanish</b></tt></a>'
-may be used to select English, Italian and Spanish menus and messages.
+may be used to select Bulgarian, Chinese, English, French,
+Italian, Japanese, Russian and Spanish menus and messages if the
+appropriate fonts have been installed.
 <p><hr>
 <a name="hbonds"><h3>HBonds</h3></a><p>
 <pre>
@@ -2157,12 +2143,42 @@ Syntax:  Italian
 The RasMol
 '<tt><b>Italian</b></tt>'
 command sets the menus and messages to the Italian versions.
-The commands
+<p>
+This command may not work correctly unless appropriate fonts
+have been installed.  The commands
+'<a href="#bulgarian"><tt><b>Bulgarian</b></tt></a>',
+'<a href="#chinese"><tt><b>Chinese</b></tt></a>',
 '<a href="#english"><tt><b>English</b></tt></a>',
-'<a href="#french"><tt><b>French</b></tt></a>'
+'<a href="#french"><tt><b>French</b></tt></a>',
+'<a href="#italian"><tt><b>Italian</b></tt></a>',
+'<a href="#russian"><tt><b>Russian</b></tt></a>'
 and
 '<a href="#spanish"><tt><b>Spanish</b></tt></a>'
-may be used to select English, French and Spanish menus and messages.
+may be used to select Bulgarian, Chinese, English, French,
+Italian, Japanese, Russian and Spanish menus and messages if the
+appropriate fonts have been installed.
+<p><hr>
+<a name="japanese"><h3>Japanese</h3></a><p>
+<pre>
+Syntax:  Japanese
+</pre><p>
+The RasMol
+'<tt><b>Japanese</b></tt>'
+command sets the menus and messages to the Japanese versions.
+<p>
+This command may not work correctly unless appropriate fonts
+have been installed.  The commands
+'<a href="#bulgarian"><tt><b>Bulgarian</b></tt></a>',
+'<a href="#chinese"><tt><b>Chinese</b></tt></a>',
+'<a href="#english"><tt><b>English</b></tt></a>',
+'<a href="#french"><tt><b>French</b></tt></a>',
+'<a href="#italian"><tt><b>Italian</b></tt></a>',
+'<a href="#russian"><tt><b>Russian</b></tt></a>'
+and
+'<a href="#spanish"><tt><b>Spanish</b></tt></a>'
+may be used to select Bulgarian, Chinese, English, French,
+Italian, Japanese, Russian and Spanish menus and messages if the
+appropriate fonts have been installed.
 <p><hr>
 <a name="label"><h3>Label</h3></a><p>
 <pre>
@@ -2283,6 +2299,267 @@ atomic coordinates in PDB, CIF or mmCIF file format.
 One possible use is a standard RasMol script prefix that may be
 concatenated with an appropriate PDB file on-the-fly.
 <p><hr>
+<a name="map"><h3>Map</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} {&lt;map_subcommand&gt; &lt;parameters&gt;}
+</pre><p>
+The RasMol
+'<tt><b>map</b></tt>'
+commands manipulate electron density maps in coordination
+with the display of molecules.  These commands are very
+memory intensive and may not work on machines with
+limited memory.  Each molecule may have as many maps
+as available memory permits.  Maps may be read from
+files or generated from Gaussian density distributions
+around atoms.
+<p>
+'<a href="#mapgenerate"><tt><b>map generate</b></tt></a>',
+to generate a map from selected atoms,
+'<a href="#maplevel"><tt><b>map level</b></tt></a>',
+to set the contouring level for selected maps,
+'<a href="#mapload"><tt><b>map load</b></tt></a>',
+to load a map from a file,
+'<a href="#mapmask"><tt><b>map mask</b></tt></a>'
+to designate a mask for the selected maps,
+'<a href="#mapresolution"><tt><b>map resolution</b></tt></a>',
+to set the resolution for contouring selected maps,
+'<a href="#maprestrict"><tt><b>map restrict</b></tt></a>',
+to select one or more maps and to disable all others,
+'<a href="#mapsave"><tt><b>map save</b></tt></a>',
+to save map information to a file,
+'<a href="#mapselect"><tt><b>map select</b></tt></a>',
+to select one or more maps,
+'<a href="#mapshow"><tt><b>map show</b></tt></a>',
+to display information about one or more maps or about the
+parameters to be used in generating or loading the next map,
+'<a href="#mapspacing"><tt><b>map spacing</b></tt></a>',
+to set the spacing betwen contour lines of selected maps,
+'<a href="#mapspread"><tt><b>map spread</b></tt></a>',
+to set the variance of the Gaussians for map generation as a fraction
+of the atomic radius, and
+'<a href="#mapzap"><tt><b>map zap</b></tt></a>'
+to delete previously generated or loaded maps.
+<p>
+The effect of
+'<a href="#mapgenerate"><tt><b>map generate</b></tt></a>'
+and
+'<a href="#mapload"><tt><b>map load</b></tt></a>'
+commands is modified by the
+'<a href="#mapmask"><tt><b>map mask</b></tt></a>'
+command which limits the portion of the display space
+that can be considered for display of maps.
+<p><hr>
+<a name="mapgenerate"><h3>Map generate</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} generate dots
+         map {&lt;map_selector&gt;} generate mesh
+         map {&lt;map_selector&gt;} generate surface
+
+</pre><p>
+The RasMol
+'<tt><b>map generate</b></tt>'
+command generates a map from whatever atoms are currently selected,
+by summing electron densities approximated by Gaussian distributions.
+Each Gaussian has a height proportional to the atomic number of the
+element type of the atom and a standard deviation determined by the
+most recently specified spread or resolution.  If a spread has been
+given the radius of the atom is multiplied by the spread to find the
+standard deviation.  The default is 2/3rds.  If a resolution
+has been given, the spread is inferred as 2/3rds of the resolution.
+For example, if the resolution is given as 1., and the atom in question
+is a Carbon with a van der Waals radius of 468 RasMol units (1.87 &Aring;ngstroms),
+the inferred spead is .6667, and the standard deviation of the Gaussian
+is taken as 1.25 &Aring;ngstroms.
+<p>
+If no specific map was given by the map selector, the new map is
+given the next available map number.
+<p>
+If a specific map was given by the map selector, the new map replaces
+that map.  If more than one map was given by the map selector, the
+new map replaces the lowest numbered of the selected maps.  In any
+case the new map becomes the currently selected map.
+<p>
+The map is displayed as dots, mesh or a surface, depending on the last
+map rendering mode selected or the mode selected on the command itself.
+<p><hr>
+<a name="maplevel"><h3>Map level</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} level {MEAN} &lt;number&gt;
+
+</pre><p>
+The RasMol
+'<tt><b>map level</b></tt>'
+command sets the contour level to be used in creating subsequent
+representations of generated or loaded maps.  If the keyword MEAN
+in used the level is relative to the mean of the map data.  Otherwise
+the level is absolute.
+<p>
+In general, a lower level results in a map containing more of the
+displayed volume, while a higher level results in a map containing
+less of the displayed volume.
+<p><hr>
+<a name="mapload"><h3>Map load</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} load &lt;filename&gt;
+
+</pre><p>
+The RasMol
+'<tt><b>map load</b></tt>'
+command loads a map file into RasMol.  The valid formats are
+CCP4 map format and imgCIF format.
+<p>
+If no specific map was given by the map selector, the new map is
+given the next available map number.
+<p>
+If a specific map was given by the map selector, the new map replaces
+that map.  If more than one map was given by the map selector, the
+new map replaces the lowest numbered of the selected maps.  In any
+case the new map becomes the currently selected map.
+<p>
+The map is displayed as dots, mesh or a surface depending on the
+last map rendering mode selected.
+<p><hr>
+<a name="mapmask"><h3>Map mask</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} mask selected
+         map {&lt;map_selector&gt;} mask &lt;number&gt;
+         map {&lt;map_selector&gt;} mask none
+
+</pre><p>
+The RasMol
+'<tt><b>map mask</b></tt>'
+command specifies a mask to be used to limit the display space
+to be used for making representations of other maps or removes
+an earlier mask specification.
+<p>
+The 'selected' option indicates that the mask is to be created
+from the currently selected atoms.  The '&lt;number&gt;' option indicates
+that the mask is to be copied from the map of the number specified.
+The 'none' option removes the previously specified mask, if any.
+<p>
+The map selector specifies the map or maps to which the specified mask
+will the applied.  For example, 'map next mask selected' specifies
+that the currently selected atoms are to be used to generate a
+mask to be applied to any maps created by subsequent 'map load'
+or 'map generate' commands.
+<p>
+Any map may be used as a mask.  The portions of the mask map greater than
+than or equal to the average value of the mask map allow the values of the
+map being masked to be used as given.  The portions of the mask
+map lower than the average value of the mask map cause the values of
+the map being masked to be treated as if they were equal to the
+lowest data value of the map being masked.
+<p><hr>
+<a name="mapresolution"><h3>Map resolution</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} resolution &lt;number&gt;
+
+</pre><p>
+The RasMol
+'<tt><b>map resolution</b></tt>'
+command specifies the resolution in RasMol units or,
+if a number containing a decimal point is given, the
+resolution in &Aring;ngstroms to be used in generating and
+in representing maps.
+<p>
+The resolution is used at the map spacing for
+representations of maps, indicating the separation
+between contour levels (see the
+'<a href="#mapspacing"><tt><b>map spacing</b></tt></a>'
+command) and to infer the map spread to be used in
+generated maps from selected atoms (see the
+'<a href="#mapspread"><tt><b>map spread</b></tt></a>'
+command).  The map spread is set to two thirds of
+the specified resolution.
+<p><hr>
+<a name="maprestrict"><h3>Map restrict</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} restrict
+
+</pre><p>
+The RasMol
+'<tt><b>map restrict</b></tt>'
+command selects particular maps to make them active for
+subsequent map commands.  This is similar to the
+'<a href="#mapselect"><tt><b>map select</b></tt></a>'
+command, but does disables the display of the
+maps that were not selected.
+<p><hr>
+<a name="mapsave"><h3>Map save</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} save &lt;filename&gt;
+
+</pre><p>
+The RasMol
+'<tt><b>map save</b></tt>'
+command saves an imgCIF map file.
+<p>
+If no specific map was given by the map selector, the currently
+selected maps and their masks are written to the file, one
+map and mask pair per data block.
+<p><hr>
+<a name="mapselect"><h3>Map select</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} select
+
+</pre><p>
+The RasMol
+'<tt><b>map select</b></tt>'
+command selects particular maps to make them active for
+subsequent map commands.  This is similar to the
+'<a href="#maprestrict"><tt><b>map restrict</b></tt></a>'
+command, but does not disable the display of the
+maps that were not selected.
+<p><hr>
+<a name="mapshow"><h3>Map show</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} show
+
+</pre><p>
+The RasMol
+'<tt><b>map show</b></tt>'
+command causes information about the maps specified by
+the map selector to be written to the command window.
+<p><hr>
+<a name="mapspacing"><h3>Map spacing</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} spacing &lt;number&gt;
+
+</pre><p>
+The RasMol
+'<tt><b>map spacing</b></tt>'
+command specifies the spacing to be used between contour lines
+in creating representations of maps.  The spacing is typically
+ given in &Aring;ngstroms with a decimal point, but may also be
+specified in RasMol units (250ths of an Angstom) as an
+integer.  For maps loaded in grid coordinates that spacing
+is parallel to the cell edges.  The default spacing is
+one half &Aring;ngstrom.
+<p><hr>
+<a name="mapspread"><h3>Map spread</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} spread &lt;number&gt;
+
+</pre><p>
+The RasMol
+'<tt><b>map spread</b></tt>'
+command specifies the reciprocal of the number of
+standard deviations per radius to be used in
+generating maps as sums of Gaussians centered
+on atomic positions.  The default spead is one
+two thirds (<i>i.e.</i> each radius covers 1.5 standard deviations).
+<p><hr>
+<a name="mapzap"><h3>Map zap</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} zap
+
+</pre><p>
+The RasMol
+'<tt><b>map zap</b></tt>'
+command removes the data and representations of the
+maps specified by the map selector.  The map numbers
+of maps that have not been removed are not changed.
+<p><hr>
 <a name="molecule"><h3>Molecule</h3></a><p>
 <pre>
 Syntax:  molecule &lt;number&gt;
@@ -2338,6 +2615,24 @@ the previous one. The shift key may be used to form distance monitors
 between a fixed atom and several consecutive positions. A distance
 monitor may also be removed (toggled) by selecting the appropriate
 pair of atom end points a second time.
+<p><hr>
+<a name="notoggle"><h3>Notoggle</h3></a><p>
+<pre>
+Syntax:  notoggle {&lt;boolean&gt;}
+</pre><p>
+The RasMol
+'<tt><b>NoToggle</b></tt>'
+command enables or disables the use of the toggle ability
+that is used by some of the other RasMol commands.
+When no boolean value is specified, NoToggle mode is ENABLED.
+When NoToggle mode is ENABLED, all toggle functionality is
+DISABLED. To turn it off, one must explicitly set
+'<tt><b>notoggle off</b></tt>'.
+<p>
+Some commands which use the toggle feature are:
+'<a href="#colourmode"><tt><b>ColourMode</b></tt></a>'.
+More functions that utilize this capability may be added
+at a later date.
 <p><hr>
 <a name="pause"><h3>Pause</h3></a><p>
 <pre>
@@ -2548,6 +2843,28 @@ will rotate together.  In all other cases, the mouseand dials control the
 the rotation of the molecule selected by the
 '<a href="#molecule"><tt><b>molecule n</b></tt></a>'
 command.
+<p><hr>
+<a name="russian"><h3>Russian</h3></a><p>
+<pre>
+Syntax:  Russian
+</pre><p>
+The RasMol
+'<tt><b>Russian</b></tt>'
+command sets the menus and messages to the Russian versions.
+<p>
+This command may not work correctly unless appropriate fonts
+have been installed.  The commands
+'<a href="#bulgarian"><tt><b>Bulgarian</b></tt></a>',
+'<a href="#chinese"><tt><b>Chinese</b></tt></a>',
+'<a href="#english"><tt><b>English</b></tt></a>',
+'<a href="#french"><tt><b>French</b></tt></a>',
+'<a href="#italian"><tt><b>Italian</b></tt></a>',
+'<a href="#russian"><tt><b>Russian</b></tt></a>'
+and
+'<a href="#spanish"><tt><b>Spanish</b></tt></a>'
+may be used to select Bulgarian, Chinese, English, French,
+Italian, Japanese, Russian and Spanish menus and messages if the
+appropriate fonts have been installed.
 <p><hr>
 <a name="save"><h3>Save</h3></a><p>
 <pre>
@@ -2800,12 +3117,20 @@ Syntax:  Spanish
 The RasMol
 '<tt><b>Spanish</b></tt>'
 command sets the menus and messages to the Spanish versions.
-The commands
+<p>
+This command may not work correctly unless appropriate fonts
+have been installed.  The commands
+'<a href="#bulgarian"><tt><b>Bulgarian</b></tt></a>',
+'<a href="#chinese"><tt><b>Chinese</b></tt></a>',
 '<a href="#english"><tt><b>English</b></tt></a>',
-'<a href="#french"><tt><b>French</b></tt></a>'
+'<a href="#french"><tt><b>French</b></tt></a>',
+'<a href="#italian"><tt><b>Italian</b></tt></a>',
+'<a href="#russian"><tt><b>Russian</b></tt></a>'
 and
-'<a href="#italian"><tt><b>Italian</b></tt></a>'
-may be used to select English, French and Italian menus and messages.
+'<a href="#spanish"><tt><b>Spanish</b></tt></a>'
+may be used to select Bulgarian, Chinese, English, French,
+Italian, Japanese, Russian and Spanish menus and messages if the
+appropriate fonts have been installed.
 <p><hr>
 <a name="ssbonds"><h3>SSBonds</h3></a><p>
 <pre>
@@ -6641,22 +6966,26 @@ Information File (mmCIF)&quot;, Meth. Enzymol. (1997) 277, 571-590.
 Transfer and Archiving&quot;, Journal of Chemical Information and Computer
 Sciences, Vol. 31, 326-333, 1991.
 <p><hr>
+<hr>
 <CENTER>
 | <a href="http://www.OpenrasMol.org">OpenRasMol</a> |
 <A href="../README.html#Copying">Copying and Distribution</A> |
 <A href="../README.html#Contents">Contents</A> |
-<A href="../INSTALL.html">Installation Instructions</A> |<BR>
+<A href="../INSTALL.html">Installation Instructions</A> |<br />
 | <A href="../ChangeLog.html">Changes</A> |
 <A href="../TODO.html">Things To Do</A> |
 <A href="../README.html#Introduction">Introduction</A> |
-<A href="../README.html#CodeAndBinaries">Source Code and Binaries</A> |<BR>
+<A href="../README.html#CodeAndBinaries">Source Code and Binaries</A> |<br />
 | <A href="rasmol.html">RasMol Manual</A> |
 <a href="esrasmol27.html">Spanish Translation of RasMol Manual</a> |
-<a href="itrasmol.hlp">Italian Translation of RasMol 2.7.1 Help File</a> |<BR>
-<a href="../README.html">Release README</A> |<BR>
+<a href="itrasmol.hlp">Italian Translation of RasMol Help File</a> |<br />
+| <a href=http://www.rasmol.org/donate.shtml>Donate to Support RasMol</a> |
+<a href="../README.html">Release README</A> |
+<a href=http://www.rasmol.org/register.shtml>Register your RasMol</a> |
+<br />
 </CENTER>
 <HR>
-Updated 28 April 2005.<BR>
+Updated 19 January 2008.<BR>
 Herbert J. Bernstein<BR>
 Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA<BR>
 <script language="javascript" type="text/javascript">
@@ -6670,8 +6999,6 @@ Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA<BR>
 <noscript>
 yaya&#64;bernstein-plus-sons&#46;com
 </noscript>
-<BR>
-+1-631-286-1339<BR>
 </font>
 
 </BODY>

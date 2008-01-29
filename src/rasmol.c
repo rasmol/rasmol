@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                               RasMol 2.7.4                              *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                            19 November 2007                             *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -21,33 +20,44 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                   RasMol 2.7.4   Nov 07                                 *
  *                                                                         *
- *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
- *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
- *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
- *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
- *of Energy.                                                               *
+ * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
+ * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
+ * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
+ * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
+ * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
+ * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
+ * Institute of General Medical Sciences (NIGMS). The content is solely    *
+ * the responsibility of the authors and does not necessarily represent    * 
+ * the official views of the funding organizations.                        *
  *                                                                         *
  *                    and Incorporating Translations by                    *
- *  Author                               Item                      Language*
+ *  Author                               Item                     Language *
  *  Isabel Servan Martinez,                                                *
- *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
- *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
- *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
- *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages French   *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
- *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  *
+ *  G. Pozhvanov                         2.7.3 menus and messages Russian  *
+ *  G. Todorov                           2.7.3 menus and messages Bulgarian*
+ *  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  *
+ *  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese *
  *                                                                         *
  *                             This Release by                             *
- * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2007               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
@@ -55,6 +65,60 @@
  ***************************************************************************/
 /* rasmol.c
  $Log: not supported by cvs2svn $
+ Revision 1.2  2007/11/19 03:28:39  yaya
+ Update to credits for 2.7.4 in manual and headers
+ Mask code added -- HJB
+
+ Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.9  2007/02/02 21:08:59  yaya
+ Remove // comments for AIX build
+ Fix signed length conflict
+ Fix array bounds violation for molecule names in multiple.c -- HJB
+
+ Revision 1.8  2006/12/29 04:07:37  yaya
+ Update x11win.c and rasmol.c to add links to list of browsers
+ and to kill About dialog when the menu bar is selected
+ Update rasmol_install.sh to allow recompilation of fonts
+ on install to handle openwin and other old systems that
+ can't handle byte-swapped bdf files, and add enviroment
+ variable RASMOL_NOSPAWN to suppress spawn in intermediate
+ xterm from rasmol_run.sh. -- HJB
+
+ Revision 1.7  2006/12/23 23:18:00  yaya
+ Detect remote X server that does not share memory
+ Add new rasmol_install.sh and rasmol_run.sh scripts -- HJB
+
+ Revision 1.6  2006/12/10 03:32:45  yaya
+ Additional updates for linux build with Russian, cleaning
+ up X11 font selection for CP1251 and recovering when fonts
+ are missing. -- HJB
+
+ Revision 1.5  2006/12/03 02:53:10  yaya
+ Clean up compilation warnings in outfile.c
+ Mods for about screen under Linux -- HJB
+
+ Revision 1.4  2006/11/29 16:08:10  yaya
+ Fix missing raswin.idm in src and missing include of sys/stat.h in rasmol.c
+ -- HJB
+
+ Revision 1.3  2006/11/28 03:12:48  yaya
+ Changes for Russian and About dialog in unix
+ This is a variant tried under Mac OS X.  Changes
+ for Linux still needed.  note that more work is
+ needed on font selection. -- HJB
+
+ Revision 1.2  2006/09/17 10:53:56  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:45:57  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
+ Initial Rasmol 2.7.3 Import
+
  Revision 1.1  2004/05/07 19:46:16  yaya
  Initial revision
 
@@ -102,10 +166,12 @@
 #include <math.h>
 
 #include <signal.h>
+#include <errno.h>
 
 
 #define RASMOL
 #include "rasmol.h"
+#include "raswin.idm"
 #include "graphics.h"
 #include "molecule.h"
 #include "infile.h"
@@ -121,6 +187,7 @@
 #include "vector.h"
 #include "wbrotate.h"
 #include "langsel.h"
+#include "script.h"
 
 
 
@@ -177,6 +244,14 @@
 #define	XFORMS_SAVEDIALOG	1
 #endif
 
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+
+static char fpnamebuf[1048];
+
+
 #define IsIdentChar(x)  ((isalnum(x))||((x)=='_')||((x)=='$'))
 #define TwoPi           2.0*PI
 
@@ -212,6 +287,7 @@ static fd_set OrigWaitSet;
 static fd_set WaitSet;
 static int WaitWidth;
 static int FileNo;
+
 
 #ifdef SOCKETS
 /* Supported Protocols */
@@ -259,6 +335,7 @@ static int SocketNo;
 #endif  /* SOCKETS */
 #endif  /* TERMIOS */
 
+static int firstpass=1;
 
 static int InitialWide;
 static int InitialHigh;
@@ -418,7 +495,7 @@ static int StdInASTEvent( void )
 static int OpenSocket( void )
 {
     struct sockaddr_in addr;
-    auto int length;
+    auto unsigned int length;
     register int i;
 
     UseSockets = False;
@@ -833,37 +910,62 @@ static void HandleFileSave( int selector )
     char *r;
     struct stat status;
     static char * cmd[] = {
-	"pdb",
-	"gif",
-	"epsf",
-	"ppm",
-	"iris",
-	"ras",
-	"bpm",
-	"pict"
+	"PDB",
+	"BMP",
+	"GIF",
+	"IRIS",
+	"PPM",
+	"RAS",
+	"PS",
+	"PICT",
+	"VectPS",
+	"Molscript",
+	"Kinemage",
+	"POVray3",
+	"VRML",
+	"RPP",
+	"R3D",
+	"script"
+	
     };
     static const char * suffix[] = {
 	"*.pdb",
+	"*.bmp",
 	"*.gif",
-	"*.epsf",
-	"*.ppm",
 	"*.rgb",
+	"*.ppm",
 	"*.ras",
-	"*.bpm",
-	"*.pict"
+	"*.ps",
+	"*.pict",
+	"*.ps",
+	"*.min",
+	"*.kin",
+	"*.pov",
+	"*.vrml",
+	"*.rpp",
+	"*.r3d",
+	"*.scr"
     };
     static const char * mesg[] = {
 	"Save current molecule as",
+	"Save BMP image as",
 	"Save GIF image as",
-	"Save EPSF file as",
+	"Save IRIS RGB image as",
 	"Save PPM image as",
-	"Save IRIS image as",
-	"Save Raster format as",
-	"Save BPM image as",
-	"Save PICT file as"
+	"Save Sun Raster image as",
+	"Save Postscript image as",
+	"Save PICT image as",
+	"Save Vector PS image as",
+	"Save Molscript file as",
+	"Save Kinemage file as",
+	"Save POVray image as",
+	"Save VRML image as",
+	"Save Ramachandran file as",
+	"Save Raster3D file as",
+	"Save RasMol Script file as"
     };
 
-    if (selector < 0 || selector > 7) {
+    if (selector < 0 || selector > 15) {
 	WriteString("Error: command not supported");
 	return;
     }
@@ -897,13 +999,21 @@ static void HandleFileSave( int selector )
        WriteString(r);
        WriteChar(' ');
        switch (selector) 
-       {   case 1:   WriteGIFFile(r);            break;
-           case 2:   WriteEPSFFile(r,True,True); break;
-           case 3:   WritePPMFile(r,True);       break;
-           case 4:   WriteIRISFile(r);           break;
-           case 5:   WriteRastFile(r,True);      break;
-           case 6:   WriteBMPFile(r);            break;
-           case 7:   WritePICTFile(r);           break;
+       {   case 1:   WriteBMPFile(r);             break;
+           case 2:   WriteGIFFile(r);             break;
+           case 3:   WriteIRISFile(r);            break;
+           case 4:   WritePPMFile(r,True);        break;
+           case 5:   WriteRastFile(r,True);       break;
+           case 6:   WriteEPSFFile(r,True,True);  break;
+           case 7:   WritePICTFile(r);            break;
+           case 8:   WriteVectPSFile(r);          break;
+           case 9:   WriteMolScriptFile(r);       break;
+           case 10:  WriteKinemageFile(r);        break;
+           case 11:  WritePOVRay3File(r);         break;
+           case 12:  WriteVRMLFile(r,0);          break;
+           case 13:  WritePhiPsiAngles(r,-1);     break;
+           case 14:  WriteR3DFile(r);             break;
+           case 15:  WriteScriptFile(r);          break;
            default:  SavePDBMolecule(r);
                      break;
        }
@@ -945,6 +1055,397 @@ static void CreateNewFolder(void * name)
 	fl_refresh_fselector();
 }
 #endif
+
+
+/* EnsurePath 
+
+   When possible, ensure the the path for the given file has been
+   created.  The path must be in a mutable array, since the
+   check is done by progressively changing backshlashes into
+   nulls, checking the partial path and then restoring the slash.
+*/
+
+static void EnsurePath(char * path) {
+
+  char * ptr;
+  
+  int quoted;
+  int depth;
+  
+  quoted = 0;
+  depth = 0;
+  ptr = path;
+  
+  while (*ptr)  {
+    if (*ptr== '"') quoted = 1-quoted;
+    if (*ptr == '/' && !quoted) {
+      *ptr = '\0';
+      depth++;
+      if ((depth > 1 || ptr-path > 0 ) && 
+         mkdir(path, 
+           S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)) {
+        if (errno != EEXIST) {
+          WriteString(MsgStrs[StrErrFile]);
+          WriteString(path);
+          WriteString(MsgStrs[StrNotFnd]);
+          *ptr = '/';
+          WriteString("in ");
+          WriteString(path);
+          WriteString("\n");
+          break;
+        }
+      }
+      *ptr = '/';
+    }
+    ptr++;
+  }	
+  return;
+}
+
+
+/* Determine where the RasMol Application is loaded 
+
+   If the environment variable RASMOLPATH is set, that is used
+   Otherwise, if the symbol RASMOLDIR is defined, that is returned.
+   Finally, if neither of these are set, the current working directory
+   is returned.
+*/
+
+static size_t DetermineRasMolPath( char * rpath, size_t maxlen) {
+
+  char * src, * dst;
+  
+  dst = rpath;
+  
+  if ((src = (char*)(getenv("RASMOLPATH"))) ) { 
+    while(*src && dst-rpath < maxlen-1) { *dst++ = *src++; }
+    *dst++ = '\0';
+    return dst-rpath-1;	
+  }
+  
+  
+#ifdef RASMOLDIR
+
+  src = RASMOLDIR;
+  while(*src && dst-rpath < maxlen-1) { *dst++ = *src++; }
+  *dst++ = '\0';
+  return dst-rpath-1;	
+  
+#endif
+  
+  if ( getcwd(rpath,maxlen-2)) {
+  
+    dst = rpath;
+    while (*dst) dst++;
+    if( dst !=rpath && *(dst -1) != '\\' ) {
+      *dst++ = '\\';
+    }
+    *dst++ = '\0';
+    return dst-rpath-1;
+  	
+  } else {
+  
+    return 0;
+  	
+  }
+	
+}
+
+/* Determine where the RasMol.flg file is located
+
+   If the environment variable RASMOLFLAGPATH is set, that is used
+   Otherwise, $HOME/.rasmol/RasMol.flg is used
+
+*/
+
+
+static size_t DetermineRasMolFlagPath( char *rfpath, size_t maxlen ) {
+
+  char * src, * dst;
+    
+  dst = rfpath;
+  
+  if ((src = (char*)(getenv("RASMOLFLAGPATH"))) ) { 
+    while(*src && dst-rfpath < maxlen-1) { *dst++ = *src++; }
+    *dst++ = '\0';
+    return dst-rfpath-1;	
+  }
+
+  if ((src = (char*)(getenv("HOME"))) ) { 
+    while(*src && dst-rfpath < maxlen-1) { *dst++ = *src++; }
+    src = "/.rasmol/RasMol.flg";
+    while(*src && dst-rfpath < maxlen-1) { *dst++ = *src++; }
+    *dst++ = '\0';
+    return dst-rfpath-1;	
+  }
+
+  return 0;
+}
+
+/*  Launch a particular browser with a URL
+    attempts to launch a browser with the URL as an argument
+    
+    Tries the browser in the given argument string.
+    The string is parsed left to right using the substrings
+    delimited by colons as trial browser execution commands.  Each trial
+    browser command string is scanned for a "$".  if a "$" is found, the
+    URL is put in place of the $.  If not, the trial browser with the URL
+    appended is inserted into a command string of the form
+    
+        which browser > /dev/null 2>&1 &&(browser URL > /dev/null 2>&1 &);exit
+        
+    A literal $ may be included if elided with a backslash.
+    
+    Note that RasMol will block until the system call returns, so it
+    is important to place the spawned browser in the background and
+    to exit from the command string.
+    
+    */
+
+static int LaunchThisBrowserWithURL(const char * browser, const char * URL) {
+
+  char browsercmd[1026];
+  register char * src, *dst, *url, *xbrowser, *tail ;
+  int charcnt, nodollar, status;
+  
+  src = (char *)browser;
+  
+  while(*src){
+
+    dst = browsercmd;
+    status = -1;
+    charcnt = 0;
+    nodollar = 1;
+    xbrowser = src;
+
+    while(*src && *src != ':' && charcnt < 1024) {
+      if (*src == '$' && (charcnt==0 || *(src-1) != '\\') ) {
+        nodollar = 0;
+        url = (char *)URL;
+        while (*url && charcnt < 1024) { *dst++ = *url++; charcnt++;}
+        src++;
+      continue;
+      } else {
+        *dst++ = *src++; charcnt++;
+      }
+    }
+    if (nodollar && src-browser > 0 && charcnt+charcnt+18+34< 1024) {
+      charcnt = 0;
+      dst =  browsercmd;
+      tail = "which ";
+      while (*tail && charcnt < 1024) { *dst++ = *tail++; charcnt++;}
+      tail = xbrowser;
+      while (*tail && charcnt < 1024 && *tail != ':') { *dst++ = *tail++; charcnt++;}
+      tail = "> /dev/null 2>&1 &&(";
+      while (*tail && charcnt < 1024) { *dst++ = *tail++; charcnt++;}
+      tail = xbrowser;
+      while (*tail && charcnt < 1024 && *tail != ':') { *dst++ = *tail++; charcnt++;}
+      charcnt = strlen(browsercmd);
+      *dst++ = ' ';
+      charcnt++;
+      url = (char *)URL;
+      while (*url && charcnt < 1024-9-17) { *dst++ = *url++; charcnt++;}
+      tail = "> /dev/null 2>&1 &);exit;";
+      while (*tail && charcnt < 1024) { *dst++ = *tail++; charcnt++;}
+        	  
+    }
+    *dst = '\0';
+    if(strlen(browsercmd) > strlen(URL)+1)  {
+      status = system(browsercmd);
+      if (!status) return 0;
+      InvalidateCmndLine();
+      WriteString(MsgStrs[StrWarn]);
+      WriteString("'");
+      WriteString(browsercmd);
+      WriteString(MsgStrs[StrNotFnd]);
+      if (WTERMSIG(status) == SIGINT || WTERMSIG(status) == SIGQUIT) break;
+    }
+    src++;
+  }
+  return -1;
+}
+
+
+/*  Launch a Browser with a URL
+    attempts to launch a browser with the URL as an argument
+    
+    Tries several browsers in turn:
+    
+      First from the value of the environment variable RASMOL_BROWSER
+      Second from the value of the environment variable BROWSER
+      Third from the value of preprocessor variable RASMOL_BROWSER
+      if defined, or from the string
+       
+"which open > /dev/null 2>&1&&(open $ > /dev/null 2>&1);exit:mozilla:firefox:opera:safari:netscape"
+
+concatenated with the string
+
+":which links > /dev/null 2&1&&(xterm -e links $ &) >/dev/null 2>1);exit" 
+
+    In all cases, the string is parsed left to right using the substrings
+    delimited by colons as trial browser execution commands.  Each trial
+    browser command string is scanned for a "$".  if a "$" is found, the
+    URL is put in place of the $.  If not, the trial browser with the URL
+    appended is inserted into a command string of the form
+    
+        which browser&&(browser URL & > /dev/null 2>&1);exit
+        
+    A literal $ may be included if elided with a backslash.
+    
+    Note that RasMol will block until the system call returns, so it
+    is important to place the spawned browser in the background and
+    to exit from the command string.
+    
+    */
+
+static int LaunchBrowserWithURL( const char * URL ) {
+
+  char * trial;
+  
+  if ((trial=getenv("RASMOL_BROWSER"))) {
+  	if (!LaunchThisBrowserWithURL(trial,URL)) return 0;
+  }
+  if ((trial=getenv("BROWSER"))) {
+  	if (!LaunchThisBrowserWithURL(trial,URL)) return 0;
+  }
+  return LaunchThisBrowserWithURL(
+#ifdef RASMOL_BROWSER
+  RASMOL_BROWSER
+#else
+"which open > /dev/null 2>&1&&(open $ > /dev/null 2>&1);exit:mozilla:firefox:opera:safari:netscape"
+":which links > /dev/null 2&1&&(xterm -e links $ &) >/dev/null 2>1);exit" 
+#endif
+  ,URL);
+}
+
+static void HelpScreen( void ) {
+  if (LaunchBrowserWithURL("http://www.rasmol.org/help.shtml")) 
+  {  InvalidateCmndLine();
+     WriteString("'");
+     WriteString("http://www.rasmol.org/help.shtml"); 
+     WriteString(MsgStrs[StrNotFnd]);
+  }
+  return;
+}
+
+static void Register( void ) {
+  if (LaunchBrowserWithURL("http://www.rasmol.org/register.shtml"))
+     HelpScreen();
+  return;
+}
+
+static void Donate( void ) {
+  if (LaunchBrowserWithURL("http://www.rasmol.org/donate.shtml"))
+     HelpScreen();
+  return;
+}
+
+
+size_t DetermineApplicationIdentifier( char * aid, size_t maxlen ) {
+
+  char macname[255];
+  
+  char *src, *dst;
+  size_t curlen;
+  
+  dst = aid;
+  curlen = 0;
+  
+  src = "RasMol_";
+  while (*src && curlen < maxlen-1 ) {*dst++ = *src++; curlen++;}
+  src = VERSION;
+  while (*src && curlen < maxlen-1 ) {*dst++ = *src++; curlen++;}
+  
+  if (curlen < maxlen-1) {*dst++ = '_'; curlen++;}
+  
+  if (gethostname(macname,255)) {
+    src = macname;
+  	while (*src && curlen < maxlen-1 && (src-macname)<255 ) {
+  	  *dst++ = *src++; curlen++;
+  	}
+  }
+  
+  if (curlen >= maxlen) return 0;
+  *dst++ = '\0';
+  
+  return dst-aid;
+	
+}
+
+int getraid ( char * aid, size_t maxlen, char * langstr, size_t maxlstr) {
+
+  FILE *fraid;
+  size_t count, ncount;
+  size_t lenread;
+
+  if (DetermineRasMolFlagPath(fpnamebuf,1047)) {
+    
+    EnsurePath(fpnamebuf);
+    fraid = fopen(fpnamebuf,"r");
+    
+    if (fraid
+      && (lenread=fread(aid,1,maxlen,fraid)) ) {
+      count = 0;
+      while (*aid && count<maxlen-1 && count < lenread) {
+        if (*aid=='\n' || *aid=='\r') break;
+      	count++;
+      	aid++;
+      }
+      if (count < lenread && (*aid == '\n' || *aid == '\r')) {
+        *aid++ = '\0';
+        count++;
+        ncount = 0;
+        if (count < maxlen-1 && count < lenread && *aid=='\n') {
+          aid++;
+          count++;
+        }
+        while(*aid && count < maxlen-1 && ncount < maxlstr-1 && count < lenread) {
+          if(*aid == '\n' || *aid == '\r') break;
+          *langstr++ = *aid++;
+          count++;
+          ncount++;
+        }
+        *langstr++ = '\0';
+      } else  {
+      	*aid++ = '\0';
+      }
+      
+      fclose(fraid);
+      return count;
+    }
+
+    if (fraid ) fclose(fraid);
+  	
+  }
+
+  *aid = '\0';
+  return 0;
+	
+}
+
+int setraid ( const char * aid, const char * langstr ) {
+
+  FILE *fraid;
+  size_t lenwritten;
+  
+  lenwritten = 0;
+  if (DetermineRasMolFlagPath(fpnamebuf,1047)) {
+
+      EnsurePath(fpnamebuf);
+  
+    fraid = fopen(fpnamebuf,"w+");
+          
+    if (fraid)  {
+      lenwritten=fwrite(aid,1,strlen(aid),fraid);
+      lenwritten+=fwrite("\n",1,1,fraid);
+      lenwritten+=fwrite(langstr,1,strlen(langstr)+1,fraid);
+      fclose(fraid);
+      return lenwritten;
+    }
+  	
+  }
+  return lenwritten;
+}
 
 static void HandleMenu( int hand )
 {
@@ -1224,7 +1725,44 @@ static void HandleMenu( int hand )
                   break;
 
         case(6):  /* Help Menu */
+                   switch( item ) {   
+                      case(1):   /* About RasMol */
+                        DisplayAboutDLG(); break;
+                      case(2):   /* User Manual  */
+                        HelpScreen(); break;
+                      case(3):   /* Register     */
+                        Register(); break;
+                      case(4):   /* Donate       */
+                        Donate(); break;
+                  }
                   break;
+    	case(7):  /* About Dialog  */
+    	           if (AboutDLG[item-1].DLGtype==DLGCHECKBOX) {    	           	  
+                       AboutDLG[item-1].status = (AboutDLG[item-1].status)?0:1;
+    	               DrawAboutDLG(); break;
+       	           } else {
+       	           	  if (AboutDLG[item-1].DLGtype==DLGPUSHBUTTON) {
+       	           	    AboutDLG[item-1].status = (AboutDLG[item-1].status)?0:1;
+       	           	    DrawAboutDLG();
+       	           	    switch ( AboutDLG[item-1].Identifier) {
+       	           	      case (IDD_OK):
+       	           	        AboutDLG[item-1].status = 0;
+       	           	        UnDisplayAboutDLG();
+       	           	        break;
+       	           	      case (IDM_REGISTER):
+       	           	        Register(); 
+       	           	        AboutDLG[item-1].status = (AboutDLG[item-1].status)?0:1;
+       	           	        DrawAboutDLG();
+       	           	        break;
+       	           	      case (IDM_DONATE):  
+       	           	        Donate();
+       	           	        AboutDLG[item-1].status = (AboutDLG[item-1].status)?0:1;
+       	           	        DrawAboutDLG();
+       	           	        break;
+       	           	    }
+       	
+       	           	  }
+       	           }
     }
 }
 
@@ -1379,13 +1917,21 @@ int ProcessCommand( void )
 
         case(3):  /* Export Image Filename */
                   if( *CurLine ) switch( StateOption )
-                  {   case(1):   WriteGIFFile(CurLine);            break;
-                      case(2):   WriteEPSFFile(CurLine,True,True); break;
-                      case(3):   WritePPMFile(CurLine,True);       break;
-                      case(4):   WriteIRISFile(CurLine);           break;
-                      case(5):   WriteRastFile(CurLine,True);      break;
-                      case(6):   WriteBMPFile(CurLine);            break;
-                      case(7):   WritePICTFile(CurLine);           break;
+                  {   case(1):    WriteBMPFile(CurLine);            break;
+                      case(2):    WriteGIFFile(CurLine);            break;
+                      case(3):    WriteIRISFile(CurLine);           break;
+                      case(4):    WritePPMFile(CurLine,True);       break;
+                      case(5):    WriteRastFile(CurLine,True);      break;
+                      case(6):    WriteEPSFFile(CurLine,True,True); break;
+                      case(7):    WritePICTFile(CurLine);           break;
+                      case(8):    WriteVectPSFile(CurLine);         break;
+                      case(9):    WriteMolScriptFile(CurLine);      break;
+                      case(10):   WriteKinemageFile(CurLine);       break;
+                      case(11):   WritePOVRay3File(CurLine);        break;
+                      case(12):   WriteVRMLFile(CurLine,0);         break;
+                      case(13):   WritePhiPsiAngles(CurLine,-1);     break;
+                      case(14):   WriteR3DFile(CurLine);            break;
+                      case(15):   WriteScriptFile(CurLine);         break;
                   }
                   ResetCommandLine(1);
                   break;
@@ -1521,7 +2067,8 @@ static struct {
 static void ProcessOptions( int argc, char *argv[] )
 {
     register char *ptr;
-    register int i,j;
+    register int i,j,argok;
+    register language klang;
 
     for( i=1; i<argc; i++ )
     {   ptr = argv[i];
@@ -1531,28 +2078,41 @@ static void ProcessOptions( int argc, char *argv[] )
         if( (*ptr=='-') && ptr[1] )
 #endif
         {   ptr++;
+        
+            if (*ptr=='-') {
+            
+              argok = False;
+              for (klang=(language)0; klang < NUMLANGS; klang++) {
+            
+                if (!strcasecmp(ptr+1,lang2str(klang))) {
+                  Language = klang;
+                  argok = True; break;	
+                }
+              }
+              if (argok) continue;
+            }
 
-            if( !strcmp(ptr,"nodisplay") )
+            if( !strcasecmp(ptr,"nodisplay") )
             {   Interactive = False;
 #ifdef PROFILE
-            } else if( !strcmp(ptr,"prof") ||
-                       !strcmp(ptr,"profile") )
+            } else if( !strcasecmp(ptr,"prof") ||
+                       !strcasecmp(ptr,"profile") )
             {   ProfCount = 200;
 #endif
-            } else if( !strcmp(ptr,"noconnect") )
+            } else if( !strcasecmp(ptr,"noconnect") )
             {   CalcBondsFlag = False;
-            } else if( !strcmp(ptr,"connect") )
+            } else if( !strcasecmp(ptr,"connect") )
             {   CalcBondsFlag = True;
-            } else if( !strcmp(ptr,"insecure") )
+            } else if( !strcasecmp(ptr,"insecure") )
             {   AllowWrite = True;
-            } else if( !strcmp(ptr,"secure") )
+            } else if( !strcasecmp(ptr,"secure") )
             {   AllowWrite = False;
 
-            } else if( !strcmp(ptr,"script") )
+            } else if( !strcasecmp(ptr,"script") )
             {   if( i == argc-1 ) DisplayUsage();
                 ScriptNamePtr = argv[++i];
-            } else if( !strcmp(ptr,"width") ||
-                       !strcmp(ptr,"wide") )
+            } else if( !strcasecmp(ptr,"width") ||
+                       !strcasecmp(ptr,"wide") )
             {   if( i == argc-1 ) DisplayUsage();
                 InitialWide = atoi(argv[++i]);
                 if( InitialWide < 48 )
@@ -1560,33 +2120,33 @@ static void ProcessOptions( int argc, char *argv[] )
                 } else if( (j = InitialWide%4) )
                     InitialWide += 4-j;
 
-            } else if( !strcmp(ptr,"height") ||
-                       !strcmp(ptr,"high") )
+            } else if( !strcasecmp(ptr,"height") ||
+                       !strcasecmp(ptr,"high") )
             {   if( i == argc-1 ) DisplayUsage();
                 InitialHigh = atoi(argv[++i]);
                 if( InitialHigh < 48 )
                     InitialHigh = 48;
 
 #ifdef SOCKETS
-            } else if( !strcmp(ptr,"port") )
+            } else if( !strcasecmp(ptr,"port") )
             {   if( i == argc-1 ) DisplayUsage();
                 ServerPort = atoi(argv[++i]);
 #endif
 
-            } else if( !strcmp(ptr,"sybyl") )
+            } else if( !strcasecmp(ptr,"sybyl") )
             {   FileFormat = FormatMol2;
-            } else if( !strcmp(ptr,"pdbnmr") )
+            } else if( !strcasecmp(ptr,"pdbnmr") )
             {   FileFormat = FormatNMRPDB;
-            } else if( !strcmp(ptr,"cif") )
-	    {  FileFormat = FormatCIF;
+            } else if( !strcasecmp(ptr,"cif") )
+            {  FileFormat = FormatCIF;
 #ifdef CEXIOLIB
-            } else if( !strcmp(ptr,"cex") )
+            } else if( !strcasecmp(ptr,"cex") )
             {   FileFormat = FormatCEX;
 #endif
 
             } else  /* File Formats! */
             {   for( j=0; j<FORMATOPTMAX; j++ )
-                    if( !strcmp(ptr,FormatOpt[j].ident) )
+                    if( !strcasecmp(ptr,FormatOpt[j].ident) )
                     {   FileFormat = FormatOpt[j].format;
                         break;
                     }
@@ -1630,6 +2190,51 @@ static void InitialiseFSDialogs(void)
 }
 #endif
 
+language bestlang( void ) 
+{
+
+    language mylang;
+    char * lang, * lc_all, * lctest;
+    
+    mylang = English;
+    
+    if (getraid(filaid, 1025, fillang, 81) &&
+      strlen(fillang) > 0 ) {
+      return str2lang(fillang);
+    }
+    
+    lang = getenv("LANG");
+    lc_all = getenv("LC_ALL");
+	
+	lctest = lang;
+    if (lc_all)  lctest = lc_all;
+    
+    if (lctest)  {
+    
+      if (!strncasecmp(lctest,"fr",2)) mylang = French;
+      if (!strncasecmp(lctest,"it",2)) mylang = Italian;
+      if (!strncasecmp(lctest,"de",2)) mylang = German;
+      if (!strncasecmp(lctest,"en",2)) mylang = English;
+      if (!strncasecmp(lctest,"es",2)) mylang = Spanish;
+      if (!strncasecmp(lctest,"ru",2)) mylang = Russian;
+      if (!strncasecmp(lctest,"bg",2)) mylang = Bulgarian;
+      if (!strncasecmp(lctest,"cn",2)) mylang = Chinese;
+      if (!strncasecmp(lctest,"jp",2)) mylang = Japanese;
+    	
+    }
+        
+    return mylang;
+    
+}
+
+void UpdateLanguage( void ) {
+
+    getraid(filaid, 1025, fillang, 81);
+    setraid(filaid,lang2str(Language));
+}
+
+
+
 int main( int argc, char *argv[] )
 {
     register FILE *fp;
@@ -1639,7 +2244,8 @@ int main( int argc, char *argv[] )
     static char VersionStr[255];
   
     Interactive = False;
-    SwitchLang (English);
+	TermLanguage = English;
+    SwitchLang (bestlang());
 
     sprintf (VersionStr,"%s\nVersion %s %s\n%s\n", 
              MAIN_COPYRIGHT, VERSION, 
@@ -1654,8 +2260,8 @@ int main( int argc, char *argv[] )
     Interactive = OpenDisplay(InitialWide,InitialHigh);
     InitTerminal(Interactive);
 
-    SwitchLang (English);
-
+    SwitchLang (Language);
+ 
     signal(SIGINT,RasMolSignalExit);
     signal(SIGPIPE,SIG_IGN);
 
@@ -1769,6 +2375,16 @@ int main( int argc, char *argv[] )
 #endif
     }
 
+    if (Interactive) {
+      if (firstpass) {
+        firstpass = 0;
+        if (!(getraid(filaid, 1025, fillang, 81)
+          && DetermineApplicationIdentifier(macaid, 1025)
+          && !strncasecmp(filaid,macaid,1024)) ){
+          DisplayAboutDLG();
+        }
+      }           
+    }
 
 #ifdef TERMIOS
     done = False;

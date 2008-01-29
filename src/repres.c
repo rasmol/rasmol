@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                               RasMol 2.7.4                              *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                            19 November 2007                             *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -21,33 +20,44 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                   RasMol 2.7.4   Nov 07                                 *
  *                                                                         *
- *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
- *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
- *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
- *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
- *of Energy.                                                               *
+ * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
+ * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
+ * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
+ * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
+ * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
+ * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
+ * Institute of General Medical Sciences (NIGMS). The content is solely    *
+ * the responsibility of the authors and does not necessarily represent    * 
+ * the official views of the funding organizations.                        *
  *                                                                         *
  *                    and Incorporating Translations by                    *
- *  Author                               Item                      Language*
+ *  Author                               Item                     Language *
  *  Isabel Servan Martinez,                                                *
- *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
- *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
- *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
- *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages French   *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
- *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  *
+ *  G. Pozhvanov                         2.7.3 menus and messages Russian  *
+ *  G. Todorov                           2.7.3 menus and messages Bulgarian*
+ *  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  *
+ *  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese *
  *                                                                         *
  *                             This Release by                             *
- * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2007               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
@@ -55,6 +65,94 @@
  ***************************************************************************/
 /* repres.c
  $Log: not supported by cvs2svn $
+ Revision 1.17  2008/01/29 04:12:11  yaya
+ Post release cleanup of problems discovered. -- HJB
+
+ Revision 1.16  2008/01/16 21:35:11  yaya
+ Change default resolution from .5 Angstrom to 1 Angstrom
+ Correct map xlow, xhigh calculations
+ Correct map axis output -- HJB
+
+ Revision 1.15  2007/12/14 02:04:50  yaya
+ Correct Chinese data for missing line in langsel_utf.c
+ Rewrite code for handling of slab mode in stereo -- HJB
+
+ Revision 1.14  2007/11/19 03:28:40  yaya
+ Update to credits for 2.7.4 in manual and headers
+ Mask code added -- HJB
+
+ Revision 1.13  2007/11/16 22:48:30  yaya
+ Remove use of MapNumber if favor of size of vector
+ Clean up selection logic; start on script writing code -- HJB
+
+ Revision 1.12  2007/11/13 03:22:17  yaya
+ Changes to support map selectors.  Needs more work. -- HJB
+
+ Revision 1.11  2007/10/31 03:02:55  yaya
+ Fix for gaps in map surface and removal of debug normals and points
+ Add strcasestr for systems that don't support it
+ Set up installer for windows -- HJB
+
+ Revision 1.10  2007/10/29 02:29:36  yaya
+ Fix stereo offset for map surfaces and other uses of ClipPoly
+ Decouple mesh from surface for maps
+ Experiment with alternatives for normals calculation -- to
+ be continued -- HJB
+
+ Revision 1.9  2007/10/23 02:27:55  yaya
+ Preliminary mods for revised PDB format derived from Rutgers mods.
+ Partial changes for map tangles -- HJB
+
+ Revision 1.8  2007/10/22 00:46:54  yaya
+ Add start of code for normal to map needed for solid surface.
+ Make new title revisions contingent on Interactive flag.
+ --HJB
+
+ Revision 1.7  2007/09/03 14:25:10  yaya
+ Upload of more of the map load and map generate commands -- HJB
+
+ Revision 1.6  2007/08/03 02:02:34  yaya
+ Add MEAN to map level command, and move the various map settings
+ under the map command, and set the defaults to make a nice map
+ on a default generate (spread .1667, level mean, spacing .5) -- HJB
+
+ Revision 1.5  2007/07/14 14:09:03  yaya
+ Update to command.c to add load option for maps
+ Introduce display to map bonds
+
+ Revision 1.4  2007/07/09 13:57:06  yaya
+ Add spacing and spread commands -- HJB
+
+ Revision 1.3  2007/07/07 21:54:31  yaya
+ Next round of preliminary updates for maps, allowing multiple maps,
+ code to set the contour level and some fixes to the languages files -- HJB
+
+ Revision 1.2  2007/07/02 12:44:39  yaya
+ Partial preliminary map code -- HJB
+
+ Revision 1.1.1.1  2007/03/01 01:16:32  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.4  2006/11/01 03:23:51  yaya
+ Update NSIS windows installer for more script types and to fix
+ misplaced script instructions for data files; add document and
+ script icons directly in raswin.exe; add credit line to
+ G. A. Pozhvanov in comments for Russian translations. -- HJB
+
+ Revision 1.3  2006/10/20 13:53:02  yaya
+ Move about dialog flag file RASWIN.FLG to APPDATA style directories
+ Translate three "not founds" that had been missed before -- HJB
+
+ Revision 1.2  2006/09/17 10:53:56  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:45:59  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.2  2006/06/19 22:06:41  todorovg
+ Rasmol 2.7.3.1
+
  Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
  Initial Rasmol 2.7.3 Import
 
@@ -129,6 +227,8 @@
 #include "infile.h"
 #include "vector.h"
 #include "wbrotate.h"
+#include "langsel.h"
+#include "maps.h"
 
 
 #define RootSix          2.44948974278
@@ -483,7 +583,7 @@ void DisplayLabels( void )
     ForEachAtom
         if( aptr->label )
         {   /* Peform Label Slabbing! */
-            if( !ZValid(aptr->z) || !ZBack(aptr->z) )
+            if( !ZBValid(aptr->x,aptr->z) )
                 continue;
  
             label = (Label*)aptr->label;
@@ -626,7 +726,7 @@ void CreateMonitor( Long src, Long dst )
         } else if( dptr )
         {   sprintf(buffer," %ld",src);
         } else sprintf(buffer,"s %ld and %ld",src,dst);
-        WriteString(buffer); WriteString(" not found!\n");
+        WriteString(buffer); WriteString(MsgStrs[StrNotFnd]);
  
     } else AddMonitors( sptr, dptr );
 }
@@ -674,7 +774,7 @@ void DisplayMonitors( void )
         ClipDashVector(s->x,s->y,s->z,d->x,d->y,d->z,sc,dc,' ');
  
         if( DrawMonitDistance )
-            if( ZValid( (s->z+d->z)/2 ) && ZBack( (s->z+d->z)/2 ))
+            if( ZBValid( (s->x+d->x)/2, (s->z+d->z)/2 ) )
             {   x = (s->x+d->x)/2;
                 y = (s->y+d->y)/2;
  
@@ -1095,20 +1195,235 @@ void DisplaySurface( void )
             {   yi = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset-Ceny;
                 if( YValid(yi) )
                 {   zi = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset-Cenz;
-                    if( ZValid(zi) && ZBack(zi) )
+                    if( ZBValid(xi,zi))
                         PlotDeepPoint(xi,yi,zi,ptr->col[i]);
                 }
             }
         }
+     ReDrawFlag |= RFRefresh;
+
 }
  
+void DisplayMapPoints( void )
+{
+    register int xi,yi,zi;
+    register Real x,y,z;
+    register int i, j, irad;
+    register int Cenx,Ceny,Cenz;
+    MapPointVec __far *MapPointsPtr;
+    MapInfo mapinfo;
+    
+    Cenx=(int)rint(CenX*MatX[0]+CenY*MatX[1]+CenZ*MatX[2]);
+    Ceny=(int)rint(CenX*MatY[0]+CenY*MatY[1]+CenZ*MatY[2]);
+    Cenz=(int)rint(CenX*MatZ[0]+CenY*MatZ[1]+CenZ*MatZ[2]);
 
+    if (MapInfoPtr)
+      for (j=0; j<MapInfoPtr->size; j++) {
+      	vector_get_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,j );
+      	MapPointsPtr = mapinfo.MapPointsPtr;
+      	irad = (int)rint(Scale*(Real)(mapinfo.MapMeshRad));
+
+        if (MapPointsPtr && (mapinfo.flag&MapPointFlag) )
+        for (i=0; i<MapPointsPtr->size; i++) {
+        	x = (MapPointsPtr->array[i]).xpos;
+        	y = (MapPointsPtr->array[i]).ypos;
+        	z = (MapPointsPtr->array[i]).zpos;
+ 
+            xi = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset-Cenx;
+            if( XValid(xi) ) { 
+              yi = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset-Ceny;
+              if( YValid(yi) ) { 
+                zi = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset-Cenz;
+                if( ZBValid(xi,zi)  ) {
+                  if (irad <= 0 && ZBValid(xi,zi) ) {
+                    PlotDeepPoint(xi,yi,zi,(MapPointsPtr->array[i]).col);
+                  } else  {
+                    ClipSphere(xi,yi,zi,irad,(MapPointsPtr->array[i]).col);
+                  }
+                  }
+                }
+              }
+            }
+        }
+    ReDrawFlag |= RFRefresh;
+
+}
+
+void DisplayMapBonds( void )
+{
+    register int xsrc,ysrc,zsrc,xdst,ydst,zdst;
+    register Real x1,y1,z1,x2,y2,z2;
+    register int i, j, irad;
+    register int src, dst;
+    register int Cenx,Ceny,Cenz;
+    MapPointVec __far *MapPointsPtr;
+    MapBondVec __far *MapBondsPtr;
+    MapInfo mapinfo;
+    
+    Cenx=(int)rint(CenX*MatX[0]+CenY*MatX[1]+CenZ*MatX[2]);
+    Ceny=(int)rint(CenX*MatY[0]+CenY*MatY[1]+CenZ*MatY[2]);
+    Cenz=(int)rint(CenX*MatZ[0]+CenY*MatZ[1]+CenZ*MatZ[2]);
+
+    if (MapInfoPtr)
+      for (j=0; j<MapInfoPtr->size; j++) {
+      	vector_get_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,j );
+      	MapPointsPtr = mapinfo.MapPointsPtr;
+      	MapBondsPtr = mapinfo.MapBondsPtr;
+      	irad = (int)rint(Scale*(Real)(mapinfo.MapMeshRad));
+      	
+      	if (MapBondsPtr && (mapinfo.flag&MapMeshFlag))
+      	for (i=0; i<MapBondsPtr->size; i++) {
+      	  src = (MapBondsPtr->array[i]).src;
+      	  dst = (MapBondsPtr->array[i]).dst;
+          x1 = (MapPointsPtr->array[src]).xpos;
+          y1 = (MapPointsPtr->array[src]).ypos;
+          z1 = (MapPointsPtr->array[src]).zpos;
+          x2 = (MapPointsPtr->array[dst]).xpos;
+          y2 = (MapPointsPtr->array[dst]).ypos;
+          z2 = (MapPointsPtr->array[dst]).zpos;
+          xsrc = (int)rint(x1*MatX[0]+y1*MatX[1]+z1*MatX[2])+XOffset-Cenx;
+          ysrc = (int)rint(x1*MatY[0]+y1*MatY[1]+z1*MatY[2])+YOffset-Ceny;
+          zsrc = (int)rint(x1*MatZ[0]+y1*MatZ[1]+z1*MatZ[2])+ZOffset-Cenz;
+          xdst = (int)rint(x2*MatX[0]+y2*MatX[1]+z2*MatX[2])+XOffset-Cenx;
+          ydst = (int)rint(x2*MatY[0]+y2*MatY[1]+z2*MatY[2])+YOffset-Ceny;
+          zdst = (int)rint(x2*MatZ[0]+y2*MatZ[1]+z2*MatZ[2])+ZOffset-Cenz;
+          if (irad>0) {
+          	ClipCylinder(xsrc,ysrc,zsrc,xdst,ydst,zdst,
+          	  (MapPointsPtr->array[src]).col,
+              (MapPointsPtr->array[dst]).col,
+              irad, ' ', ' ');
+          } else {
+            if ((mapinfo.flag&MapMeshDashFlag) == MapMeshDashFlag ) {
+              ClipDashVector(xsrc,ysrc,zsrc,xdst,ydst,zdst,
+                (MapPointsPtr->array[src]).col,
+                (MapPointsPtr->array[dst]).col,' ');
+            } else {
+              ClipTwinVector(xsrc,ysrc,zsrc,xdst,ydst,zdst,
+                (MapPointsPtr->array[src]).col,
+                (MapPointsPtr->array[dst]).col,' ');
+            }  
+          }
+      	}
+      	
+    }
+}
+
+void DisplayMapTangles( void ) {
+
+    register Real x1,y1,z1,x2,y2,z2,x3,y3,z3;
+    register int i, j, ii;
+    register int src, dst, oth;
+    register int Cenx,Ceny,Cenz;
+    Long normals[3][3];
+    Long* worldnormals[3];
+    MapPointVec __far *MapPointsPtr;
+    MapTangleVec __far *MapTanglePtr;
+    MapInfo mapinfo;
+    Poly tangle;
+    int inten;
+    
+    Cenx=(int)rint(CenX*MatX[0]+CenY*MatX[1]+CenZ*MatX[2]);
+    Ceny=(int)rint(CenX*MatY[0]+CenY*MatY[1]+CenZ*MatY[2]);
+    Cenz=(int)rint(CenX*MatZ[0]+CenY*MatZ[1]+CenZ*MatZ[2]);
+
+    if (MapInfoPtr)
+      for (j=0; j<MapInfoPtr->size; j++) {
+      	vector_get_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,j );
+      	MapPointsPtr = mapinfo.MapPointsPtr;
+      	MapTanglePtr = mapinfo.MapTanglePtr;
+      	
+      	if (MapTanglePtr && (mapinfo.flag&MapSurfFlag))
+      	for (i=0; i<MapTanglePtr->size; i++) {
+      	  src = (MapTanglePtr->array[i]).points[0];
+      	  dst = (MapTanglePtr->array[i]).points[1];
+      	  oth = (MapTanglePtr->array[i]).points[2];
+      	  x1 = (MapPointsPtr->array[src]).xpos;
+          y1 = (MapPointsPtr->array[src]).ypos;
+          z1 = (MapPointsPtr->array[src]).zpos;
+          x2 = (MapPointsPtr->array[dst]).xpos;
+          y2 = (MapPointsPtr->array[dst]).ypos;
+          z2 = (MapPointsPtr->array[dst]).zpos;
+          x3 = (MapPointsPtr->array[oth]).xpos;
+          y3 = (MapPointsPtr->array[oth]).ypos;
+          z3 = (MapPointsPtr->array[oth]).zpos;
+          tangle.v[0].x = (int)rint(x1*MatX[0]+y1*MatX[1]+z1*MatX[2])+XOffset-Cenx;
+          tangle.v[0].y = (int)rint(x1*MatY[0]+y1*MatY[1]+z1*MatY[2])+YOffset-Ceny;
+          tangle.v[0].z = (int)rint(x1*MatZ[0]+y1*MatZ[1]+z1*MatZ[2])+ZOffset-Cenz;
+          tangle.v[1].x = (int)rint(x2*MatX[0]+y2*MatX[1]+z2*MatX[2])+XOffset-Cenx;
+          tangle.v[1].y = (int)rint(x2*MatY[0]+y2*MatY[1]+z2*MatY[2])+YOffset-Ceny;
+          tangle.v[1].z = (int)rint(x2*MatZ[0]+y2*MatZ[1]+z2*MatZ[2])+ZOffset-Cenz;
+          tangle.v[2].x = (int)rint(x3*MatX[0]+y3*MatX[1]+z3*MatX[2])+XOffset-Cenx;
+          tangle.v[2].y = (int)rint(x3*MatY[0]+y3*MatY[1]+z3*MatY[2])+YOffset-Ceny;
+          tangle.v[2].z = (int)rint(x3*MatZ[0]+y3*MatZ[1]+z3*MatZ[2])+ZOffset-Cenz;
+          worldnormals[0]=(MapPointsPtr->array[src]).Un;
+          worldnormals[1]=(MapPointsPtr->array[dst]).Un;
+          worldnormals[2]=(MapPointsPtr->array[oth]).Un;
+          /* if (i==0) 
+          {
+          	fprintf(stderr,"WorldNormal 0: [%ld,%ld,%ld], 1: [%ld,%ld,%ld], 2:[%ld,%ld,%ld]\n",
+          	worldnormals[0][0], worldnormals[0][1], worldnormals[0][2],
+          	worldnormals[1][0], worldnormals[1][1], worldnormals[1][2],
+          	worldnormals[2][0], worldnormals[2][1], worldnormals[2][2]
+          	);
+          } */
+          for (ii=0; ii<3; ii++ ) {
+            normals[ii][0] = ((Long)rint((worldnormals[ii][0]*RotX[0]+worldnormals[ii][1]*RotX[1]+worldnormals[ii][2]*RotX[2]))/30.);
+            normals[ii][1] = ((Long)rint((worldnormals[ii][0]*RotY[0]+worldnormals[ii][1]*RotY[1]+worldnormals[ii][2]*RotY[2]))/30.);
+            normals[ii][2] = ((Long)rint((worldnormals[ii][0]*RotZ[0]+worldnormals[ii][1]*RotZ[1]+worldnormals[ii][2]*RotZ[2]))/30.);
+          }
+          /* if (i==0) 
+          {
+          	fprintf(stderr,"Normal 0: [%ld,%ld,%ld], 1: [%ld,%ld,%ld], 2:[%ld,%ld,%ld]\n",
+          	normals[0][0], normals[0][1], normals[0][2],
+          	normals[1][0], normals[1][1], normals[1][2],
+          	normals[2][0], normals[2][1], normals[2][2]
+          	);
+          } */
+          /* inten = (normals[0][0]-normals[0][1]+normals[0][2]); */
+          inten = LightDot(normals[0][0],normals[0][1],normals[0][2]);
+          if (inten > 0) {
+            inten = (MapPointsPtr->array[src]).col+((inten*colconst(255))>>ColBits);
+          } else {
+          	inten = (MapPointsPtr->array[src]).col;
+          }
+          tangle.v[0].inten = inten;
+          /* inten = (normals[1][0]-normals[1][1]+normals[1][2]); */
+          inten = LightDot(normals[1][0],normals[1][1],normals[1][2]);
+          if (inten > 0) {
+            inten = (MapPointsPtr->array[dst]).col+((inten*colconst(255))>>ColBits);
+          } else {
+          	inten = (MapPointsPtr->array[dst]).col;
+          }
+          tangle.v[1].inten = inten;
+          /* inten = (normals[2][0]-normals[2][1]+normals[2][2]); */
+          inten = LightDot(normals[2][0],normals[2][1],normals[2][2]);
+          if (inten > 0) {
+            inten = (MapPointsPtr->array[oth]).col+((inten*colconst(255))>>ColBits);
+          } else {
+          	inten = (MapPointsPtr->array[oth]).col;
+          }
+          tangle.v[2].inten = inten;
+          tangle.count = 3;
+          ClipPolygon(&tangle);
+          /*  Debug code for surface normals 
+          for(ii=0;ii<3;ii++) {
+            ClipTwinVector(tangle.v[ii].x,tangle.v[ii].y,tangle.v[ii].z,
+              tangle.v[ii].x+normals[ii][0]/10,tangle.v[ii].y+normals[ii][1]/10,tangle.v[ii].z+normals[ii][2]/10,
+               (MapPointsPtr->array[dst]).col,(MapPointsPtr->array[dst]).col,' ');          	
+          } */
+      		
+      	}
+      }
+    
+
+
+      }
 
 /*==============================*/
 /*  Ribbon & Cartoon Functions  */
 /*==============================*/
  
-static void CalculateVInten( Knot *ptr )
+void CalculateVInten( Knot *ptr )
 {
     register Real inten;
  
@@ -1132,7 +1447,7 @@ static void CalculateVInten( Knot *ptr )
 }
  
 
-static void CalculateHInten( Knot *ptr )
+void CalculateHInten( Knot *ptr )
 {
     register Real inten;
  
@@ -1631,6 +1946,17 @@ void ResetRepres( void )
 void InitialiseRepres( void )
 {
     DotPtr = (DotStruct __far*)0;
+    MapInfoPtr = (MapInfoVec __far *)0;
+    MapLevel = 0.0;
+    MapFlag = MapMeanFlag;
+    MapSpacing = 250L;
+    MapSpread = .6667;
+    MapRGBCol[0] = 0xFA;
+    MapRGBCol[1] = 0xFF;
+    MapRGBCol[2] = 0xFA;
+    MapPointRad=0;
+    MapMeshRad=0;
+    MapLabel=NULL;
     MonitList = (Monitor __far*)0;
     LabelList = (void*)0;
 

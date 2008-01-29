@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                               RasMol 2.7.4                              *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                            19 November 2007                             *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -21,33 +20,44 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                   RasMol 2.7.4   Nov 07                                 *
  *                                                                         *
- *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
- *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
- *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
- *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
- *of Energy.                                                               *
+ * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
+ * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
+ * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
+ * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
+ * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
+ * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
+ * Institute of General Medical Sciences (NIGMS). The content is solely    *
+ * the responsibility of the authors and does not necessarily represent    * 
+ * the official views of the funding organizations.                        *
  *                                                                         *
  *                    and Incorporating Translations by                    *
- *  Author                               Item                      Language*
+ *  Author                               Item                     Language *
  *  Isabel Servan Martinez,                                                *
- *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
- *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
- *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
- *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages French   *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
- *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  *
+ *  G. Pozhvanov                         2.7.3 menus and messages Russian  *
+ *  G. Todorov                           2.7.3 menus and messages Bulgarian*
+ *  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  *
+ *  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese *
  *                                                                         *
  *                             This Release by                             *
- * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2007               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
@@ -55,6 +65,53 @@
  ***************************************************************************/
 /* pixutils.c
  $Log: not supported by cvs2svn $
+ Revision 1.7  2008/01/22 19:31:40  yaya
+ Fixup typos in messages and align versions of langsel.
+ Correct boundary calculations for map generate.
+ Update CW project for windows.  -- HJB
+
+ Revision 1.6  2008/01/14 15:49:16  yaya
+ More of code for CBF style map save
+ More use of stdlib as per Ladislav Michnovic
+ --HJB
+
+ Revision 1.5  2008/01/05 20:56:29  yaya
+ Update handling of stereo interaction with slab
+ Enable save of CBF-style maps. -- HJB
+
+ Revision 1.4  2007/12/14 02:04:50  yaya
+ Correct Chinese data for missing line in langsel_utf.c
+ Rewrite code for handling of slab mode in stereo -- HJB
+
+ Revision 1.3  2007/11/19 03:28:39  yaya
+ Update to credits for 2.7.4 in manual and headers
+ Mask code added -- HJB
+
+ Revision 1.2  2007/10/29 02:29:36  yaya
+ Fix stereo offset for map surfaces and other uses of ClipPoly
+ Decouple mesh from surface for maps
+ Experiment with alternatives for normals calculation -- to
+ be continued -- HJB
+
+ Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.3  2006/11/01 03:23:51  yaya
+ Update NSIS windows installer for more script types and to fix
+ misplaced script instructions for data files; add document and
+ script icons directly in raswin.exe; add credit line to
+ G. A. Pozhvanov in comments for Russian translations. -- HJB
+
+ Revision 1.2  2006/09/17 10:53:56  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:45:54  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
+ Initial Rasmol 2.7.3 Import
+
  Revision 1.1  2004/05/07 19:46:16  yaya
  Initial revision
 
@@ -102,9 +159,9 @@
 #include <PrintTraps.h>
 #endif
 #endif
-#ifdef sun386
+/* #ifdef sun386 */ /* Ladislav Michnovic, 10 Jan 08 */
 #include <stdlib.h>
-#endif
+/* #endif        */ /* Ladislav Michnovic, 10 Jan 08 */
 
 #include <stdio.h>
 #include <math.h>
@@ -152,9 +209,6 @@ typedef struct {
 
 static ArcEntry __far *ArcAcPtr;
 static ArcEntry __far *ArcDnPtr;
-static ArcEntry __far *OCircle;
-static ArcEntry __far *NCircle;
-static ArcEntry __far *TCircle;
 #if defined(IBMPC) || defined(APPLEMAC)
 static ArcEntry __far *ArcAc;
 static ArcEntry __far *ArcDn;
@@ -162,15 +216,12 @@ static ArcEntry __far *ArcDn;
 static ArcEntry ArcAc[ARCSIZE];
 static ArcEntry ArcDn[ARCSIZE];
 #endif
-static int OR, NR, ODots, NDots;
 static Long C[3], A[3];
 static Long Cprev[3], Cnext[3];
 
 static int radprev, radnext, rad, rada, c;
 
 
-static char FontDimen[23];
-static int FontWid[97];
 static int ClipStatus;
 
 /*
@@ -211,10 +262,10 @@ static int ClipStatus;
         } else if( (x) >= View.xmax ) \
             (res) |= BitRight;        \
                                       \
-        if( !ZValid((z)) )            \
+        if( !ZValid((x),(z)) )        \
             (res) |= BitFront;        \
                                       \
-        if( !ZBack((z))  )            \
+        if( !ZBack((x),(z))  )        \
             (res) |= BitBack;         \
     }
 
@@ -252,10 +303,10 @@ static int OutCode( int x, int y, int z )
     } else if( x >= View.xmax )
         result |= BitRight;
 
-    if( !ZValid(z) )
+    if( !ZValid(x,z) )
         result |= BitFront;
     
-    if( !ZBack(z) )
+    if( !ZBack(x,z) )
         result |= Bitback;
     return result;
 }
@@ -286,7 +337,7 @@ void ClipPoint( int x, int y, int z, int col )
     register short __huge *dptr;
     register Long offset;
 
-    if( XValid(x) && YValid(y) && ZValid(z) && ZBack(z) )
+    if( XValid(x) && YValid(y) && ZBValid(x,z) )
     {   /* PlotPoint(x,y,z,col); */
         offset = (Long)y*View.yskip+x;
         dptr = View.dbuf+offset+View.shift;
@@ -327,7 +378,7 @@ void ClipDeepPoint( int x, int y, int z, int col )
     register short __huge *dptr;
     register int inten;
 
-    if( XValid(x) && YValid(y) && ZValid(z) && ZBack(z) )
+    if( XValid(x) && YValid(y) && ZBValid(x,z) )
     {   /* PlotDeepPoint(x,y,z,col); */
         offset = (Long)y*View.yskip+x;
         dptr = View.dbuf+offset+View.shift;
@@ -608,7 +659,7 @@ void ClipDashLine( int x1, int y1, int z1,
         mid = (x1+x2)/2;
 
         while( x1!=x2 )
-        {   if( XValid(x1) && YValid(y1) && ZValid(z1) && ZBack(z1) )
+        {   if( XValid(x1) && YValid(y1) && ZBValid(x1,z1) )
             {   if( count<2 )
                 {   co = (x1<mid)? col1 : col2;
 					c = Lut[co];
@@ -653,7 +704,7 @@ void ClipDashLine( int x1, int y1, int z1,
 
         
         while( y1!=y2 )
-        {   if( XValid(x1) && YValid(y1) && ZValid(z1) && ZBack(z1) )
+        {   if( XValid(x1) && YValid(y1) && ZBValid(x1,z1) )
             {   if( count<2 )
                 {   co = (y1<mid)? col1 : col2;
 					c = Lut[co];
@@ -1025,7 +1076,7 @@ void ClipDashVector( int x1, int y1, int z1,
         mid = (x1+x2)/2;
 
         while( x1!=x2 )
-        {   if( XValid(x1) && YValid(y1) && ZValid(z1) && ZBack(z1) )
+        {   if( XValid(x1) && YValid(y1) && ZBValid(x1,z1)  )
             {   if( count<2 )
                 {   col = (x1<mid)? col1 : col2;
 	   	    cola = (x1<mid)? col2 : col1;
@@ -1081,7 +1132,7 @@ void ClipDashVector( int x1, int y1, int z1,
 
         
         while( y1!=y2 )
-        {   if( XValid(x1) && YValid(y1) && ZValid(z1) && ZBack(z1) )
+        {   if( XValid(x1) && YValid(y1) && ZBValid(x1,z1) )
             {   if( count<2 )
                 {   col = (y1<mid)? col1 : col2;
                     p =  altc&&(abs(y1-mid)<abs(dy)/4);
@@ -1481,17 +1532,40 @@ void ClipPolygon( Poly *p )
     register int dy,ymin;
     register int top,rem;
     register int x,y,i;
+    register int anyin, anyout;
+    register int xp;
+
+    anyout = False;
+    for (i = 0; i < p->count; i++) {
+      if (p->v[i].y < 0 || p->v[i].y >= View.ymax ) anyout = True;
+    }
 
     /* Reject Clip Polygon */
-    if( UseSlabPlane )
-        for( i=0; i<p->count; i++ )
-            if( p->v[i].z >= SlabValue )
-                return;
-    if( UseDepthPlane )
-        for( i=0; i<p->count; i++ )
-            if( p->v[i].z <= DepthValue )
-                return;
-
+    if( UseSlabPlane )  {
+        anyin = False;
+        for( i=0; i<p->count; i++ ) {
+          
+          xp = p->v[i].x;
+          if ( xp < 0 ) { anyout = True; continue; }
+          if ( xp >= View.xmax) { anyout = True; continue; }
+          if( p->v[i].z < View.slbuf[xp] )
+                anyin = True;
+          else anyout = True;
+        }
+        if (!anyin) return;
+    }
+    if( UseDepthPlane ) {
+        anyin = False;
+        for( i=0; i<p->count; i++ ) {
+          xp = p->v[i].x;
+          if ( xp < 0 ) { anyout = True; continue; }
+          if ( xp >= View.xmax) { anyout = True; continue; }
+          if( p->v[i].z > View.dlbuf[xp] )
+                anyin = True;
+          else anyout = True;
+        }
+        if (!anyin) return;
+    }
     /* Find top vertex */
     top = 0;  
     ymin = p->v[0].y;
@@ -1618,7 +1692,8 @@ void ClipPolygon( Poly *p )
 
                 dptr = dbase+xmin;
                 for( x=xmin; x<xmax; x++ )
-                {   if( (int)(z>>16) > *dptr )
+                {   if( (!anyout ||((XValid(x))&&(YValid(y))&&(ZBValid(x,(int)(z>>16)))))
+                      && (int)(z>>16) > *(dptr+View.shift ) )
                     {   fbase[x+View.shift] = Lut[(int)(inten>>16)];
                         *(dptr+View.shift) = (int)(z>>16);
                     }
@@ -1779,7 +1854,7 @@ static void ClipFlatPolygon( Poly *p )
 
                 dptr = dbase+xmin;
                 for( x=xmin; x<xmax; x++ )
-                {   if( (int)(z>>16) > *dptr )
+                {   if( (int)(z>>16) > *(dptr+View.shift ) )
                     {   fbase[x+View.shift] = Lut[p->v[0].inten];
                         *(dptr+View.shift) = (int)(z>>16);
                     }
@@ -1973,15 +2048,27 @@ void RectRibbon( Knot __far *src, Knot __far *dst, int col )
 static int TestSphere( int x, int y, int z, int rad )
 {
     register int temp;
+    register int zrad;
+    register int xp;
+    double theta;
 
     ClipStatus = 0;
+    
+    xp = x;
+    if (xp < 0) xp =0;
+    if (xp >= View.xmax) xp = View.xmax-1;
+    zrad = rad;
+    if (UseStereo) {
+      theta = -PI*StereoAngle/360.;
+      zrad = rint(((double)rad)/cos(theta));
+    }
 
     if( UseSlabPlane )
-    {   if( z-rad>=SlabValue )
+    {   if( z-zrad>=View.slbuf[xp] )
             return( False );
 
-        if( z+rad>=SlabValue )
-        {   if( SlabMode )
+        if( z+zrad>=View.slbuf[xp] )
+        {   if( SlabMode != SlabReject )
             {   ClipStatus |= BitFront;
             } else return( False );
         } else if( SlabMode==SlabSection )
@@ -1989,11 +2076,11 @@ static int TestSphere( int x, int y, int z, int rad )
     }
 
     if( UseDepthPlane )
-    {   if( z+rad<=DepthValue )
+    {   if( z+zrad<=View.dlbuf[xp])
             return( False );
 
-        if( z-rad<=DepthValue )
-        {   if( SlabMode )
+        if( z-zrad<=View.dlbuf[xp])
+        {   if( SlabMode != SlabReject )
             {   ClipStatus |= BitBack;
             } else return( False );
         } else if( SlabMode==SlabSection )
@@ -2025,18 +2112,19 @@ static int TestSphere( int x, int y, int z, int rad )
 /*  Sphere Rendering Macros  */
 /*===========================*/
 
-#define UpdateAcross(dz)    \
-        depth = (dz)+z;                    \
+#define UpdateAcross(dz)                                \
+        depth = (dz)+z;                                 \
         if( depth > *(dptr+View.shift) )                \
         {   *(dptr+View.shift) = depth;                 \
-            fptr = fold+dx;                \
-            inten = LightDot(dx,dy,dz);    \
-            if( inten>0 )                  \
+            fptr = fold+dx;                             \
+            inten = LightDot(dx,dy,dz);                 \
+            if( inten>0 )                               \
             {      inten = (int)((inten*colconst(rad))>>ColBits); \
                    *(fptr+View.shift) = Lut[col+inten]; \
             } else *(fptr+View.shift) = Lut[col];       \
         }                                  \
         dptr++;  dx++;
+
 
 #define oUpdateLine  \
         dx = -wide;                   \
@@ -2100,32 +2188,41 @@ void ClipSphere( int x, int y, int z, int rad, int col )
     register int crad,cwide,temp;
     register Long offset;
 
+
+    /* If this sphere is not visible, do not draw it */
     if( !TestSphere(x,y,z,rad) )
         return;
 
+    /* If this sphere is completely visible, draw it */
     if( !ClipStatus )
     {   DrawSphere(x,y,z,rad,col);
         return;
     }
 
+
+    /* If we hit y=0, start there */
     if( ClipStatus&BitAbove )
     {   dy = -y;
         fold = View.fbuf + x;
         dold = View.dbuf + x;
     } else
+    /* else start at the top of the sphere */
     {   dy = -rad;
         offset = (Long)(y+dy)*View.yskip+x;
         fold = View.fbuf + offset;
         dold = View.dbuf + offset;
     }
 
+    /* If we hit the bottom of the screen, end there */
     if( ClipStatus&BitBelow )
     {   lasty = (View.ymax-1)-y;
     } else lasty = rad;
 
+    /* side is as far as dx can go */
     side = (View.xmax-1)-x;
+    dx = 0;
     /* No Slab Plane Clipping */
-    if( !(ClipStatus&BitFront) )
+    if( !(ClipStatus&BitFront) && !(ClipStatus&BitBack) )
     {   while( dy<=lasty )
         {   wide = pythag(rad,AbsFun(dy));
             lastx = MinFun(wide,side);
@@ -2143,6 +2240,12 @@ void ClipSphere( int x, int y, int z, int rad, int col )
         return;
     }
 
+
+    /* we have slab plane clipping  or depth clipping */
+    
+    if (SlabMode == SlabReject) return;
+    
+    if (!UseStereo) {
     dz = SlabValue-z;
     crad = pythag(rad,AbsFun(dz));
  
@@ -2170,12 +2273,7 @@ void ClipSphere( int x, int y, int z, int rad, int col )
                 if( temp<=cwide )
                 {    /* Slab Plane Clipping Modes */
                     switch( SlabMode )
-                    {   case( SlabFinal ):
-                                fold[dx+View.shift] = Lut[col+SlabInten];
-                                *(dptr+View.shift) = SliceValue;
-                                break;
-
-                        case( SlabHollow ):
+                    {   case( SlabHollow ):
                                 dz = pythag(wide,temp);
                                 depth = z - dz;
                                 if( depth>*(dptr+View.shift) )
@@ -2194,9 +2292,9 @@ void ClipSphere( int x, int y, int z, int rad, int col )
                         case( SlabSection ):
                         case( SlabClose ):
                                 dz = SlabValue-z;
-                                depth = dx*dx+dy*dy+dz*dz+SliceValue;
+                                depth = dx*dx+dy*dy+dz*dz+SlabValue+SliceValue;
                                 if( (*(dptr+View.shift)
-                                  <SliceValue) ||
+                                  < SlabValue+SliceValue) ||
                                   (depth<*(dptr+View.shift)) )
                                 {   fold[dx+View.shift] = 
                                       Lut[col+SlabInten];
@@ -2222,6 +2320,90 @@ void ClipSphere( int x, int y, int z, int rad, int col )
         fold += View.yskip;
         dy++;
     }
+    } else {
+      /* We have the worst case, slab plane clipping in stereo */
+      int clipt, ddz;
+      dy = -rad;
+      offset = (Long)(y+dy)*View.yskip+x;
+      fold = View.fbuf + offset;
+      dold = View.dbuf + offset;      
+      while( dy<=lasty )
+        {   wide = pythag(rad,AbsFun(dy));
+            lastx = MinFun(wide,side);
+            dx = - MinFun(wide,x);
+            dptr = dold + dx;
+
+            while( dx<=lastx )
+            {   clipt = False;
+                dz = pythag(wide,AbsFun(dx));
+                depth = dz+z;
+                ddz=View.slbuf[x+dx]-z;
+                ddz=dx*dx+dy*dy+ddz*ddz+View.slbuf[x+dx]+SliceValue;
+                if (UseSlabPlane && SlabMode == SlabClose && depth >= View.slbuf[x+dx]
+                  && z <= View.slbuf[x+dx]) {
+                  depth =  View.slbuf[x+dx]-1;
+                  clipt = True;
+                }
+                if (UseDepthPlane && SlabMode == SlabClose && depth <= View.dlbuf[x+dx]
+                  && z >= View.dlbuf[x+dx]) {
+                  depth =  View.dlbuf[x+dx]+1;
+                  clipt = True;
+                }
+                if ((clipt&&(ddz<*(dptr+View.shift)||
+                  View.slbuf[x+dx]+SliceValue>*(dptr+View.shift)))||
+                  (depth > *(dptr+View.shift))) {
+                  if( ZBValid(x+dx,depth) ) {   
+                    *(dptr+View.shift) = clipt?ddz:depth;
+                    fptr = fold+dx;
+                    if (clipt){
+                      *(fptr+View.shift) = Lut[col+SlabInten];
+                    } else {
+                      inten = LightDot(dx,dy,dz);
+                      if( inten>0 ) {  
+                        inten = (int)((inten*colconst(rad))>>ColBits);
+                        *(fptr+View.shift) = Lut[col+inten];
+                      } else *(fptr+View.shift) = Lut[col];
+                    }
+                  } else {
+                    depth = z-dz;
+                    clipt = False;
+                    if (UseSlabPlane && SlabMode == SlabClose && depth < View.slbuf[x+dx]
+                      && z >= View.slbuf[x+dx]) {
+                      depth =  View.slbuf[x+dx]-1;
+                      clipt = True;
+                    }
+                    if (UseDepthPlane && SlabMode == SlabClose && depth > View.dlbuf[x+dx]
+                      && z <= View.dlbuf[x+dx]) {
+                      depth =  View.dlbuf[x+dx]+1;
+                      clipt = True;
+                    }
+                    if ((ZBValid(x+dx,depth))
+                      && ((clipt&&(ddz<*(dptr+View.shift)||
+                      View.slbuf[x+dx]+SliceValue>*(dptr+View.shift)))||
+                      (depth > *(dptr+View.shift))) ) {
+                      *(dptr+View.shift) = clipt?ddz:depth;
+                      fptr = fold+dx;
+                      if (clipt){
+                        *(fptr+View.shift) = Lut[col+SlabInten];
+                      } else {
+                        inten = LightDot(-dx,-dy,dz);
+                        if( inten>0 ) {  
+                          inten = (int)((inten*colconst(rad))>>ColBits);
+                          *(fptr+View.shift) = Lut[col+inten];
+                        } else *(fptr+View.shift) = Lut[col];
+                      }
+                    }
+                  }
+                }
+                dptr++;  dx++;
+            }
+            dold += View.yskip;
+            fold += View.yskip;
+            dy++;
+        }
+        return;
+}
+
 }
 
 void DrawStar( int x, int y, int z, int rad, int col )
@@ -2303,14 +2485,13 @@ if ( inten > 0 ) {                                             \
 if (inten > ColourMask) inten = ColourMask;                    \
 if( OValid(offset1) && XValid(C[xsub]+dx) &&                   \
     YValid(C[ysub]+dy) &&                                      \
-    ZValid(C[zsub]+dz) &&                                      \
-    ZBack(C[zsub]+dz) ){                                       \
+    ZBValid(C[xsub]+dx,C[zsub]+dz)  ){                         \
     SETPIXEL(View.dbuf+offset1,                                \
              View.fbuf+offset1,C[zsub]+dz,Lut[c+inten]);       \
 }                                                              \
 inten = LightDot(-dx+C[xsub]-A[xsub],                          \
                  -dy+C[ysub]-A[ysub],                          \
-                 -dz+C[zsub]-A[zsub]);                         \
+                 -dz+C[zsub]-A[zsub]);                          \
 if ( inten > 0 ) {                                             \
     inten = (int)((inten*colconst(rada))>>ColBits);            \
 } else {                                                       \
@@ -2319,8 +2500,7 @@ if ( inten > 0 ) {                                             \
 if (inten > ColourMask) inten = ColourMask;                    \
 if( OValid(offset2) && XValid(C[xsub]-dx) &&                   \
     YValid(C[ysub]-dy) &&                                      \
-    ZValid(C[zsub]-dz) &&                                      \
-    ZBack(C[zsub]-dz) ){                                       \
+    ZBValid(C[xsub]-dx,C[zsub]-dz) ){                          \
     SETPIXEL(View.dbuf+offset2,                                \
              View.fbuf+offset2,C[zsub]-dz,Lut[c+inten]);       \
 }
@@ -2330,28 +2510,16 @@ if( OValid(offset2) && XValid(C[xsub]-dx) &&                   \
 #endif
 
 #ifdef SMALLER
-#define XCIRCPIXEL CircPixel(dx,dy,dz);
+#define CIRCPIXEL CircPixel(dx,dy,dz);
 void CircPixel( Long dx, Long dy, Long dz) {
     register int inten;
     register Long offset1, offset2;
     YCIRCPIXEL
 }
 #else
-#define XCIRCPIXEL YCIRCPIXEL
+#define CIRCPIXEL YCIRCPIXEL
 #endif
 
-
-#define CIRCPIXEL                                              \
-if (s == 0 ) { if (NDots < ARCSIZE) {                          \
-   (NCircle[NDots]).dx = dx;                                   \
-   (NCircle[NDots]).dy = dy;                                   \
-   (NCircle[NDots]).dz = dz;                                   \
-   (NCircle[NDots]).inten = brushdir;                          \
-    NDots++;                                                   \
-   /* fprintf(stderr,"dx, dy, dz, brushdir, G, F, Gxup, Gyup, {%ld, %ld, %ld}, %d, %ld, %ld, %ld, %ld\n",    \
-   dx, dy, dz, brushdir, G, F, Gxup, Gyup);                */   \
-} else {NR = -1;}   }                                          \
-{XCIRCPIXEL}
 
 #define CIRCDOZ                                                \
 if (AbsFun(F+SBD.U[SBD.s2]) < AbsFun(F) ) {                    \
@@ -2395,14 +2563,12 @@ void DrawCircle( void ) {
 	register Long F, G, FS, s2S, Gxup, Gxdown, Gyup, Gydown;
 	register int inten;
 	int spandex, s, w;
-	int rdir, cdir, ii;
+	int rdir, cdir;
 	Long * ds[3];
 	register Long *ds0, *ds1, *ds2;
 	long Xmin, Ymin, Xmax, Ymax, Xpeak;
 	int updown, ifirst;
 	register int brush, brushdir;
-	double rinc;
-	
 	
 	rdir = (radnext-radprev)==0?0:((radnext-radprev<0)?-1:1);
 	cdir = (Cnext[SBD.s2]-Cprev[SBD.s2])==0?0:((Cnext[SBD.s2]-Cprev[SBD.s2]<0)?-1:1);
@@ -2454,35 +2620,6 @@ void DrawCircle( void ) {
 							  (double)(rad*rad+(C[0]-A[0])*(C[0]-A[0])
 									   +(C[1]-A[1])*(C[1]-A[1])
 									   +(C[2]-A[2])*(C[2]-A[2]))));
-	     /*
-		 if (OR > 0 && rad <= OR && 2*rad> OR) {
-			double rat = ((double)rad)/((double)OR);
-			for (ii=0; ii<ODots; ii++) {
-				dx = rint(rat*(OCircle[ii]).dx);
-				dy = rint(rat*(OCircle[ii]).dy);
-				dz = rint(rat*(OCircle[ii]).dz);
-				brushdir = OCircle[ii].inten;
-				F = dx*SBD.U[0] + dy*SBD.U[1] + dz*SBD.U[2];
-				{XCIRCPIXEL}
-				for (s = 1; s < brush; s++) {	
-					switch (brushdir) 
-					{
-						case 0:  (*ds0)++; F += SBD.U[SBD.s0]; break;
-						case 1:  (*ds0)++; F += SBD.U[SBD.s0]; {CIRCDOZ} {XCIRCPIXEL}; 
-						case 2:  (*ds1)--; F -= SBD.U[SBD.s1]; break;
-						case 3:  (*ds0)--; F -= SBD.U[SBD.s0]; {CIRCDOZ} {XCIRCPIXEL}; 
-								 (*ds1)--; F -= SBD.U[SBD.s1]; break;
-						case 4:  (*ds0)--; F -= SBD.U[SBD.s0]; break;
-					}
-					{CIRCDOZ} {XCIRCPIXEL}
-				}
-			}
-			continue;
-		}
-		*/
-		NDots = 0;
-		NR = rad;
-		
 		Xmin = - (Xmax =
 				  (Long)(rint((double)(rad))*(sqrt((double)(SBD.Us1Us1_Us2Us2)))/
 						 sqrt((double)(SBD.Us0Us0_Us1Us1_Us2Us2))));
@@ -2634,13 +2771,6 @@ void DrawCircle( void ) {
 			*ds2 = s2S;
 			
 		}
-		if ( NR > 0 ) {
-			TCircle = OCircle;
-			OCircle = NCircle;
-			NCircle = TCircle;
-			OR = rad;
-			ODots = NDots;
-		}
         continue;
 		} while (w < spandex);
 }
@@ -2668,9 +2798,6 @@ void DrawTorus( int x1, int y1, int z1,
     c = c1;
 
     rad = -1;
-    OR = NR = -1;
-    OCircle = ArcAc;
-    NCircle = ArcDn;
 	smax = SBD.t1;
     
     for (u = SBD.t1; u <= SBD.sxyz-SBD.t2+2*sstep; u+=sstep ) {
@@ -2725,7 +2852,7 @@ void DrawTorus( int x1, int y1, int z1,
                 (Cnext[1]-A[1])*(Cnext[1]-A[1])+
                 (Cnext[2]-A[2])*(Cnext[2]-A[2]))));
           if (TestSphere(A[0],A[1],A[2],rada)) {
-              if ( (ClipStatus&BitFront) ) {
+              if ( (ClipStatus&BitFront) && SlabMode == SlabClose) {
                   ClipSphere(A[0],A[1],A[2],rada,c);
                   rad = -1;
               } else {
@@ -2753,7 +2880,17 @@ static int TestSurfaceBond( int x1, int y1, int z1,
                               int x2, int y2, int z2,
                               int xrad1, int xrad2, int radp )
 {
+    int x1p, x2p;
     ClipStatus = False;
+    
+    x1p = x1;
+    if (x1 < 0) x1p = 0;
+    if (x1 >= View.xmax) x1p = View.xmax-1;
+
+    x2p = x2;
+    if (x1 < 0) x2p = 0;
+    if (x1 >= View.xmax) x2p = View.xmax-1;
+
 
     if ( x1+xrad1 < 0 && x2+xrad2 < 0 ) return False;
     if ( x1-xrad1 >= View.xmax && x2-xrad2 >= View.xmax ) return False;
@@ -2762,11 +2899,11 @@ static int TestSurfaceBond( int x1, int y1, int z1,
     if ( y1-xrad1 >= View.ymax && y2-xrad2 >= View.ymax ) return False;
 
     if ( UseSlabPlane ) {
-        if ( z1-xrad1 >= SlabValue && z2-xrad1 >= SlabValue ) return False;
+        if ( z1-xrad1 >= View.slbuf[x1p]  && z2-xrad1 >= View.slbuf[x2p] ) return False;
     }
 
     if ( UseDepthPlane ) {
-        if ( z1+xrad1 <= DepthValue && z2+xrad2 <= DepthValue ) return False;
+        if ( z1+xrad1 <= View.dlbuf[x1p] && z2+xrad2 <= View.dlbuf[x2p] ) return False;
     }
 
     if ( x1-xrad1 < 0 || x2-xrad2 < 0 ||
@@ -2774,10 +2911,10 @@ static int TestSurfaceBond( int x1, int y1, int z1,
          y1-xrad1 < 0 || y2-xrad2 < 0 ||
          y1+xrad1 >= View.ymax || y2+xrad2 >= View.ymax ) ClipStatus = True;
     if ( UseSlabPlane ) {
-        if ( z1+xrad1 > SlabValue || z2+xrad2 > SlabValue) ClipStatus = True;
+        if ( z1+xrad1 > View.slbuf[x1p] || z2+xrad2 > View.slbuf[x2p]) ClipStatus = True;
     }
     if ( UseDepthPlane ) {
-        if ( z1-xrad1 < DepthValue || z2-xrad2 > DepthValue) ClipStatus = True;
+        if ( z1-xrad1 < View.dlbuf[x1p] || z2-xrad2 < View.dlbuf[x2p]) ClipStatus = True;
     }
     return True;
 }
@@ -2788,7 +2925,6 @@ void ClipSurfaceBond( int x1, int y1, int z1,
                               int xrad1, int xrad2, int radp, char altl )
 {
     if (!TestSurfaceBond(x1,y1,z1,x2,y2,z2,xrad1,xrad2,radp) ) return;
-    /* DrawEllipses( x1,y1,z1, x2,y2,z2,  c1,c2, xrad1,xrad2,radp, altl ); */
     DrawTorus( x1,y1,z1, x2,y2,z2,  c1,c2, xrad1,xrad2,radp, altl );
 
 }
@@ -3063,8 +3199,24 @@ static int TestCylinder( int x1, int y1, int z1,
 {
     register int tmp1, tmp2;
 
+    int x1p, x2p;
+    double theta, zrat;
+    
+    zrat = 1.;
+    if (UseStereo) {
+    	theta = -PI*StereoAngle/360.;
+        zrat = 1./cos(theta);
+    }
+    x1p = x1;
+    if (x1 < 0) x1p = 0;
+    if (x1 >= View.xmax) x1p = View.xmax-1;
+
+    x2p = x2;
+    if (x1 < 0) x2p = 0;
+    if (x1 >= View.xmax) x2p = View.xmax-1;
+
     if( UseSlabPlane )
-        if( (z1+rad>SlabValue) || (z2+rad>SlabValue) )
+        if( (z1+(int)rint(zrat*(double)rad)>=View.slbuf[x1p]) || (z2+(int)rint(zrat*(double)rad)>+View.slbuf[x2p]) )
             return(False);
 
     ClipStatus = False;

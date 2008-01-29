@@ -1,10 +1,9 @@
-
 /***************************************************************************
- *                               RasMol 2.7.3                              *
+ *                               RasMol 2.7.4                              *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                             6 February 2005                             *
+ *                            19 November 2007                             *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -21,33 +20,44 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2001               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
  *                   RasMol 2.7.2.1.1 Jan 04                               *
  *                   RasMol 2.7.3   Feb 05                                 *
+ *                   RasMol 2.7.3.1 Apr 06                                 *
+ *                   RasMol 2.7.4   Nov 07                                 *
  *                                                                         *
- *with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky Chachra,*
- *and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by         *
- *grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National    *
- *Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department  *
- *of Energy.                                                               *
+ * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
+ * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
+ * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
+ * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
+ * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
+ * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
+ * Institute of General Medical Sciences (NIGMS). The content is solely    *
+ * the responsibility of the authors and does not necessarily represent    * 
+ * the official views of the funding organizations.                        *
  *                                                                         *
  *                    and Incorporating Translations by                    *
- *  Author                               Item                      Language*
+ *  Author                               Item                     Language *
  *  Isabel Servan Martinez,                                                *
- *  Jose Miguel Fernandez Fernandez      2.6   Manual              Spanish *
- *  Jose Miguel Fernandez Fernandez      2.7.1 Manual              Spanish *
- *  Fernando Gabriel Ranea               2.7.1 menus and messages  Spanish *
- *  Jean-Pierre Demailly                 2.7.1 menus and messages  French  *
+ *  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  *
+ *  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  *
+ *  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  *
+ *  Jean-Pierre Demailly                 2.7.1 menus and messages French   *
  *  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          *
- *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian *
+ *  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  *
+ *  G. Pozhvanov                         2.7.3 menus and messages Russian  *
+ *  G. Todorov                           2.7.3 menus and messages Bulgarian*
+ *  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  *
+ *  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese *
  *                                                                         *
  *                             This Release by                             *
- * Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA *
+ * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2005               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2007               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
@@ -55,6 +65,78 @@
  ***************************************************************************/
 /* molecule.c
  $Log: not supported by cvs2svn $
+ Revision 1.15  2008/01/29 04:12:11  yaya
+ Post release cleanup of problems discovered. -- HJB
+
+ Revision 1.14  2008/01/16 21:35:11  yaya
+ Change default resolution from .5 Angstrom to 1 Angstrom
+ Correct map xlow, xhigh calculations
+ Correct map axis output -- HJB
+
+ Revision 1.13  2007/11/25 17:12:18  yaya
+ Refresh colours on map load.  Put default spread back to 1/6 -- HJB
+
+ Revision 1.12  2007/11/25 04:11:58  yaya
+ Updates to map mask logic and inverse transforms -- HJB
+
+ Revision 1.11  2007/11/19 03:28:39  yaya
+ Update to credits for 2.7.4 in manual and headers
+ Mask code added -- HJB
+
+ Revision 1.10  2007/11/16 22:48:30  yaya
+ Remove use of MapNumber if favor of size of vector
+ Clean up selection logic; start on script writing code -- HJB
+
+ Revision 1.9  2007/10/23 02:27:55  yaya
+ Preliminary mods for revised PDB format derived from Rutgers mods.
+ Partial changes for map tangles -- HJB
+
+ Revision 1.8  2007/10/22 00:46:53  yaya
+ Add start of code for normal to map needed for solid surface.
+ Make new title revisions contingent on Interactive flag.
+ --HJB
+
+ Revision 1.7  2007/10/03 16:56:34  kamburop
+ (in molecule.c) "RasMol - " string added to the title of the window
+ (in multiple.c) Window title is updated when different molecule is selected
+
+ Revision 1.6  2007/09/13 19:23:22  yaya
+ RasMol 2.7.4 PreRelease 1 -- HJB
+
+ Revision 1.5  2007/09/03 14:25:10  yaya
+ Upload of more of the map load and map generate commands -- HJB
+
+ Revision 1.4  2007/08/03 02:02:34  yaya
+ Add MEAN to map level command, and move the various map settings
+ under the map command, and set the defaults to make a nice map
+ on a default generate (spread .1667, level mean, spacing .5) -- HJB
+
+ Revision 1.3  2007/07/09 13:57:06  yaya
+ Add spacing and spread commands -- HJB
+
+ Revision 1.2  2007/07/07 21:54:31  yaya
+ Next round of preliminary updates for maps, allowing multiple maps,
+ code to set the contour level and some fixes to the languages files -- HJB
+
+ Revision 1.1.1.1  2007/03/01 01:16:33  todorovg
+ Chinese working versio from rasmol_ru initial import
+
+ Revision 1.3  2006/11/01 03:23:50  yaya
+ Update NSIS windows installer for more script types and to fix
+ misplaced script instructions for data files; add document and
+ script icons directly in raswin.exe; add credit line to
+ G. A. Pozhvanov in comments for Russian translations. -- HJB
+
+ Revision 1.2  2006/09/17 10:53:55  yaya
+ Clean up headers and start on code for X11 -- HJB
+
+ Revision 1.1.1.1  2006/09/16 18:45:50  yaya
+ Start of RasMol Russian Translation Project based on translations
+ by Gregory A. Pozhvanov of Saint Petersburg State University -- HJB
+
+ Revision 1.1.1.1  2006/06/19 22:05:14  todorovg
+ Initial Rasmol 2.7.3 Import
+
  Revision 1.1  2004/05/07 19:46:16  yaya
  Initial revision
 
@@ -120,6 +202,7 @@
 #include "langsel.h"
 #include "repres.h"
 #include "graphics.h"
+#include "maps.h"
 
 #define HBondPool   32
 #define BondPool    32
@@ -212,14 +295,16 @@ void ReviseTitle( void )
     buffer[58] = 0;
     buffer[59] = 0;
     
+    strncpy(buffer,"RasMol - ", 9);
+    buffer[9]=0;
+    
     if( *Info.identcode ) {
-      strncpy(buffer,Info.identcode, 10);
-      buffer[10] = 0;
+      strncat(buffer,Info.identcode, 10);
       strncat(buffer," ",1);
     }
 
     if( *Info.technique ) {
-      strncat(buffer,Info.technique, 58-strlen(Info.identcode));
+      strncat(buffer,Info.technique, 49-strlen(Info.identcode));
     }
 
     SetCanvasTitle( buffer );
@@ -464,6 +549,14 @@ int FindResNo( char *ptr )
                    } else if( ch2 == 'Y' )
                    {   if( ch3 == 'G' )
                            return( 39 );
+                   } else if( ch2 == 'D') 
+                   {   switch( ch3 )
+                       {   case('A'):  return( 54 );
+                           case('C'):  return( 55 );
+                           case('G'):  return( 56 );
+                           case('T'):  return( 57 );
+                           case('I'):  return( 58 );
+                       } 
                    }
                    break;
 
@@ -826,11 +919,14 @@ RAtom __far *CreateAtom( void )
 }
 
 
-void ProcessAtom( RAtom __far *ptr )
+void ProcessAtomType( RAtom __far *ptr, char etype[2] )
 {
     int altc;
 
-    ptr->elemno = GetElemNumber(CurGroup,ptr);
+    if ((etype[0]==' '&&etype[1]==' ')|| isdigit(etype[0]) || isdigit(etype[1]))
+      ptr->elemno = GetElemNumber(CurGroup,ptr);
+    else
+      ptr->elemno = GetElemDescNumber(etype);
     if( ptr->elemno == 1 )
     {   ptr->flag |= HydrogenFlag;
         HasHydrogen = True;
@@ -896,6 +992,11 @@ void ProcessAtom( RAtom __far *ptr )
         altc = (((int)ptr->altl)&(AltlDepth-1))+1;
         if (MaxAltl < altc) MaxAltl = altc;
     }
+}
+
+void ProcessAtom ( RAtom __far *ptr ) {
+  ProcessAtomType( ptr, "  ");
+  return;
 }
 
 
@@ -1482,7 +1583,7 @@ void CreateNewBond (Long src, Long dst )
 			   0 if the atoms can be touched by the
 			     probe, but do not overlap
 			   1 if the atoms overlap (centers
-				 within the average of the radii)
+				 within half the average of the radii)
  */
 
 
@@ -1505,7 +1606,7 @@ static int PreTestSurface(  RAtom __far *sptr,  RAtom __far *dptr,
     
     /* Sum of van der Waals radii */
 	dist = srad + drad;
-	maxT = dist*dist/4;
+	maxT = dist*dist/16;
     dist += ProbeRadius+ProbeRadius;
     maxS = dist*dist;  
     
@@ -2023,7 +2124,7 @@ void CreateSurfaceBonds( void )
 									abort = 0;
 									switch (PreTestSurface(aptr,dptr,C,&crad,Un)) {
 										
-										case 0: 
+										case 0:
 											/* Look for atoms centers within ProbeRadius+AbsMaxAtomRad of C
 											i.e. 3 Angstroms plus the ProbeRadius of C */ 
 											mxm = C[0] - MinX; 
@@ -3020,6 +3121,15 @@ static void ResetDatabase( void )
     MaskCount = 0;
     NMRModel = 0;
     NullBonds = 0;
+    
+    MapLevel = 0.;
+    MapFlag = MapMeanFlag;
+    MapSpacing = 250L;
+    MapSpread = .6667;
+    MapRGBCol[0] = 0xFA;
+    MapRGBCol[1] = 0xFF;
+    MapRGBCol[2] = 0xFA;
+
 
     for ( i=0; i<3; i++ ) {
       Info.vecf2o[i] = Info.veco2f[i] = Info.cell[i] = 0.;
@@ -3119,6 +3229,14 @@ void InitialiseDatabase( void )
     FreeBond = (void __far*)0;
     Info.cisbondcount = -1; /* to ititialize it has to be < 0 */   
     CisBondCutOff = CIS;
+    MapLevel = 0.;
+    MapFlag = MapMeanFlag;
+    MapSpacing = 250L;
+    MapSpread = .6667;
+    MapRGBCol[0] = 0xFA;
+    MapRGBCol[1] = 0xFF;
+    MapRGBCol[2] = 0xFA;
+
 
 #ifdef APPLEMAC
     AllocList = (void*)0;
