@@ -72,9 +72,6 @@
  Revision 1.3  2007/11/25 04:11:58  yaya
  Updates to map mask logic and inverse transforms -- HJB
 
- Revision 1.2  2007/11/25 17:57:50  yaya-hjb
- Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
-
  Revision 1.2  2007/10/23 02:27:55  yaya
  Preliminary mods for revised PDB format derived from Rutgers mods.
  Partial changes for map tangles -- HJB

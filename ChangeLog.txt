@@ -1,16 +1,16 @@
-  ChangeLog
+                                   ChangeLog
                                  RasMol 2.7.4.1
 
-      Molecular Graphics Visualisation Tool
+                     Molecular Graphics Visualisation Tool
                     19 November 2007 (rev. 19 January 2008)
 
-Based on RasMol 2.6 by Roger Sayle
+                       Based on RasMol 2.6 by Roger Sayle
 Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                                Hertfordshire, UK
-Version 2.6, August 1995, Version 2.6.4, December 1998
+             Version 2.6, August 1995, Version 2.6.4, December 1998
                       Copyright (c) Roger Sayle 1992-1999
 
-and Based on Mods by
+                              and Based on Mods by
 
 +------------------------------------------------------------------------------+
 | Author            | Version, Date        | Copyright                         |
@@ -47,19 +47,19 @@ and Based on Mods by
 |                   | 08                   |                                   |
 +------------------------------------------------------------------------------+
 
-This Release by
-Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Lane, Bellport, NY, USA
+                                This Release by
+   Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Lane, Bellport, NY, USA
                           yaya@bernstein-plus-sons.com
                   Copyright (c) Herbert J. Bernstein 1998-2008
 
      ----------------------------------------------------------------------
 
         THIS IS A PRELIMINARY RELEASE INVOLVING EXTENSIVE MODIFICATIONS
-        ***** USE WITH CAUTION ******
+                         ***** USE WITH CAUTION ******
 
      ----------------------------------------------------------------------
 
-    IMPORTANT
+                                   IMPORTANT
 
    This version is based directly on RasMol 2.7.3.1, RasMol 2.7.3, RasMol
    2.7.2.1.1 and on RasMol 2.7.2, on RasMol 2.7.1.1, on RasTop 1.3, on RasMol
@@ -359,53 +359,53 @@ Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Lane, Bellport, NY, USA
 
 
 
-      Changes to RasMol 2.7.2.1.1 to create RasMol 2.7.3:
+  Changes to RasMol 2.7.2.1.1 to create RasMol 2.7.3:
 
 
  [06/02/2005]    HJB
-		Release 2.7.3 created
+                 Release 2.7.3 created
 
  [21/01/2005]    HJB molecule.c
-		Correct XYZ input by capping atom types.  Thanks to
-		Stuart Prescott.
+                 Correct XYZ input by capping atom types.  Thanks to
+                 Stuart Prescott.
 
  [16/01/2005]    HJB applemac.c, cmndline.c, command.c, command.h,
-		infile.c, langsel.c, langsel.h, langsel_mac.c,
-		molecule.c, molecule.h, mswin31.c, multiple.c,
-		pixutils.c, pixutils.h, rasmac.c, rasmol.c, 
-		rastxt.c, raswin.c, render.c, render.h, repres.c,
-		repres.h, tokens.c, tokens.h, transfor.h, x11win.c
-		Base level of changes for Lee-Richards molecular
-		surfaces. 
+                 infile.c, langsel.c, langsel.h, langsel_mac.c,
+                 molecule.c, molecule.h, mswin31.c, multiple.c,
+                 pixutils.c, pixutils.h, rasmac.c, rasmol.c,
+                 rastxt.c, raswin.c, render.c, render.h, repres.c,
+                 repres.h, tokens.c, tokens.h, transfor.h, x11win.c
+                 Base level of changes for Lee-Richards molecular
+                 surfaces.
 
  [12/01/2005]    Clarice Chigbo repres.c, render.c, repres.h
-		Correction to negative torsion angle monitors and to imprecise 
-		distance and angle monitors; limits the available range for 
-		distance monitors to approximately 327 Angstroms.  
+                 Correction to negative torsion angle monitors and to imprecise
+                 distance and angle monitors; limits the available range for
+                 distance monitors to approximately 327 Angstroms. 
 
  [17/01/2005]    Clarice Chigbo script.c
-		Output CPKNEW in scripts
+                 Output CPKNEW in scripts
 
  [04/01/2005]    Ricky Chachra command.c
-		Fix to wireframe 0, ribbon 0, cartoon 0, backbone 0, 
-		strands 0 and trace 0 commands to work the same as these 
-		command with off instead of 0
+                 Fix to wireframe 0, ribbon 0, cartoon 0, backbone 0,
+                 strands 0 and trace 0 commands to work the same as these
+                 command with off instead of 0
 
  [30/10/2004]    Mamoru Yamanishi Imakefile, rasmol.c
-		Used xforms to provide GUI for file open under X-windows 
+                 Used xforms to provide GUI for file open under X-windows
 
  [21/10/2004]    Clarice Chigbo tokens.c, tokens.h
-		Define CPKNEW token
+                 Define CPKNEW token
 
  [20/10/2004]    Clarice Chigbo transfor.c, transfor.h
-		New CPK color table
+                 New CPK color table
 
  [26/04/2004]    HJB cif.c
-		correction to handling of blank immediately following
-		initial quote mark.
+                 correction to handling of blank immediately following
+                 initial quote mark.
 
  [26/04/2004]    HJB vector.c
-		correction to SubtractAtoms for bond rotation.
+                 correction to SubtractAtoms for bond rotation.
 
 
   Changes from RasMol 2.7.1 (the final reference release of RasMol 2.7.2) to
@@ -443,710 +443,710 @@ Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Lane, Bellport, NY, USA
        output modes.
      * Fixes for some of the problems reported since the last release.
 
-      Post-release changes to RasMol 2.7.2.1.1:
+  Post-release changes to RasMol 2.7.2.1.1:
 
 
  [07/05/04]      HJB mswin31.c
-		restored lost fix for intialization of ZRange and
-		DialValue[8..9] and rebuilt raswin.exe.  Thanks to
-		Julien Hering.
+                 restored lost fix for intialization of ZRange and
+                 DialValue[8..9] and rebuilt raswin.exe.  Thanks to
+                 Julien Hering.
 
  [14/02/04]      HJB pixutils.c
-		remove static from declaration of ClipVector.
+                 remove static from declaration of ClipVector.
 
  [14/02/14]      HJB cif_stx.c
-		remove trailing characters from #endif.
+                 remove trailing characters from #endif.
 
  [03/02/04]      HJB Makefile.in
-		Change transfer to transfor in 2 dependencies.  Thanks
-                to R. Harlow.
+                 Change transfer to transfor in 2 dependencies.  Thanks
+                         to R. Harlow.
 
-      Changes to RasMol 2.7.2.1 to create RasMol 2.7.2.1.1:
+  Changes to RasMol 2.7.2.1 to create RasMol 2.7.2.1.1:
 
 
  [26/01/04]      HJB abstree.c
-		Fix warning on sprintf calls with unused args, match long
-		variables with %ld format descriptors.
+                 Fix warning on sprintf calls with unused args, match long
+                 variables with %ld format descriptors.
 
  [26/01/04]      HJB cif.c
-		Add brackets to avoid compiler warnings on dangling elses.
-		Fix cif_lex to parse 'O''' correctly.  Change from
-		WORD to CIFWORD to avoid conflict with windows.h.
+                 Add brackets to avoid compiler warnings on dangling elses.
+                 Fix cif_lex to parse 'O''' correctly.  Change from
+                 WORD to CIFWORD to avoid conflict with windows.h.
 
  [26/01/04]      HJB cif.h
-		Change from WORD to CIFWORD to avoid conflict with windows.h.
-		Add prototype for cif_free_handle.
+                 Change from WORD to CIFWORD to avoid conflict with windows.h.
+                 Add prototype for cif_free_handle.
 
  [26/01/04]      HJB cif.stx.tab.c
-		Change from WORD to CIFWORD to avoid conflict with windows.h.
+                 Change from WORD to CIFWORD to avoid conflict with windows.h.
 
  [26/01/04]      HJB cif_ctonum.c
-		Remove unused variable dndec
+                 Remove unused variable dndec
 
  [26/01/04]      HJB cif_fract.c
-		Remove unused variable kk
+                 Remove unused variable kk
 
  [26/01/04]      HJB cif_stx.c
-		Change from WORD to CIFWORD to avoid conflict with windows.h.
-		Add include of rasmol.h.
+                 Change from WORD to CIFWORD to avoid conflict with windows.h.
+                 Add include of rasmol.h.
 
  [26/01/04]      HJB command.c
-		Initialize variables to avoid compiler warnings.  Use %ld
-		format for long variables.  Fix RotMode == RotBond which
-		should have been an assignment.  Add parens on logical
-		expressions.
+                 Initialize variables to avoid compiler warnings.  Use %ld
+                 format for long variables.  Fix RotMode == RotBond which
+                 should have been an assignment.  Add parens on logical
+                 expressions.
 
  [26/01/04]      HJB command.h
-		Add prototypes for ResumePauseCommand, InterruptPauseCommand.
+                 Add prototypes for ResumePauseCommand, InterruptPauseCommand.
 
  [26/01/04]      HJB graphics.h
-		Add include of windows.h
+                 Add include of windows.h
 
  [26/01/04]      HJB infile.c
-		Removed unused ReadValue2.  Add brackets to avoid compiler
-		warnings on dangling elses.  Initialize variables to avoid
-		compiler warnings.
+                 Removed unused ReadValue2.  Add brackets to avoid compiler
+                 warnings on dangling elses.  Initialize variables to avoid
+                 compiler warnings.
 
  [26/01/04]      HJB langsel.c langsel_mac.c
-		Add include of string.h
+                 Add include of string.h
 
  [26/01/04]      HJB molecule.c
-		Add include of graphics.h.  Change to %ld format for longs.
-		Remove unused variables.  Add brackets to avoid compiler warnings
-		on dangling elses.
+                 Add include of graphics.h.  Change to %ld format for longs.
+                 Remove unused variables.  Add brackets to avoid compiler warnings
+                 on dangling elses.
 
  [26/01/04]      HJB molecule.h
-		Add prototype of TestDisulphideBridge.
+                 Add prototype of TestDisulphideBridge.
 
  [26/01/04]      HJB multiple.c
-		Fix reversed comment terminator.  Add include of string.h.  Add
-		brackets to initializer to match structure.
+                 Fix reversed comment terminator.  Add include of string.h.  Add
+                 brackets to initializer to match structure.
 
  [26/01/04]      HJB multiple.h
-		Add prototype of ReRadius.
+                 Add prototype of ReRadius.
 
  [26/01/04]      HJB outfile.c
-		Initialize variables to avoid compiler warnings.  Change to %ld
-		for long.
+                 Initialize variables to avoid compiler warnings.  Change to %ld
+                 for long.
 
  [26/01/04]      HJB pixutils.c
-		Initialize variables to avoid compiler warnings.  Removed unused
-		variables.
+                 Initialize variables to avoid compiler warnings.  Removed unused
+                 variables.
 
  [26/01/04]      HJB pixutils.h
-		Add prototypes of DrawTwinLine, ClipLine, ClipTwinLine,
-		ClipDashLine, DrawTwinVector, ClipVector, ClipTwinVector, 
-		ClipDashVector.
+                 Add prototypes of DrawTwinLine, ClipLine, ClipTwinLine,
+                 ClipDashLine, DrawTwinVector, ClipVector, ClipTwinVector,
+                 ClipDashVector.
 
  [26/01/04]      HJB rasmol.c
-		Add parens to avoid compiler warning.
+                 Add parens to avoid compiler warning.
 
  [26/01/04]      HJB rasmol.h
-		Set version and date.  Add include of stdlib.h for malloc.
+                 Set version and date.  Add include of stdlib.h for malloc.
 
  [26/01/04]      HJB render.c
-		Change the handling of very long longs to avoid a compiler
-		warning.  Use %ld format for longs.
+                 Change the handling of very long longs to avoid a compiler
+                 warning.  Use %ld format for longs.
 
  [26/01/04]      HJB repres.c
-		Remove unused variables.  Use %ld format for longs.  Initialize
-		variables to avoid compiler warnings.
+                 Remove unused variables.  Use %ld format for longs.  Initialize
+                 variables to avoid compiler warnings.
 
  [26/01/04]      HJB repres.h
-		Add prototype of LoadDotsFile.
+                 Add prototype of LoadDotsFile.
 
  [26/01/04]      HJB script.c
-		Add include of string.h.  Use %ld format for longs.  Initialize
-		variables to avoid compiler warnings.  Remove unused variables.
-		Fix sign of trailing bits on VRML z coordinates.
+                 Add include of string.h.  Use %ld format for longs.  Initialize
+                 variables to avoid compiler warnings.  Remove unused variables.
+                 Fix sign of trailing bits on VRML z coordinates.
 
  [26/01/04]      HJB script.h
-		Add prototype of WritePOVRay3File.
+                 Add prototype of WritePOVRay3File.
 
  [26/01/04]      HJB tokens.h
-		Add parens in definition of IsImageToken.
+                 Add parens in definition of IsImageToken.
 
  [26/01/04]      HJB transfor.c
-		Add parens for logical expression.  Remove unused variables.
-		Initialize variables to avoid compiler warnings.
+                 Add parens for logical expression.  Remove unused variables.
+                 Initialize variables to avoid compiler warnings.
 
  [26/01/04]      HJB transfor.h
-		Add prototype of DefineShade, RMat2RV, RV2RMat.
+                 Add prototype of DefineShade, RMat2RV, RV2RMat.
 
  [26/01/04]      HJB wbrotate.c
-		Add include of cmndline.h.  Remove unused variables.  Initialize
-		variables to avoid compiler warnings.  Use %ld format for longs.
-		Add value for a returns that need them.
+                 Add include of cmndline.h.  Remove unused variables.  Initialize
+                 variables to avoid compiler warnings.  Use %ld format for longs.
+                 Add value for a returns that need them.
  
  [26/01/04]      HJB x11win.c
-		Initialize variables to avoid compiler warnings.  Add brackets to
-		avoid compiler warnings on dangling elses.
+                 Initialize variables to avoid compiler warnings.  Add brackets to
+                 avoid compiler warnings on dangling elses.
 
  [14/04/02]      HJB Imakefile
-		Update to allow scripts to make multiple pixel depths by
-		setting PIXELDEPTH to 8, 16 or 32 externally.  Add default
-		flags for various HP architectures.
+                 Update to allow scripts to make multiple pixel depths by
+                 setting PIXELDEPTH to 8, 16 or 32 externally.  Add default
+                 flags for various HP architectures.
 
  [13/04/02]      HJB cif.c
-		Reduce warnings by casting uses of size_t.
+                 Reduce warnings by casting uses of size_t.
 
  [13/04/02]      HJB cif_ctonum.c
-		Reduce warnings by casting to int for pointers indptr-test.
+                 Reduce warnings by casting to int for pointers indptr-test.
 
  [13/04/02]      HJB command.c
-		Reduce warnings by explicit use of long (rather than Long)
-		for fpos, and casting to size_t for comparisons, etc.
+                 Reduce warnings by explicit use of long (rather than Long)
+                 for fpos, and casting to size_t for comparisons, etc.
 
  [13/04/02]      HJB infile.c
-		In ProcessPDBBond, match types of srcatm and dstatom by
-		changing from int to Long, casting to size_t for
-		comparisons, etc.
+                 In ProcessPDBBond, match types of srcatm and dstatom by
+                 changing from int to Long, casting to size_t for
+                 comparisons, etc.
 
  [13/04/02]      HJB molecule.c
-		Change MemSize from int to size_t.
+                 Change MemSize from int to size_t.
 
  [13/04/02]      HJB rasmol.c
-		Change AdviseLen from int to size_t, change socket to xsocket,
-		change __hpux to HPUX_LEGACY
+                 Change AdviseLen from int to size_t, change socket to xsocket,
+                 change __hpux to HPUX_LEGACY
 
  [13/04/02]      HJB rasmol.h
-		Add HPUX_LEGACY for old style hpux select.
+                 Add HPUX_LEGACY for old style hpux select.
 
  [13/04/02]      HJB render.c
-		Make test of sizeof(Long) > 4 conditional on not defining
-		_LONGLONG.  Make some changes from Long to long, etc.
+                 Make test of sizeof(Long) > 4 conditional on not defining
+                 _LONGLONG.  Make some changes from Long to long, etc.
 
  [13/04/02]      HJB x11win.c
-		Cast some pointer diffs to int, change some Long to long,
-		etc.
+                 Cast some pointer diffs to int, change some Long to long,
+                 etc.
 
  [29/06/01]      HJB command.c
-		Correct logic for inline load of a new molecule from
-		data file treated as a script.
+                 Correct logic for inline load of a new molecule from
+                 data file treated as a script.
 
  [21/04/01]      HJB all
-		Fix credit for initial Spanish translation.  Thanks to
-		E. Martz. 
+                 Fix credit for initial Spanish translation.  Thanks to
+                 E. Martz.
 
  [19/04/01]      HJB command.c
-		Post release fix to handling of load inline in 
-		windows version due to problem with STRICT logic.
+                 Post release fix to handling of load inline in
+                 windows version due to problem with STRICT logic.
                  Thanks to Jan Reichert <jr@imb-jena.de> for pointing
-		out the problem.
+                 out the problem.
 
  [18/04/01]      HJB command.c
-		Post release fix to handling of load inline in UCB
-		multiple molecule environment.  Thanks to Jan 
+                 Post release fix to handling of load inline in UCB
+                 multiple molecule environment.  Thanks to Jan
                  Reichert <jr@imb-jena.de> for pointing out the
-		problem.
+                 problem.
 
-      Changes from RasMol 2.7.1.1 and 2.7.2 to create RasMol 2.7.2.1:
+  Changes from RasMol 2.7.1.1 and 2.7.2 to create RasMol 2.7.2.1:
 
  [14/04/01]      HJB script.c
-		Correct error in writing scripts with partial use of spacefill.
+                 Correct error in writing scripts with partial use of spacefill.
                  Thanks to Steven Vik <svik@mail.smu.edu> for reporting the
-		problem.
+                 problem.
 
  [14/04/01]      HJB rasmol.doc, itasmol2721.hlp, esrasmol.html
-		Updated manuals for 2.7.2.1.
-		
+                 Updated manuals for 2.7.2.1.
+                
  [02/04/01]      HJB     abstree.c, abstree.h
-		Increase space for atom names from 4 to 12 characters.
+                 Increase space for atom names from 4 to 12 characters.
 
  [02/04/01]      HJB     applemac.c
-		Add symbolic ZRange, add 2 dials. See [12/01/01] changes for langsel.
+                 Add symbolic ZRange, add 2 dials. See [12/01/01] changes for langsel.
 
  [02/04/01]      HJB     cmndline.c, cmndline.h
-		Reworked all exits on mouse motion processing to leave values
-		in DialValues or WRot..., etc depending on RotMode.  Made HeldButton
-		a global for future reference.
+                 Reworked all exits on mouse motion processing to leave values
+                 in DialValues or WRot..., etc depending on RotMode.  Made HeldButton
+                 a global for future reference.
 
  [02/04/01]      HJB     command.c, rasmol.c, rasmac.c, raswin.c
-		Change stereo command to cycle cross-wall-none.
+                 Change stereo command to cycle cross-wall-none.
 
  [02/04/01]      HJB     command.c, script.c, transfor.c
-		Rework output of rotation information.
+                 Rework output of rotation information.
 
  [02/04/01]      HJB     infile.c
-		Increase limit on atom names for CIF from 4 to 12 characters.
+                 Increase limit on atom names for CIF from 4 to 12 characters.
 
  [02/04/01]      HJB     langsel.c langsel_mac.c
-		Add French (thanks to Jean-Pierre Demailly 
+                 Add French (thanks to Jean-Pierre Demailly
                  <Jean-Pierre.Demailly@ujf-grenoble.fr>) and Italian (Giuseppe Martini
                  <martini@iigb.na.cnr.it> and Giovanni Paolella <paolella@dbbm.unina.it>
-		with contributions by: A. Davassi, M. Masullo, C. Liotto, G. Paolella,
-		G. Martini.  Adapt to 2.7.2 menu structure.
+                 with contributions by: A. Davassi, M. Masullo, C. Liotto, G. Paolella,
+                 G. Martini.  Adapt to 2.7.2 menu structure.
 
  [02/04/01]      HJB     mswin31.c
-		Removed "Printing Completed" message.
+                 Removed "Printing Completed" message.
 
  [02/04/01]      HJB     multiple.c
-		Save DotPtr to fix misplaced dots in multiple molecules.  Save
-		LastTX, LastTY, LastTZ, LocalRadius, ShiftS, XlateCen.  Make
-		"Insufficient memory" message be language dependent
-		MsgStrs[StrMalloc]
+                 Save DotPtr to fix misplaced dots in multiple molecules.  Save
+                 LastTX, LastTY, LastTZ, LocalRadius, ShiftS, XlateCen.  Make
+                 "Insufficient memory" message be language dependent
+                 MsgStrs[StrMalloc]
 
  [02/04/01]      HJB     outfile.c, pixutils.c, repres.c
-		Rework backclipping separating ZOffset from new DepthValue,
-		define BitBack
+                 Rework backclipping separating ZOffset from new DepthValue,
+                 define BitBack
 
  [02/04/01]      HJB     tokens.c
-		Added the following tokens relative to 2.7.2, includes tokens
-		added for 2.7.1.1:
-		
-		ASSE                 AxesTok
-		ASSI                 AxesTok
-		CADENA               ChainTok
-		CADENAS              ChainTok
-		CATENA               ChainTok
-		CATENE               ChainTok
-		COPY                 CopyTok
-		DEPTH                DepthTok
-		DIBUJO               CartoonTok
-		DIBUJOS              CartoonTok
-		E                    AndTok
-		EJE                  AxesTok
-		EJES                 AxesTok
-		ELANCE               BondTok
-		ELANCES              BondTok
-		ELICHE               HelixTok
-		ENGLISH              EnglishTok
-		ELICHE               HelixTok
-		ESQUELETO            BackboneTok
-		ETIQUETA             LabelTok
-		ETIQUETAS            LabelTok
-		ETICHETTA            LabelTok
-		ETICHETTE            LabelTok  
-		FILODIFERRO          WireframeTok
-		FILDIFERRO           WireframeTok
-		FILI                 StrandsTok  
-		FRENCH               FrenchTok
-		GIRO                 TurnTok
-		GIROS                TurnTok
-		GRUPO                GroupTok
-		GRUPPO               GroupTok 
-		HEBRAS               StrandsTok
+                 Added the following tokens relative to 2.7.2, includes tokens
+                 added for 2.7.1.1:
+                
+                 ASSE                 AxesTok
+                 ASSI                 AxesTok
+                 CADENA               ChainTok
+                 CADENAS              ChainTok
+                 CATENA               ChainTok
+                 CATENE               ChainTok
+                 COPY                 CopyTok
+                 DEPTH                DepthTok
+                 DIBUJO               CartoonTok
+                 DIBUJOS              CartoonTok
+                 E                    AndTok
+                 EJE                  AxesTok
+                 EJES                 AxesTok
+                 ELANCE               BondTok
+                 ELANCES              BondTok
+                 ELICHE               HelixTok
+                 ENGLISH              EnglishTok
+                 ELICHE               HelixTok
+                 ESQUELETO            BackboneTok
+                 ETIQUETA             LabelTok
+                 ETIQUETAS            LabelTok
+                 ETICHETTA            LabelTok
+                 ETICHETTE            LabelTok 
+                 FILODIFERRO          WireframeTok
+                 FILDIFERRO           WireframeTok
+                 FILI                 StrandsTok 
+                 FRENCH               FrenchTok
+                 GIRO                 TurnTok
+                 GIROS                TurnTok
+                 GRUPO                GroupTok
+                 GRUPPO               GroupTok
+                 HEBRAS               StrandsTok
                  IMAGE                            ImageTok
-		ITALIAN              ItalianTok
-		MOSTRAR              DisplayTok
-		NASTRO               RibbonTok 
-		NASTRI               RibbonTok 
+                 ITALIAN              ItalianTok
+                 MOSTRAR              DisplayTok
+                 NASTRO               RibbonTok
+                 NASTRI               RibbonTok
                  PASTE                            PasteTok
                  POSITION                         PositionTok
-		RIEMPIMENTO          SpacefillTok
-		SALIR                ExitTok
-		SCHELETRO            BackboneTok
-		SELECTION            SelectionTok
-		SHADEPOWER           ShadePowerTok
-		SPANISH              SpanishTok
-		TODO                 AllTok
-		TUTTO                AllTok 
-		VIEW                 ViewTok
-		VIGNETTA             CartoonTok
-		VISUALIZZA           DisplayTok 
+                 RIEMPIMENTO          SpacefillTok
+                 SALIR                ExitTok
+                 SCHELETRO            BackboneTok
+                 SELECTION            SelectionTok
+                 SHADEPOWER           ShadePowerTok
+                 SPANISH              SpanishTok
+                 TODO                 AllTok
+                 TUTTO                AllTok
+                 VIEW                 ViewTok
+                 VIGNETTA             CartoonTok
+                 VISUALIZZA           DisplayTok
 
  [02/04/01]      HJB     transfor.c
-		Rework interaction of mouse, local rotation and world rotation
-		to make horizontal mouse motion of individual molecule rotate
-		horizontally even when outer world rotation creates a tilt.
-		Restores incremental mouse motion effects similar to what
-		was in effect for 2.7.1, but with world rotations.  Reworked
-		RasTop centering to restore 2.7.2 behavior -- defaults to
-		center the new rotation on the screen.
+                 Rework interaction of mouse, local rotation and world rotation
+                 to make horizontal mouse motion of individual molecule rotate
+                 horizontally even when outer world rotation creates a tilt.
+                 Restores incremental mouse motion effects similar to what
+                 was in effect for 2.7.1, but with world rotations.  Reworked
+                 RasTop centering to restore 2.7.2 behavior -- defaults to
+                 center the new rotation on the screen.
 
  [02/04/01]      HJB     several
-		Make dial indices symbolic.
+                 Make dial indices symbolic.
 
  [02/04/01]      HJB     wbrotate.c, wbrotate.h
-		Rework interaction of mouse and world rotation to make
-		horizontal mouse motion of individual molecule rotate horizontally
-		even when outer world rotation creates a tilt. 
+                 Rework interaction of mouse and world rotation to make
+                 horizontal mouse motion of individual molecule rotate horizontally
+                 even when outer world rotation creates a tilt.
 
 
-      Changes adopted from RasTop 1.3 in creating RasMol 2.7.2.1:
+  Changes adopted from RasTop 1.3 in creating RasMol 2.7.2.1:
 
-Note: These mods do not reflect the complete source of RasTop 1.3.
+   Note: These mods do not reflect the complete source of RasTop 1.3.
 
  [31/01/00]      PV      command.c
-		Added code for selecting atom areas with mouse:  changed 
-		PickAtom() function name in PickAtoms();  changed PicAtome
-		identifier in PickAtom; added function SelectArea()
-		and DisplayArea(); added code for command "select view"
+                 Added code for selecting atom areas with mouse:  changed
+                 PickAtom() function name in PickAtoms();  changed PicAtome
+                 identifier in PickAtom; added function SelectArea()
+                 and DisplayArea(); added code for command "select view"
 
  [30/01/00]      PV command.c
-		Added command "select view" and corresponding code,
-		which allows to select a part of a molecule based on screen display.
+                 Added command "select view" and corresponding code,
+                 which allows to select a part of a molecule based on screen display.
 
  [16/01/00]      PV cmndline.c
-		In PerformMouseFunc() corrected MM_CLIP to access clipping with
-		the mouse, added MM_DEPT to access backclipping (depth) with the mouse.
+                 In PerformMouseFunc() corrected MM_CLIP to access clipping with
+                 the mouse, added MM_DEPT to access backclipping (depth) with the mouse.
 
  [16/01/00]      PV      transfor.h, transfor.c, token.h, token.c, script.c
-		Added ShadePower in DefineColourMap(), which brings some interesting
-		shade variations. Added ShadePowerTok and command "set shade x"
-		with x between -20 to 20.
+                 Added ShadePower in DefineColourMap(), which brings some interesting
+                 shade variations. Added ShadePowerTok and command "set shade x"
+                 with x between -20 to 20.
 
  [03/01/00]      PV      transfor.c
-		Fixed bug (and modified) function Power() to handle Specpower
+                 Fixed bug (and modified) function Power() to handle Specpower
 
  [12/14/99]      PV
-		Added variables ShiftS and UseAutoDepthCue that adjust DepthCue 
-		with slabbing. 
+                 Added variables ShiftS and UseAutoDepthCue that adjust DepthCue
+                 with slabbing.
 
  [14/12/99]      PV      transform.c
-		Added function CentreTransform() to either move the origin in the
-		molecule or move the molecule to the origin (origin = True ). 
-		Added variables Cenx,y,z, which mesure distance centre-origin.
+                 Added function CentreTransform() to either move the origin in the
+                 molecule or move the molecule to the origin (origin = True ).
+                 Added variables Cenx,y,z, which mesure distance centre-origin.
 
  [29/09/99]      PV      molecule.c
-		Fixed bug in FindCisBonds() (no zeroing of last group cisbondflag);
-		Added ability to convert triple bond to single (CreateBondOrder())
+                 Fixed bug in FindCisBonds() (no zeroing of last group cisbondflag);
+                 Added ability to convert triple bond to single (CreateBondOrder())
 
  [24/09/99]      PV      cmndline.c
-		Correlated mouse binding to global variable MouseMode.
-		Removed EnableMenus(state==1) in ResetCommandLine().
-		Fixed mouse binding with INVERT on y values.
-		Fixed bug on capture status on mouse-up.  Added MM_PREV
-		to mouse binding for deselection.  Fixed INVERT on y 
-		value for mouseup.
+                 Correlated mouse binding to global variable MouseMode.
+                 Removed EnableMenus(state==1) in ResetCommandLine().
+                 Fixed mouse binding with INVERT on y values.
+                 Fixed bug on capture status on mouse-up.  Added MM_PREV
+                 to mouse binding for deselection.  Fixed INVERT on y
+                 value for mouseup.
 
  [21/09/99]      PV      command.c, render.h, render.c, transfor.h, transfor.c
-		Added four new picking modes: select an atom: PickAtom; select
-		a group: PickGroup; select a chain: PickChain; modify bonding/add
-		multiple bonds: PickBond.   Allowed picking parameter shift = -1
-		when Ctrl key is down to deselect an atom (a group, a chain)
-		from the current selection. [Note by HJB 02/04/01 -- The UCB
-		and 2.7.2 bond picking was used in 2.7.2.1 instead of the
-		RasTop version]
+                 Added four new picking modes: select an atom: PickAtom; select
+                 a group: PickGroup; select a chain: PickChain; modify bonding/add
+                 multiple bonds: PickBond.   Allowed picking parameter shift = -1
+                 when Ctrl key is down to deselect an atom (a group, a chain)
+                 from the current selection. [Note by HJB 02/04/01 -- The UCB
+                 and 2.7.2 bond picking was used in 2.7.2.1 instead of the
+                 RasTop version]
 
  [22/09/99]      PV abstree.h, abstree.c
-		First step for saving atomsets & identifiers in RasMol scripts
-		(SetSize to 100 and SymEntry and SymbolTable in header).
+                 First step for saving atomsets & identifiers in RasMol scripts
+                 (SetSize to 100 and SymEntry and SymbolTable in header).
 
  [21/09/99]      PV      cif.h
-		Fixed missing declaration of cif_parse in cif.h
-		
+                 Fixed missing declaration of cif_parse in cif.h
+                
  [21/09/99]      PV      cmndline.c
-		In ProcessCharacter()) added ESC (0x1b) character to interrupt
-		script pausing.		
+                 In ProcessCharacter()) added ESC (0x1b) character to interrupt
+                 script pausing.        
 
  [21/09/99]      PV      command.c
-		Changed output for one-letter-code sequence in series of 50
-		characters with a space each subgroup of 10.
+                 Changed output for one-letter-code sequence in series of 50
+                 characters with a space each subgroup of 10.
     
  [21/09/99]      PV      infile.c
-		Compiling problems with RasMol 2.7.1 files (VisualC++ 5.0)
+                 Compiling problems with RasMol 2.7.1 files (VisualC++ 5.0)
                  - explicited all conversions long to short in infile.c  /*casting*/
 
  [21/09/99]      PV      pixutils.c
-		Compiling problems with RasMol 2.7.1 files (VisualC++ 5.0)
-		- fixed casting in drawstar() and clipstar() in pixutils.c
-		Set ARCSIZE  to 32768 under MSWIN, allowing drawing cylinders with
-		radii up to 250 RasMol Units.  Current implementation gives a maximum
-		of 75 RU at maximum zooming.  Mac implementation should be verified.
+                 Compiling problems with RasMol 2.7.1 files (VisualC++ 5.0)
+                 - fixed casting in drawstar() and clipstar() in pixutils.c
+                 Set ARCSIZE  to 32768 under MSWIN, allowing drawing cylinders with
+                 radii up to 250 RasMol Units.  Current implementation gives a maximum
+                 of 75 RU at maximum zooming.  Mac implementation should be verified.
 
  [14/07/99]      PV      abstree.c transfor.c
-		(Adapted from RasTop 1.3) Added shortcuts for direct evaluations
-		of atomsets (BuildAtomSet(), SelectZoneExpr()).
-		
+                 (Adapted from RasTop 1.3) Added shortcuts for direct evaluations
+                 of atomsets (BuildAtomSet(), SelectZoneExpr()).
+                
  [14/07/99]      PV      abstree.c, transfor.c
-		Added shortcuts for direct evaluations of atomsets (BuildAtomSet(),
-		SelectZoneExpr()); gain up to 15 seconds of computer time on very
-		large molecules.
+                 Added shortcuts for direct evaluations of atomsets (BuildAtomSet(),
+                 SelectZoneExpr()); gain up to 15 seconds of computer time on very
+                 large molecules.
 
  [10/07/99]      PV      cif.c
-		Fixed memory allocation bug in cif_make_handle		
+                 Fixed memory allocation bug in cif_make_handle         
 
-      Changes from RasMol 2.7.1 to create RasMol 2.7.2:
+  Changes from RasMol 2.7.1 to create RasMol 2.7.2:
 
  [28/08/00]      HJB     all
-		Updates to comments, resources, etc for preliminary testing 
-		release.
-		
+                 Updates to comments, resources, etc for preliminary testing
+                 release.
+                
  [21/08/00]      HJB     abstree.c, abstree.h
-		Change type Atom to RAtom to avoid conflicts with X.
-		Offset all uses of xorg, yorg, zorg databse entried with
-		fxorg, fyorg, fzorg database entries for UCB bond
-		rotation.  Change char* strings to unsigned char* strings
-		to allow for extra UCB Angstrom and degree symbols.
+                 Change type Atom to RAtom to avoid conflicts with X.
+                 Offset all uses of xorg, yorg, zorg databse entried with
+                 fxorg, fyorg, fzorg database entries for UCB bond
+                 rotation.  Change char* strings to unsigned char* strings
+                 to allow for extra UCB Angstrom and degree symbols.
 
  [21/08/00]      HJB     applemac.c
-		Change from use of toolbar settings to use of RotMode.
-		Add new "Settings" menu.
+                 Change from use of toolbar settings to use of RotMode.
+                 Add new "Settings" menu.
 
  [21/08/00]      HJB     cmndline.c
-		Adapt GSG code from UCB mods for mouse moves, to make
-		the moves control bond rotation, molecule rotation, or
-		world rotation, but change from use of toolbar settings
-		to use of RotMode
+                 Adapt GSG code from UCB mods for mouse moves, to make
+                 the moves control bond rotation, molecule rotation, or
+                 world rotation, but change from use of toolbar settings
+                 to use of RotMode
 
  [21/08/00]      HJB     command.c
-		Add new error message (ErrNoBond) for "Bond for rotation
-		not picked".  Add new parameter for alternate conformer
-		bond waist radius.  Adapt to fxorg, etc. offsets.  Adapt
-		GSG UCB pick bond tool bar button to a command line
-		command.  Add show centre, show rotation, show translation
-		and show zoom commands.  Add bond, unbond commands.
-		Add rotate bond, rotate molecule, rotate all command.
+                 Add new error message (ErrNoBond) for "Bond for rotation
+                 not picked".  Add new parameter for alternate conformer
+                 bond waist radius.  Adapt to fxorg, etc. offsets.  Adapt
+                 GSG UCB pick bond tool bar button to a command line
+                 command.  Add show centre, show rotation, show translation
+                 and show zoom commands.  Add bond, unbond commands.
+                 Add rotate bond, rotate molecule, rotate all command.
 
  [21/08/00]      HJB     command.h
-		Add space after "__huge"
+                 Add space after "__huge"
 
  [21/08/00]      HJB     font.h
-		Adapt GSG UCB mods characters for Angstrom and degree to be
-		additional symbols, not repalcements.
+                 Adapt GSG UCB mods characters for Angstrom and degree to be
+                 additional symbols, not repalcements.
 
  [21/08/00]      HJB     graphics.h
-		Add new redraw flag, "RFRotBond" to signal that a bond
-		rotation is involved, and add it to RFRotate, RFApply and
-		RFInitial.  Add ZRange.  Move main X window definitions
-		into this header to facilitate toolbar development.
+                 Add new redraw flag, "RFRotBond" to signal that a bond
+                 rotation is involved, and add it to RFRotate, RFApply and
+                 RFInitial.  Add ZRange.  Move main X window definitions
+                 into this header to facilitate toolbar development.
 
  [21/08/00]      HJB     infile.c, infile.h
-		Change all Atom types to RAtom.  Add xorg, etc. offsets
-		on all coordinate calauclations.  Move GroupPool definition
-		to header.
-		
+                 Change all Atom types to RAtom.  Add xorg, etc. offsets
+                 on all coordinate calauclations.  Move GroupPool definition
+                 to header.
+                
  [21/08/00]      HJB     molecule.h and all referring files
-		Change type Atom to RAtom to avoid conflicts with X.
-		Add fxorg, fyorg, fzorg database entries for UCB bond
-		rotation offsets.
+                 Change type Atom to RAtom to avoid conflicts with X.
+                 Add fxorg, fyorg, fzorg database entries for UCB bond
+                 rotation offsets.
 
  [21/08/00]      HJB     multiple.c
-		Remove all use of the toolbar, converting to menu.
-		Detect last element of file name string.  Update VarList
-		for current variables.  Change to ANSI C prototypes.
-		Move revised DrawMoleculeList from GSG's UCB toolbar.c
-		into multiple.c, but drop list only into MolName[].
+                 Remove all use of the toolbar, converting to menu.
+                 Detect last element of file name string.  Update VarList
+                 for current variables.  Change to ANSI C prototypes.
+                 Move revised DrawMoleculeList from GSG's UCB toolbar.c
+                 into multiple.c, but drop list only into MolName[].
 
  [21/08/00]      HJB     wbrotate.c, wbrotate.h
-		Remove all use of the toolbar, converting to menu.
-		Change to ANSI C prototypes.  Revise bond and world
-		rotation logic to use full rotation, nor increment,
-		for improved accuracy.  Change Bond rotation logic to
-		preserve nesting of bonds without changing the original
-		coordinates.  Add database of selected bonds and logic
-		to add bonds on the fly and remove them.
+                 Remove all use of the toolbar, converting to menu.
+                 Change to ANSI C prototypes.  Revise bond and world
+                 rotation logic to use full rotation, nor increment,
+                 for improved accuracy.  Change Bond rotation logic to
+                 preserve nesting of bonds without changing the original
+                 coordinates.  Add database of selected bonds and logic
+                 to add bonds on the fly and remove them.
 
  [21/08/00]      HJB     vector.c, vector.h
-		Change to ANSI C prototypes.  Replace Vector and Matrix
-		with their array definitions for clarity.
+                 Change to ANSI C prototypes.  Replace Vector and Matrix
+                 with their array definitions for clarity.
 
  [27/02/00]      HJB     transfor.c, transfor.h
-		Add alternate conformer bond radius to EnableWireFrame
+                 Add alternate conformer bond radius to EnableWireFrame
 
  [23/02/00]      HJB     infile.c
-		Fix *- for - typo in XYZ and MOL2 input of coordinates
+                 Fix *- for - typo in XYZ and MOL2 input of coordinates
 
  [23/02/00]      HJB     molecule.c
-		Fix D2O to DOD mapping.  Thanks to Brian W. Beck.
+                 Fix D2O to DOD mapping.  Thanks to Brian W. Beck.
 
  [23/02/00]      HJB     pixutils.c
-		New code for alternate conformer bonds.
+                 New code for alternate conformer bonds.
 
  [23/02/00]      HJN     raswin.c
-		Update WinMail entry to WINAPI
+                 Update WinMail entry to WINAPI
 
  [29/01/00]      HJB     molecule.c
-		Comment out chain by chain reset of bonding to allow for
-		het groups after TER at expense of slower bonding.
+                 Comment out chain by chain reset of bonding to allow for
+                 het groups after TER at expense of slower bonding.
 
  [29/01/00]      HJB     mswin31.c
-		Update printer logic for modern windows specs.
+                 Update printer logic for modern windows specs.
 
  [29/01/00]      HJB     rasmac.c
-		Fix reference of monaco font.
+                 Fix reference of monaco font.
 
  [15/07/99]      HJB (for AR)    raswin.c
-		Add check for \r.  Thanks for Andrew Raine.
+                 Add check for \r.  Thanks for Andrew Raine.
 
  [15/07/99]      RS      raswin.c
-		Add .ML2 and .SY2 extensions for Sybyl and MOL2.
+                 Add .ML2 and .SY2 extensions for Sybyl and MOL2.
 
 
-      Changes adapted from UCB rasmol in creating RasMol 2.7.2:
+  Changes adapted from UCB rasmol in creating RasMol 2.7.2:
 
-Note: These mods do not reflect the complete source of UCB RasMol. In
-particular toolbar.h and toolbar.c have not been used in this pass, and
-the full source of UCB RasMol has not yet been recovered.
+   Note: These mods do not reflect the complete source of UCB RasMol. In
+   particular toolbar.h and toolbar.c have not been used in this pass, and
+   the full source of UCB RasMol has not yet been recovered.
 
  [30/11/95]      GSG rasmac.c
-		Hide command window.  Add help screen menu logic.  Add hooks to
-		load multiple molecules.  Add toolbar menu to Windows menu.  Make
-		mouse moves control bond rotation, molecule rotation or world
-		rotation depending on tool bar button choices.  Same for scroll
-		bars.
-		
+                 Hide command window.  Add help screen menu logic.  Add hooks to
+                 load multiple molecules.  Add toolbar menu to Windows menu.  Make
+                 mouse moves control bond rotation, molecule rotation or world
+                 rotation depending on tool bar button choices.  Same for scroll
+                 bars.
+                
  [29/11/95]      GSG     applemac.c
-		Change default background for printing to white.
-		Hook scroll bar H values to bond angle (BRotValue),
-		molecule rotation angle (DialValue[1]) or
-		world rotation angle (WRotValue[1]) depending on
-		toolbar settings.  Hook scroll bar V values to
-		molecule rotation angle (DialValue[0]) or
-		world rotation angle (WRotValue[0]) depending on
-		tool bar settings.  Allow file open when less than
-		MAX_MOLECULES molecules.
+                 Change default background for printing to white.
+                 Hook scroll bar H values to bond angle (BRotValue),
+                 molecule rotation angle (DialValue[1]) or
+                 world rotation angle (WRotValue[1]) depending on
+                 toolbar settings.  Hook scroll bar V values to
+                 molecule rotation angle (DialValue[0]) or
+                 world rotation angle (WRotValue[0]) depending on
+                 tool bar settings.  Allow file open when less than
+                 MAX_MOLECULES molecules.
 
  [21/08/00]      GSG     font.h
-		Add characters for Angstrom and degree as replacements
-		for vertical bar and tilde.
-		
+                 Add characters for Angstrom and degree as replacements
+                 for vertical bar and tilde.
+                
  [16/11/95]      GSG render.c, render.h
-		Add PickBond.  Add hooks to draw multiple molecules.  Automatically
-		switch to the molecule of any picked atom.  Add monitor for picked
-		distance, angle or torsion angle.
+                 Add PickBond.  Add hooks to draw multiple molecules.  Automatically
+                 switch to the molecule of any picked atom.  Add monitor for picked
+                 distance, angle or torsion angle.
 
  [14/11/95]      GSG transfor.c
-		Add hooks for bond rotation and global rotation.
-		
+                 Add hooks for bond rotation and global rotation.
+                
  [14/11/95]      GSG vector.c, vector.h, wbrotate.c, wbrotate.h
-		New routines introduced with UCB mods to allow for
-		bond rotations and global rotation.
+                 New routines introduced with UCB mods to allow for
+                 bond rotations and global rotation.
 
  [14/11/95]      GSG infile.c
-		Add fxorg, fyorg, fxorg for MDL molecule input only.
+                 Add fxorg, fyorg, fxorg for MDL molecule input only.
 
  [14/11/95]      GSG molecule.c, molecule.h
-		Add fxorg, fyorg, fxorg and list of bonds to atom database
-		for world and bond rotation.
-		
+                 Add fxorg, fyorg, fxorg and list of bonds to atom database
+                 for world and bond rotation.
+                
  [11/11/95]      GSG multiple.c, multiple.h
-		New routine introduced with UCB mods to allow for
-		multiple molecules.
+                 New routine introduced with UCB mods to allow for
+                 multiple molecules.
 
  [10/11/95]      GSG tokens.c,tokens.h
-		Add MoleculeTok.
-		
+                 Add MoleculeTok.
+                
  [10/11/95]      GSG repres.h
-		Add flag for units to Monitors.
+                 Add flag for units to Monitors.
 
  [09/11/95]      GSG     command.c, command.h
-		Add hooks for multiple molecules.  Log background
-		status to allow default white print background.
-		Add molecule command.
+                 Add hooks for multiple molecules.  Log background
+                 status to allow default white print background.
+                 Add molecule command.
 
  [09/11/95]      GSG rasmol.c
-		Add initialisation for multiple molecules.
+                 Add initialisation for multiple molecules.
 
 
 
-      Changes from RasMol 2.7.1 to create RasMol 2.7.1.1:
+  Changes from RasMol 2.7.1 to create RasMol 2.7.1.1:
 
  [21/01/01]      FGR, HJB        langsel.c, langsel_mac.c, mswin.c,  applemac.c
-		Installed translations for Edit menu on mac and PC 
-		provided by Fernando Gabriel Ranea. 
+                 Installed translations for Edit menu on mac and PC
+                 provided by Fernando Gabriel Ranea.
 
  [17/01/01]      FGR, HJB        langsel.c, langsel_mac.c
-		Corrections to translations by Fernando Gabriel Ranea, installed
-		by HJB with revisions to menu bar accelerators.
+                 Corrections to translations by Fernando Gabriel Ranea, installed
+                 by HJB with revisions to menu bar accelerators.
 
  [12/01/01]      HJB     applemac.c
-		Added include of langsel.h.  Added routine ReWriteStr255 to rewrite
-		menu bar items in place and tostr255 to convert other menu items
-		strings to Pascal form for use in SetmenuItemText.  Set up
-		ReDrawWindow to refresh all menu strings and then redraw the menu
-		bar.  Note that the rewrite of the main menu bar is _very_ risky
-		and may not survive system changes.
+                 Added include of langsel.h.  Added routine ReWriteStr255 to rewrite
+                 menu bar items in place and tostr255 to convert other menu items
+                 strings to Pascal form for use in SetmenuItemText.  Set up
+                 ReDrawWindow to refresh all menu strings and then redraw the menu
+                 bar.  Note that the rewrite of the main menu bar is _very_ risky
+                 and may not survive system changes.
 
  [12/01/01]      HJB     command.c
-		Added include of langsel.h.  Remove redundant ErrorMsg array and Err...
-		definitions.  Change messages to reference MsgStrs.  Add English and
-		Spanish as commands calling SwitchLang.
+                 Added include of langsel.h.  Remove redundant ErrorMsg array and Err...
+                 definitions.  Change messages to reference MsgStrs.  Add English and
+                 Spanish as commands calling SwitchLang.
 
  [12/01/01]      HJB     infile.c
-		Fix coordinate typo in load of XYZ and Mol2 molecules.
+                 Fix coordinate typo in load of XYZ and Mol2 molecules.
 
  [12/01/01]      HJB     langsel.c, langsel_mac.c, langsel.h
-		New routines to carry multi-lingual translations.  Many thanks to
-		Fernando Gabriel Ranea for the bulk of the Spanish translations,
-		and for creating the initial Spanish version of RasMol 2.7.1.  Note
-		that langsel.c uses the ANSI character set, while lansel_mac.c uses the
-		Macintosh character set.
+                 New routines to carry multi-lingual translations.  Many thanks to
+                 Fernando Gabriel Ranea for the bulk of the Spanish translations,
+                 and for creating the initial Spanish version of RasMol 2.7.1.  Note
+                 that langsel.c uses the ANSI character set, while lansel_mac.c uses the
+                 Macintosh character set.
 
  [12/01/01]      HJB     molecule.c
-		Added include of langsel.h.  Changed messages to reference MsgStrs.
-		Refixed D2O misparse, which had been previously fixed.  Mod had been
-		lost.
+                 Added include of langsel.h.  Changed messages to reference MsgStrs.
+                 Refixed D2O misparse, which had been previously fixed.  Mod had been
+                 lost.
 
  [12/01/01]      HJB     mswin31.c
-		Added include of raswin.idm and langsel.h.  Included partial update
-		to printer logic.  Added ReDrawWindow as rewrite of menus with
-		ModifyMenu and RemoveMenu/AppendMenu calls.
+                 Added include of raswin.idm and langsel.h.  Included partial update
+                 to printer logic.  Added ReDrawWindow as rewrite of menus with
+                 ModifyMenu and RemoveMenu/AppendMenu calls.
 
  [12/01/01]      HJB     rasmac.c
-		Added include of langsel.h.  Added SwitchLang(English) calls
-		for initialization to main routine.
+                 Added include of langsel.h.  Added SwitchLang(English) calls
+                 for initialization to main routine.
 
  [12/01/01]      HJB     rasmol.c
-		Add fix for broken math routines by referencing atan2.
+                 Add fix for broken math routines by referencing atan2.
 
  [12/01/01]      HJB     rasmol.h
-		Added include of langsel.h.  Added SwitchLang(English) calls
-		for initialization to main routine.
+                 Added include of langsel.h.  Added SwitchLang(English) calls
+                 for initialization to main routine.
 
  [12/01/01]      HJB     raswin.c
-		Added include of langsel.h.  Changed font of command window to ANSI
-		character set.  Changed most messages to reference MsgStrs.  Add
-		SwitchLang(English) calls for initialization to WinMain.
+                 Added include of langsel.h.  Changed font of command window to ANSI
+                 character set.  Changed most messages to reference MsgStrs.  Add
+                 SwitchLang(English) calls for initialization to WinMain.
 
  [12/01/01]      HJB     x11win.c
-		Restructured MenuItem and BarItem to make .text, .pos and .len
-		indirect, so that they can be fetched from MsgStrs, MsgAuxl and
-		MsgLens.  The .pos field is used to specify the character offset
-		of the acceleration key.  The main menu bar may now have non-zero
-		offsets.  All the menu items have been changed to MsgStrs[StrM...]
-		referecences, and added include of langsel.h.  Added ReDrawWindow
-		simply as a call to ReSizeWindow.  This is overkill, but appropriate
-		for these infrequent calls.
+                 Restructured MenuItem and BarItem to make .text, .pos and .len
+                 indirect, so that they can be fetched from MsgStrs, MsgAuxl and
+                 MsgLens.  The .pos field is used to specify the character offset
+                 of the acceleration key.  The main menu bar may now have non-zero
+                 offsets.  All the menu items have been changed to MsgStrs[StrM...]
+                 referecences, and added include of langsel.h.  Added ReDrawWindow
+                 simply as a call to ReSizeWindow.  This is overkill, but appropriate
+                 for these infrequent calls.
 
  [12/01/01]      HJB     tokens.h
-		Added tokens EnglishTok and SpanishTok.
+                 Added tokens EnglishTok and SpanishTok.
 
  [12/01/01]      HJB     graphics.h
-		Added prototype of ReDrawWindow, a system-dependent call to be used
-		after updating menus on language changes.
+                 Added prototype of ReDrawWindow, a system-dependent call to be used
+                 after updating menus on language changes.
 
  [12/01/01]      HJB     cmndline.c
-		Added include of langsel.h, changed prompts as follows:
-		
+                 Added include of langsel.h, changed prompts as follows:
+                
                  "PDB file name:"                MsgStrs[StrPrmtPDB]
                  "Image file name:"              MsgStrs[StrPrmtImg]
                  "Molecule file name:"   MsgStrs[StrPrmtMol]
-		
-		
+                
+                
 
  [12/01/01]      HJB     tokens.c
-		Added the following tokens:
-		
-		CADENA               ChainTok
-		CADENAS              ChainTok
-		DIBUJO               CartoonTok
-		DIBUJOS              CartoonTok
-		E                    AndTok
-		EJE                  AxesTok
-		EJES                 AxesTok
-		ELANCE               BondTok
-		ELANCES              BondTok
-		ENGLISH              EnglishTok
-		ESQUELETO            BackboneTok
-		ETIQUETA             LabelTok
-		ETIQUETAS            LabelTok
-		GIRO                 TurnTok
-		GIROS                TurnTok
-		GRUPO                GroupTok
-		HEBRAS               StrandsTok
-		MOSTRAR              DisplayTok
-		SALIR                ExitTok
-		SPANISH              SpanishTok
-		TODO                 AllTok 
+                 Added the following tokens:
+                
+                 CADENA               ChainTok
+                 CADENAS              ChainTok
+                 DIBUJO               CartoonTok
+                 DIBUJOS              CartoonTok
+                 E                    AndTok
+                 EJE                  AxesTok
+                 EJES                 AxesTok
+                 ELANCE               BondTok
+                 ELANCES              BondTok
+                 ENGLISH              EnglishTok
+                 ESQUELETO            BackboneTok
+                 ETIQUETA             LabelTok
+                 ETIQUETAS            LabelTok
+                 GIRO                 TurnTok
+                 GIROS                TurnTok
+                 GRUPO                GroupTok
+                 HEBRAS               StrandsTok
+                 MOSTRAR              DisplayTok
+                 SALIR                ExitTok
+                 SPANISH              SpanishTok
+                 TODO                 AllTok
 
 
  [26/12/99]      HJB     mswin31.c
-		Do not reset Voxel Data for each chain.
+                 Do not reset Voxel Data for each chain.
 
  [02/10/99]      HJB     molecule.c
-		Update printer logic.
+                 Update printer logic.
 
   Changes from RasMol 2.7.0 to RasMol 2.7.1.1 include:
 
@@ -1172,177 +1172,177 @@ the full source of UCB RasMol has not yet been recovered.
      * Improved accuracy of coordinates in pseudo-PDB output.
      * Fixes to the centering logic.
 
-      Changes from RasMol 2.7.0.1 to create RasMol 2.7.1:
+  Changes from RasMol 2.7.0.1 to create RasMol 2.7.1:
 
  [15/07/99]      HJB     documentation
-		Add Dunix binaries.  Thanks to David Atkinson
+                 Add Dunix binaries.  Thanks to David Atkinson
 
  [06/07/99]      HJB     all
-		Release 2.7.1
+                 Release 2.7.1
 
  [05/07/99]      HJB     documentation
-		Cut-off date for Release 2.7.1 documentation changes.
+                 Cut-off date for Release 2.7.1 documentation changes.
 
  [22/06/99]      HJB     all source
-		Cut-off date for Release 2.7.1 code changes.
+                 Cut-off date for Release 2.7.1 code changes.
 
  [22/06/99]      HJB     command.c
-		Save fact that a data file was loaded inline.  Add
-		processing for star command, all new options for
-		bondmode [all | none | not bonded ]
+                 Save fact that a data file was loaded inline.  Add
+                 processing for star command, all new options for
+                 bondmode [all | none | not bonded ]
 
  [22/06/99]      HJB     infile.c
-		Update DataFileFormat after autorecognition.
+                 Update DataFileFormat after autorecognition.
 
  [22/06/99]      HJB     molecule.h
-		Add MarkAtoms to hold new bondmode flags.
+                 Add MarkAtoms to hold new bondmode flags.
 
  [22/06/99]      HJB     pixutils.c, render.c
-		Add code for new star command.
+                 Add code for new star command.
 
  [22/06/99]      HJB     script.c
-		Add logic to write star command output.  Report data
-		loaded as CIF or as inline correctly.  Warn users
-		that inline data is not being written out.  Check
-		inversion of Y-axis on POVRAY3.  Thanks to Curt
-		Haltiwanger for suggesting marking non-bonded atoms
-		on wireframe displays.
+                 Add logic to write star command output.  Report data
+                 loaded as CIF or as inline correctly.  Warn users
+                 that inline data is not being written out.  Check
+                 inversion of Y-axis on POVRAY3.  Thanks to Curt
+                 Haltiwanger for suggesting marking non-bonded atoms
+                 on wireframe displays.
 
  [22/06/99]      HJB     transfor.c
-		Add code for new star command, new bondmode options.
+                 Add code for new star command, new bondmode options.
 
  [18/06/99]      HJB     pixutils.h, pixutils.c
-		Change name of DisplayString to DisplayRasString to
-		avoid a conflict with X libraries.  Add FontWid array
-		to hold character widths (FontSize for FS, FontSize/4
-		+1 + maximum x position for PS).  Add FontStroke logic to
-		write cylinders instead of lines when FontStroke is not
-		zero.
+                 Change name of DisplayString to DisplayRasString to
+                 avoid a conflict with X libraries.  Add FontWid array
+                 to hold character widths (FontSize for FS, FontSize/4
+                 +1 + maximum x position for PS).  Add FontStroke logic to
+                 write cylinders instead of lines when FontStroke is not
+                 zero.
 
  [18/06/99]      HJB     render.c
-		Change name of DisplayString to DisplayRasString to
-		avoid a conflict with X libraries.
+                 Change name of DisplayString to DisplayRasString to
+                 avoid a conflict with X libraries.
 
  [18/06/99]      HJB     repres.c
-		When FonstStroke is non-zero, don't offset character
-		color by (ColourMask>>1), to allow room for color
-		adjustments in cylinder drawing.
+                 When FonstStroke is non-zero, don't offset character
+                 color by (ColourMask>>1), to allow room for color
+                 adjustments in cylinder drawing.
 
  [18/06/99]      HJB     script.c
-		Add logic to write PS flag for proportional spacing
-		on set fontsize, and logic to write set fontstroke n.
+                 Add logic to write PS flag for proportional spacing
+                 on set fontsize, and logic to write set fontstroke n.
 
  [18/06/99]      HJB     tokens.c, tokens.h
-		Add tokens for BlueTint (BlueTintTok), Brown (BrownTok),
-		FontStroke (FontStrokeTok), FS (FSTok), Gold (GoldTok),
-		Gray or Grey (GrayTok), GreenTint (GreenTintTok), HotPink
-		(HotPinkTok), Pick as an alternative for Picking 
-		(PickingTok), Pink (PinkTok), PinkTint (PinktintTok),
-		SeaGreen (SeaGreenTok), SkyBlue (SlyBlueTok),
-		YellowTint (YellowTintTok)
+                 Add tokens for BlueTint (BlueTintTok), Brown (BrownTok),
+                 FontStroke (FontStrokeTok), FS (FSTok), Gold (GoldTok),
+                 Gray or Grey (GrayTok), GreenTint (GreenTintTok), HotPink
+                 (HotPinkTok), Pick as an alternative for Picking
+                 (PickingTok), Pink (PinkTok), PinkTint (PinktintTok),
+                 SeaGreen (SeaGreenTok), SkyBlue (SlyBlueTok),
+                 YellowTint (YellowTintTok)
 
  [13/06/99]      HJB     command.c
-		Change processing of load inline command to work from
-		the currently opened script, saving the file position.
-		Accept HEADER and DATA_... as commands in a script,
-		processing that line and all subsequent lines as a
-		data file, unless a prior load inline command was already
-		done		
+                 Change processing of load inline command to work from
+                 the currently opened script, saving the file position.
+                 Accept HEADER and DATA_... as commands in a script,
+                 processing that line and all subsequent lines as a
+                 data file, unless a prior load inline command was already
+                 done           
 
  [12/06/99]      HJB     infile.c
-		When processing a PDB file, test for DATA_... until
-		a non-comment, non-blank line is found.  Revert
-		to CIF processing if DATA_... is found.
+                 When processing a PDB file, test for DATA_... until
+                 a non-comment, non-blank line is found.  Revert
+                 to CIF processing if DATA_... is found.
 
  [11/06/99]      HJB     infile.c
-		In PDB format input extract EXPDTA for Info.technique.  
-		In CIF format input accept _audit_block_code for the 
-		entry ID, _exptl.method, _diffrn_radiation.probe or 
-		_diffrn_radiation_probe for Info.technique.  Preserve 
-		low order bits of coordinates in xtrl, yrtl, ztrl.  On 
-		PDB output, report Info.technique in EXPDTA and reinsert 
-		low-order bits for coordinates.
+                 In PDB format input extract EXPDTA for Info.technique. 
+                 In CIF format input accept _audit_block_code for the
+                 entry ID, _exptl.method, _diffrn_radiation.probe or
+                 _diffrn_radiation_probe for Info.technique.  Preserve
+                 low order bits of coordinates in xtrl, yrtl, ztrl.  On
+                 PDB output, report Info.technique in EXPDTA and reinsert
+                 low-order bits for coordinates.
 
  [10/06/99]      HJB     abstree.c
-		Add code to report coordinates for show selected cordinates  
+                 Add code to report coordinates for show selected cordinates 
 
  [10/06/99]      HJB     command.c
-		Recognize new commands, picking coordinates, 
-		show selected cordinates.  Update default title produced
-		by title command.
+                 Recognize new commands, picking coordinates,
+                 show selected cordinates.  Update default title produced
+                 by title command.
 
  [10/06/99]      HJB     molecule.h
-		Add new Info fields for date and technique.  Extend
-		identcode to 80 columns.  Add CRD to Selection enum type.
-		Add prototype for ReviseTitle.
+                 Add new Info fields for date and technique.  Extend
+                 identcode to 80 columns.  Add CRD to Selection enum type.
+                 Add prototype for ReviseTitle.
 
  [10/06/99]      HJB     render.h, render.c
-		Add code to report coordinates for picking coordinates,
-		define PickCoord symbol.
+                 Add code to report coordinates for picking coordinates,
+                 define PickCoord symbol.
 
  [10/06/99]      HJB     tokens.h, tokens.c
-		Add code recognize COORD, COORDS, COORDINATE, COORDINATES for 
-		new CoordTok, DATA_... for CIFDataTok, HEADER for HeaderTok 
+                 Add code recognize COORD, COORDS, COORDINATE, COORDINATES for
+                 new CoordTok, DATA_... for CIFDataTok, HEADER for HeaderTok
 
  [09/06/99]      HJB     molecule.c
-		Put PDB entry ID and EXPDTA info into canvas title, report
-		EXPDTA data from Info.technique on reading file.
+                 Put PDB entry ID and EXPDTA info into canvas title, report
+                 EXPDTA data from Info.technique on reading file.
 
  [06/06/99]      HJB     infile.c
-		Restore the origin on PDB and other outputs.
+                 Restore the origin on PDB and other outputs.
 
  [06/06/99]      HJB     script.c
-		Change script output to include centering and
-		change various coordinate outputs to restore
-		origins the z-axis orientation.
+                 Change script output to include centering and
+                 change various coordinate outputs to restore
+                 origins the z-axis orientation.
 
  [06/06/99]      HJB     command.c
-		Add command centre [CenX,CenY,CenZ] to center by offsets
-		from centre of gravity.
-		
+                 Add command centre [CenX,CenY,CenZ] to center by offsets
+                 from centre of gravity.
+                
  [03/06/99]      HJB     render.c
-		Remove call to TranslateToCentre, hold centering
-		in CenX, CenY and CenZ, decoupled from dials,
-		add RFRotate to ReDrawFlag on centering.  Thanks to
-		Bohdan Schneider for pointing out the problems with
-		centering.
+                 Remove call to TranslateToCentre, hold centering
+                 in CenX, CenY and CenZ, decoupled from dials,
+                 add RFRotate to ReDrawFlag on centering.  Thanks to
+                 Bohdan Schneider for pointing out the problems with
+                 centering.
 
  [03/06/99]      HJB     transfor.c
-		Remove TranslateToCentre, remove processing of CenX,
-		CenY and CenZ from dial values, and put it into
-		computation of ptr->x,y,z
+                 Remove TranslateToCentre, remove processing of CenX,
+                 CenY and CenZ from dial values, and put it into
+                 computation of ptr->x,y,z
 
-      Changes after release of RasMol_2.7.0.1:
+  Changes after release of RasMol_2.7.0.1:
 
  [27/04/99]      HJB     README.html, Changelog.html, INSTALL.html, manual
-		Add navigation links at top and bottom of each page.
-		Add links for gzipped versions of raswin.hlp, rasmol.hlp.
-		Thanks to E. Martz and Kjeld Olesen.
+                 Add navigation links at top and bottom of each page.
+                 Add links for gzipped versions of raswin.hlp, rasmol.hlp.
+                 Thanks to E. Martz and Kjeld Olesen.
 
  [27/04/99]      HJB     INSTALL.html, manual
-		Replace empty copy of INSTALL.html in doc/, correct
-		embedded html in manual.  Thanks to Kurt Giles.
+                 Replace empty copy of INSTALL.html in doc/, correct
+                 embedded html in manual.  Thanks to Kurt Giles.
 
-      Changes from RasMol_2.7.0 to create RasMol_2.7.0.1:
+  Changes from RasMol_2.7.0 to create RasMol_2.7.0.1:
 
 
  [22/04/99]      HJB
-		Announce RasMol 2.7.0.1 on pdb-l@rcsb.org, 
-		rasmol@lists.umass.edu, mmciflist@ndbdev.rutgers.edu
+                 Announce RasMol 2.7.0.1 on pdb-l@rcsb.org,
+                 rasmol@lists.umass.edu, mmciflist@ndbdev.rutgers.edu
 
  [11/04/99]      HJB     *.c, *.h
-		Update all comment blocks for new version and date
+                 Update all comment blocks for new version and date
 
  [11/04/99]      HJB     abstree.h
-		Realign Pred... to agree with ...Tok to correct
-		misaligned introduced by HJB (not AM) during merge of 2.6x1
-		into 2.7.0.
+                 Realign Pred... to agree with ...Tok to correct
+                 misaligned introduced by HJB (not AM) during merge of 2.6x1
+                 into 2.7.0.
 
  [11/04/99]      HJB     tokens.h
-		Fix definition of IsPredTok
+                 Fix definition of IsPredTok
 
  [09/04/99]      HJB     molecule,h
-		Make residue identification case-insensitive.
+                 Make residue identification case-insensitive.
 
 
 
@@ -1350,376 +1350,354 @@ the full source of UCB RasMol has not yet been recovered.
   RasMol_2.7.0:
 
  [30/03/99]      HJB     all
-		Cleanup and release of version 2.7.0
-
-[23/03/99]	HJB	abstree.c
-		Add code to select on alternate conformers.  Increase
-		accuracy of torsion angle calculation.
+                 Cleanup and release of version 2.7.0
 
  [23/03/99]      HJB     abstree.c
-		Make InitHelpFile generally available, change to 
-		WriteString for reporting CisBondCutOff for use on mac,
-		report models on show selected.
+                 Add code to select on alternate conformers.  Increase
+                 accuracy of torsion angle calculation.
 
-[23/03/99]	HJB	rasmol.c, raswin.c, rasmac.c
-		Add suggestion for help notice to initial text lines.
+ [23/03/99]      HJB     command.c, command.h
+                 Make InitHelpFile generally available, change to
+                 WriteString for reporting CisBondCutOff for use on mac,
+                 report models on show selected.
 
-[23/03/99]	HJB	script.c
-		In order to support mac introduce WriteBuffer and
-		change all fprintf(outFile, ... to WriteBuffer, provide
-		code from fisipl for Ramachandran printer plot.  Handle
-		signs of torsion angles.  Thanks to F. C. Bernstein.
+ [23/03/99]      HJB     rasmol.c, raswin.c, rasmac.c
+                 Add suggestion for help notice to initial text lines.
 
-[23/03/99]	HJB	tokens.h, tokens.c
-		Add RamPrintTok, RPP, RDF, etc., hook POVRAY3 to the
-		new POVray code.
+ [23/03/99]      HJB     script.c
+                 In order to support mac introduce WriteBuffer and
+                 change all fprintf(outFile, ... to WriteBuffer, provide
+                 code from fisipl for Ramachandran printer plot.  Handle
+                 signs of torsion angles.  Thanks to F. C. Bernstein.
 
-[20/03/99]	HJB	*.h, *.c
-		In general, the RasMol_2.6_CIF.2 version was used as a base
-		and upgraded with the RasMol_2.6.4 changes.  The exceptions
-		are below
+ [23/03/99]      HJB     tokens.h, tokens.c
+                 Add RamPrintTok, RPP, RDF, etc., hook POVRAY3 to the
+                 new POVray code.
 
-[20/03/99]	HJB	infile.c
-		Cell parameters are read with the double routine ReadDecValue
-		from 2.6_CIF.2, rather than ReadValue2 from 2.6.4
+ [20/03/99]      HJB     *.h, *.c
+                 In general, the RasMol_2.6_CIF.2 version was used as a base
+                 and upgraded with the RasMol_2.6.4 changes.  The exceptions
+                 are below
+
+ [20/03/99]      HJB     infile.c
+                 Cell parameters are read with the double routine ReadDecValue
+                 from 2.6_CIF.2, rather than ReadValue2 from 2.6.4
 
 
 
+  Changes from RasMol_2.6 to create RasMol_2.6x1:
 
-      Changes from RasMol_2.6 to create RasMol_2.6x1:
+ [15/2/98]       AM      abstree.c, abstree.h
+                 Add PredCisBond, DescribeObj, CalcPhiAngle, CalcPsiAngle,
+                 CalcOmegaAngle, shift torsion angle calculations 180
+                 degrees.
 
+ [15/2/98]       AM      command.c
+                 Add FindCisBonds, CisBondCutOff, show of selected chains,
+                 groups, atoms, show and write of phi-psi angles
 
-[15/2/98]	AM	abstree.c, abstree.h
-		Add PredCisBond, DescribeObj, CalcPhiAngle, CalcPsiAngle,
-		CalcOmegaAngle, shift torsion angle calculations 180
-		degrees.
+ [15/2/98]       AM      molecule.h, molecule.c
+                 Add CIS bond logic
 
-[15/2/98]	AM	command.c
-		Add FindCisBonds, CisBondCutOff, show of selected chains,
-		groups, atoms, show and write of phi-psi angles
+ [15/2/98]       AM      rasmol.h, rasmol.c
+                 Add USE_FD_SET_TYPE option
 
-[15/2/98]	AM	molecule.h, molecule.c
-		Add CIS bond logic
+ [15/2/98]       AM      script.h, script.c
+                 Add WritePhiPsiAngles, code for POV-Ray version 3
+                
 
-[15/2/98]	AM	rasmol.h, rasmol.c
-		Add USE_FD_SET_TYPE option
+ [15/2/98]       AM      tokens.h
+                 Add CisBondedTok, RamachanTok, CisAngleTok, PhiPsiTok,
+                 define PHIPSI, CISANGLE, RAMACHAN, CISBONDED
 
-[15/2/98]	AM	script.h, script.c
-		Add WritePhiPsiAngles, code for POV-Ray version 3
-		
+  Changes from RasMol_2.6 to create RasMol_2.6.4:
 
-[15/2/98]	AM	tokens.h
-		Add CisBondedTok, RamachanTok, CisAngleTok, PhiPsiTok,
-		define PHIPSI, CISANGLE, RAMACHAN, CISBONDED
+ [8/2/99]        RS      command.c, rasmol.c, scripts.c, rastxt.c, raswin.c
+                 rasmac.c
+                 Final fixup and release of version 2.6.4
 
+ [27/12/98]      RS      *.h, *.c
+                 Remove all non-ANSI-C prototypes and ensure use of ( void )
+                 for empty argument lists.  Upgrade all procedure delcarations.
+                 Convert to use of MSWIN.
 
+ [27/12/98]      RS      abstree.c
+                 Redo torsion angel calculation.
+                
 
-      Changes from RasMol_2.6 to create RasMol_2.6.4:
+ [27/12/98]      RS      applemac.c
+                 Convert to Apple's new routine names
 
+ [27/12/98]      RS      cmndline.c, cmndline.h
+                 New routine for mouse, keyboard, dials
 
-[8/2/99]	RS	command.c, rasmol.c, scripts.c, rastxt.c, raswin.c
-		rasmac.c
-		Final fixup and release of version 2.6.4
+ [27/12/98]      RS      command.c, command.h
+                 Move routines for mouse, keyboard, dials to cmndline.c.
+                 Redo ParseColour.  Reorganize command parsing
 
-[27/12/98]	RS	*.h, *.c
-		Remove all non-ANSI-C prototypes and ensure use of ( void )
-		for empty argument lists.  Upgrade all procedure delcarations.
-		Convert to use of MSWIN.
+ [27/12/98]      RS      infile.c
+                 Change references to MMIO to MMIOLIB.  Pass fp and buffer
+                 to FetchRecord as argument.  Add ReadValue2, ProcessPDBBond,
+                 ProcessPDBUnitCell.  Fix recognition of END. Use
+                 InvalidateCmndline and UnusedArgument.  Write MODEL and
+                 ENDMDL records when appropriate
+                
+ [27/12/98]      RS      molecule.c
+                 Reorganize FindResNo as a character-oriented search tree
+                 Add Cache.
 
-[27/12/98]	RS	abstree.c
-		Redo torsion angel calculation.
-		
+ [27/12/98]      RS      rasmac.c
+                 Convert to Apple's new routine names
 
-[27/12/98]	RS	applemac.c
-		Convert to Apple's new routine names
+ [27/12/98]      RS      rastxt.c
+                 New text-only main program
 
-[27/12/98]	RS	cmndline.c, cmndline.h
-		New routine for mouse, keyboard, dials
+ [27/12/98]      RS      repres.c
+                 Add LabelTermnii
 
-[27/12/98]	RS	command.c, command.h
-		Move routines for mouse, keyboard, dials to cmndline.c.
-		Redo ParseColour.  Reorganize command parsing
+ [27/12/98]      RS      tranfor.c
+                 Add TranslateToCentre
 
-[27/12/98]	RS	infile.c
-		Change references to MMIO to MMIOLIB.  Pass fp and buffer
-		to FetchRecord as argument.  Add ReadValue2, ProcessPDBBond,
-		ProcessPDBUnitCell.  Fix recognition of END. Use
-		InvalidateCmndline and UnusedArgument.  Write MODEL and 
-		ENDMDL records when appropriate
-		
-[27/12/98]	RS	molecule.c
-		Reorganize FindResNo as a character-oriented search tree
-		Add Cache.
+ [27/12/98]      RS      transfor.h
+                 Reorganize the logic defining DefaultAmbient, making
+                 the default value 0.4 instead of 0.6, except for E&S, which
+                 is still .05.
 
-[27/12/98]	RS	rasmac.c
-		Convert to Apple's new routine names
+ [27/12/98]      RS      tokens.c
+                 New routine for character-oriented search tree for tokens.
+                
+ [01/08/97]      RS      infile.c
+                 Decreased the maximum valid alpha carbon to alpha carbon
+                 distance to 4.2 Angstroms from 7.0 Angstroms.  Thanks to
+                 Kostas Sfyrakis and Harren Jhoti.
 
-[27/12/98]	RS	rastxt.c
-		New text-only main program
+ [15/04/97]      RS      molecule.c repres.c
+                 Fixed a bizarre feature in the OpenVMS compiler that complained
+                 about "a=*b" as "=*" operator is an obsoltete form and may not
+                 be portable.  Special thanks to Remington Stone.
 
-[27/12/98]	RS	repres.c
-		Add LabelTermnii
+ [28/11/96]      RS      rasmol.h rasmol.c
+                 Several minor fixes to compile RasMol under VMS.  Special
+                 thanks to Adam Ralph (and CCP4).
 
-[27/12/98]	RS	tranfor.c
-		Add TranslateToCentre
 
-[27/12/98]	RS	transfor.h
-		Reorganize the logic defining DefaultAmbient, making
-		the default value 0.4 instead of 0.6, except for E&S, which
-		is still .05.
+  Changes from RasMol_2.6_CIF(Rev 1) to create RasMol_2.6_CIF(Rev 2):
 
-[27/12/98]	RS	tokens.c
-		New routine for character-oriented search tree for tokens.
-		
-[01/08/97]	RS	infile.c
-		Decreased the maximum valid alpha carbon to alpha carbon
-		distance to 4.2 Angstroms from 7.0 Angstroms.  Thanks to
-		Kostas Sfyrakis and Harren Jhoti.
+ [24/2/99]       HJB     Release of RasMol_2.6_CIF(Rev 2) at
+                 http://www/bernstein-plus-sons.com/software/rasmol
+                 and announce to mailing lists.
 
-[15/04/97]	RS	molecule.c repres.c
-		Fixed a bizarre feature in the OpenVMS compiler that complained
-		about "a=*b" as "=*" operator is an obsoltete form and may not
-		be portable.  Special thanks to Remington Stone.
+ [21/2/99]       HJB     cif.h
+                 Add prototypes of cif_make_handle, cif_read_file,
+                 cif_make_file, cif_save_character to avoid compiler warnings
 
-[28/11/96]	RS	rasmol.h rasmol.c
-		Several minor fixes to compile RasMol under VMS.  Special
-		thanks to Adam Ralph (and CCP4).
+ [21/2/99]       HJB     cif_ctonum.c
+                 Remove unneeded values.h
 
+ [21/2/99]       HJB     cif_ctonum.h
+                 Correct prototype
 
-      Changes from RasMol_2.6_CIF(Rev 1) to create RasMol_2.6_CIF(Rev 2):
+ [21/2/99]       HJB     infile.c
+                 Add cif_ctonum.h, define LoadCIFMolecule prototype,
+                 initialize ch, add return  to avoid compiler warnings.
 
+ [21/2/99]       HJB     abstree.c, cif.c, cif_ctonum.c, command.c,
+                 infile.c, molecule.c
+                 Use string_case.h instead of <strings.h> for IBMPC,
+                 VMS and APPLEMAC.
 
-[24/2/99]	HJB	Release of RasMol_2.6_CIF(Rev 2) at
-		http://www/bernstein-plus-sons.com/software/rasmol
-		and announce to mailing lists.
+ [21/2/99]       HJB     rasmol.h
+                 Update version, add some definitions from R. Sayle's
+                 2.6.4 in preparation for 2.7.0.
 
-[21/2/99]	HJB	cif.h
-		Add prototypes of cif_make_handle, cif_read_file,
-		cif_make_file, cif_save_character to avoid compiler warnings
+ [21/2/99]       HJB     rasmac.c, rasmol.c, raswin.c
+                 Update reported date on startup.
 
-[21/2/99]	HJB	cif_ctonum.c
-		Remove unneeded values.h
+ [21/2/99]       HJB     render.c
+                 Add cif_fract.h to avoid compiler warnings.
 
-[21/2/99]	HJB	cif_ctonum.h
-		Correct prototype
+ [21/2/99]       HJB     string_case.c
+                 Replace garbled version, provide string_case.h.
 
-[21/2/99]	HJB	infile.c
-		Add cif_ctonum.h, define LoadCIFMolecule prototype,
-		initialize ch, add return  to avoid compiler warnings.
+ [21/2/99]       HJB     script.c
+                 Initialize first, last, radius, to avoid compiler warnings
 
-[21/2/99]	HJB	abstree.c, cif.c, cif_ctonum.c, command.c, 
-		infile.c, molecule.c
-		Use string_case.h instead of  for IBMPC,
-		VMS and APPLEMAC.
+ [21/2/99]       HJB     transfor.c
+                 Initialize min and max to avoid compiler warnings.
 
-[21/2/99]	HJB	rasmol.h
-		Update version, add some definitions from R. Sayle's
-		2.6.4 in preparation for 2.7.0.
+ [10/1/99]       HJB     Release of RasMol_2.6_CIF(Rev 1) at
+                 http://www.bernstein-plus-sons.com/software/rasmol
+                 and announce to mmCIF mailing list.
 
-[21/2/99]	HJB	rasmac.c, rasmol.c, raswin.c
-		Update reported date on startup.
+ [9/1/99]        HJB     cif.c
+                 Change toupper calls to ToUpper calls. 
 
-[21/2/99]	HJB	render.c
-		Add cif_fract.h to avoid compiler warnings.
+ [8/1/99]        HJB     command.c
+                 Add argument to CreateMoleculeBonds to force zapping
+                 on connect. 
 
-[21/2/99]	HJB	string_case.c
-		Replace garbled version, provide string_case.h.
+ [8/1/99]        HJB     infile.c
+                 Log requested bonds which cannot be made in NullBonds
+                 and report to users, add RightJustify to right-justify
+                 residue names, recognize _atom_site_disorder_group
+                 for small molecule alternate conformerse, recognize bonds
+                 which don't have either atom names or atom numbers.
 
-[21/2/99]	HJB	script.c
-		Initialize first, last, radius, to avoid compiler warnings
+ [8/1/99]        HJB     molecule.c
+                 Add argument to CreateMoleculeBonds to force zapping
+                 on connect. 
 
-[21/2/99]	HJB	transfor.c
-		Initialize min and max to avoid compiler warnings.
+ [8/1/99]        HJB     molecule.h
+                 Add argument to CreateMoleculeBonds to force zapping
+                 on connect, add NullBonds to log requested bonds which
+                 cannot be made. 
 
-[10/1/99]	HJB	Release of RasMol_2.6_CIF(Rev 1) at
-		http://www.bernstein-plus-sons.com/software/rasmol
-		and announce to mmCIF mailing list.
+ [8/1/99]        HJB     mswin31.c
+                 Use VERSION to construct window title.
 
-[9/1/99]	HJB	cif.c
-		Change toupper calls to ToUpper calls.  
+ [8/1/99]        HJB     outfile.c
+                 Use VERSION to construct Postscript output file header.
 
-[8/1/99]	HJB	command.c
-		Add argument to CreateMoleculeBonds to force zapping
-		on connect.  
+ [8/1/99]        HJB     rasmac.c
+                 Use VERSION to report version on startup.
 
-[8/1/99]	HJB	infile.c
-		Log requested bonds which cannot be made in NullBonds
-		and report to users, add RightJustify to right-justify
-		residue names, recognize _atom_site_disorder_group
-		for small molecule alternate conformerse, recognize bonds
-		which don't have either atom names or atom numbers.
+ [8/1/99]        HJB     rasmol.c
+                 Use VERSION to report version on startup.
 
-[8/1/99]	HJB	molecule.c
-		Add argument to CreateMoleculeBonds to force zapping
-		on connect.  
+ [8/1/99]        HJB     raswin.c
+                 Use VERSION to report version on startup.
 
-[8/1/99]	HJB	molecule.h
-		Add argument to CreateMoleculeBonds to force zapping
-		on connect, add NullBonds to log requested bonds which
-		cannot be made.  
+ [8/1/99]        HJB     script.c
+                 Use VERSION to construct various output file headers.
 
-[8/1/99]	HJB	mswin31.c
-		Use VERSION to construct window title.
+ [8/1/99]        HJB     x11win.c
+                 Use VERSION to construct window title.
 
-[8/1/99]	HJB	outfile.c
-		Use VERSION to construct Postscript output file header.
 
-[8/1/99]	HJB	rasmac.c
-		Use VERSION to report version on startup.
+  Changes from RasMol_2.6 to create RasMol_2.6_CIF:
 
-[8/1/99]	HJB	rasmol.c
-		Use VERSION to report version on startup.
 
-[8/1/99]	HJB	raswin.c
-		Use VERSION to report version on startup.
+ [22/12/98]      HJB     Preliminary release of RasMol_2.6_CIF at
+                 http://www.bernstein-plus-sons.com/software/rasmol
 
-[8/1/99]	HJB	script.c
-		Use VERSION to construct various output file headers.
+ [19/12/98]      HJB     command.c
+                 correct handling of internal help files under windows,
+                 and allow for unix help files on a mac.
 
-[8/1/99]	HJB	x11win.c
-		Use VERSION to construct window title.
+ [18/12/98]      HJB     Makefile.in, Imakefile
+                 Update for CIF support.
 
+ [09/12/98]      HJB     infile.c
+                 Cummulative changes for fractional coordinates,
+                 CIF. 
 
+ [09/12/98]      HJB     command.c
+                 Changes for alt, model labels, colour schemes,
+                 CIF. 
 
-      Changes from RasMol_2.6 to create RasMol_2.6_CIF:
+ [09/12/98]      HJB     molecule.h
+                 Cummulative changes for fractional coordinates,
+                 new colour schemes, CIF. 
 
+ [09/12/98]      HJB     molecule.c
+                 Cummulative changes for fractional coordinates,
+                 new colour schemes, CIF. 
+ [09/12/98]      HJB     x11win.c
+                 Update comments, menus and version text.
 
+ [09/12/98]      HJB     mswin31.c
+                 Update comments, output file commentary.
 
-[22/12/98]	HJB	Preliminary release of RasMol_2.6_CIF at
-		http://www.bernstein-plus-sons.com/software/rasmol
+ [09/12/98]      HJB     outfile.c
+                 Update comments, output file commentary.
 
-[19/12/98]	HJB	command.c
-		correct handling of internal help files under windows,
-		and allow for unix help files on a mac.
+ [09/12/98]      HJB     script.c
+                 Update comments, output file commentary.
 
-[18/12/98]	HJB	Makefile.in, Imakefile
-		Update for CIF support. 
+ [09/12/98]      HJB     rasmol.c
+                 Update comments, output file commentary.
 
-[09/12/98]	HJB	infile.c
-		Cummulative changes for fractional coordinates,
-		CIF.  
+ [04/12/98]      HJB     pixutils.c
+                 Update comments, code to stripe bonds for alternate
+                 conformers. 
 
-[09/12/98]	HJB	command.c
-		Changes for alt, model labels, colour schemes,
-		CIF.  
+ [04/12/98]      HJB     pixutils.h
+                 Update comments, protytpes to stripe bonds for alternate
+                 conformers.
 
-[09/12/98]	HJB	molecule.h
-		Cummulative changes for fractional coordinates,
-		new colour schemes, CIF.  
+ [04/12/98]      HJB     rasmac.c
+                 Update comments, adjust code for current Metrowerks
+                 compiler. 
 
-[09/12/98]	HJB	molecule.c
-		Cummulative changes for fractional coordinates,
-		new colour schemes, CIF.  
-[09/12/98]	HJB	x11win.c
-		Update comments, menus and version text.
+ [04/12/98]      HJB     raswin.c
+                 Update comments, adjust code for current Metrowerks
+                 compiler. 
 
-[09/12/98]	HJB	mswin31.c
-		Update comments, output file commentary.
+ [04/12/98]      HJB     tokens.h
+                 Update comments, tokens for alt, model colours.
 
-[09/12/98]	HJB	outfile.c
-		Update comments, output file commentary.
+ [04/12/98]      HJB     transfor.c
+                 Update comments, add code for alt, model colours.
+                
+ [04/12/98]      HJB     transfor.h
+                 Update comments, prototypes for alt, model colours.
 
-[09/12/98]	HJB	script.c
-		Update comments, output file commentary.
+ [23/11/98]      HJB     abstree.c
+                 Add code for %A, %M specifiers, divide u/l case.
 
-[09/12/98]	HJB	rasmol.c
-		Update comments, output file commentary.
+ [22/11/98]      HJB     cif_fract.c
+                 New routine, derived from cif2pdb by H.J. Bernstein
+                 and F. C. Bernstein. 
 
-[04/12/98]	HJB	pixutils.c
-		Update comments, code to stripe bonds for alternate
-		conformers.  
+ [22/11/98]      HJB     cif_fract.h.
+                 New header for cif_fact.c.
 
-[04/12/98]	HJB	pixutils.h
-		Update comments, protytpes to stripe bonds for alternate
-		conformers. 
+ [22/11/98]      HJB     cif_stx.c
+                 New routine, derived from P. Ellis CBFlib parser.
 
-[04/12/98]	HJB	rasmac.c
-		Update comments, adjust code for current Metrowerks
-		compiler.  
+ [23/11/98]      HJB     render.c
+                 Update comments, add code to stripe bonds for alternate
+                 conformers.
 
-[04/12/98]	HJB	raswin.c
-		Update comments, adjust code for current Metrowerks
-		compiler.  
+ [23/11/98]      HJB     repres.c
+                 Update comments, add code to stripe bonds for alternate
+                 conformers.
 
-[04/12/98]	HJB	tokens.h
-		Update comments, tokens for alt, model colours.
+ [09/09/98]      HJB     cif_ctonum.c
+                 New routine, derived from ciftbx by S. R. Hall
+                 and H. J. Bernstein. 
 
-[04/12/98]	HJB	transfor.c
-		Update comments, add code for alt, model colours.
-		
-[04/12/98]	HJB	transfor.h
-		Update comments, prototypes for alt, model colours.
+ [09/09/98]      HJB     cif_ctonum.h
+                 New header for cif_ctonum.c.
 
-[23/11/98]	HJB	abstree.c
-		Add code for %A, %M specifiers, divide u/l case. 
+ [18/08/98]      HJB     cif.h
+                 New header for cif.c, derived from CBFlib by P. Ellis
+                 and H. J. Bernstein.
+                         
+ [18/08/98]      HJB     cif.c
+                 New routine derived from CBFlib by P. Ellis and
+                 H. J. Bernstein.
+                         
+ [14/08/98]      HJB     rasmol.c
+                 Added hooks for termio for Linux.  These changes
+                 are similar to, but not identical to the FreeBSD hooks.
+                 See the linux conditionals. -- H. J. Bernstein
 
-[22/11/98]	HJB	cif_fract.c
-		New routine, derived from cif2pdb by H.J. Bernstein
-		and F. C. Bernstein.  
+  Other Changes
 
-[22/11/98]	HJB	cif_fract.h.
-		New header for cif_fact.c. 
+   The complete version 2 change history is in the directory ChangeLog
 
-[22/11/98]	HJB	cif_stx.c
-		New routine, derived from P. Ellis CBFlib parser.
+     ----------------------------------------------------------------------
 
-[23/11/98]	HJB	render.c
-		Update comments, add code to stripe bonds for alternate
-		conformers. 
+| OpenRasMol | Copying and Distribution | Contents | Installation Instructions |
+      | Changes | Things To Do | Introduction | Source Code and Binaries |
+| RasMol Manual | Spanish Translation of RasMol Manual | Italian Translation of
+                               RasMol Help File |
+      | Donate to Support RasMol | Release README | Register your RasMol |
 
-[23/11/98]	HJB	repres.c
-		Update comments, add code to stripe bonds for alternate
-		conformers. 
+     ----------------------------------------------------------------------
 
-[09/09/98]	HJB	cif_ctonum.c
-		New routine, derived from ciftbx by S. R. Hall
-		and H. J. Bernstein.  
-
-[09/09/98]	HJB	cif_ctonum.h
-		New header for cif_ctonum.c. 
-
-[18/08/98]	HJB	cif.h
-		New header for cif.c, derived from CBFlib by P. Ellis
-		and H. J. Bernstein. 
-				 
-[18/08/98]	HJB	cif.c
-		New routine derived from CBFlib by P. Ellis and 
-		H. J. Bernstein. 
-				 
-[14/08/98]	HJB	rasmol.c
-		Added hooks for termio for Linux.  These changes
-		are similar to, but not identical to the FreeBSD hooks.
-		See the linux conditionals. -- H. J. Bernstein
-
-
-      Other Changes
-
-
-The complete version 2 change history is in the directory ChangeLog
-<ChangeLog/>
-
-| OpenRasMol <http://www.OpenrasMol.org> | Copying and Distribution
-<README.html#Copying> | Contents <README.html#Contents> | Installation
-Instructions <INSTALL.html> |
-| Changes <ChangeLog.html> | Things To Do <TODO.html> | Introduction
-<README.html#Introduction> | Source Code and Binaries
-<README.html#CodeAndBinaries> |
-| RasMol Manual <doc/rasmol.html> | Spanish Translation of RasMol Manual
-<doc/esrasmol27.html> | Italian Translation of RasMol 2.7.1 Help File
-<doc/itrasmol.hlp> |
-| Release README <README.html> |
-
-
-------------------------------------------------------------------------
-
-Updated 17 April 2005.
-
-Herbert J. Bernstein
-
-Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA
-
-yaya@bernstein-plus-sons.com <mailto:yaya@bernstein-plus-sons.com>
-
-
-
-
+   Updated 26 January 2008.
+   Herbert J. Bernstein
+   Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA
+   yaya@bernstein-plus-sons.com

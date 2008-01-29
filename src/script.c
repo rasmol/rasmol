@@ -65,6 +65,9 @@
  ***************************************************************************/
 /* script.c
  $Log: not supported by cvs2svn $
+ Revision 1.5  2008/01/29 04:12:11  yaya
+ Post release cleanup of problems discovered. -- HJB
+
  Revision 1.4  2007/11/19 03:28:40  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -1221,7 +1224,7 @@ static void WriteScriptMaps()
           if (!MapPointRad)  {
             if (mapinfo->flag&MapPointFlag)fprintf(OutFile,"map new dots\n");          	
           } else  {
-          if (mapinfo->flag&MapPointFlag)fprintf(OutFile,"map new dots %-.2lf\n",
+            if (mapinfo->flag&MapPointFlag)fprintf(OutFile,"map new dots %-.2lf\n",
               ((double)mapinfo->MapPointRad/250.) );
           }
           if (mapinfo->flag&MapMeshFlag){
@@ -1231,7 +1234,7 @@ static void WriteScriptMaps()
               if (!MapMeshRad) {
                 fprintf(OutFile,"map new mesh\n" );
               } else {
-              fprintf(OutFile,"map new mesh %-.2lf\n",((double)mapinfo->MapMeshRad/250.) );
+                fprintf(OutFile,"map new mesh %-.2lf\n",((double)mapinfo->MapMeshRad/250.) );
               }
             }
           }

@@ -65,6 +65,9 @@
  ***************************************************************************/
 /* transfor.c
  $Log: not supported by cvs2svn $
+ Revision 1.6  2008/01/29 04:12:11  yaya
+ Post release cleanup of problems discovered. -- HJB
+
  Revision 1.5  2007/11/19 03:28:40  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -2215,8 +2218,8 @@ void ColourDotsPotential( void )
                 Shade[ref->shade].refcount++;
                 ptr->col[i] = ref->col;
             }
-            }
     }
+}
 
 void ColourPointAttrib( int r, int g, int b, int mapno )
 {
@@ -2254,8 +2257,8 @@ void ColourPointAttrib( int r, int g, int b, int mapno )
           (MapPointsPtr->array[i]).col = Shade2Colour(nshade);
               
         }
-
-      }
+              
+        }
 }
 
 
@@ -2313,8 +2316,8 @@ void ColourPointPotential( int mapno )
           (MapPointsPtr->array[i]).col = ref->col;
               
         }
-        
-      }
+              
+        }
 
 
 }

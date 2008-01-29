@@ -84,24 +84,24 @@
    is map->mapdata[ix-(map->xlow)+
                    (map->xhigh-map->xlow+1)*(iy-(map->ylow))+
                    (map->xhigh-xlow+1)*(map->yhigh-map->ylow+1)*(iz-((map->zlow))]
-
+                   
    The transform mapm2r, mapxlate is organized so that mapm2r[ii+jj*3] holds
    the (ii,jj) element of the matrix.
-
+   
    The transform mapr2m is the inverse of mapm2r and is needed for conversion
    of the gradient of non-orthogonal map to a normal of the orthogonal map
 
  */
 typedef struct {
   void * mapdata;            /* mapdata[xlow:xhigh,ylow:yhigh,zlow:zhigh] */
-  int elsize;                /* size of element in chars                  */ 
-  int eltype;                /* CBF_INTEGER or CBF_FLOAT                  */                  
+  int elsize;                /* size of element in chars                  */
+  int eltype;                /* CBF_INTEGER or CBF_FLOAT                  */
   int maptype;               /* MAP_ORTHOGONAL or MAP_FRACTIONAL          */
   int adiv, bdiv, cdiv;      /* number of a,b,c grid divisions            */
-  Long xint, yint, zint;     /* The interval between map segments         */
-  Long xorig, yorig, zorig;  /* The origin for the map                    */
-  Long xlow, ylow, zlow;     /* The low indices                           */
-  Long xhigh, yhigh, zhigh;  /* The high indices                          */
+  long xint, yint, zint;     /* The interval between map segments         */
+  long xorig, yorig, zorig;  /* The origin for the map                    */
+  long xlow, ylow, zlow;     /* The low indices                           */
+  long xhigh, yhigh, zhigh;  /* The high indices                          */
   double mapdatamin;         /* The minimum value in the map              */
   double mapdatamax;         /* The maximum value in the map              */
   double mapdatamean;        /* The average value in the map              */
@@ -178,9 +178,9 @@ typedef struct {
      dzpos =  MapR2M(map,2,0)*(gradient)[0] + MapR2M(map,2,1)*(gradient)[1] + MapR2M(map,2,2)*(gradient)[2]; \
      glen = sqrt(dxpos*dxpos+dypos*dypos+dzpos*dzpos); \
      if (glen > 0.) {                                  \
-       (mp).Un[0] = -(Long)(4096.*(gradient)[0]/glen); \
-       (mp).Un[1] = -(Long)(4096.*(gradient)[1]/glen); \
-       (mp).Un[2] = -(Long)(4096.*(gradient)[2]/glen); \
+       (mp).Un[0] = -(Long)(4096.*(dxpos/glen)); \
+       (mp).Un[1] = -(Long)(4096.*(dypos/glen)); \
+       (mp).Un[2] = -(Long)(4096.*(dzpos/glen)); \
      } \
      } \
   }

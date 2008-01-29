@@ -69,9 +69,6 @@
  Correct Chinese data for missing line in langsel_utf.c
  Rewrite code for handling of slab mode in stereo -- HJB
 
- Revision 1.2  2007/11/25 17:57:50  yaya-hjb
- Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
-
  Revision 1.2  2007/11/19 03:28:40  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB

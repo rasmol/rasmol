@@ -35,7 +35,7 @@
 # Imake rules for building libraries, programs, scripts, and data files
 # rules:  $XConsortium: Imake.rules,v 1.193 94/04/10 17:39:55 rws Exp $
 
-#   $RCSfile: Makefile_hp,v $ $Revision: 1.1.1.1 $ $Date: 2007-11-17 03:28:36 $
+#   $RCSfile: Makefile_hp,v $ $Revision: 1.2 $ $Date: 2008-01-29 15:56:32 $
 
           PATHSEP = /
             SHELL = /usr/bin/sh
@@ -386,7 +386,7 @@ LINTEXTENSIONLIB = $(LINTEXTENSION)
          DEPLIBS2 = $(DEPLIBS)
          DEPLIBS3 = $(DEPLIBS)
 
-#   $RCSfile: Makefile_hp,v $ $Revision: 1.1.1.1 $ $Date: 2007-11-17 03:28:36 $
+#   $RCSfile: Makefile_hp,v $ $Revision: 1.2 $ $Date: 2008-01-29 15:56:32 $
 
           SOXMREV = 1.2
          SOMRMREV = 1.2

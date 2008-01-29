@@ -70,19 +70,10 @@
  Correct boundary calculations for map generate.
  Update CW project for windows.  -- HJB
 
- Revision 1.4  2008/01/18 03:25:09  yaya-hjb
- Update to RasMol 2.7.4 prerelease 4 level -- HJB
-
  Revision 1.6  2008/01/14 15:49:16  yaya
  More of code for CBF style map save
  More use of stdlib as per Ladislav Michnovic
  --HJB
-
- Revision 1.3  2008/01/05 21:31:40  yaya-hjb
- Update ChangeLog and TODO for 2.7.4.
- Update rasmol.doc, rasmol.hlp and rasmol.html for GM's toggle.
- Update slab mode for stereo.
- Add save of maps in CBF mode. -- HJB
 
  Revision 1.5  2008/01/05 20:56:29  yaya
  Update handling of stereo interaction with slab
@@ -91,9 +82,6 @@
  Revision 1.4  2007/12/14 02:04:50  yaya
  Correct Chinese data for missing line in langsel_utf.c
  Rewrite code for handling of slab mode in stereo -- HJB
-
- Revision 1.2  2007/11/25 17:57:50  yaya-hjb
- Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
 
  Revision 1.3  2007/11/19 03:28:39  yaya
  Update to credits for 2.7.4 in manual and headers
@@ -2065,7 +2053,7 @@ static int TestSphere( int x, int y, int z, int rad )
     double theta;
 
     ClipStatus = 0;
-
+    
     xp = x;
     if (xp < 0) xp =0;
     if (xp >= View.xmax) xp = View.xmax-1;
@@ -2409,13 +2397,13 @@ void ClipSphere( int x, int y, int z, int rad, int col )
                 }
                 dptr++;  dx++;
             }
-        dold += View.yskip;
-        fold += View.yskip;
-        dy++;
-    }
+            dold += View.yskip;
+            fold += View.yskip;
+            dy++;
+        }
         return;
-    }
-    	
+}
+
 }
 
 void DrawStar( int x, int y, int z, int rad, int col )

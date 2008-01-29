@@ -1,16 +1,16 @@
-                        Installation Instructions
+                           Installation Instructions
                                  RasMol 2.7.4.1
 
-                    Molecular Graphics Visualisation Tool
+                     Molecular Graphics Visualisation Tool
                                 26 January 2008
 
-                     Based on RasMol 2.6 by Roger Sayle
+                       Based on RasMol 2.6 by Roger Sayle
       Biomolecular Structures Group, Glaxo Wellcome Research & Development
-                        Stevenage, Hertfordshire, UK
-           Version 2.6, August 1995, Version 2.6.4, December 1998
-                    Copyright (C) Roger Sayle 1992-1999
+                          Stevenage, Hertfordshire, UK
+             Version 2.6, August 1995, Version 2.6.4, December 1998
+                      Copyright (c) Roger Sayle 1992-1999
 
-                            and Based on Mods by
+                              and Based on Mods by
 
 +------------------------------------------------------------------------------+
 | Author            | Version, Date        | Copyright                         |
@@ -62,7 +62,7 @@
    authors and does not necessarily represent the official views of the
    funding organizations.
 
-                     and Incorporating Translations by
+                       and Incorporating Translations by
 
 +-----------------------------------------------------------------------------+
 | Author                               | Item                     | Language  |
@@ -88,9 +88,9 @@
 | Mamoru Yamanishi, Katajima Hajime    | 2.7.3 menus and messages | Japanese  |
 +-----------------------------------------------------------------------------+
 
-                              This Release by
+                                This Release by
    Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Lane, Bellport, NY, USA
-                        yaya@bernstein-plus-sons.com
+                          yaya@bernstein-plus-sons.com
                   Copyright (c) Herbert J. Bernstein 1998-2008
 
    The original RasMol manual was created by Roger Sayle. In July 1996, Dr.
@@ -110,7 +110,7 @@
                    Documentation Last Updated 26 January 2008
             Edited by Herbert J. Bernstein and Frances C. Bernstein
 
-                                Translations
+                                  Translations
 
    Thanks to the efforts of Jose Miguel Fernandez Fernandez (Departamento de
    Bioquimica y Biologia Molecular. Universidad de Granada. Espana
@@ -132,8 +132,8 @@
 
      ----------------------------------------------------------------------
 
-                 THIS IS A PRELIMINARY RELEASE INVOLVING EXTENSIVE MODIFICATIONS
-                                  ***** USE WITH CAUTION ******
+        THIS IS A PRELIMINARY RELEASE INVOLVING EXTENSIVE MODIFICATIONS
+                         ***** USE WITH CAUTION ******
 
      ----------------------------------------------------------------------
 
@@ -311,7 +311,7 @@
    TERMIOS      This directive enables the command line processing on UNIXs   
                 that support the termios terminal handling routines. By       
                 leaving this symbol undefined, RasMol omits the interactive   
-   command line interface. Undefining is not recommended!
+                command line interface. Undefining is not recommended!        
    SOCKETS      This directive enables the TCP/IP server functionality of     
                 RasMol to be enable. This enables other software to connect   
                 to a running RasMol. This should be undefined on machines not 
@@ -336,55 +336,55 @@
 
    To summarise;
 
-    A typical UNIX build:
-         /* #define IBMPC        */
-         /* #define MSWIN        */
-         /* #define APPLEMAC     */
-         #define X11WIN
-         #define UNIX
+     A typical UNIX build:
+          /* #define IBMPC        */
+          /* #define MSWIN        */
+          /* #define APPLEMAC     */
+          #define X11WIN
+          #define UNIX
 
-         /* #define DIALBOX      */
+          /* #define DIALBOX      */
+          #define SOCKETS
+          #define TERMIOS
+          #define PROFILE
+          #define MITSHM
+          #define USE_UNAME
+          #define USE_CBFLIB
+
+     A typical Windows build:
+         #define IBMPC
+         #define MSWIN
+         /* #define APPLEMAC      */
+         /* #define X11WIN        */
+         /* #define UNIX          */
+
+         /* #define DIALBOX       */
+         /* #define SOCKETS       */
+         #define TERMIOS
+         #define PROFILE
+         #define MITSHM
+         #define USE_CBFLIB
+
+     A typical Macintosh classic build:
+         /* #define IBMPC         */
+         /* #define MSWIN         */
+         #define APPLEMAC
+         /* #define X11WIN        */
+         /* #define UNIX          */
+
+         /* #define DIALBOX       */
          #define SOCKETS
          #define TERMIOS
          #define PROFILE
          #define MITSHM
-          #define USE_UNAME
-          #define USE_CBFLIB
-
-    A typical Windows build:
-        #define IBMPC
-        #define MSWIN
-        /* #define APPLEMAC      */
-        /* #define X11WIN        */
-        /* #define UNIX          */
-
-        /* #define DIALBOX       */
-        /* #define SOCKETS       */
-        #define TERMIOS
-        #define PROFILE
-        #define MITSHM
-         #define USE_CBFLIB
-
-     A typical Macintosh classic build:
-        /* #define IBMPC         */
-        /* #define MSWIN         */
-        #define APPLEMAC
-        /* #define X11WIN        */
-        /* #define UNIX          */
-
-        /* #define DIALBOX       */
-        #define SOCKETS
-        #define TERMIOS
-        #define PROFILE
-        #define MITSHM
          /* #define USE_CBFLIB    */
 
 
    Any comments, suggestions or questions about this modified version should
    be directed to Herbert J. Bernstein at rasmol@bernstein-plus-sons.com.
 
-         | OpenRasMol | Copying and Distribution | Contents | Installation Instructions |
-               | Changes | Things To Do | Introduction | Source Code and Binaries |
+| OpenRasMol | Copying and Distribution | Contents | Installation Instructions |
+      | Changes | Things To Do | Introduction | Source Code and Binaries |
 | RasMol Manual | Spanish Translation of RasMol Manual | Italian Translation of
                                RasMol Help File |
       | Donate to Support RasMol | Release README | Register your RasMol |

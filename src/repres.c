@@ -65,26 +65,17 @@
  ***************************************************************************/
 /* repres.c
  $Log: not supported by cvs2svn $
- Revision 1.4  2008/01/18 03:25:09  yaya-hjb
- Update to RasMol 2.7.4 prerelease 4 level -- HJB
+ Revision 1.17  2008/01/29 04:12:11  yaya
+ Post release cleanup of problems discovered. -- HJB
 
  Revision 1.16  2008/01/16 21:35:11  yaya
  Change default resolution from .5 Angstrom to 1 Angstrom
  Correct map xlow, xhigh calculations
  Correct map axis output -- HJB
 
- Revision 1.3  2008/01/05 21:31:40  yaya-hjb
- Update ChangeLog and TODO for 2.7.4.
- Update rasmol.doc, rasmol.hlp and rasmol.html for GM's toggle.
- Update slab mode for stereo.
- Add save of maps in CBF mode. -- HJB
-
  Revision 1.15  2007/12/14 02:04:50  yaya
  Correct Chinese data for missing line in langsel_utf.c
  Rewrite code for handling of slab mode in stereo -- HJB
-
- Revision 1.2  2007/11/25 17:57:50  yaya-hjb
- Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
 
  Revision 1.14  2007/11/19 03:28:40  yaya
  Update to credits for 2.7.4 in manual and headers
@@ -1231,7 +1222,7 @@ void DisplayMapPoints( void )
       	vector_get_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,j );
       	MapPointsPtr = mapinfo.MapPointsPtr;
       	irad = (int)rint(Scale*(Real)(mapinfo.MapMeshRad));
-      	
+
         if (MapPointsPtr && (mapinfo.flag&MapPointFlag) )
         for (i=0; i<MapPointsPtr->size; i++) {
         	x = (MapPointsPtr->array[i]).xpos;
@@ -1245,15 +1236,15 @@ void DisplayMapPoints( void )
                 zi = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset-Cenz;
                 if( ZBValid(xi,zi)  ) {
                   if (irad <= 0 && ZBValid(xi,zi) ) {
-                        PlotDeepPoint(xi,yi,zi,(MapPointsPtr->array[i]).col);
+                    PlotDeepPoint(xi,yi,zi,(MapPointsPtr->array[i]).col);
                   } else  {
                     ClipSphere(xi,yi,zi,irad,(MapPointsPtr->array[i]).col);
                   }
+                  }
                 }
+              }
             }
         }
-    }
-    }
     ReDrawFlag |= RFRefresh;
 
 }
@@ -1307,9 +1298,9 @@ void DisplayMapBonds( void )
                 (MapPointsPtr->array[src]).col,
                 (MapPointsPtr->array[dst]).col,' ');
             } else {
-          ClipTwinVector(xsrc,ysrc,zsrc,xdst,ydst,zdst,
-            (MapPointsPtr->array[src]).col,
-            (MapPointsPtr->array[dst]).col,' ');
+              ClipTwinVector(xsrc,ysrc,zsrc,xdst,ydst,zdst,
+                (MapPointsPtr->array[src]).col,
+                (MapPointsPtr->array[dst]).col,' ');
             }  
           }
       	}
@@ -1334,7 +1325,7 @@ void DisplayMapTangles( void ) {
     Cenx=(int)rint(CenX*MatX[0]+CenY*MatX[1]+CenZ*MatX[2]);
     Ceny=(int)rint(CenX*MatY[0]+CenY*MatY[1]+CenZ*MatY[2]);
     Cenz=(int)rint(CenX*MatZ[0]+CenY*MatZ[1]+CenZ*MatZ[2]);
-    
+
     if (MapInfoPtr)
       for (j=0; j<MapInfoPtr->size; j++) {
       	vector_get_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,j );
@@ -1367,29 +1358,45 @@ void DisplayMapTangles( void ) {
           worldnormals[0]=(MapPointsPtr->array[src]).Un;
           worldnormals[1]=(MapPointsPtr->array[dst]).Un;
           worldnormals[2]=(MapPointsPtr->array[oth]).Un;
+          /* if (i==0) 
+          {
+          	fprintf(stderr,"WorldNormal 0: [%ld,%ld,%ld], 1: [%ld,%ld,%ld], 2:[%ld,%ld,%ld]\n",
+          	worldnormals[0][0], worldnormals[0][1], worldnormals[0][2],
+          	worldnormals[1][0], worldnormals[1][1], worldnormals[1][2],
+          	worldnormals[2][0], worldnormals[2][1], worldnormals[2][2]
+          	);
+          } */
           for (ii=0; ii<3; ii++ ) {
-            normals[ii][0] = ((Long)rint((worldnormals[ii][0]*RotX[0]+worldnormals[ii][1]*RotX[1]+worldnormals[ii][2]*RotX[2]))/24.);
-            normals[ii][1] = ((Long)rint((worldnormals[ii][0]*RotY[0]+worldnormals[ii][1]*RotY[1]+worldnormals[ii][2]*RotY[2]))/24.);
-            normals[ii][2] = ((Long)rint((worldnormals[ii][0]*RotZ[0]+worldnormals[ii][1]*RotZ[1]+worldnormals[ii][2]*RotZ[2]))/24.);
+            normals[ii][0] = ((Long)rint((worldnormals[ii][0]*RotX[0]+worldnormals[ii][1]*RotX[1]+worldnormals[ii][2]*RotX[2]))/30.);
+            normals[ii][1] = ((Long)rint((worldnormals[ii][0]*RotY[0]+worldnormals[ii][1]*RotY[1]+worldnormals[ii][2]*RotY[2]))/30.);
+            normals[ii][2] = ((Long)rint((worldnormals[ii][0]*RotZ[0]+worldnormals[ii][1]*RotZ[1]+worldnormals[ii][2]*RotZ[2]))/30.);
           }
-          inten = (normals[0][0]-normals[0][1]+normals[0][2]);
-          /* inten = LightDot(normals[0][0],-InvertY(normals[0][1]),normals[0][2]); */
+          /* if (i==0) 
+          {
+          	fprintf(stderr,"Normal 0: [%ld,%ld,%ld], 1: [%ld,%ld,%ld], 2:[%ld,%ld,%ld]\n",
+          	normals[0][0], normals[0][1], normals[0][2],
+          	normals[1][0], normals[1][1], normals[1][2],
+          	normals[2][0], normals[2][1], normals[2][2]
+          	);
+          } */
+          /* inten = (normals[0][0]-normals[0][1]+normals[0][2]); */
+          inten = LightDot(normals[0][0],normals[0][1],normals[0][2]);
           if (inten > 0) {
             inten = (MapPointsPtr->array[src]).col+((inten*colconst(255))>>ColBits);
           } else {
           	inten = (MapPointsPtr->array[src]).col;
           }
           tangle.v[0].inten = inten;
-          inten = (normals[1][0]-normals[1][1]+normals[1][2]);
-          /* inten = LightDot(normals[1][0],-InvertY(normals[1][1]),normals[1][2]); */
+          /* inten = (normals[1][0]-normals[1][1]+normals[1][2]); */
+          inten = LightDot(normals[1][0],normals[1][1],normals[1][2]);
           if (inten > 0) {
             inten = (MapPointsPtr->array[dst]).col+((inten*colconst(255))>>ColBits);
           } else {
           	inten = (MapPointsPtr->array[dst]).col;
           }
           tangle.v[1].inten = inten;
-          inten = (normals[2][0]-normals[2][1]+normals[2][2]);
-          /* inten = LightDot(normals[2][0],-InvertY(normals[2][1]),normals[2][2]); */
+          /* inten = (normals[2][0]-normals[2][1]+normals[2][2]); */
+          inten = LightDot(normals[2][0],normals[2][1],normals[2][2]);
           if (inten > 0) {
             inten = (MapPointsPtr->array[oth]).col+((inten*colconst(255))>>ColBits);
           } else {
@@ -1404,13 +1411,13 @@ void DisplayMapTangles( void ) {
               tangle.v[ii].x+normals[ii][0]/10,tangle.v[ii].y+normals[ii][1]/10,tangle.v[ii].z+normals[ii][2]/10,
                (MapPointsPtr->array[dst]).col,(MapPointsPtr->array[dst]).col,' ');          	
           } */
-      	
-    }
+      		
+      	}
       }
     
 
-	
-}
+
+      }
 
 /*==============================*/
 /*  Ribbon & Cartoon Functions  */

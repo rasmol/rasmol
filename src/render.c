@@ -65,11 +65,8 @@
  ***************************************************************************/
 /* render.c
  $Log: not supported by cvs2svn $
- Revision 1.3  2008/01/05 21:31:40  yaya-hjb
- Update ChangeLog and TODO for 2.7.4.
- Update rasmol.doc, rasmol.hlp and rasmol.html for GM's toggle.
- Update slab mode for stereo.
- Add save of maps in CBF mode. -- HJB
+ Revision 1.9  2008/01/29 04:12:11  yaya
+ Post release cleanup of problems discovered. -- HJB
 
  Revision 1.8  2008/01/05 20:56:29  yaya
  Update handling of stereo interaction with slab
@@ -78,9 +75,6 @@
  Revision 1.7  2007/12/14 02:04:50  yaya
  Correct Chinese data for missing line in langsel_utf.c
  Rewrite code for handling of slab mode in stereo -- HJB
-
- Revision 1.2  2007/11/25 17:57:50  yaya-hjb
- Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
 
  Revision 1.6  2007/11/19 03:28:39  yaya
  Update to credits for 2.7.4 in manual and headers
@@ -1736,7 +1730,7 @@ static void DrawFrameOne( void )
         View.shift = 0;
         View.xmax = wide;
         View.offmax = 2*wide*YRange;
-
+        
         if( UseSlabPlane ){
           for (ii=0; ii<wide; ii++) {
             kemp = (double)SlabValue+rint(((double)(wide/2-ii))*tantheta);
@@ -1999,8 +1993,8 @@ static void IdentifyAtom( int xpos, int ypos )
     if( !IdentFound || (IdentDist>=50) )
     {   /* Reset Pick Atom! */
         QChain = (void __far*)0;
-	QGroup = (void __far*)0;
-	QAtom = (void __far*)0;
+        QGroup = (void __far*)0;
+        QAtom = (void __far*)0;
     } else break; /* [GSG 11/10/95] */
     } /* [GSG 11/10/95] */
 

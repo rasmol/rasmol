@@ -310,7 +310,7 @@ void DeAllocateExpr( Expr *expr )
 
 int GetElemDescNumber (char etype[2]) {
 
-    register char ch1,ch2;
+  register char ch1,ch2;
   
   ch1 = ToUpper(etype[0]);
   ch2 = ToUpper(etype[1]);

@@ -2,16 +2,16 @@
                                  RasMol 2.7.4.1
 
 
-                    Molecular Graphics Visualisation Tool
+                     Molecular Graphics Visualisation Tool
                                 26 January 2008
 
-                     Based on RasMol 2.6 by Roger Sayle
+                       Based on RasMol 2.6 by Roger Sayle
       Biomolecular Structures Group, Glaxo Wellcome Research & Development
-                        Stevenage, Hertfordshire, UK
-           Version 2.6, August 1995, Version 2.6.4, December 1998
-                    Copyright (C) Roger Sayle 1992-1999
+                          Stevenage, Hertfordshire, UK
+             Version 2.6, August 1995, Version 2.6.4, December 1998
+                      Copyright (c) Roger Sayle 1992-1999
 
-                            and Based on Mods by
+                              and Based on Mods by
 
 +------------------------------------------------------------------------------+
 | Author            | Version, Date        | Copyright                         |
@@ -59,7 +59,7 @@
    authors and does not necessarily represent the official views of the
    funding organizations.
 
-                     and Incorporating Translations by
+                       and Incorporating Translations by
 
 +-----------------------------------------------------------------------------+
 | Author                               | Item                     | Language  |
@@ -85,9 +85,9 @@
 | Mamoru Yamanishi, Katajima Hajime    | 2.7.3 menus and messages | Japanese  |
 +-----------------------------------------------------------------------------+
 
-                              This Release by
+                                This Release by
    Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Lane, Bellport, NY, USA
-                        yaya@bernstein-plus-sons.com
+                          yaya@bernstein-plus-sons.com
                   Copyright (c) Herbert J. Bernstein 1998-2008
 
    The original RasMol manual was created by Roger Sayle. In July 1996, Dr.
@@ -107,7 +107,7 @@
                    Documentation Last Updated 26 January 2008
             Edited by Herbert J. Bernstein and Frances C. Bernstein
 
-                                Translations
+                                  Translations
 
    Thanks to the efforts of Jose Miguel Fernandez Fernandez (Departamento de
    Bioquimica y Biologia Molecular. Universidad de Granada. Espana
@@ -129,12 +129,12 @@
 
      ----------------------------------------------------------------------
 
-      THIS IS A PRELIMINARY RELEASE INVOLVING EXTENSIVE MODIFICATIONS
-                       ***** USE WITH CAUTION ******
+        THIS IS A PRELIMINARY RELEASE INVOLVING EXTENSIVE MODIFICATIONS
+                         ***** USE WITH CAUTION ******
 
      ----------------------------------------------------------------------
 
-                                 IMPORTANT
+                                   IMPORTANT
 
    This version is based directly on RasMol version 2.7.4, on RasMol version
    2.7.3.1, on RasMol vesion 2.7.3, on RasMol version 2.7.2.1.1, on RasMol
@@ -189,33 +189,33 @@
    For those who need uncompressed versions and can accept the longer
    download times, uncompressed versions are available:
 
-         README        Text version of this file
-         manualUS.rtf  8.5x11 RTF copy of User Manual
-   (bin) manualUS.ps   8.5x11 PostScript version of the RasMol User Manual
-   (bin) manualUS.pdf  8.5x11 PDF version of the RasMol User Manual
-         manualA4.rtf  A4 RTF copy of User Manual
-   (bin) manualA4.ps   A4 PostScript version of the RasMol User Manual
-   (bin) manualA4.pdf  A4 PDF version of the RasMol User Manual
-
-         refcardUS.rtf 8.5x11 RTF copy of Ref. Card
-   (bin) refcardUS.ps  8.5x11 PostScript version of Quick Reference Card
-   (bin) refcardUS.pdf 8.5x11 PDF version of Quick Reference Card
-         refcardA4.rtf A4 RTF copy of Ref. Card
-   (bin) refcardA4.ps  A4 PostScript version of Quick Reference Card
-   (bin) refcardA4.pdf A4 PDF version of Quick Reference Card
-
-         rasmol.0      ASCII text formatted version of UNIX 'man' page
-         rasmol.1      Nroff macro version of the UNIX `man' page
-
-   (bin) rasmol.hlp    RasMol help file (unix, mac, windows)
-
-         rasmol.vms    RasMol help file (VMS librarian HELP text)
-
-         raswin.rtf    RTF source of RasMol WinHelp document
-   (bin) raswin.hpj    Parameter file for RasMol WinHelp document
-   (bin) raswin.hlp    RasMol WinHelp file
-
-         rasmol.html   HTML version of User Manual for WWW/HTTP
+          README        Text version of this file                           
+          manualUS.rtf  8.5x11 RTF copy of User Manual                      
+    (bin) manualUS.ps   8.5x11 PostScript version of the RasMol User Manual 
+    (bin) manualUS.pdf  8.5x11 PDF version of the RasMol User Manual        
+          manualA4.rtf  A4 RTF copy of User Manual                          
+    (bin) manualA4.ps   A4 PostScript version of the RasMol User Manual     
+    (bin) manualA4.pdf  A4 PDF version of the RasMol User Manual            
+                                                                            
+          refcardUS.rtf 8.5x11 RTF copy of Ref. Card                        
+    (bin) refcardUS.ps  8.5x11 PostScript version of Quick Reference Card   
+    (bin) refcardUS.pdf 8.5x11 PDF version of Quick Reference Card          
+          refcardA4.rtf A4 RTF copy of Ref. Card                            
+    (bin) refcardA4.ps  A4 PostScript version of Quick Reference Card       
+    (bin) refcardA4.pdf A4 PDF version of Quick Reference Card              
+                                                                            
+          rasmol.0      ASCII text formatted version of UNIX 'man' page     
+          rasmol.1      Nroff macro version of the UNIX `man' page          
+                                                                            
+    (bin) rasmol.hlp    RasMol help file (unix, mac, windows)               
+                                                                            
+          rasmol.vms    RasMol help file (VMS librarian HELP text)          
+                                                                            
+          raswin.rtf    RTF source of RasMol WinHelp document               
+    (bin) raswin.hpj    Parameter file for RasMol WinHelp document          
+    (bin) raswin.hlp    RasMol WinHelp file                                 
+                                                                            
+          rasmol.html   HTML version of User Manual for WWW/HTTP            
 
      ----------------------------------------------------------------------
 

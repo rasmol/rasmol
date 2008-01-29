@@ -4,13 +4,13 @@
                     Molecular Graphics Visualisation Tool
                     19 November 2007 (rev. 19 January 2008)
 
-                     Based on RasMol 2.6 by Roger Sayle
+                       Based on RasMol 2.6 by Roger Sayle
 Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                                Hertfordshire, UK
-           Version 2.6, August 1995, Version 2.6.4, December 1998
-                    Copyright (C) Roger Sayle 1992-1999
+             Version 2.6, August 1995, Version 2.6.4, December 1998
+                      Copyright (c) Roger Sayle 1992-1999
 
-                            and Based on Mods by
+                              and Based on Mods by
 
 +------------------------------------------------------------------------------+
 | Author            | Version, Date        | Copyright                         |
@@ -58,7 +58,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
    authors and does not necessarily represent the official views of the
    funding organizations.
 
-                     and Incorporating Translations by
+                       and Incorporating Translations by
 
 +-----------------------------------------------------------------------------+
 | Author                               | Item                     | Language  |
@@ -84,9 +84,9 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 | Mamoru Yamanishi, Katajima Hajime    | 2.7.3 menus and messages | Japanese  |
 +-----------------------------------------------------------------------------+
 
-                              This Release by
+                                This Release by
    Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Lane, Bellport, NY, USA
-                        yaya@bernstein-plus-sons.com
+                          yaya@bernstein-plus-sons.com
                   Copyright (c) Herbert J. Bernstein 1998-2008
 
    The original RasMol manual was created by Roger Sayle. In July 1996, Dr.
@@ -106,7 +106,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                   Documentation Last Updated 12 November 2007
             Edited by Herbert J. Bernstein and Frances C. Bernstein
 
-                                Translations
+                                  Translations
 
    Thanks to the efforts of Jose Miguel Fernandez Fernandez (Departamento de
    Bioquimica y Biologia Molecular. Universidad de Granada. Espana
@@ -128,8 +128,8 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
      ----------------------------------------------------------------------
 
-                 THIS IS A PRELIMINARY RELEASE INVOLVING EXTENSIVE MODIFICATIONS
-                                  ***** USE WITH CAUTION ******
+        THIS IS A PRELIMINARY RELEASE INVOLVING EXTENSIVE MODIFICATIONS
+                         ***** USE WITH CAUTION ******
 
      ----------------------------------------------------------------------
 
@@ -146,7 +146,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
      ----------------------------------------------------------------------
 
-                                  Contents
+  Contents
 
      * IMPORTANT - Copying and Distribution
      * Installation Instructions
@@ -164,7 +164,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
      ----------------------------------------------------------------------
 
-                                Introduction
+                                  Introduction
 
    This posting is made to announce the releases of RasMol version 2.7.4.1.
    This release is based on RasMol 2.7.4 and RasMol 2.7.3.1, the final
@@ -239,7 +239,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
      ----------------------------------------------------------------------
 
-                          Source Code and Binaries
+                            Source Code and Binaries
 
    The complete source code and user documentation of RasMol 2.7.4 may be
    obtained from http://blondie.dowling.edu/projects/rasmol and
@@ -255,8 +255,8 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
    http://blondie.dowling.edu/projects/rasmol and
    http://blondie.dowling.edu/projects/rasmol.
 
-   Any comments, suggestions or questions about this modified version of
-   RasMol should be directed to rasmol@bernstein-plus-sons.com.
+     Any comments, suggestions or questions about this modified version of
+          RasMol should be directed to rasmol@bernstein-plus-sons.com.
 
 | OpenRasMol | Copying and Distribution | Contents | Installation Instructions |
       | Changes | Things To Do | Introduction | Source Code and Binaries |
@@ -267,6 +267,6 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
      ----------------------------------------------------------------------
 
                             Updated 26 January 2008.
-   Herbert J. Bernstein
-   Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA
-   yaya@bernstein-plus-sons.com
+                              Herbert J. Bernstein
+        Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA
+                          yaya@bernstein-plus-sons.com

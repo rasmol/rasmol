@@ -65,22 +65,13 @@
  ***************************************************************************/
 /* molecule.c
  $Log: not supported by cvs2svn $
- Revision 1.4  2008/01/18 03:25:09  yaya-hjb
- Update to RasMol 2.7.4 prerelease 4 level -- HJB
+ Revision 1.15  2008/01/29 04:12:11  yaya
+ Post release cleanup of problems discovered. -- HJB
 
  Revision 1.14  2008/01/16 21:35:11  yaya
  Change default resolution from .5 Angstrom to 1 Angstrom
  Correct map xlow, xhigh calculations
  Correct map axis output -- HJB
-
- Revision 1.3  2008/01/05 21:31:40  yaya-hjb
- Update ChangeLog and TODO for 2.7.4.
- Update rasmol.doc, rasmol.hlp and rasmol.html for GM's toggle.
- Update slab mode for stereo.
- Add save of maps in CBF mode. -- HJB
-
- Revision 1.2  2007/11/25 17:57:50  yaya-hjb
- Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
 
  Revision 1.13  2007/11/25 17:12:18  yaya
  Refresh colours on map load.  Put default spread back to 1/6 -- HJB
@@ -933,7 +924,7 @@ void ProcessAtomType( RAtom __far *ptr, char etype[2] )
     int altc;
 
     if ((etype[0]==' '&&etype[1]==' ')|| isdigit(etype[0]) || isdigit(etype[1]))
-    ptr->elemno = GetElemNumber(CurGroup,ptr);
+      ptr->elemno = GetElemNumber(CurGroup,ptr);
     else
       ptr->elemno = GetElemDescNumber(etype);
     if( ptr->elemno == 1 )
@@ -2133,7 +2124,7 @@ void CreateSurfaceBonds( void )
 									abort = 0;
 									switch (PreTestSurface(aptr,dptr,C,&crad,Un)) {
 										
-										case 0: 
+										case 0:
 											/* Look for atoms centers within ProbeRadius+AbsMaxAtomRad of C
 											i.e. 3 Angstroms plus the ProbeRadius of C */ 
 											mxm = C[0] - MinX; 

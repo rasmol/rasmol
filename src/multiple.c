@@ -65,16 +65,13 @@
  ***************************************************************************/
 /* multiple.c
  $Log: not supported by cvs2svn $
- Revision 1.3  2008/01/18 03:25:09  yaya-hjb
- Update to RasMol 2.7.4 prerelease 4 level -- HJB
+ Revision 1.14  2008/01/29 04:12:11  yaya
+ Post release cleanup of problems discovered. -- HJB
 
  Revision 1.13  2008/01/14 15:49:16  yaya
  More of code for CBF style map save
  More use of stdlib as per Ladislav Michnovic
  --HJB
-
- Revision 1.2  2007/11/25 17:57:50  yaya-hjb
- Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
 
  Revision 1.12  2007/11/19 03:28:39  yaya
  Update to credits for 2.7.4 in manual and headers
@@ -552,7 +549,7 @@ void ReRadius( void )
         if (MapRadius > WorldRadius) {
           WorldRadius = MapRadius;
           WorldSize = WorldRadius<<1;
-          DScale = 1.0/WorldSize;
+          DScale = 1.0/WorldSize;        	
         }
       }
       if ( NumMolecules > 1 ) SwitchMolecule(SaveMol);

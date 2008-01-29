@@ -65,13 +65,13 @@
  ***************************************************************************/
 /* infile.c
  $Log: not supported by cvs2svn $
+ Revision 1.6  2008/01/29 04:12:10  yaya
+ Post release cleanup of problems discovered. -- HJB
+
  Revision 1.5  2008/01/14 15:49:16  yaya
  More of code for CBF style map save
  More use of stdlib as per Ladislav Michnovic
  --HJB
-
- Revision 1.2  2007/11/25 17:57:49  yaya-hjb
- Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
 
  Revision 1.4  2007/11/19 03:28:39  yaya
  Update to credits for 2.7.4 in manual and headers
@@ -1061,9 +1061,9 @@ int LoadPDBMolecule( FILE *fp,  int flag )
                               Info.mato2f[rownum-1][1] =  ReadDecValue(20,10);
                               Info.mato2f[rownum-1][2] =  ReadDecValue(30,10);
                               Info.veco2f[rownum-1] =  ReadDecValue(45,10);
-			      if (rownum == 3) {
+                            if (rownum == 3) {
                                 if (invxfrm(Info.mato2f,Info.veco2f,
-					    Info.matf2o,Info.vecf2o) ) {
+                                  Info.matf2o,Info.vecf2o) ) {
                                   int i, j;
 
                                   WriteString

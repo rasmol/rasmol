@@ -68,9 +68,6 @@
  Revision 1.10  2007/12/06 18:47:10  hk0i
  added NoToggle and ColourMode commands + messages (translations needed), README for lang files, script to generate all langsel files (uses previous scripts).
 
- Revision 1.2  2007/11/25 17:57:50  yaya-hjb
- Update sf rasmol_bleeding_edge for 2.7.4 release -- HJB
-
  Revision 1.9  2007/11/19 03:28:40  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
