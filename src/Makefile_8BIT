@@ -336,7 +336,7 @@ MODLDCOMBINEFLAGS = -r
 
 # $TOG: Motif.rules /main/4 1998/02/06 10:53:37 kaleb $
 
-# $Id: Makefile_8BIT,v 1.2 2008-01-29 16:19:12 yaya-hjb Exp $
+# $Id: Makefile_8BIT,v 1.3 2008-01-30 03:43:59 yaya-hjb Exp $
 
 # $Xorg: X11.rules,v 1.4 2000/08/17 19:41:46 cpqbld Exp $
 
@@ -344,7 +344,7 @@ MODLDCOMBINEFLAGS = -r
 
 # $TOG: Motif.tmpl /main/5 1998/02/06 10:53:46 kaleb $
 
-# $Id: Makefile_8BIT,v 1.2 2008-01-29 16:19:12 yaya-hjb Exp $
+# $Id: Makefile_8BIT,v 1.3 2008-01-30 03:43:59 yaya-hjb Exp $
 
 # ----------------------------------------------------------------------
 # X Window System Build Parameters and Rules

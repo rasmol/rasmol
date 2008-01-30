@@ -1,5 +1,5 @@
 #!/bin/csh
-foreach file ( index.html esrasmol27.html itrasmol.hlp )
+foreach file ( index.html esrasmol27.html itrasmol.hlp GPL.txt NOTICE.txt RASLIC.txt )
   rm -rf $file
 end
 foreach file (*)

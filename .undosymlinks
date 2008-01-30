@@ -1,6 +1,5 @@
 #!/bin/csh
-foreach file ( index.shtml RasMol.tar.gz RasMol.DEC RasMol.HP \
-RasMol.LINUX RasMol.MAC RasMol.MSWIN RasMol.RS6K RasMol.SGI )
+foreach file ( index.shtml RasMol.tar.gz )
   rm -rf $file
 end
 foreach file (*)
