@@ -230,9 +230,9 @@ char fillang [81];
 static char * EMPTY = "";
 static char * RMG = "RasMol Molecular Graphics";
 static char * RURL = "http://www.rasmol.org/";
-static char * RVERS  = "X11 Version 2.7.3.1";
-static char * RCOP = "Copyright (C) R.Sayle 1992-1999";
-static char * RCOP2 = "Copyright (C) H. Bernstein 1998-2006";
+static char * RVERS  = "X11 Version " VERSION;
+static char * RCOP = MAIN_COPYRIGHT;
+static char * RCOP2 = VER_COPYRIGHT;
 static char * REMAIL = "yaya@bernstein-plus-sons.com";
 static char * ROK = "OK";
 
