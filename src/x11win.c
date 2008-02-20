@@ -65,6 +65,9 @@
  ***************************************************************************/
 /* x11win.c
  $Log: not supported by cvs2svn $
+ Revision 1.5  2008/01/30 03:44:00  yaya-hjb
+ More post 2.7.4.1 release cleanup -- HJB
+
  Revision 1.5  2007/11/19 03:28:40  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -2554,6 +2557,9 @@ int OpenDisplay( int x, int y )
     }
 
     if ( RasOpenFonts() ) {
+          int isave;
+          isave = Interactive;
+          Interactive = False;
 	  if ( Language != Russian ) {
 	    SwitchLang(English);
 		if ( RasOpenFonts () ) 
@@ -2561,8 +2567,9 @@ int OpenDisplay( int x, int y )
 	  } else {
 		FatalGraphicsError("Unable to find suitable font");
 	  }
+          Interactive = isave;
     }
-
+   
     OpenColourMap();
 
     MaxHeight = DisplayHeight(dpy,num);  MinHeight = MenuHigh+101;
