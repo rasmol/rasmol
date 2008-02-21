@@ -65,6 +65,9 @@
  ***************************************************************************/
 /* rasmol.c
  $Log: not supported by cvs2svn $
+ Revision 1.3  2008/01/30 03:44:00  yaya-hjb
+ More post 2.7.4.1 release cleanup -- HJB
+
  Revision 1.2  2007/11/19 03:28:39  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -190,6 +193,10 @@
 #include "script.h"
 
 
+#ifdef GTKWIN
+extern char filaid[];
+extern char fillang[];
+#endif
 
 #ifdef esv
 #include <sysv/unistd.h>
@@ -255,9 +262,12 @@ static char fpnamebuf[1048];
 #define IsIdentChar(x)  ((isalnum(x))||((x)=='_')||((x)=='$'))
 #define TwoPi           2.0*PI
 
+#ifdef GTKWIN
+FILE *OutFp;
+#else
 /* Either stdout or stderr */
 #define OutFp stdout
-
+#endif
 
 #ifdef VMS
 static struct {
@@ -286,7 +296,7 @@ static struct timeval TimeOut;
 static fd_set OrigWaitSet;
 static fd_set WaitSet;
 static int WaitWidth;
-static int FileNo;
+int FileNo;
 
 
 #ifdef SOCKETS
@@ -667,7 +677,9 @@ static void InitTerminal( int sockets )
 #endif
 
 #ifdef TERMIOS
+#ifndef GTKWIN
     FileNo = fileno(stdin);
+#endif
     FD_ZERO(&OrigWaitSet);
     FD_SET(FileNo,&OrigWaitSet);
     WaitWidth = FileNo+1;
@@ -1447,7 +1459,7 @@ int setraid ( const char * aid, const char * langstr ) {
   return lenwritten;
 }
 
-static void HandleMenu( int hand )
+void HandleMenu( int hand )
 {
     register int menu;
     register int item;
@@ -1736,6 +1748,7 @@ static void HandleMenu( int hand )
                         Donate(); break;
                   }
                   break;
+#ifndef GTKWIN
     	case(7):  /* About Dialog  */
     	           if (AboutDLG[item-1].DLGtype==DLGCHECKBOX) {    	           	  
                        AboutDLG[item-1].status = (AboutDLG[item-1].status)?0:1;
@@ -1763,6 +1776,8 @@ static void HandleMenu( int hand )
        	
        	           	  }
        	           }
+		   break;
+#endif /* GTKWIN */
     }
 }
 
@@ -2190,6 +2205,12 @@ static void InitialiseFSDialogs(void)
 }
 #endif
 
+#ifdef GTKWIN
+language bestlang( void ) 
+{
+    return English;
+}
+#else
 language bestlang( void ) 
 {
 
@@ -2226,6 +2247,7 @@ language bestlang( void )
     return mylang;
     
 }
+#endif /* GTKWIN */
 
 void UpdateLanguage( void ) {
 
@@ -2252,11 +2274,18 @@ int main( int argc, char *argv[] )
              VER_DATE, VER_COPYRIGHT);
 
     InitDefaultValues();
+#ifdef GTKWIN
+    gtk_init(&argc, &argv);
+#endif    
     ProcessOptions(argc,argv);
     ReDrawFlag = 0;
-    
+#ifdef GTKWIN
+    temp = True;
+    Interactive = True;
+#else	
     temp = Interactive;
     setbuf(OutFp,(char *)NULL);
+#endif
     Interactive = OpenDisplay(InitialWide,InitialHigh);
     InitTerminal(Interactive);
 
@@ -2375,6 +2404,23 @@ int main( int argc, char *argv[] )
 #endif
     }
 
+#ifdef GTKWIN
+	if( Interactive ) {
+		gtk_main();
+	}
+	else 
+	{   done = False;
+    	while( !done )
+        {   /* Command Line Only! */
+            ch = ReadCharacter();
+            if( ProcessCharacter(ch) )
+            {   if( !ProcessCommand() )
+                {   RefreshScreen();
+                } else done = True;
+            }
+        }
+    }	
+#else
     if (Interactive) {
       if (firstpass) {
         firstpass = 0;
@@ -2398,11 +2444,13 @@ int main( int argc, char *argv[] )
     }
 #else /* !TERMIOS */
     if( Interactive )
+#ifdef X11WIN
     {   /* X Windows Only! */
         while( HandleEvents(True) )
             if( !CommandActive )
                 ResetCommandLine(0);
-    } else 
+    } else
+#endif 	
     {   done = False;
         while( !done )
         {   /* Command Line Only! */
@@ -2414,7 +2462,8 @@ int main( int argc, char *argv[] )
             }
         }
     }
-#endif
+#endif /* TERMIOS */
+#endif /* GTKWIN */
     RasMolExit();
     return 0;
 }

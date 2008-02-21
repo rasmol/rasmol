@@ -65,6 +65,9 @@
  ***************************************************************************/
 /* multiple.c
  $Log: not supported by cvs2svn $
+ Revision 1.3  2008/01/30 03:44:00  yaya-hjb
+ More post 2.7.4.1 release cleanup -- HJB
+
  Revision 1.14  2008/01/29 04:12:11  yaya
  Post release cleanup of problems discovered. -- HJB
 
@@ -626,18 +629,20 @@ void DrawMoleculeList( void )
 #else
         s = Info.filename
 #endif
-        if ( strlen(s) >  MAX_MOLNAME-6 ) {
-          s += strlen(s)-3;
-          sprintf(buf, "%d. ...%s", i+1, s);
+        if ( strlen(s) > MAX_MOLNAME-6 ) {
+          snprintf(buf, MAX_MOLNAME-4, "%d. %s", i+1, s);
+		  snprintf(buf+(MAX_MOLNAME-5), 4, "%s", "...");
         } else {
-          sprintf(buf, "%d. %s", i+1, s);
+          snprintf(buf, MAX_MOLNAME, "%d. %s", i+1, s);
         }
         MolName[i][MAX_MOLNAME-1]='\0';
-        strncpy(MolName[i],buf,MAX_MOLNAME-1);
+        strncpy(MolName[i],buf,MAX_MOLNAME);
         MolNStr[i] = &(MolName[i][0]);
         MolNLen[i] = strlen(MolName[i]);
     }
     SwitchMolecule(save);
+#ifdef GTKWIN
+	if(Interactive)
+		UpdateGtkMoleculeList();
+#endif
 }
-
-

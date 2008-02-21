@@ -65,6 +65,9 @@
  ***************************************************************************/
 /* wbrotate.c
  $Log: not supported by cvs2svn $
+ Revision 1.3  2008/01/30 03:44:00  yaya-hjb
+ More post 2.7.4.1 release cleanup -- HJB
+
  Revision 1.5  2008/01/29 04:12:11  yaya
  Post release cleanup of problems discovered. -- HJB
 
@@ -403,6 +406,10 @@ int RemoveBond(  Long nsrc, Long ndst )
            if( BondSelected == brptr ) {
              BondSelected = brptr->brnext;
              if(!BondSelected) {
+#ifdef GTKWIN
+				if(Interactive)	
+				EnableRotBondMenu(False);
+#endif	
                WriteString("No rotation bond selected.\n");
              } else {
                WriteString("Next rotation bond selected.\n");
@@ -443,6 +450,10 @@ void ResetBondsSel( void )
    } 
    BondsSelected = (BondRot __far *)NULL;
    BondSelected = (BondRot __far *)NULL;
+#ifdef GTKWIN
+   if(Interactive)
+	   EnableRotBondMenu(False);
+#endif   
 }
 
 
@@ -564,6 +575,10 @@ void SetBondAxis( RAtom __far *src, RAtom __far *dst )
     }
     
     WriteString("Bond selected.\n");
+#ifdef GTKWIN
+	if(Interactive)
+		EnableRotBondMenu(True);
+#endif	
     brptr = BondSelected;
     BondSelected = (BondRot __far *)_fmalloc(sizeof(BondRot));
     if (brptr) {

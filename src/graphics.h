@@ -222,8 +222,11 @@ Window RootWin;
 char filaid [1025];
 char macaid [1025];
 char fillang [81];
+#endif
 
-
+#ifdef GTKWIN
+char filaid [1025];
+char fillang [81];
 #endif
 
 #ifdef X11WIN

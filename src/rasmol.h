@@ -74,11 +74,11 @@
 /* #define IBMPC        */
 /* #define MSWIN        */
 /* #define APPLEMAC     */
-#define X11WIN
+/* #define X11WIN */ /* defined in the Imakefile now */
 #define UNIX
 
 /* #define DIALBOX      */
-#define SOCKETS
+/* #define SOCKETS */
 #define TERMIOS
 #define PROFILE
 #define MITSHM
@@ -269,6 +269,7 @@ void RasMolFatalExit( char* );
 void AdviseUpdate( int );
 void RefreshScreen( void );
 void RasMolExit( void );
+void HandleMenu( int hand );
 
 #ifdef APPLEMAC
 #include "rasmac.h"

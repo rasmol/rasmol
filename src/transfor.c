@@ -65,6 +65,9 @@
  ***************************************************************************/
 /* transfor.c
  $Log: not supported by cvs2svn $
+ Revision 1.3  2008/01/30 03:44:00  yaya-hjb
+ More post 2.7.4.1 release cleanup -- HJB
+
  Revision 1.6  2008/01/29 04:12:11  yaya
  Post release cleanup of problems discovered. -- HJB
 
@@ -3613,7 +3616,10 @@ void ResetTransform( void )
 
     BondsSelected = (BondRot __far *)NULL;
     BondSelected = (BondRot __far *)NULL;
-
+#ifdef GTKWIN
+    if(Interactive)
+	   EnableRotBondMenu(False);
+#endif 
     CenX = CenY = CenZ = 0;
     ShiftS = 0;
     XlateCen = False;
