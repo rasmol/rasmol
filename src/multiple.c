@@ -65,6 +65,19 @@
  ***************************************************************************/
 /* multiple.c
  $Log: not supported by cvs2svn $
+ Revision 1.5  2008/03/17 01:32:41  yaya
+ Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
+
+ Revision 1.4  2008/03/16 22:38:09  yaya
+ Update stable release to 2.7.4.2; Update rasmol_install and rasmol_run
+ scripts to handle Japanese and Chiness (using cxterm), changing
+ Japanese for unix back to EUCJP; and align command line options
+ to set initial window size and position to agree between unix and
+ windows -- HJB
+
+ Revision 1.4  2008/02/21 15:11:46  tpikonen
+ Add GTK GUI.
+
  Revision 1.3  2008/01/30 03:44:00  yaya-hjb
  More post 2.7.4.1 release cleanup -- HJB
 

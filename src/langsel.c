@@ -197,10 +197,10 @@ langfont langfonts[NUMLANGS] = {
 };
 #else
 langfont langfonts[NUMLANGS] = {
-  { "RASMOL_ENGLISH_MENU_FONT",
+  { "RASMOL_ENGLISH_MENU_FONT", 
     "-*-helvetica-bold-o-normal-*-14-*-iso8859-1" ":"
     "-*-serf-bold-o-normal-*-14-*-iso8859-1" ":"
-    "-*-*-bold-o-normal-*-14-*-*-*-*-*-iso8859-1" ":",
+    "-*-*-bold-o-normal-*-14-*-iso8859-1" ":",
     English },
   { "RASMOL_FRENCH_MENU_FONT", 
     "-*-helvetica-bold-o-normal-*-14-*-iso8859-1" ":"
@@ -228,10 +228,10 @@ langfont langfonts[NUMLANGS] = {
     "-*-*-bold-o-normal-*-14-*-*1251" ":", 
     Russian },
   { "RASMOL_CHINESE_MENU_FONT", 
-    "*-gb2312*" ":", 
+    "*-16-*-gb2312.1980-0" ":", 
     Chinese },
   { "RASMOL_JAPANESE_MENU_FONT", 
-    "*jisx*" ":", 
+    "*-r-*-14-*-jisx0208.1983-0" ":", 
     Japanese },
   { "RASMOL_BULGARIAN_MENU_FONT", 
     "-*-helvetica-bold-o-normal-*-14-*1251" ":"

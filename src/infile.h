@@ -65,6 +65,17 @@
  ***************************************************************************/
 /* infile.h
  $Log: not supported by cvs2svn $
+ Revision 1.3  2008/03/17 01:32:41  yaya
+ Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
+
+ Revision 1.3  2008/03/16 22:25:21  yaya
+ Align comments with production version; Update rasmol_install and
+ rasmol_run shell scripts for Japanese and Chinese; Align logic for
+ positioning and sizing initial window with windows version -- HJB
+
+ Revision 1.2  2008/01/28 03:29:37  yaya
+ Update CVS to RasMol_2.7.4.1 -- HJB
+
  Revision 1.2  2007/11/19 03:28:39  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB

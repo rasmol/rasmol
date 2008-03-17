@@ -78,7 +78,9 @@
 #define UNIX
 
 /* #define DIALBOX      */
-/* #define SOCKETS */
+#ifndef GTK
+#define SOCKETS
+#endif
 #define TERMIOS
 #define PROFILE
 #define MITSHM
@@ -165,9 +167,9 @@
 /*==============================*/
 
 #define MAIN_COPYRIGHT "Copyright (C) Roger Sayle 1992-1999"
-#define VERSION "2.7.4"
-#define VER_COPYRIGHT "Copyright (C) Herbert J. Bernstein 1998-2007"
-#define VER_DATE "November 2007"
+#define VERSION "2.7.4.2"
+#define VER_COPYRIGHT "Copyright (C) Herbert J. Bernstein 1998-2008"
+#define VER_DATE "March 2008"
 
 #ifndef True
 #define True  1

@@ -65,8 +65,31 @@
  ***************************************************************************/
 /* x11win.c
  $Log: not supported by cvs2svn $
- Revision 1.5  2008/01/30 03:44:00  yaya-hjb
- More post 2.7.4.1 release cleanup -- HJB
+ Revision 1.6  2008/03/17 01:32:41  yaya
+ Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
+
+ Revision 1.5  2008/03/16 22:38:10  yaya
+ Update stable release to 2.7.4.2; Update rasmol_install and rasmol_run
+ scripts to handle Japanese and Chiness (using cxterm), changing
+ Japanese for unix back to EUCJP; and align command line options
+ to set initial window size and position to agree between unix and
+ windows -- HJB
+
+ Revision 1.8  2008/03/16 22:25:22  yaya
+ Align comments with production version; Update rasmol_install and
+ rasmol_run shell scripts for Japanese and Chinese; Align logic for
+ positioning and sizing initial window with windows version -- HJB
+
+ Revision 1.7  2008/03/08 21:41:03  yaya
+ Updates to switch Japanese in unix to EUC_CN, and to reorganize
+ languagues directory for split between mswin and unix. -- HJB
+
+ Revision 1.6  2008/03/08 15:26:50  yaya
+ Fixes to get Chinese working under MacOSX for RasMol 2.7.4
+ Based on suggested fixes by Mamoru Yamanishi. -- HJB
+
+ Revision 1.4  2008/01/28 03:29:38  yaya
+ Update CVS to RasMol_2.7.4.1 -- HJB
 
  Revision 1.5  2007/11/19 03:28:40  yaya
  Update to credits for 2.7.4 in manual and headers
@@ -193,6 +216,14 @@
 #include <X11/keysym.h>
 #include <X11/cursorfont.h>
 
+#ifdef X_LOCALE
+#include <X11/Xlocale.h>
+#define SetLocale _Xsetlocale
+#else
+#include <locale.h>
+#define SetLocale setlocale
+#endif
+
 #define GRAPHICS
 #include "rasmol.h"
 #include "bitmaps.h"
@@ -207,7 +238,7 @@
 #include "wbrotate.h"
 #include "langsel.h"
 #include "graphics.h"
-#include <locale.h>
+
 
 
 /* Menu Definitions */
@@ -469,7 +500,6 @@ typedef union {
 
 static int MenuHigh;
 static int FontHigh;
-XFontSet fontset;
 static char* lastlocale;
 static Cursor cross;
 static Cursor arrow;
@@ -479,6 +509,9 @@ static Pixmap tilepix;
 static Pixmap uppix, dnpix;
 static Pixmap lfpix, rgpix;
 static XFontStruct *MenuFont=NULL;
+static XFontSet MenuFontSet=NULL;
+static short XFascent;
+static short XFdescent;
 static XSetWindowAttributes attr;
 static Window XScrlWin, YScrlWin;
 static XWMHints hints;
@@ -657,20 +690,53 @@ static void OpenCanvas( int x, int y )
 }
 
 
+static XFontSet RasLoadQueryFontSet(Display *disp, const char *fontset_name)
+{
+    XFontSet MenuFontSet;
+    int      missing_charset_count;
+    char     **missing_charset_list;
+    char     *def_string;
+    char     buffer[255];
+
+    MenuFontSet = XCreateFontSet(disp, fontset_name,
+                             &missing_charset_list, &missing_charset_count,
+                             &def_string);
+
+    if (missing_charset_count) {
+        if (strlen(fontset_name) < 200)
+        sprintf(buffer, "Missing charsets in MenuFontSet (%s) creation.\n", fontset_name);
+        else strcpy(buffer,"Missing charsets in MenuFontSet creation.\n");
+        WriteString(buffer);
+        for( ; missing_charset_count-- ; ){
+          sprintf(buffer, "  missing %d: %s\n",
+             missing_charset_count, missing_charset_list[missing_charset_count]);
+        WriteString(buffer);
+        }
+        XFreeStringList(missing_charset_list);
+    }
+    return MenuFontSet;
+}
+
+
+
+
 static int RasOpenFonts( void )
 {
     static char fontname [255];
     register int i;
-    char **missing_charsets; 
-    int num_missing_charsets; 
-    char *default_string;
+    XFontSetExtents *extent;
+    char *menufonts;
     XRectangle dummy;
     XRectangle bound;
+
+
 
 	if ( Language != TermLanguage ) 
 	{
 	  if ( MenuFont && MenuFont->fid )  XUnloadFont(dpy,MenuFont->fid); 
 	  MenuFont = 0;
+	  if (MenuFontSet)  XFreeFontSet( dpy,MenuFontSet);
+	  MenuFontSet=NULL;
 	} 
 	
 	if (!MenuFont || !(MenuFont->fid ) ) {
@@ -679,17 +745,18 @@ static int RasOpenFonts( void )
 	for (i=0; i < NUMLANGS; i++) {
 	
 	  if (langfonts[i].lang == Language) {
-	    char *menufonts;
 	    int kl;
 	    if((menufonts = getenv(langfonts[i].menufontvar)) ) {
 	      char * strend;
 	      while ((strend = strchr(menufonts,':'))) {
+	        /* fprintf(stderr,"menufonts: %s\n",menufonts); */
 	        strncpy(fontname,menufonts,strend-menufonts<255?strend-menufonts:254);
 	        fontname[strend-menufonts<255?strend-menufonts:254]='\0';
 	        menufonts=strend+1;
 	        if( (MenuFont=XLoadQueryFont(dpy,fontname)) ) break;
 	      }
-	      if (!MenuFont && (kl=strlen(menufonts)> 0 ) ) {
+	      if (!MenuFont && (kl=strlen(menufonts))> 0  ) {
+	        /* fprintf(stderr,"menufonts: %s\n",menufonts); */
 	      	strncpy(fontname,menufonts,kl<255?kl:254);
 	        fontname[kl<255?kl:254] = '\0';
 	        if( (MenuFont=XLoadQueryFont(dpy,fontname)) ) break;
@@ -700,12 +767,14 @@ static int RasOpenFonts( void )
 	    if ((menufonts = langfonts[i].menufontlist) ) {
 	      char * strend;
 	      while ((strend = strchr(menufonts,':')) ) {
+	        /* fprintf(stderr,"menufonts: %s\n",menufonts);*/
 	        strncpy(fontname,menufonts,strend-menufonts<255?strend-menufonts:254);
 	        fontname[strend-menufonts<255?strend-menufonts:254]='\0';
 	        menufonts=strend+1;
 	        if( (MenuFont=XLoadQueryFont(dpy,fontname)) ) break;
 	      }
-	      if (!MenuFont && (kl=strlen(menufonts)> 0)) {
+	      if (!MenuFont && (kl=strlen(menufonts))> 0) {
+	        /* fprintf(stderr,"menufonts: %s\n",menufonts); */
 	      	strncpy(fontname,menufonts,kl<255?kl:254);
 	        fontname[kl<255?kl:254] = '\0';
 	        if( (MenuFont=XLoadQueryFont(dpy,fontname)) ) break;
@@ -717,48 +786,76 @@ static int RasOpenFonts( void )
 	}
 	}
 	
+	/* if (MenuFont) fprintf(stderr,"Selected menufont %s\n",fontname); */
+	
     if (!cross) cross = XCreateFontCursor(dpy,XC_tcross);
     if (!arrow) arrow = XCreateFontCursor(dpy,XC_top_left_arrow);
-    MenuItem *ptr;
 
-      if (Language == Chinese){
+    if (Language == Chinese){
+      
+        strncat(fontname,",-*-helvetica-bold-o-normal-*-14-*-iso8859-1",
+          254-strlen(fontname));
 
-        setlocale(LC_ALL, "zh_CN.GB2312");
-	lastlocale = "chinese";
-        fontset = XCreateFontSet(dpy,
-        "*-16-*-gb2312.1980-0,-*-helvetica-bold-o-normal-*-14-*-iso8859-1",
-        &missing_charsets, &num_missing_charsets, &default_string);
-	if ( !fontset ) return 1;
-        XmbTextExtents( fontset, MsgStrs[StrWarranty], strlen(MsgStrs[StrWarranty]), &dummy, &bound );
-        FontHigh = bound.height;
-      }else if (Language == Japanese){
+        SetLocale(LC_ALL, "zh_CN.GB2312");
+        lastlocale = "chinese";
+        MenuFontSet = RasLoadQueryFontSet(dpy,
+        fontname);
+	    if ( !MenuFontSet ) return 1;
+	    extent = XExtentsOfFontSet(MenuFontSet);
+        XFascent  = extent->max_logical_extent.height;
+        XFdescent = extent->max_logical_extent.height *  1.0 / 10.0;
+        FontHigh = extent->max_logical_extent.height + 6;
+        XmbTextExtents( MenuFontSet, MsgStrs[StrWarranty], strlen(MsgStrs[StrWarranty]), &dummy, &bound );
+        if (bound.height > FontHigh) FontHigh = bound.height;
+        if (-dummy.y > XFascent ) XFascent = dummy.y;
+        if (-dummy.y+dummy.height > XFdescent ) XFdescent = -dummy.y+dummy.height;
+        if (XFdescent > 4) XFdescent = 4;
+        MenuHigh = FontHigh + 6;
+        if( !MenuFont ) return 1;
+        return 0;
 
-        setlocale(LC_ALL, "ja_JP.eucjp");
-	lastlocale = "japanese";
-        fontset = XCreateFontSet(dpy,
-        "*-r-*-14-*-jisx0208.1983-0,*-r-*-24-*-jisx0201.1976-0,-*-helvetica-bold-o-normal-*-14-*-iso8859-1",
-        &missing_charsets, &num_missing_charsets, &default_string);
-        if ( !fontset ) return 1;
-	XmbTextExtents( fontset, MsgStrs[StrWarranty], strlen(MsgStrs[StrWarranty]), &dummy, &bound );
-        FontHigh = bound.height;
+      } else if (Language == Japanese) {
+      
+        strncat(fontname,",-*-helvetica-bold-o-normal-*-14-*-iso8859-1",
+          254-strlen(fontname));
+
+
+        SetLocale(LC_ALL, "ja_JP.eucjp");
+	    lastlocale = "japanese";
+        MenuFontSet = RasLoadQueryFontSet(dpy,
+        fontname);
+        if ( !MenuFontSet ) return 1;
+	    extent = XExtentsOfFontSet(MenuFontSet);
+        XFascent  = extent->max_logical_extent.height;
+        XFdescent = extent->max_logical_extent.height *  2.0 / 10.0;
+        FontHigh = extent->max_logical_extent.height + 6;
+        XmbTextExtents( MenuFontSet, MsgStrs[StrWarranty], strlen(MsgStrs[StrWarranty]), &dummy, &bound );
+        if (bound.height > FontHigh) FontHigh = bound.height;
+        if (-dummy.y > XFascent ) XFascent = dummy.y;
+        if (-dummy.y+dummy.height > XFdescent ) XFdescent = -dummy.y+dummy.height;
+        if (XFdescent > 4) XFdescent = 4;
+        MenuHigh = FontHigh + 6;
+        if( !MenuFont ) return 1;
+        return 0;
+        
       }else{
 	if (Language == English ){
-           setlocale(LC_ALL, "en_US");
+           SetLocale(LC_ALL, "en_US");
 	   lastlocale = "english";
-        }else if ( Language == Spanish ){
-           setlocale(LC_ALL, "es_ES");
+    }else if ( Language == Spanish ){
+           SetLocale(LC_ALL, "es_ES");
 	   lastlocale = "spanish";
 	}else if ( Language == Italian ){
-           setlocale(LC_ALL, "it_IT");
+           SetLocale(LC_ALL, "it_IT");
 	   lastlocale = "italian";
 	}else if ( Language == French ){
-           setlocale(LC_ALL, "fr_FR");
+           SetLocale(LC_ALL, "fr_FR");
 	   lastlocale = "french";
 	}else if ( Language == Russian ){
-           setlocale(LC_ALL, "ru_RU");
+           SetLocale(LC_ALL, "ru_RU");
 	   lastlocale = "russian";
 	}else if ( Language == Bulgarian ){
-           setlocale(LC_ALL, "bg_BG");
+           SetLocale(LC_ALL, "bg_BG");
 	   lastlocale = "bulgarian";
 	}
 
@@ -768,6 +865,8 @@ static int RasOpenFonts( void )
                MenuFont->max_bounds.ascent + 1;
       }
     MenuHigh = FontHigh+6;
+    XFascent = MenuFont->ascent;
+    XFdescent = MenuFont->descent;
 	return 0;
 }
 
@@ -1490,18 +1589,27 @@ static void DisplayMenuBarText( BarItem *ptr, int x, int y )
     } else {
       slen = strlen(*(ptr->text));
     }
-    if (!strcmp (lastlocale , "chinese") || !strcmp( lastlocale, "japanese" ) ) {
-        XmbDrawString( dpy, MainWin, fontset, gcon, x, y+5, *(ptr->text), slen );
+    if  ( MenuFontSet ) {
+        XmbDrawString( dpy, MainWin, MenuFontSet, gcon, x, y, *(ptr->text), slen );
+        under = y + XFdescent;
     }else{
         XDrawString( dpy, MainWin, gcon, x, y, *(ptr->text), slen );
-    }
         under = y + MenuFont->descent;
+    }
+    
+    if (!isascii(*(*(ptr->text)+*(ptr->pos)) )) return;
 
     pos = x;
     if (*(ptr->pos)>0) pos += XTextWidth( MenuFont, *(ptr->text), *(ptr->pos) );
               
-    wide = - XTextWidth( MenuFont, *(ptr->text)+*(ptr->pos)+1, slen-*(ptr->pos)-1 )
-           + XTextWidth( MenuFont, *(ptr->text)+*(ptr->pos), slen-*(ptr->pos) );
+    if  ( MenuFontSet ) {
+      if (*(ptr->pos)>0) pos += XmbTextEscapement(MenuFontSet, *(ptr->text), *(ptr->pos) );
+      wide = - XmbTextEscapement( MenuFontSet, *(ptr->text)+*(ptr->pos)+1, slen-*(ptr->pos)-1 )
+             + XmbTextEscapement( MenuFontSet, *(ptr->text)+*(ptr->pos), slen-*(ptr->pos) );
+    }else{
+      wide = - XTextWidth( MenuFont, *(ptr->text)+*(ptr->pos)+1, slen-*(ptr->pos)-1 )
+             + XTextWidth( MenuFont, *(ptr->text)+*(ptr->pos), slen-*(ptr->pos) );
+    }
 
     if (wide > 3) wide--;
     if (wide > 6) wide--;
@@ -1517,8 +1625,6 @@ static void DrawMenuBar( void )
     register int wide;
     register int x,y;
     register int i;
-    XRectangle bound;
-    XRectangle dummy;
 	if (Language != TermLanguage ) {
 	  if (RasOpenFonts()) {
 	    Language = TermLanguage;
@@ -1527,16 +1633,21 @@ static void DrawMenuBar( void )
 	  TermLanguage = Language;
 	}
 
-    x = 6; y = MenuFont->ascent+4;
-    XSetFont( dpy, gcon, MenuFont->fid );
+    x = 6;
+    if  ( MenuFontSet ) {
+      y = XFascent+4;
+    } else {
+      y = MenuFont->ascent+4;	
+      XSetFont( dpy, gcon, MenuFont->fid );
+    }
 
     for( i=0; i<MenuBarMax; i++ )
     {   ptr = MenuBar+i;
-        if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
-           wide = XmbTextExtents( fontset, *(ptr->text), *(ptr->len), &dummy, &bound );
-	}else{
-	    wide = XTextWidth(MenuFont, *(ptr->text), *(ptr->len));
-	}
+        if ( MenuFontSet ) {
+          wide = XmbTextEscapement( MenuFontSet, *(ptr->text), *(ptr->len) );
+	    } else {
+	      wide = XTextWidth(MenuFont, *(ptr->text), *(ptr->len));
+	    }
         if( x+wide+24 > MainWide ) break;
 
         /* Right Justify "Help" */
@@ -1568,12 +1679,12 @@ static void DisplayPopUpText( MenuItem *ptr, int x, int y )
     XSetForeground( dpy, gcon, col );
 
     if (ptr->enable && (*(ptr->enable) == ptr->value)) {
-       if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
-           XDrawLine( dpy, PopUpWin, gcon, x-9, y-FontHigh/32, 
-                 x-7, y+FontHigh-10);
-           XDrawLine( dpy, PopUpWin, gcon, x-7, y+FontHigh-10, 
-                 x-3, y-FontHigh/3);
-       }else{
+       if ( MenuFontSet ) {
+           XDrawLine( dpy, PopUpWin, gcon, x-9, y+XFdescent-FontHigh/2, 
+                 x-7, y+XFdescent-2);
+           XDrawLine( dpy, PopUpWin, gcon, x-7, y+XFdescent-2, 
+                 x-3, y+XFdescent-FontHigh+2);
+       } else {
            XDrawLine( dpy, PopUpWin, gcon, x-9, y+MenuFont->descent-FontHigh/2, 
                  x-7, y+MenuFont->descent-2);
            XDrawLine( dpy, PopUpWin, gcon, x-7, y+MenuFont->descent-2, 
@@ -1585,11 +1696,26 @@ static void DisplayPopUpText( MenuItem *ptr, int x, int y )
     } else {
       slen = strlen(*(ptr->text));
     }
-    if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
-        XmbDrawString( dpy, PopUpWin, fontset, gcon, x, y+5, *(ptr->text), slen );
+    if ( MenuFontSet ) {
+      XmbDrawString( dpy, PopUpWin, MenuFontSet, gcon, x, y, *(ptr->text), slen );
+      if( (ptr->flags & mbAccel ) && isascii(*(*(ptr->text)+*(ptr->pos)) ) )
+      {   under = y + XFdescent;
+
+        pos = x;
+        if (*(ptr->pos)>0) pos += XmbTextEscapement( MenuFontSet, *(ptr->text), *(ptr->pos) );
+        
+        
+        wide = - XmbTextEscapement(MenuFontSet, *(ptr->text)+*(ptr->pos)+1, slen-*(ptr->pos)-1 )
+               + XmbTextEscapement(MenuFontSet, *(ptr->text)+*(ptr->pos), slen-*(ptr->pos) );
+              
+        if (wide > 3) wide--;
+        if (wide > 6) wide--;
+
+        XDrawLine( dpy, PopUpWin, gcon, pos, under, pos+wide, under );
+      }
     }else{
-        XDrawString( dpy, PopUpWin, gcon, x, y, *(ptr->text), slen );
-      if( ptr->flags & mbAccel )
+      XDrawString( dpy, PopUpWin, gcon, x, y, *(ptr->text), slen );
+      if( (ptr->flags & mbAccel ) && isascii(*(*(ptr->text)+*(ptr->pos)) ) )
       {   under = y + MenuFont->descent;
 
         pos = x;
@@ -1634,7 +1760,7 @@ static void DrawPopUpMenu( void )
     for( i=0; i<count; i++ )
     {   if( !(ptr->flags&mbSepBar) )
         {  
-            DisplayPopUpText( ptr, x+12, y+MenuFont->ascent+2 );
+            DisplayPopUpText( ptr, x+12, y+XFascent+2 );
 
             if( ItemFlag && (i==MenuItemSelect) )
             {      DrawUpBox(PopUpWin,2,y,PopUpWide-2,y+FontHigh+3);
@@ -1681,8 +1807,8 @@ static void DisplayPopUpMenu( int i, int x )
     for( i=0; i<count; i++ )
     {   if( !(ptr->flags&mbSepBar) )
         {   
-	    if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
-               wide = XmbTextExtents( fontset, *(ptr->text), *(ptr->len), &dummy, &bound );
+	    if ( MenuFontSet ) {
+               wide = XmbTextExtents( MenuFontSet, *(ptr->text), *(ptr->len), &dummy, &bound );
 	    }else{
 	        wide = XTextWidth(MenuFont, *(ptr->text), *(ptr->len));
 	    }
@@ -1723,17 +1849,15 @@ static void DisplayAboutDLGText( DLGItem *ptr, int x, int y, int center )
     
     if (center) {
     	 
-      if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
-	  XRectangle bound;
-	  XRectangle dummy;
+      if ( MenuFontSet ) {
 
-          wide = XmbTextExtents(fontset,*(ptr->text),slen, &dummy, &bound);
+          wide = XmbTextEscapement(MenuFontSet,*(ptr->text),slen);
 
-          XmbDrawString( dpy, PopUpWin, fontset,gcon, 
+          XmbDrawString( dpy, PopUpWin, MenuFontSet,gcon, 
             x+(ptr->x+(ptr->width)/2)*DLGScale-wide/2, 
             y+(ptr->y)*DLGScale, *(ptr->text), slen );
       }else{
-	  wide = XTextWidth(MenuFont, *(ptr->text), slen);
+	      wide = XTextWidth(MenuFont, *(ptr->text), slen);
 
           XDrawString( dpy, PopUpWin,gcon, 
             x+(ptr->x+(ptr->width)/2)*DLGScale-wide/2, 
@@ -1742,8 +1866,8 @@ static void DisplayAboutDLGText( DLGItem *ptr, int x, int y, int center )
         
     } else  {
        
-      if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
-          XmbDrawString( dpy, PopUpWin, fontset, gcon, 
+      if ( MenuFontSet ) {
+          XmbDrawString( dpy, PopUpWin, MenuFontSet, gcon, 
             x+(ptr->x)*DLGScale, 
             y+(ptr->y)*DLGScale, *(ptr->text), slen );
       }else{
@@ -2164,7 +2288,7 @@ static int HandleItemKey( int key )
       count += 1+*(MenuBar[MenuBarSelect].increment);
     }
     for( i=0; i<count; i++ )
-    {   if( (ptr->flags&(mbEnable|mbAccel)) && 
+    {   if( (ptr->flags&(mbEnable|mbAccel)) &&  isascii(*(*(ptr->text)+*(ptr->pos)) )  &&
            !(ptr->flags&mbSepBar) )
         {   ch = (*(ptr->text))[*(ptr->pos)];
             if( ToUpper(ch) == key )
@@ -2277,8 +2401,6 @@ static void SelectMenu( int menu )
     register int wide;
     register int i,x;
 
-XRectangle bound;
-XRectangle dummy;
     if( !PopUpFlag )
     {   MenuBarSelect = menu;
         DrawMenuBar();
@@ -2289,8 +2411,8 @@ XRectangle dummy;
     {   x = 6;
         for( i=0; i<menu; i++ )
         {   ptr = MenuBar+i;
-	   if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
-            wide = XmbTextExtents(fontset,*(ptr->text),*(ptr->len), &dummy, &bound);
+	   if ( MenuFontSet ){
+            wide = XmbTextEscapement(MenuFontSet,*(ptr->text),*(ptr->len));
 	   }else{
 	    wide = XTextWidth(MenuFont, *(ptr->text), *(ptr->len));
            }
@@ -2298,8 +2420,8 @@ XRectangle dummy;
         }
     } else 
     {   ptr = MenuBar+menu;
-          if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
-            wide = XmbTextExtents(fontset,*(ptr->text),*(ptr->len), &dummy, &bound);
+          if ( MenuFontSet ){
+            wide = XmbTextEscapement(MenuFontSet,*(ptr->text),*(ptr->len));
 	   }else{
 	    wide = XTextWidth(MenuFont, *(ptr->text), *(ptr->len));
            }
@@ -2318,17 +2440,14 @@ static int HandleMenuClick( int pos )
     register int wide;
     register int x,i;
 
-    XRectangle bound;
-    XRectangle dummy;
-
     if (PopUpFlag && MenuBarSelect == AboutDLGMItem) UnDisplayAboutDLG();
     x = 6;
     for( i=0; i<MenuBarCount; i++ )
     {   ptr = MenuBar+i;
-        if ( !strcmp( lastlocale, "chinese" ) || !strcmp( lastlocale, "japanese" )){
-            wide = XmbTextExtents(fontset,*(ptr->text),*(ptr->len), &dummy, &bound);
-	   }else{
-	    wide = XTextWidth(MenuFont, *(ptr->text), *(ptr->len));
+        if ( MenuFontSet ){
+          wide = XmbTextEscapement(MenuFontSet,*(ptr->text),*(ptr->len));
+	    }else{
+	      wide = XTextWidth(MenuFont, *(ptr->text), *(ptr->len));
            }
         if( i == MenuBarMax-1 ) x = MainWide - (wide+24);
 
@@ -2457,7 +2576,7 @@ int FatalXError( Display *ptr )
 }
 
 
-int OpenDisplay( int x, int y )
+int OpenDisplay( void )
 {
 #ifdef THIRTYTWOBIT
     static ByteTest test;
@@ -2471,6 +2590,8 @@ int OpenDisplay( int x, int y )
     static XSizeHints size;
     static int temp;
     static char VersionStr[50];
+    int xpos, ypos, rxpos, rypos;
+    Window win;
 
     sprintf (VersionStr,"RasMol Version %s", VERSION);
 
@@ -2492,9 +2613,20 @@ int OpenDisplay( int x, int y )
     RLut[3]=200; GLut[3]=200; BLut[3]=200;  ULut[3]=True;
     RLut[4]=255; GLut[4]=255; BLut[4]=255;  ULut[4]=True;
 
-    XRange = x;  WRange = XRange>>1;
-    YRange = y;  HRange = YRange>>1;
+    XRange = DefaultWide;
+    YRange = DefaultHigh;
+    
+    if (InitWidth  >= 48) XRange = InitWidth;
+    if (InitHeight >= 48) YRange = InitHeight;
+
+    WRange = XRange>>1;
+    HRange = YRange>>1;
     Range = MinFun(XRange,YRange);
+    
+    xpos = InitXPos-14;
+    ypos = InitYPos-MenuHigh-14;
+    if (xpos < 0) xpos = 0;
+    if (ypos < 0) ypos = 0;
 
     if( !Interactive ) return( False );
     if( (dpy=XOpenDisplay(NULL)) == NULL )
@@ -2557,9 +2689,6 @@ int OpenDisplay( int x, int y )
     }
 
     if ( RasOpenFonts() ) {
-          int isave;
-          isave = Interactive;
-          Interactive = False;
 	  if ( Language != Russian ) {
 	    SwitchLang(English);
 		if ( RasOpenFonts () ) 
@@ -2567,9 +2696,8 @@ int OpenDisplay( int x, int y )
 	  } else {
 		FatalGraphicsError("Unable to find suitable font");
 	  }
-          Interactive = isave;
     }
-   
+
     OpenColourMap();
 
     MaxHeight = DisplayHeight(dpy,num);  MinHeight = MenuHigh+101;
@@ -2637,7 +2765,7 @@ int OpenDisplay( int x, int y )
     {      SwapBytes = test.bytes[0];
     } else SwapBytes = test.bytes[3];
 #endif
-
+    
     XMapSubwindows(dpy,MainWin);
     XMapWindow(dpy,MainWin);
 
@@ -2648,6 +2776,12 @@ int OpenDisplay( int x, int y )
 
     XClearWindow( dpy, CanvWin );
     XSync(dpy,False);
+    
+    XTranslateCoordinates(dpy,MainWin,RootWin,xpos,ypos,
+                          &rxpos, &rypos, &win );
+    XMoveResizeWindow(dpy,MainWin,rxpos,rypos,MainWide, MainHigh);
+    ReDrawWindow();
+
 
     num = 1<<ConnectionNumber(dpy);
     return( num );

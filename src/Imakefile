@@ -3,7 +3,7 @@
 #                                                                         #
 #                                 RasMol                                  #
 #                 Molecular Graphics Visualisation Tool                   #
-#                            19 November 2007                              #
+#                            19 November 2007                             #
 #                                                                         #
 #                   Based on RasMol 2.6 by Roger Sayle                    #
 # Biomolecular Structures Group, Glaxo Wellcome Research & Development,   #
@@ -109,6 +109,12 @@ DEPTHDEF = -DTHIRTYTWOBIT
 # DEPTHDEF = -DEIGHTBIT
 #endif
 
+#ifdef OLDX_LOCALE
+  LOCALEDEF = -DX_LOCALE
+#else
+  LOCALEDEF =
+#endif
+
 # #define GTKWIN
 #define X11WIN
 
@@ -147,8 +153,9 @@ CBFLIBDIR = $(CBFLIB_TARBALLDIR)/CBFlib_$(CBFLIB_VERSION)
 #   e.g. /usr/local/lib/rasmol/rasmol.hlp
 RASMOLDIR = $(USRLIBDIR)/rasmol/
 
-DEFINES = $(GTKCFLAGS) $(GUIDEF) -DRASMOLDIR=\"$(RASMOLDIR)\" $(DEPTHDEF) \
--D_USE_RASMOL_H_ $(GUIOPTION) -I$(CBFLIBDIR)/include
+
+DEFINES = $(GTKCFLAGS) $(GUIDEF) -DRASMOLDIR=\"$(RASMOLDIR)\" $(DEPTHDEF) $(LOCALEDEF) \
+          -D_USE_RASMOL_H_ $(GUIOPTION) -I$(CBFLIBDIR)/include
 
 SRCS = rasmol.c rasmol.h molecule.c molecule.h abstree.c abstree.h \
        cmndline.c cmndline.h command.c command.h tokens.h transfor.c \
@@ -157,12 +164,12 @@ SRCS = rasmol.c rasmol.h molecule.c molecule.h abstree.c abstree.h \
        infile.h repres.c repres.h tokens.c cif_fract.c cif_fract.h cif.c \
        cif.h cif_ctonum.c cif_ctonum.h cif_stx.c \
        multiple.h multiple.c vector.h vector.c \
-       wbrotate.c wbrotate.c langsel.h langsel.c maps.h maps.c $(GUISRC)
+       wbrotate.c wbrotate.c langsel.h langsel_unix.c maps.h maps.c $(GUISRC)
 
 OBJS = rasmol.o molecule.o abstree.o cmndline.o command.o transfor.o \
        render.o repres.o  pixutils.o outfile.o script.o \
        infile.o tokens.o  cif_fract.o cif.o cif_ctonum.o cif_stx.o \
-       multiple.o vector.o wbrotate.o langsel.o maps.o $(GUIOBJ)
+       multiple.o vector.o wbrotate.o langsel_unix.o maps.o $(GUIOBJ)
 
 # Previous Risc/Os definition
 # LDLIBS = -lm -lXinput $(XLIB)
@@ -171,7 +178,7 @@ OBJS = rasmol.o molecule.o abstree.o cmndline.o command.o transfor.o \
 # LDLIBS = -lm -lXi -lXextSam $(XLIB)
 
 LDLIBS = -lm -lXi $(XLIB) $(EXTRA_LIBRARIES) $(XFORMSLIB) $(GTKLIBS) \
--L$(CBFLIBDIR)/lib -lcbf
+			-L$(CBFLIBDIR)/lib -lcbf
 
 
 

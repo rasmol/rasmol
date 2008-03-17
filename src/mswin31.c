@@ -65,6 +65,29 @@
  ***************************************************************************/
 /* mswin31.c
  $Log: not supported by cvs2svn $
+ Revision 1.4  2008/03/17 01:32:41  yaya
+ Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
+
+ Revision 1.3  2008/03/16 22:38:09  yaya
+ Update stable release to 2.7.4.2; Update rasmol_install and rasmol_run
+ scripts to handle Japanese and Chiness (using cxterm), changing
+ Japanese for unix back to EUCJP; and align command line options
+ to set initial window size and position to agree between unix and
+ windows -- HJB
+
+ Revision 1.4  2008/03/16 22:25:22  yaya
+ Align comments with production version; Update rasmol_install and
+ rasmol_run shell scripts for Japanese and Chinese; Align logic for
+ positioning and sizing initial window with windows version -- HJB
+
+ Revision 1.3  2008/03/09 18:04:06  yaya
+ As per a suggestion by Gregory A. Pozhvanov, fixed handling of quoted
+ filename strings in raswin and added new command line options
+ -width nnnn, -height nnnn, -xpos nnnn, and -ypos nnnn. -- HJB
+
+ Revision 1.2  2008/01/28 03:29:37  yaya
+ Update CVS to RasMol_2.7.4.1 -- HJB
+
  Revision 1.2  2007/11/25 04:11:58  yaya
  Updates to map mask logic and inverse transforms -- HJB
 
@@ -557,6 +580,7 @@ int OpenDisplay( HANDLE instance, int mode )
     register int i,size;
     long style;
     RECT rect;
+    LONG XPOS, YPOS;
     static char VersionStr[50];
 
     sprintf (VersionStr,"RasMol Version %s", VERSION);
@@ -574,21 +598,35 @@ int OpenDisplay( HANDLE instance, int mode )
 
     ULut[0] = True;
     RLut[0] = GLut[0] = BLut[0] = 0;
-    XRange = DefaultWide;   WRange = XRange>>1;
-    YRange = DefaultHigh;   HRange = YRange>>1;
+
+    XRange = DefaultWide;
+    YRange = DefaultHigh;
+    
+    if (InitWidth  >= 48) XRange = InitWidth;
+    if (InitHeight >= 48) YRange = InitHeight;
+
+    WRange = XRange>>1;
+    HRange = YRange>>1;
     Range = MinFun(XRange,YRange);
     ZRange = 20000;
-    
-    rect.top  = 0;   rect.bottom = YRange;
-    rect.left = 0;   rect.right  = XRange;
 
-    
+    rect.top = InitYPos;
+    rect.left = InitXPos;
+    rect.bottom = InitYPos+YRange;
+    rect.right = InitXPos+XRange;
+      
     style = WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL;
 
     hMenu = LoadMenu(instance,"RasWinMenu");
     AdjustWindowRect(&rect,style,TRUE);
+
+    XPOS = YPOS = CW_USEDEFAULT;
+    
+    if (InitXPos > 0 && rect.left > 0 ) XPOS = rect.left;
+    if (InitYPos > 0 && rect.top > 0) YPOS = rect.top;
+
     CanvWin = CreateWindow("RasWinClass",VersionStr, style,
-                            CW_USEDEFAULT, CW_USEDEFAULT,
+                            XPOS, YPOS,
                             rect.right-rect.left, 
                             rect.bottom-rect.top,
                             NULL,hMenu,instance,NULL);

@@ -161,6 +161,7 @@ int UseHourGlass;
 int DisableMenu;
 int ReDrawFlag;
 int Range;
+int InitWidth, InitHeight, InitXPos, InitYPos;
 
 int MouseCaptureStatus;
 int MouseUpdateStatus;
@@ -284,6 +285,8 @@ extern int UseHourGlass;
 extern int DisableMenu;
 extern int ReDrawFlag;
 extern int Range;
+extern int InitWidth, InitHeight, InitXPos, InitYPos;
+
 
 extern int MouseCaptureStatus;
 extern int MouseUpdateStatus;
@@ -359,7 +362,7 @@ void EndWait( void );
 #ifdef MSWIN
 int OpenDisplay( HANDLE, int );
 #else
-int OpenDisplay( int, int );
+int OpenDisplay( );
 #endif
 
 #if !defined(IBMPC) && !defined(APPLEMAC)

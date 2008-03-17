@@ -65,11 +65,28 @@
  ***************************************************************************/
 /* transfor.c
  $Log: not supported by cvs2svn $
- Revision 1.3  2008/01/30 03:44:00  yaya-hjb
+ Revision 1.5  2008/03/17 01:32:41  yaya
+ Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
+
+ Revision 1.7  2008/03/16 22:25:22  yaya
+ Align comments with production version; Update rasmol_install and
+ rasmol_run shell scripts for Japanese and Chinese; Align logic for
+ positioning and sizing initial window with windows version -- HJB
+
+ Revision 1.4  2008/02/21 15:11:46  tpikonen
+ Add GTK GUI.
+
+ Revision 1.4  2008/01/30 03:15:55  yaya
  More post 2.7.4.1 release cleanup -- HJB
 
  Revision 1.6  2008/01/29 04:12:11  yaya
  Post release cleanup of problems discovered. -- HJB
+
+ Revision 1.3  2008/01/29 04:35:26  yaya
+ Postrelease update to fix problems discovered -- HJB
+
+ Revision 1.2  2008/01/28 03:29:38  yaya
+ Update CVS to RasMol_2.7.4.1 -- HJB
 
  Revision 1.5  2007/11/19 03:28:40  yaya
  Update to credits for 2.7.4 in manual and headers

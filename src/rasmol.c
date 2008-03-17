@@ -65,8 +65,29 @@
  ***************************************************************************/
 /* rasmol.c
  $Log: not supported by cvs2svn $
+ Revision 1.4  2008/03/17 01:32:41  yaya
+ Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
+
+ Revision 1.3  2008/03/16 22:38:09  yaya
+ Update stable release to 2.7.4.2; Update rasmol_install and rasmol_run
+ scripts to handle Japanese and Chiness (using cxterm), changing
+ Japanese for unix back to EUCJP; and align command line options
+ to set initial window size and position to agree between unix and
+ windows -- HJB
+
+ Revision 1.3  2008/03/16 22:25:22  yaya
+ Align comments with production version; Update rasmol_install and
+ rasmol_run shell scripts for Japanese and Chinese; Align logic for
+ positioning and sizing initial window with windows version -- HJB
+
+ Revision 1.4  2008/02/21 15:11:46  tpikonen
+ Add GTK GUI.
+
  Revision 1.3  2008/01/30 03:44:00  yaya-hjb
  More post 2.7.4.1 release cleanup -- HJB
+
+ Revision 1.2  2008/01/28 03:29:38  yaya
+ Update CVS to RasMol_2.7.4.1 -- HJB
 
  Revision 1.2  2007/11/19 03:28:39  yaya
  Update to credits for 2.7.4 in manual and headers
@@ -346,9 +367,6 @@ static int SocketNo;
 #endif  /* TERMIOS */
 
 static int firstpass=1;
-
-static int InitialWide;
-static int InitialHigh;
 
 static char *FileNamePtr;
 static char *ScriptNamePtr;
@@ -2032,8 +2050,7 @@ static void InitDefaultValues( void )
 
     FileNamePtr = NULL;
     ScriptNamePtr = NULL;
-    InitialWide = DefaultWide;
-    InitialHigh = DefaultHigh;
+    InitWidth = InitHeight = InitXPos = InitYPos = 0;
     ProfCount = 0;
 
     CalcBondsFlag = True;
@@ -2129,18 +2146,26 @@ static void ProcessOptions( int argc, char *argv[] )
             } else if( !strcasecmp(ptr,"width") ||
                        !strcasecmp(ptr,"wide") )
             {   if( i == argc-1 ) DisplayUsage();
-                InitialWide = atoi(argv[++i]);
-                if( InitialWide < 48 )
-                {   InitialWide = 48;
-                } else if( (j = InitialWide%4) )
-                    InitialWide += 4-j;
+                InitWidth = atoi(argv[++i]);
+                if( InitWidth < 48 )
+                {   InitWidth = 48;
+                } else if( (j = InitWidth%4) )
+                    InitWidth += 4-j;
 
             } else if( !strcasecmp(ptr,"height") ||
                        !strcasecmp(ptr,"high") )
             {   if( i == argc-1 ) DisplayUsage();
-                InitialHigh = atoi(argv[++i]);
-                if( InitialHigh < 48 )
-                    InitialHigh = 48;
+                InitHeight = atoi(argv[++i]);
+                if( InitHeight < 48 )
+                    InitHeight = 48;
+                
+            } else if( !strcasecmp(ptr,"xpos"))
+            {   if( i == argc-1 ) DisplayUsage();
+                InitXPos = atoi(argv[++i]);
+            } else if( !strcasecmp(ptr,"ypos"))
+            {   if( i == argc-1 ) DisplayUsage();
+                InitYPos = atoi(argv[++i]);
+                
 
 #ifdef SOCKETS
             } else if( !strcasecmp(ptr,"port") )
@@ -2286,7 +2311,7 @@ int main( int argc, char *argv[] )
     temp = Interactive;
     setbuf(OutFp,(char *)NULL);
 #endif
-    Interactive = OpenDisplay(InitialWide,InitialHigh);
+    Interactive = OpenDisplay();
     InitTerminal(Interactive);
 
     SwitchLang (Language);
