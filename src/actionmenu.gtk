@@ -1,0 +1,140 @@
+<ui>
+  <menubar name='MainMenu'>
+    <menu action='FileMenu'>
+      <menuitem action='Open' />
+      <menuitem action='Recent' />
+      <menuitem action='SaveAs' />
+      <menuitem action='Export' />
+      <menuitem action='Close' />
+	  <separator/>
+	  <menuitem action='PageSetup'/>
+   	  <menuitem action='Print'/>
+	  <separator/>
+	  <menuitem action='Exit' />
+  	  <separator/>
+      <placeholder name='OFiles' />
+    </menu>
+	<menu action='ViewMenu'>
+      <menuitem action='Command' />
+	  <menuitem action='Scrolls' />
+  	  <menuitem action='Menus' />
+	  <menuitem action='Fullscreen' />
+	  <separator/>
+	  <menuitem action='Setfont' />
+    </menu>
+    <menu action='DispMenu'>
+      <menuitem action='Wireframe' />
+  	  <menuitem action='Backbone' />
+	  <menuitem action='Sticks' />
+	  <menuitem action='Spheres' />
+	  <menuitem action='Ballstick' />
+	  <menuitem action='Ribbons' />
+	  <menuitem action='Strands' />
+	  <menuitem action='Cartoons' />
+	  <menuitem action='MolSurf' />
+    </menu>
+	<menu action='ColMenu'>
+	  <menuitem action='Monochrome' />
+      <menuitem action='CPK' />
+	  <menuitem action='Shapely' />
+	  <menuitem action='Group' />
+	  <menuitem action='Chain' />
+	  <menuitem action='Temperature' />
+	  <menuitem action='Structure' />
+ 	  <menuitem action='User' />
+	  <menuitem action='Model' />
+	  <menuitem action='Alt' />
+    </menu>
+	<menu action='OptMenu'>
+	  <menuitem action='Slab' />
+	  <menuitem action='Hydrogens' />
+	  <menuitem action='Heteros' />
+	  <menuitem action='Specular' />
+	  <menuitem action='Shadows' />
+	  <menuitem action='Stereo' />
+	  <menuitem action='Labels' />
+    </menu>
+	<menu action='SetMenu'>
+      <menuitem action='POff' />
+	  <menuitem action='PIdent' />
+	  <menuitem action='PDistance' />
+	  <menuitem action='PMonitor' />
+	  <menuitem action='PAngle' />
+	  <menuitem action='PTorsion' />
+	  <menuitem action='PLabel' />
+	  <menuitem action='PCentre' />
+	  <menuitem action='PCoord' />
+	  <menuitem action='PBond' />
+	  <separator/>
+	  <menuitem action='RBond' />
+	  <menuitem action='RMol' />
+	  <menuitem action='RAll' />
+    </menu>
+	<menu action='HelpMenu'>
+	  	  <menuitem action='Manual' />
+	  	  <menuitem action='Register' />
+	  	  <menuitem action='Donate' />
+		  <menuitem action='About' />
+    </menu>
+  </menubar>
+  <popup>
+  	<menu action='ViewMenu'>
+      <menuitem action='Command' />
+	  <menuitem action='Scrolls' />
+  	  <menuitem action='Menus' />
+	  <menuitem action='Fullscreen' />
+	  <separator/>
+	  <menuitem action='Setfont' />
+    </menu>
+    <menu action='DispMenu'>
+      <menuitem action='Wireframe' />
+  	  <menuitem action='Backbone' />
+	  <menuitem action='Sticks' />
+	  <menuitem action='Spheres' />
+	  <menuitem action='Ballstick' />
+	  <menuitem action='Ribbons' />
+	  <menuitem action='Strands' />
+	  <menuitem action='Cartoons' />
+	  <menuitem action='MolSurf' />
+    </menu>
+	<menu action='ColMenu'>
+	  <menuitem action='Monochrome' />
+      <menuitem action='CPK' />
+	  <menuitem action='Shapely' />
+	  <menuitem action='Group' />
+	  <menuitem action='Chain' />
+	  <menuitem action='Temperature' />
+	  <menuitem action='Structure' />
+ 	  <menuitem action='User' />
+	  <menuitem action='Model' />
+	  <menuitem action='Alt' />
+    </menu>
+	<menu action='OptMenu'>
+	  <menuitem action='Slab' />
+	  <menuitem action='Hydrogens' />
+	  <menuitem action='Heteros' />
+	  <menuitem action='Specular' />
+	  <menuitem action='Shadows' />
+	  <menuitem action='Stereo' />
+	  <menuitem action='Labels' />
+    </menu>
+	<menu action='SetMenu'>
+      <menuitem action='POff' />
+	  <menuitem action='PIdent' />
+	  <menuitem action='PDistance' />
+	  <menuitem action='PMonitor' />
+	  <menuitem action='PAngle' />
+	  <menuitem action='PTorsion' />
+	  <menuitem action='PLabel' />
+	  <menuitem action='PCentre' />
+	  <menuitem action='PCoord' />
+	  <menuitem action='PBond' />
+	  <separator/>
+	  <menuitem action='RBond' />
+	  <menuitem action='RMol' />
+	  <menuitem action='RAll' />
+    </menu>
+	<separator/>
+    <placeholder name='OFiles' />
+  </popup>
+</ui>

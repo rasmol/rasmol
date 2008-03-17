@@ -65,6 +65,36 @@
  ***************************************************************************/
 /* rasmol.c
  $Log: not supported by cvs2svn $
+ Revision 1.5  2008/03/17 03:26:07  yaya-hjb
+ Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
+ Japanese for Linux and Mac OS X versions using rasmol_install and
+ rasmol_run scripts, and align command line options for size and
+ position of initial window. -- HJB
+
+ Revision 1.4  2008/03/17 01:32:41  yaya
+ Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
+
+ Revision 1.3  2008/03/16 22:38:09  yaya
+ Update stable release to 2.7.4.2; Update rasmol_install and rasmol_run
+ scripts to handle Japanese and Chiness (using cxterm), changing
+ Japanese for unix back to EUCJP; and align command line options
+ to set initial window size and position to agree between unix and
+ windows -- HJB
+
+ Revision 1.3  2008/03/16 22:25:22  yaya
+ Align comments with production version; Update rasmol_install and
+ rasmol_run shell scripts for Japanese and Chinese; Align logic for
+ positioning and sizing initial window with windows version -- HJB
+
+ Revision 1.4  2008/02/21 15:11:46  tpikonen
+ Add GTK GUI.
+
+ Revision 1.3  2008/01/30 03:44:00  yaya-hjb
+ More post 2.7.4.1 release cleanup -- HJB
+
+ Revision 1.2  2008/01/28 03:29:38  yaya
+ Update CVS to RasMol_2.7.4.1 -- HJB
+
  Revision 1.2  2007/11/19 03:28:39  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -190,6 +220,10 @@
 #include "script.h"
 
 
+#ifdef GTKWIN
+extern char filaid[];
+extern char fillang[];
+#endif
 
 #ifdef esv
 #include <sysv/unistd.h>
@@ -255,9 +289,12 @@ static char fpnamebuf[1048];
 #define IsIdentChar(x)  ((isalnum(x))||((x)=='_')||((x)=='$'))
 #define TwoPi           2.0*PI
 
+#ifdef GTKWIN
+FILE *OutFp;
+#else
 /* Either stdout or stderr */
 #define OutFp stdout
-
+#endif
 
 #ifdef VMS
 static struct {
@@ -286,7 +323,7 @@ static struct timeval TimeOut;
 static fd_set OrigWaitSet;
 static fd_set WaitSet;
 static int WaitWidth;
-static int FileNo;
+int FileNo;
 
 
 #ifdef SOCKETS
@@ -336,9 +373,6 @@ static int SocketNo;
 #endif  /* TERMIOS */
 
 static int firstpass=1;
-
-static int InitialWide;
-static int InitialHigh;
 
 static char *FileNamePtr;
 static char *ScriptNamePtr;
@@ -667,7 +701,9 @@ static void InitTerminal( int sockets )
 #endif
 
 #ifdef TERMIOS
+#ifndef GTKWIN
     FileNo = fileno(stdin);
+#endif
     FD_ZERO(&OrigWaitSet);
     FD_SET(FileNo,&OrigWaitSet);
     WaitWidth = FileNo+1;
@@ -1447,7 +1483,7 @@ int setraid ( const char * aid, const char * langstr ) {
   return lenwritten;
 }
 
-static void HandleMenu( int hand )
+void HandleMenu( int hand )
 {
     register int menu;
     register int item;
@@ -1736,6 +1772,7 @@ static void HandleMenu( int hand )
                         Donate(); break;
                   }
                   break;
+#ifndef GTKWIN
     	case(7):  /* About Dialog  */
     	           if (AboutDLG[item-1].DLGtype==DLGCHECKBOX) {    	           	  
                        AboutDLG[item-1].status = (AboutDLG[item-1].status)?0:1;
@@ -1763,6 +1800,8 @@ static void HandleMenu( int hand )
        	
        	           	  }
        	           }
+		   break;
+#endif /* GTKWIN */
     }
 }
 
@@ -2017,8 +2056,7 @@ static void InitDefaultValues( void )
 
     FileNamePtr = NULL;
     ScriptNamePtr = NULL;
-    InitialWide = DefaultWide;
-    InitialHigh = DefaultHigh;
+    InitWidth = InitHeight = InitXPos = InitYPos = 0;
     ProfCount = 0;
 
     CalcBondsFlag = True;
@@ -2114,18 +2152,26 @@ static void ProcessOptions( int argc, char *argv[] )
             } else if( !strcasecmp(ptr,"width") ||
                        !strcasecmp(ptr,"wide") )
             {   if( i == argc-1 ) DisplayUsage();
-                InitialWide = atoi(argv[++i]);
-                if( InitialWide < 48 )
-                {   InitialWide = 48;
-                } else if( (j = InitialWide%4) )
-                    InitialWide += 4-j;
+                InitWidth = atoi(argv[++i]);
+                if( InitWidth < 48 )
+                {   InitWidth = 48;
+                } else if( (j = InitWidth%4) )
+                    InitWidth += 4-j;
 
             } else if( !strcasecmp(ptr,"height") ||
                        !strcasecmp(ptr,"high") )
             {   if( i == argc-1 ) DisplayUsage();
-                InitialHigh = atoi(argv[++i]);
-                if( InitialHigh < 48 )
-                    InitialHigh = 48;
+                InitHeight = atoi(argv[++i]);
+                if( InitHeight < 48 )
+                    InitHeight = 48;
+                
+            } else if( !strcasecmp(ptr,"xpos"))
+            {   if( i == argc-1 ) DisplayUsage();
+                InitXPos = atoi(argv[++i]);
+            } else if( !strcasecmp(ptr,"ypos"))
+            {   if( i == argc-1 ) DisplayUsage();
+                InitYPos = atoi(argv[++i]);
+                
 
 #ifdef SOCKETS
             } else if( !strcasecmp(ptr,"port") )
@@ -2190,6 +2236,12 @@ static void InitialiseFSDialogs(void)
 }
 #endif
 
+#ifdef GTKWIN
+language bestlang( void ) 
+{
+    return English;
+}
+#else
 language bestlang( void ) 
 {
 
@@ -2226,6 +2278,7 @@ language bestlang( void )
     return mylang;
     
 }
+#endif /* GTKWIN */
 
 void UpdateLanguage( void ) {
 
@@ -2252,12 +2305,19 @@ int main( int argc, char *argv[] )
              VER_DATE, VER_COPYRIGHT);
 
     InitDefaultValues();
+#ifdef GTKWIN
+    gtk_init(&argc, &argv);
+#endif    
     ProcessOptions(argc,argv);
     ReDrawFlag = 0;
-    
+#ifdef GTKWIN
+    temp = True;
+    Interactive = True;
+#else	
     temp = Interactive;
     setbuf(OutFp,(char *)NULL);
-    Interactive = OpenDisplay(InitialWide,InitialHigh);
+#endif
+    Interactive = OpenDisplay();
     InitTerminal(Interactive);
 
     SwitchLang (Language);
@@ -2375,6 +2435,23 @@ int main( int argc, char *argv[] )
 #endif
     }
 
+#ifdef GTKWIN
+	if( Interactive ) {
+		gtk_main();
+	}
+	else 
+	{   done = False;
+    	while( !done )
+        {   /* Command Line Only! */
+            ch = ReadCharacter();
+            if( ProcessCharacter(ch) )
+            {   if( !ProcessCommand() )
+                {   RefreshScreen();
+                } else done = True;
+            }
+        }
+    }	
+#else
     if (Interactive) {
       if (firstpass) {
         firstpass = 0;
@@ -2398,11 +2475,13 @@ int main( int argc, char *argv[] )
     }
 #else /* !TERMIOS */
     if( Interactive )
+#ifdef X11WIN
     {   /* X Windows Only! */
         while( HandleEvents(True) )
             if( !CommandActive )
                 ResetCommandLine(0);
-    } else 
+    } else
+#endif 	
     {   done = False;
         while( !done )
         {   /* Command Line Only! */
@@ -2414,7 +2493,8 @@ int main( int argc, char *argv[] )
             }
         }
     }
-#endif
+#endif /* TERMIOS */
+#endif /* GTKWIN */
     RasMolExit();
     return 0;
 }

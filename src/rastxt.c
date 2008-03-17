@@ -125,8 +125,6 @@ static struct termios IntrTerm;
 #endif
 
 
-static int InitialWide;
-static int InitialHigh;
 
 static char *FileNamePtr;
 static char *ScriptNamePtr;
@@ -404,7 +402,7 @@ void EndWait( void )
 }
 
 
-int OpenDisplay( int x, int y )
+int OpenDisplay( void )
 {
     register int i;
 
@@ -485,8 +483,7 @@ static void InitDefaultValues( void )
 
     FileNamePtr = NULL;
     ScriptNamePtr = NULL;
-    InitialWide = DefaultWide;
-    InitialHigh = DefaultHigh;
+    InitWidth = InitHeight = InitXPos = InitYPos = 0;
     ProfCount = 0;
 
     FileFormat = FormatPDB;
@@ -553,15 +550,18 @@ static void ProcessOptions( int argc, char *argv[] )
             } else if( !strcmp(ptr,"width") ||
                        !strcmp(ptr,"wide") )
             {   if( i == argc-1 ) DisplayUsage();
-                InitialWide = atoi(argv[++i]);
-                if( InitialWide < 48 )
-                    InitialWide = 48;
+                InitWidth = atoi(argv[++i]);
+                if( InitWidth < 48 )
+                    InitWidth = 48;
+                else if( (j = InitWidth%4) )
+                    InitWidth += 4-j;
+
             } else if( !strcmp(ptr,"height") ||
                        !strcmp(ptr,"high") )
             {   if( i == argc-1 ) DisplayUsage();
-                InitialHigh = atoi(argv[++i]);
-                if( InitialHigh < 48 )
-                    InitialHigh = 48;
+                InitHeight = atoi(argv[++i]);
+                if( InitHeight < 48 )
+                    InitHeight = 48;
 
             } else if( !strcmp(ptr,"sybyl") )
             {   FileFormat = FormatMol2;
@@ -610,7 +610,7 @@ int main( int argc, char *argv[] )
     ReDrawFlag = 0;
     
     setbuf(OutFp,(char *)NULL);
-    OpenDisplay(InitialWide,InitialHigh);
+    OpenDisplay();
     InitTerminal();
 
 #ifdef UNIX

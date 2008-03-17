@@ -1,5 +1,0 @@
-#!/bin/bash
-
-./genlangsel
-./genlangselmac
-./genlangselmaster

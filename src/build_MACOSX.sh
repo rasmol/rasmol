@@ -7,7 +7,8 @@
 #
 cp Imakefile Imakefile_save
 rm Imakefile
-echo "#define PIXELDEPTH 8"|cat - Imakefile_save > Imakefile
+echo "#define OLDX_LOCALE xx" > Imakefile
+echo "#define PIXELDEPTH 8"|cat - Imakefile_save >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
 xmkmf
 mv Makefile Makefile_8BIT
@@ -17,7 +18,8 @@ if [ "$1"  != "-nobuild" ]; then
   mv rasmol rasmol_8BIT
 fi;
 rm Imakefile
-echo "#define PIXELDEPTH 16"|cat - Imakefile_save > Imakefile
+echo "#define OLDX_LOCALE xx" > Imakefile
+echo "#define PIXELDEPTH 16"|cat - Imakefile_save >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
 xmkmf
 mv Makefile Makefile_16BIT
@@ -27,7 +29,8 @@ if [ "$1" != "-nobuild" ]; then
   mv rasmol rasmol_16BIT
 fi;
 rm Imakefile
-echo "#define PIXELDEPTH 32"|cat - Imakefile_save > Imakefile
+echo "#define OLDX_LOCALE xx" > Imakefile
+echo "#define PIXELDEPTH 32"|cat - Imakefile_save >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
 gcc checklong.c -o checklong
 VAL=`(./checklong; echo $1)`
@@ -46,7 +49,8 @@ if [ "$1" != "-nobuild" ]; then
   fi;
 fi;
 rm Imakefile
-echo "#define PIXELDEPTH 8" > Imakefile
+echo "#define OLDX_LOCALE xx" > Imakefile
+echo "#define PIXELDEPTH 8" >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
 echo "#define XFORMSLIB xx"|cat - Imakefile_save >> Imakefile
 xmkmf
@@ -57,7 +61,8 @@ if [ "$1"  != "-nobuild" ]; then
   mv rasmol rasmol_XFORMS_8BIT
 fi;
 rm Imakefile
-echo "#define PIXELDEPTH 16" > Imakefile
+echo "#define OLDX_LOCALE xx" > Imakefile
+echo "#define PIXELDEPTH 16" >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
 echo "#define XFORMSLIB xx"|cat - Imakefile_save >> Imakefile
 xmkmf
@@ -68,7 +73,8 @@ if [ "$1" != "-nobuild" ]; then
   mv rasmol rasmol_XFORMS_16BIT
 fi;
 rm Imakefile
-echo "#define PIXELDEPTH 32" > Imakefile
+echo "#define OLDX_LOCALE xx" > Imakefile
+echo "#define PIXELDEPTH 32" >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
 echo "#define XFORMSLIB xx"|cat - Imakefile_save >> Imakefile
 if [ $VAL -gt 4 ]; then

@@ -1,3 +1,4 @@
+#!/bin/sh
 cat header.c > langsel_mac.c
 cat langsel.English.mac.c >> langsel_mac.c
 echo "" >> langsel_mac.c

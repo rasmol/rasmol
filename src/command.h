@@ -65,6 +65,23 @@
  ***************************************************************************/
 /* command.h
  $Log: not supported by cvs2svn $
+ Revision 1.4  2008/03/17 03:26:06  yaya-hjb
+ Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
+ Japanese for Linux and Mac OS X versions using rasmol_install and
+ rasmol_run scripts, and align command line options for size and
+ position of initial window. -- HJB
+
+ Revision 1.3  2008/03/17 01:32:41  yaya
+ Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
+
+ Revision 1.8  2008/03/16 22:25:21  yaya
+ Align comments with production version; Update rasmol_install and
+ rasmol_run shell scripts for Japanese and Chinese; Align logic for
+ positioning and sizing initial window with windows version -- HJB
+
+ Revision 1.2  2008/01/28 03:29:37  yaya
+ Update CVS to RasMol_2.7.4.1 -- HJB
+
  Revision 1.7  2007/12/06 18:47:09  hk0i
  added NoToggle and ColourMode commands + messages (translations needed), README for lang files, script to generate all langsel files (uses previous scripts).
 

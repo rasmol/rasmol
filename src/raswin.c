@@ -66,6 +66,35 @@
  ***************************************************************************/
 /* raswin.c
  $Log: not supported by cvs2svn $
+ Revision 1.4  2008/03/17 03:26:07  yaya-hjb
+ Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
+ Japanese for Linux and Mac OS X versions using rasmol_install and
+ rasmol_run scripts, and align command line options for size and
+ position of initial window. -- HJB
+
+ Revision 1.4  2008/03/17 01:32:41  yaya
+ Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
+
+ Revision 1.3  2008/03/16 22:38:10  yaya
+ Update stable release to 2.7.4.2; Update rasmol_install and rasmol_run
+ scripts to handle Japanese and Chiness (using cxterm), changing
+ Japanese for unix back to EUCJP; and align command line options
+ to set initial window size and position to agree between unix and
+ windows -- HJB
+
+ Revision 1.4  2008/03/16 22:25:22  yaya
+ Align comments with production version; Update rasmol_install and
+ rasmol_run shell scripts for Japanese and Chinese; Align logic for
+ positioning and sizing initial window with windows version -- HJB
+
+ Revision 1.3  2008/03/09 18:04:06  yaya
+ As per a suggestion by Gregory A. Pozhvanov, fixed handling of quoted
+ filename strings in raswin and added new command line options
+ -width nnnn, -height nnnn, -xpos nnnn, and -ypos nnnn. -- HJB
+
+ Revision 1.2  2008/01/28 03:29:38  yaya
+ Update CVS to RasMol_2.7.4.1 -- HJB
+
  Revision 1.2  2007/11/19 03:28:39  yaya
  Update to credits for 2.7.4 in manual and headers
  Mask code added -- HJB
@@ -3461,6 +3490,8 @@ static void InitDefaultValues( void )
 
     fnamebuf[0] = '\0';
     snamebuf[0] = '\0';
+    
+    InitWidth = InitHeight = InitXPos = InitYPos = 0;
 
     CalcBondsFlag = True;
     CalcSurfFlag = False;
@@ -3501,7 +3532,7 @@ static struct {
 static int ProcessOptions( char __far *ptr )
 {
     register char *dst;
-    register int i, argok;
+    register int i, j, argok;
 	register int quotemark;
     register language klang;
 
@@ -3541,59 +3572,113 @@ static int ProcessOptions( char __far *ptr )
                 ptr += 3;
 #endif 
 
-	    } else if( !strncasecmp(ptr,"script",6) )
-	    {   ptr += 6;
-		while( *ptr && (*ptr==' ') )
-		    ptr++;
+	    } else if( !strncasecmp(ptr,"script",6) ) { 
+	      ptr += 6;
+		  while( *ptr && (*ptr==' ') )  ptr++;
 
-		if( *ptr )
-		{   dst = snamebuf;
-		            quotemark = ' ';
-		            while( *ptr && (*ptr!=quotemark) ) {
-		              if (quotemark==' ' && dst==snamebuf && (*ptr == '\'' || *ptr == '"') ){
-			          quotemark = *ptr++;
-				      continue;
-			        }
-			        *dst++ = *ptr++;
-			    }
-			    if (quotemark != ' ') {
-			      if (*ptr == quotemark) {
-			      ptr++;
-			    } else {
-			      return False;
-			    }
-		        *dst = '\0';
-		       }
-		       else return False;
-		   }
+		  if( *ptr ) {   
+		    dst = snamebuf;
+		    quotemark = ' ';
+            if( *ptr == '"' || *ptr == '\'')
+            {   quotemark = *ptr++;
+                while( *ptr && (*ptr!=quotemark) )
+                    *dst++ = *ptr++;
+                if( *ptr==quotemark ) {
+                    ptr++;
+				} else return False;
+		    } else /* Unquoted! */
+            {   while( *ptr && (*ptr!=' ') )
+                    *dst++ = *ptr++;
+            }
+            *dst = '\0';
+		  } else return False;
 
 #ifdef SOCKETS
-            } else if( !strncasecmp(ptr,"port",4) )
-            {   ptr += 4;
-                while( *ptr && (*ptr==' ') )
-                    ptr++;
+        } else if( !strncasecmp(ptr,"port",4) ) {
+          ptr += 4;
+          while( *ptr && (*ptr==' ') ) ptr++;
 
-                if( isdigit(*ptr) )
-                {   ServerPort = (*ptr++)-'0';
-                    while( isdigit(*ptr) )
-                        ServerPort = (10*ServerPort)+(*ptr++)-'0';
-                } else return False;
+          if( isdigit(*ptr) ) { 
+            ServerPort = (*ptr++)-'0';
+            while( isdigit(*ptr) )
+            ServerPort = (10*ServerPort)+(*ptr++)-'0';
+          } else return False;
 #endif
-            } else if( !strncasecmp(ptr,"connect",7) )
-            {   CalcBondsFlag = True;
-                ptr += 7;
-            } else if( !strncasecmp(ptr,"noconnect",9) )
-            {   CalcBondsFlag = False;     
-                ptr += 8;
-            } else if( !strncasecmp(ptr,"insecure",8) )
-            {   AllowWrite = True;
-                ptr += 8;
-            } else if( !strncasecmp(ptr,"secure",6) )
-            {   AllowWrite = False;
-                ptr += 6;
-            } else return False;
+        } else if( !strncasecmp(ptr,"connect",7) )
+        {   CalcBondsFlag = True;
+            ptr += 7;
+        } else if( !strncasecmp(ptr,"noconnect",9) )
+        {   CalcBondsFlag = False;     
+            ptr += 8;
+        } else if( !strncasecmp(ptr,"insecure",8) )
+        {   AllowWrite = True;
+            ptr += 8;
+        } else if( !strncasecmp(ptr,"secure",6) )
+        {   AllowWrite = False;
+            ptr += 6;
+        } else if ( !strncasecmp(ptr,"height",6)) { 
+          ptr += 6;
+          while( *ptr && (*ptr==' ') ) ptr++;
+
+          if( isdigit(*ptr) ) { 
+            InitHeight = (*ptr++)-'0';
+            while( isdigit(*ptr) )
+            InitHeight = (10*InitHeight)+(*ptr++)-'0';
+            if (InitHeight < 48) InitHeight = 48;
+          } else return False;
+        } else if ( !strncasecmp(ptr,"high",6)) { 
+          ptr += 4;
+          while( *ptr && (*ptr==' ') ) ptr++;
+
+          if( isdigit(*ptr) ) { 
+            InitHeight = (*ptr++)-'0';
+            while( isdigit(*ptr) )
+            InitHeight = (10*InitHeight)+(*ptr++)-'0';
+            if (InitHeight < 48) InitHeight = 48;
+          } else return False;
+        } else if ( !strncasecmp(ptr,"width",5)) { 
+          ptr += 5;
+          while( *ptr && (*ptr==' ') ) ptr++;
+          if( isdigit(*ptr) ) { 
+            InitWidth = (*ptr++)-'0';
+            while( isdigit(*ptr) )
+            InitWidth = (10*InitWidth)+(*ptr++)-'0';
+            if (InitWidth < 48) InitWidth = 48;
+            else if( (j = InitWidth%4) )
+              InitWidth += 4-j;
+          } else return False;
+        } else if ( !strncasecmp(ptr,"wide",4)) { 
+          ptr += 4;
+          while( *ptr && (*ptr==' ') ) ptr++;
+          if( isdigit(*ptr) ) { 
+            InitWidth = (*ptr++)-'0';
+            while( isdigit(*ptr) )
+            InitWidth = (10*InitWidth)+(*ptr++)-'0';
+            if (InitWidth < 48) InitWidth = 48;
+            else if( (j = InitWidth%4) )
+              InitWidth += 4-j;
+          } else return False;
+        } else if ( !strncasecmp(ptr,"xpos",4)) { 
+          ptr += 4;
+          while( *ptr && (*ptr==' ') ) ptr++;
+          if( isdigit(*ptr) ) { 
+            InitXPos = (*ptr++)-'0';
+            while( isdigit(*ptr) )
+            InitXPos = (10*InitXPos)+(*ptr++)-'0';
+          } else return False;
+        } else if ( !strncasecmp(ptr,"ypos",4)) { 
+          ptr += 4;
+          while( *ptr && (*ptr==' ') ) ptr++;
+          if( isdigit(*ptr) ) { 
+            InitYPos = (*ptr++)-'0';
+            while( isdigit(*ptr) )
+            InitYPos = (10*InitYPos)+(*ptr++)-'0';
+          } else return False;
+        	
+        	
+        } else return False;
   
-        } else if( !*fnamebuf )
+      } else if( !*fnamebuf )
         {   dst = fnamebuf;
 		    quotemark = ' ';
             if( *ptr == '"' || *ptr == '\'')

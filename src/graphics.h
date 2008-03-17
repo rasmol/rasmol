@@ -161,6 +161,7 @@ int UseHourGlass;
 int DisableMenu;
 int ReDrawFlag;
 int Range;
+int InitWidth, InitHeight, InitXPos, InitYPos;
 
 int MouseCaptureStatus;
 int MouseUpdateStatus;
@@ -222,8 +223,11 @@ Window RootWin;
 char filaid [1025];
 char macaid [1025];
 char fillang [81];
+#endif
 
-
+#ifdef GTKWIN
+char filaid [1025];
+char fillang [81];
 #endif
 
 #ifdef X11WIN
@@ -281,6 +285,8 @@ extern int UseHourGlass;
 extern int DisableMenu;
 extern int ReDrawFlag;
 extern int Range;
+extern int InitWidth, InitHeight, InitXPos, InitYPos;
+
 
 extern int MouseCaptureStatus;
 extern int MouseUpdateStatus;
@@ -356,7 +362,7 @@ void EndWait( void );
 #ifdef MSWIN
 int OpenDisplay( HANDLE, int );
 #else
-int OpenDisplay( int, int );
+int OpenDisplay( );
 #endif
 
 #if !defined(IBMPC) && !defined(APPLEMAC)

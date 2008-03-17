@@ -1,10 +1,10 @@
 #!/bin/sh
 ###########################################################################
-#                             RasMol 2.7.3.1                              #
+#                             RasMol 2.7.4.2                              #
 #                                                                         #
 #                                 RasMol                                  #
 #                 Molecular Graphics Visualisation Tool                   #
-#                             14 April 2006                               #
+#                            19 November 2007                             #
 #                                                                         #
 #                   Based on RasMol 2.6 by Roger Sayle                    #
 # Biomolecular Structures Group, Glaxo Wellcome Research & Development,   #
@@ -23,19 +23,26 @@
 #  Philippe Valadon   RasTop 1.3       Aug 00   (C) Philippe Valadon 2000 #
 #                                                                         #
 #  Herbert J.         RasMol 2.7.0     Mar 99   (C) Herbert J. Bernstein  #
-#  Bernstein          RasMol 2.7.1     Jun 99       1998-2005             #
+#  Bernstein          RasMol 2.7.1     Jun 99       1998-2008             #
 #                     RasMol 2.7.1.1   Jan 01                             #
 #                     RasMol 2.7.2     Aug 00                             #
 #                     RasMol 2.7.2.1   Apr 01                             #
 #                     RasMol 2.7.2.1.1 Jan 04                             #
 #                     RasMol 2.7.3     Feb 05                             #
 #                     RasMol 2.7.3.1   Apr 06                             #
+#                     RasMol 2.7.4     Nov 07                             #
+#                     RasMol 2.7.4.2   Mar 08                             #
 #                                                                         #
-#  with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky       #
-#  Chachra, and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part #
-#  by grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S.        #
-#  National Science Foundation and grant DE-FG02-03ER63601 from the       #
-#  U.S. Department of Energy.                                             #
+# RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     #
+# and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        #
+# grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   #
+# Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department #
+# of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   #
+# N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    #
+# 2.7.4 supported in part by grant 1R15GM078077-01 from the National      #
+# Institute of General Medical Sciences (NIGMS). The content is solely    #
+# the responsibility of the authors and does not necessarily represent    #
+# the official views of the funding organizations.                        #
 #                                                                         #
 #                     and Incorporating Translations by                   #
 #  Author                               Item                     Language #
@@ -46,16 +53,24 @@
 #  Jean-Pierre Demailly                 2.7.1 menus and messages  French  #
 #  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          #
 #  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian #
-#  G. Pozhvanov                         2.7.3 menus and messages  Russian #
+#  G. Pozhvanov                         2.7.3 menus and messages Russian  #
+#  G. Todorov                           2.7.3 menus and messages Bulgarian#
+#  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  #
+#  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese #
 #                                                                         #
 #                             This Release by                             #
 # Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA #
 #                       yaya@bernstein-plus-sons.com                      #
-#               Copyright(C) Herbert J. Bernstein 1998-2006               #
+#               Copyright(C) Herbert J. Bernstein 1998-2008               #
 #                                                                         #
-#                READ THE FILE NOTICE FOR RASMOL LICENSES                 #
-# Please read the file NOTICE for important notices which apply to this   #
-# package and for license terms (GPL or RASLIC).                          #
+#   This version is based in directly on RasMol version 2.7.4, on RasMol  #
+#   version 2.7.3.1, on RasMol version 2.7.3, on RasMol version 2.7.2.1.1,#
+#   on RasMol version 2.7.2, on RasMol version 2.7.1, on RasMol version   #
+#   2.6_CIF.2, on RasMol version 2.6x1, on RasMol version 2.6.4, and      #
+#   RasMol 2.5-ucb and 2.6-ucb.                                           #
+#                                                                         #
+#   Please read the file NOTICE for important notices which apply to this # 
+#   package and for license terms (GPL  or RASLIC).                       #
 ###########################################################################
 #
 #
@@ -68,6 +83,7 @@
 #  code pages
 #
 #  H. J. Bernstein, 23 December 2006
+#  Rev, 15 March 2008 for Rasmol 2.7.4.2
 #
 
 # Process command line options
@@ -113,6 +129,8 @@ do
       echo "   RASMOLPATH          path to rasmol directory"
       echo "   RASMOL_LANTIN1FDIR  path to X11 ISO 8859-1 font directory"
       echo "   RASMOL_CP1251FDIR   path to X11 ISO CP 1251 font directory"
+      echo "   RASMOL_CHINESEFDIR  path to X11 Intlfonts-1.2.1/Chinese directory"
+      echo "   RASMOL_JAPANESEFDIR  path to X11 Intlfonts-1.2.1/Japanese.X directory"
       echo "   RASMOL_DEBUG        if non-empty, report settings"
       exit 1;
      
@@ -227,10 +245,10 @@ for program in \
   rasmol_run.sh \
   rasmol_install.sh \
   rasmol_32BIT \
-  rasmol_16BIT \
-  rasmol_8BIT \
   rasmol_XFORMS_32BIT \
+  rasmol_16BIT \
   rasmol_XFORMS_16BIT \
+  rasmol_8BIT \
   rasmol_XFORMS_8BIT \
 ;
 do
@@ -346,6 +364,113 @@ else
     fi
   else
     echo Latin1 fonts not found
+  fi
+fi
+
+
+# Check on availability of Intlfonts-1.2.1 fonts for
+# Chinese
+#
+
+if ( (xlsfonts -fn "*-16-*-gb2312.1980-0" | grep "gb2312.1980") > /dev/null  2>&1 );
+then
+  echo Chinese \(gb2312.1980\) fonts available
+elif [ -d $RASMOLPATH/Chinese.X ] ; then
+  echo Chinese fonts in $RASMOLPATH/Chinese.X
+else
+  for chinesefdir in \
+    $RASMOL_CHINESEFDIR \
+    ./intlfonts-1.2.1/Chinese.X \
+    ./Chinese.X \
+    ../external_packages/intlfonts-1.2.1/Chinese.X \
+    ../external_packages/Chinese.X \
+    $HOME/lib/X11/fonts/intlfonts-1.2.1/Chinese.X \
+    $HOME/lib/X11/fonts/Chinese.X \
+    /usr/lib/X11/fonts/intlfonts-1.2.1/Chinese.X \
+    /usr/lib/X11/fonts/Chinese.X \
+    /sw/lib/X11/fonts/intlfonts-1.2.1/Chinese.X \
+    /sw/lib/X11/fonts/Chinese.X \
+    /usr/openwin/lib/X11/fonts/intlfonts-1.2.1/Chinese.X \
+    /usr/openwin/lib/X11/fonts/Chinese.X \
+    ;
+  do
+    if [ -d $chinesefdir ] ; then
+      savecurdir=`pwd`;
+      cd $chinesefdir;
+      RASMOL_CHINESEFDIR=$chinesefdir;
+      cd $savecurdir;
+      break 1;
+    fi ;
+  done
+  if [ "$RASMOL_CHINESEFDIR" ]; then
+    rm -r -f $RASMOLPATH/Chinese.X ;
+    cp -r -p $RASMOL_CHINESEFDIR $RASMOLPATH/Chinese.X ;
+    echo Installed Latin1 fonts in $RASMOLPATH/jmk
+    if [ "$compilefonts" = "yes" ] ; then
+      savecurdir=`pwd`;
+      cd $RASMOLPATH/Chinese.X;
+      rm -f *.pcf;
+      rm -f *.pcf.gz;
+      rm -f *.pcf.Z;
+      for file in `ls *.bdf`; do bdftopcf $file > `basename $file .bdf`.pcf; done
+      mkfontdir `pwd`;
+      cd $savecurdir;
+    fi
+  else
+    echo Chinese fonts not found
+  fi
+fi
+
+# Check on availability of Intlfonts-1.2.1 fonts for
+# Japanese
+#
+
+if ( (xlsfonts -fn "*-r-*-14-*-jisx0208.1983-0" | grep "jisx0208.1983") > /dev/null  2>&1 );
+then
+  echo Japanese \(jisx0208.1983\) fonts available
+elif [ -d $RASMOLPATH/Japanese ] ; then
+  echo Japanese fonts in $RASMOLPATH/Japanese.X
+else
+  for japanesefdir in \
+    $RASMOL_JAPANESEFDIR \
+    ./intlfonts-1.2.1/Japanese.X \
+    ./Japanese.X \
+    ../external_packages/intlfonts-1.2.1/Japanese.X \
+    ../external_packages/Japanese.X \
+    $HOME/lib/X11/fonts/intlfonts-1.2.1/Japanese.X \
+    $HOME/lib/X11/fonts/Japanese.X \
+    /usr/lib/X11/fonts/intlfonts-1.2.1/Japanese.X \
+    /usr/lib/X11/fonts/Japanese.X \
+    /sw/lib/X11/fonts/intlfonts-1.2.1/Japanese.X \
+    /sw/lib/X11/fonts/Japanese.X \
+    /usr/openwin/lib/X11/fonts/intlfonts-1.2.1/Japanese.X \
+    /usr/openwin/lib/X11/fonts/Japanese.X \
+    ;
+  do
+    if [ -d $japanesefdir ] ; then
+      savecurdir=`pwd`;
+      cd $jpapnesefdir;
+      RASMOL_JAPANESEFDIR=$japanesefdir;
+      cd $savecurdir;
+      break 1;
+    fi ;
+  done
+  if [ "$RASMOL_JAPANESEFDIR" ]; then
+    rm -r -f $RASMOLPATH/Japanese.X ;
+    cp -r -p $RASMOL_JAPANESEFDIR $RASMOLPATH/Japanese.X ;
+    echo Installed Latin1 fonts in $RASMOLPATH/jmk
+    if [ "$compilefonts" = "yes" ] ; then
+      savecurdir=`pwd`;
+      cd $RASMOLPATH/Japanese.X;
+      rm -f *.pcf;
+      rm -f *.pcf.gz;
+      rm -f *.pcf.Z;
+      for file in `ls *.bdf`; do bdftopcf $file > `basename $file .bdf`.pcf; done
+      mkfontdir `pwd`;
+      cd $savecurdir;
+    fi
+  else
+    echo Japanese fonts not found
   fi
 fi
 

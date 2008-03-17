@@ -3,7 +3,7 @@
 #                                                                         #
 #                                 RasMol                                  #
 #                 Molecular Graphics Visualisation Tool                   #
-#                            19 November 2007                              #
+#                            19 November 2007                             #
 #                                                                         #
 #                   Based on RasMol 2.6 by Roger Sayle                    #
 # Biomolecular Structures Group, Glaxo Wellcome Research & Development,   #
@@ -109,6 +109,28 @@ DEPTHDEF = -DTHIRTYTWOBIT
 # DEPTHDEF = -DEIGHTBIT
 #endif
 
+#ifdef OLDX_LOCALE
+  LOCALEDEF = -DX_LOCALE
+#else
+  LOCALEDEF =
+#endif
+
+# #define GTKWIN
+#define X11WIN
+
+#ifdef GTKWIN
+GTKLIBS = $(shell pkg-config --libs vte gtk+-2.0)
+GTKCFLAGS = $(shell pkg-config --cflags vte gtk+-2.0)
+GUISRC = gtkwin.c eggfileformatchooser.c 
+GUIOBJ = gtkwin.o eggfileformatchooser.o
+GUIDEF = -DGTKWIN
+DEPTHDEF = -DTHIRTYTWOBIT
+#endif
+
+#ifdef X11WIN
+GUISRC = x11win.c
+GUIOBJ = x11win.o
+GUIDEF = -DX11WIN
 # using xform library to show GUI dialog
 # Use the first form for Mac OS X, the second for Linux x86
 #ifdef XFORMSLIB
@@ -116,6 +138,7 @@ DEPTHDEF = -DTHIRTYTWOBIT
 # GUIOPTION = -DXFORMSLIB -I/sw/include
  XFORMSLIB = -lXpm -L/usr/local/lib -lforms -Wl,-rpath,/usr/local/lib
  GUIOPTION = -DXFORMSLIB
+#endif
 #endif
 
 # Definitions for CBFLIB
@@ -131,22 +154,22 @@ CBFLIBDIR = $(CBFLIB_TARBALLDIR)/CBFlib_$(CBFLIB_VERSION)
 RASMOLDIR = $(USRLIBDIR)/rasmol/
 
 
-DEFINES = -DRASMOLDIR=\"$(RASMOLDIR)\" $(DEPTHDEF) \
+DEFINES = $(GTKCFLAGS) $(GUIDEF) -DRASMOLDIR=\"$(RASMOLDIR)\" $(DEPTHDEF) $(LOCALEDEF) \
           -D_USE_RASMOL_H_ $(GUIOPTION) -I$(CBFLIBDIR)/include
 
 SRCS = rasmol.c rasmol.h molecule.c molecule.h abstree.c abstree.h \
        cmndline.c cmndline.h command.c command.h tokens.h transfor.c \
-       transfor.h render.c render.h x11win.c graphics.h pixutils.c \
+       transfor.h render.c render.h graphics.h pixutils.c \
        pixutils.h font.h outfile.c outfile.h script.c script.h infile.c \
        infile.h repres.c repres.h tokens.c cif_fract.c cif_fract.h cif.c \
        cif.h cif_ctonum.c cif_ctonum.h cif_stx.c \
        multiple.h multiple.c vector.h vector.c \
-       wbrotate.c wbrotate.c langsel.h langsel.c maps.h maps.c
+       wbrotate.c wbrotate.c langsel.h langsel_unix.c maps.h maps.c $(GUISRC)
 
 OBJS = rasmol.o molecule.o abstree.o cmndline.o command.o transfor.o \
-       render.o repres.o  x11win.o pixutils.o outfile.o script.o \
+       render.o repres.o  pixutils.o outfile.o script.o \
        infile.o tokens.o  cif_fract.o cif.o cif_ctonum.o cif_stx.o \
-       multiple.o vector.o wbrotate.o langsel.o maps.o
+       multiple.o vector.o wbrotate.o langsel_unix.o maps.o $(GUIOBJ)
 
 # Previous Risc/Os definition
 # LDLIBS = -lm -lXinput $(XLIB)
@@ -154,7 +177,8 @@ OBJS = rasmol.o molecule.o abstree.o cmndline.o command.o transfor.o \
 # Additional RS6000 AIX MITSHM Library
 # LDLIBS = -lm -lXi -lXextSam $(XLIB)
 
-LDLIBS = -lm -lXi $(XLIB) $(EXTRA_LIBRARIES) $(XFORMSLIB) -L$(CBFLIBDIR)/lib -lcbf
+LDLIBS = -lm -lXi $(XLIB) $(EXTRA_LIBRARIES) $(XFORMSLIB) $(GTKLIBS) \
+			-L$(CBFLIBDIR)/lib -lcbf
 
 
 
@@ -193,12 +217,14 @@ GUIOPTION = -DXFORMSLIB -I/sw/include
 #endif
 #endif
 
-
 ComplexProgramTarget(rasmol)
 MakeDirectories(install,$(RASMOLDIR))
 InstallNonExec(../doc/rasmol.hlp,$(RASMOLDIR))
 InstallNonExec(../data/1crn.pdb,$(RASMOLDIR))
 InstallNonExec(../data/3cro.pdb,$(RASMOLDIR))
+
+cleandir:: 
+	   $(RM) gtkui.h rasmol.man
 
 rasmol.man::	../doc/rasmol.1
 		ln -s ../doc/rasmol.1 rasmol.man
@@ -216,3 +242,21 @@ $(CBFLIBDIR)/lib/libcbf.a: $(CBFLIBDIR)
 		  
 
 $(OBJS):  $(CBFLIBDIR)/lib/libcbf.a
+
+gtkwin.c: gtkui.h
+
+gtkui.h: sizechooser.glade printing-resolution.glade actionmenu.gtk
+	 echo "/* Automatically generated GTK ui definitions, do not edit! */" > gtkui.h
+	 echo >> gtkui.h
+	 echo "const gchar *actionmenu_str = \"\\" >> gtkui.h
+	 cat actionmenu.gtk | sed "s/$$/\\\/" | sed 's/"/\\\"/g' >> gtkui.h
+	 echo "\";" >> gtkui.h
+	 echo >> gtkui.h
+	 echo "const gchar *sizechooser_str = \"\\" >> gtkui.h
+	 gtk-builder-convert -w sizechooser.glade - | sed "s/$$/\\\/" | sed 's/"/\\\"/g' >> gtkui.h
+	 echo "\";" >> gtkui.h
+	 echo >> gtkui.h
+	 echo "const gchar *print_resolution_str = \"\\" >> gtkui.h
+	 gtk-builder-convert -w printing-resolution.glade - | sed "s/$$/\\\/" | sed 's/"/\\\"/g' >> gtkui.h
+	 echo "\";" >> gtkui.h
+	 echo >> gtkui.h	 
