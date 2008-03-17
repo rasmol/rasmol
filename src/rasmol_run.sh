@@ -1,10 +1,10 @@
 #!/bin/sh
 ###########################################################################
-#                             RasMol 2.7.3.1                              #
+#                             RasMol 2.7.4.2                              #
 #                                                                         #
 #                                 RasMol                                  #
 #                 Molecular Graphics Visualisation Tool                   #
-#                             14 April 2006                               #
+#                            19 November 2007                             #
 #                                                                         #
 #                   Based on RasMol 2.6 by Roger Sayle                    #
 # Biomolecular Structures Group, Glaxo Wellcome Research & Development,   #
@@ -23,19 +23,26 @@
 #  Philippe Valadon   RasTop 1.3       Aug 00   (C) Philippe Valadon 2000 #
 #                                                                         #
 #  Herbert J.         RasMol 2.7.0     Mar 99   (C) Herbert J. Bernstein  #
-#  Bernstein          RasMol 2.7.1     Jun 99       1998-2005             #
+#  Bernstein          RasMol 2.7.1     Jun 99       1998-2008             #
 #                     RasMol 2.7.1.1   Jan 01                             #
 #                     RasMol 2.7.2     Aug 00                             #
 #                     RasMol 2.7.2.1   Apr 01                             #
 #                     RasMol 2.7.2.1.1 Jan 04                             #
 #                     RasMol 2.7.3     Feb 05                             #
 #                     RasMol 2.7.3.1   Apr 06                             #
+#                     RasMol 2.7.4     Nov 07                             #
+#                     RasMol 2.7.4.2   Mar 08                             #
 #                                                                         #
-#  with RasMol 2.7.3 incorporating changes by Clarice Chigbo, Ricky       #
-#  Chachra, and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part #
-#  by grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S.        #
-#  National Science Foundation and grant DE-FG02-03ER63601 from the       #
-#  U.S. Department of Energy.                                             #
+# RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     #
+# and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        #
+# grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   #
+# Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department #
+# of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   #
+# N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    #
+# 2.7.4 supported in part by grant 1R15GM078077-01 from the National      #
+# Institute of General Medical Sciences (NIGMS). The content is solely    #
+# the responsibility of the authors and does not necessarily represent    #
+# the official views of the funding organizations.                        #
 #                                                                         #
 #                     and Incorporating Translations by                   #
 #  Author                               Item                     Language #
@@ -46,16 +53,24 @@
 #  Jean-Pierre Demailly                 2.7.1 menus and messages  French  #
 #  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          #
 #  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file           Italian #
-#  G. Pozhvanov                         2.7.3 menus and messages  Russian #
+#  G. Pozhvanov                         2.7.3 menus and messages Russian  #
+#  G. Todorov                           2.7.3 menus and messages Bulgarian#
+#  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  #
+#  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese #
 #                                                                         #
 #                             This Release by                             #
 # Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA #
 #                       yaya@bernstein-plus-sons.com                      #
-#               Copyright(C) Herbert J. Bernstein 1998-2006               #
+#               Copyright(C) Herbert J. Bernstein 1998-2008               #
 #                                                                         #
-#                READ THE FILE NOTICE FOR RASMOL LICENSES                 #
-# Please read the file NOTICE for important notices which apply to this   #
-# package and for license terms (GPL or RASLIC).                          #
+#   This version is based in directly on RasMol version 2.7.4, on RasMol  #
+#   version 2.7.3.1, on RasMol version 2.7.3, on RasMol version 2.7.2.1.1,#
+#   on RasMol version 2.7.2, on RasMol version 2.7.1, on RasMol version   #
+#   2.6_CIF.2, on RasMol version 2.6x1, on RasMol version 2.6.4, and      #
+#   RasMol 2.5-ucb and 2.6-ucb.                                           #
+#                                                                         #
+#   Please read the file NOTICE for important notices which apply to this # 
+#   package and for license terms (GPL  or RASLIC).                       #
 ###########################################################################
 #
 #
@@ -70,14 +85,14 @@
 #  code pages
 #
 #  H. J. Bernstein, 23 December 2006
+#  Rev, 15 March 2008 for Rasmol 2.7.4.2
 #
-
 
 # Process command line options
 #
 
 
-VERSION=${RASMOL_VERSION-"RasMol_2_7_3_1"};
+VERSION=${RASMOL_VERSION-"RasMol_2_7_4"};
 
 for rasmolarg in "$@" ;
 do
@@ -95,6 +110,8 @@ do
       echo "   RASMOL_LIBSFORMPATH path to xforms library directory"
       echo "   RASMOL_LANTIN1FDIR  path to X11 ISO 8859-1 font directory"
       echo "   RASMOL_CP1251FDIR   path to X11 ISO CP 1251 font directory"
+      echo "   RASMOL_CHINESEFDIR  path to X11 Intlfonts-1.2.1/Chinese directory"
+      echo "   RASMOL_JAPANESEFDIR  path to X11 Intlfonts-1.2.1/Japanese.X directory"
       echo "   RASMOL_DEBUG        if non-empty, report settings"
       echo "   RASMOL_NOSPAWN      if non-empty, do not spawn an intermediary xterm"
       exit 0;
@@ -292,6 +309,99 @@ else
   fi
 fi
 
+# Check on availability of Chinese GB2312 fonts 
+#
+if ( (xlsfonts -fn "*-16-*-gb2312.1980-0" | grep "gb2312.1980") > /dev/null  2>&1 );
+then
+  if [ "$RASMOL_DEBUG" ] ; then echo "Chinese \(gb2312.1980\) fonts available" ;
+  fi
+else
+  for chinesefdir in \
+    $RASMOL_CHINESEFDIR \
+    ./intlfonts-1.2.1/Chinese.X \
+    ./Chinese.X \
+    ../external_packages/intlfonts-1.2.1/Chinese.X \
+    ../external_packages/Chinese.X \
+    $HOME/lib/X11/fonts/intlfonts-1.2.1/Chinese.X \
+    $HOME/lib/X11/fonts/Chinese.X \
+    /usr/lib/X11/fonts/intlfonts-1.2.1/Chinese.X \
+    /usr/lib/X11/fonts/Chinese.X \
+    /sw/lib/X11/fonts/intlfonts-1.2.1/Chinese.X \
+    /sw/lib/X11/fonts/Chinese.X \
+    /usr/openwin/lib/X11/fonts/intlfonts-1.2.1/Chinese.X \
+    /usr/openwin/lib/X11/fonts/Chinese.X \
+    ;
+  do
+    if [ -d $chinesefdir ] ; then
+      savecurdir=`pwd`;
+      cd $chinesefdir;
+      RASMOL_CHINESEFDIR=$chinesefdir;
+      cd $savecurdir;
+      break 1;
+    fi ;
+  done
+  if [ "$RASMOL_CHINESEFDIR" ]; then
+    if xset +fp $RASMOL_CHINESEFDIR ;
+      then 
+        if [ "$RASMOL_DEBUG" ] ; then echo "adding fonts from $RASMOL_CHINESEFDIR" ;
+        fi
+      else chinesefdir="unknown";
+    fi
+    if [ $chinesefdir = "unknown" ];
+      then RASMOL_CHINESEFDIR= ;
+           echo unable to add Chinese GB2312 fonts ;
+      fi
+  else
+    echo unable to find Chinese GB2312 fonts ;
+  fi
+fi
+
+# Check on availability of Japanese jisx0208 fonts 
+#
+if ( (xlsfonts -fn "*-r-*-14-*-jisx0208.1983-0" | grep "jisx0208.1983") > /dev/null  2>&1 );
+then
+  if [ "$RASMOL_DEBUG" ] ; then echo "Japanese \(jisx208\) fonts available" ;
+  fi
+else
+  for japanesefdir in \
+    $RASMOL_JAPANESEFDIR \
+    ./intlfonts-1.2.1/Japanese.X \
+    ./Japanese.X \
+    ../external_packages/intlfonts-1.2.1/Japanese.X \
+    ../external_packages/Japanese.X \
+    $HOME/lib/X11/fonts/intlfonts-1.2.1/Japanese.X \
+    $HOME/lib/X11/fonts/Japanese.X \
+    /usr/lib/X11/fonts/intlfonts-1.2.1/Japanese.X \
+    /usr/lib/X11/fonts/Japanese.X \
+    /sw/lib/X11/fonts/intlfonts-1.2.1/Japanese.X \
+    /sw/lib/X11/fonts/Japanese.X \
+    /usr/openwin/lib/X11/fonts/intlfonts-1.2.1/Japanese.X \
+    /usr/openwin/lib/X11/fonts/Japanese.X \
+    ;
+  do
+    if [ -d $chinesefdir ] ; then
+      savecurdir=`pwd`;
+      cd $japanesefdir;
+      RASMOL_JAPANESEFDIR=$japanesefdir;
+      cd $savecurdir;
+      break 1;
+    fi ;
+  done
+  if [ "$RASMOL_JAPANESEFDIR" ]; then
+    if xset +fp $RASMOL_JAPANESEFDIR ;
+      then 
+        if [ "$RASMOL_DEBUG" ] ; then echo "adding fonts from $RASMOL_JAPANESEFDIR" ;
+        fi
+      else japanesefdir="unknown";
+    fi
+    if [ $japanesefdir = "unknown" ];
+      then RASMOL_JAPANESEFDIR= ;
+           echo unable to add Japanese jisx208 fonts ;
+      fi
+  else
+    echo unable to find Japanese jisx208 fonts ;
+  fi
+fi
 
 
 # Check on availability of CP 1251 fonts for
@@ -412,9 +522,64 @@ do
   fi
 done
 
-if [ "$RASMOL_DEBUG" ] ; then echo "selected CP1251 terminal font $RASMOL_CP1251TERMFONT" ;
+if [ "$RASMOL_DEBUG" ] ; then echo "selected CP 1251 Cyrillic terminal font $RASMOL_CP1251TERMFONT" ;
 fi
 
+for chinesetermfont in \
+  "$RASMOL_CHINESETERMFONT" \
+  "*-*-r-normal--16-*-gb2312.1980-0" \
+;
+do
+  if [ "$RASMOL_DEBUG" ] ; then echo "trying font $chinesetermfont" ;
+  fi
+  if ( (xlsfonts -fn "$chinesetermfont" | grep -i "gb2312") > /dev/null  2>&1 ); then
+  RASMOL_CHINESETERMFONT="$chinesetermfont";
+  break 1;
+  fi
+done
+
+
+if [ "$RASMOL_DEBUG" ] ; then echo "selected Chinese terminal font $RASMOL_CHINESETERMFONT" ;
+fi
+
+for japanesetermfont in \
+  "$RASMOL_JAPANESETERMFONT" \
+  "*-r-*-14-*-jisx0208.1983-0" \
+;
+do
+  if [ "$RASMOL_DEBUG" ] ; then echo "trying font $japanesetermfont" ;
+  fi
+  if ( (xlsfonts -fn "$japanesetermfont" | grep -i "jisx0208") > /dev/null  2>&1 ); then
+  RASMOL_JAPANESETERMFONT="$japanesetermfont";
+  break 1;
+  fi
+done
+
+
+if [ "$RASMOL_DEBUG" ] ; then echo "selected Japanese terminal font $RASMOL_JAPANESETERMFONT" ;
+fi
+
+
+if [ "$RASMOL_LANG" = "Chinese" ] ; then
+  if [ "$RASMOL_DEBUG" ] ; then echo "Starting xterm with Chinese font $RASMOL_CHINESETERMFONT" ;
+  fi
+  export LC_ALL=zh_CN.GB2312;
+  if [ "$RASMOL_NOSPAWN" ] ; then
+    exec $RASMOLPATH/$RASMOL_BIN "$@"
+  else
+    cxterm -fh "$RASMOL_CHINESETERMFONT" -hz GB -e $RASMOLPATH/$RASMOL_BIN "$@" &
+  fi
+else
+if [ "$RASMOL_LANG" = "Japanese" ] ; then
+  if [ "$RASMOL_DEBUG" ] ; then echo "Starting xterm with Japanese font $RASMOL_JAPANESETERMFONT" ;
+  fi
+  export LC_ALL=ja_JP.eucjp;
+  if [ "$RASMOL_NOSPAWN" ] ; then
+    exec $RASMOLPATH/$RASMOL_BIN "$@"
+  else
+    cxterm -fh "$RASMOL_JAPANESETERMFONT" -hz EUC -e $RASMOLPATH/$RASMOL_BIN "$@" &
+  fi
+else
 if [ "$RASMOL_LANG" = "Russian" ] ; then
   if [ "$RASMOL_DEBUG" ] ; then echo "Starting xterm with CP 1251 font $RASMOL_CP1251TERMFONT" ;
   fi
@@ -431,6 +596,8 @@ else
   else
     xterm -font "$RASMOL_LATIN1TERMFONT" -e $RASMOLPATH/$RASMOL_BIN "$@" &
   fi
+fi
+fi
 fi
 
 else
