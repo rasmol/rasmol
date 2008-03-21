@@ -775,19 +775,16 @@ void DisplayAboutDLG(void)
 
 void about_cb(GtkAction *action, gpointer user_data)
 {
-	gchar *authors[] = { "Roger Sayle", "Arne Mueller", "Philippe Valadon", "Herbert J. Bernstein", "Teemu Ikonen", NULL };
+	gchar *authors[] = { "Roger Sayle", NULL };
 	gtk_show_about_dialog(GTK_WINDOW(mainwin),
 		"authors", authors,
 		"comments", "Molecular Renderer",
 		"copyright", 
 "Copyright (C)\n\
 Roger Sayle 1992-1999\n\
-Arne Mueller 1998\n\
-UC Regents/ModularCHEM Consortium 1995, 1996\n\
-Philippe Valadon 2000\n\
-Herbert J. Bernstein 1998-2005\n\
+Herbert J. Bernstein 1998-2008\n\
 ",
-//		"license", "GPL",
+		"license", "GPL",
 		"logo-icon-name", "/usr/share/pixmaps/rasmol.xpm",
 		"version", VERSION,
 		"website", "http://rasmol.org/",

@@ -1,9 +1,9 @@
-%% RasMol V2.7.4.1 Manual
-%%                               RasMol 2.7.4
+%% RasMol V2.7.4.2 Manual
+%%                              RasMol 2.7.4.2
 %%
 %%                                  RasMol
 %%                  Molecular Graphics Visualisation Tool
-%%                 19 November 2007 (rev. 19 January 2008)
+%%                  19 November 2007 (rev. 17 March 2008)
 %%
 %%                    Based on RasMol 2.6 by Roger Sayle
 %%  Biomolecular Structures Group, Glaxo Wellcome Research & Development,
@@ -29,6 +29,7 @@
 %%                    RasMol 2.7.3.1 Apr 06
 %%                    RasMol 2.7.4   Nov 07
 %%                    RasMol 2.7.4.1 Jan 08
+%%                    RasMol 2.7.4.2 Mar 08
 %%
 %%  RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,
 %%  and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
@@ -73,10 +74,10 @@
 %% version 2.6.4 as the primary source. Changes were made in August 2000 for
 %% RasMol version 2.7.2, January 2001 for RasMol version 2.7.1.1, April 2001
 %% for RasMol version 2.7.2.1, February 2005 for RasMol version 2.7.3
-%% and November 2007 and January 2008 for RasMol version 2.7.4.
+%% and November 2007, January 2008 and March 2008 for RasMol version 2.7.4.
 %% 
 %%
-%%                Documentation Last Updated 19 January 2008
+%%                 Documentation Last Updated 18 March 2008
 %%          Edited by Herbert J. Bernstein and Frances C. Bernstein
 %%
 %% Please read the file NOTICE for important notices which apply to this
@@ -113,7 +114,7 @@ PP
 TR                       R a s M o l   v 2 . 7 . 4 . 1
 TR                       =============================
 TR                    Molecular Graphics Visualisation Tool
-TR                   19 November 2007 (rev. 19 January 2008)
+TR                    19 November 2007 (rev. 17 March 2008)
 TR
 TR                    Based on RasMol 2.6 by Roger Sayle
 TR  Biomolecular Structures Group, Glaxo Wellcome Research & Development,
@@ -139,6 +140,7 @@ TR                    RasMol 2.7.3   Feb 05
 TR                    RasMol 2.7.3.1 Apr 06
 TR                    RasMol 2.7.4   Nov 07
 TR                    RasMol 2.7.4.1 Jan 08
+TR                    RasMol 2.7.4.2 Mar 08
 TR
 TR  RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,
 TR  and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
@@ -183,10 +185,10 @@ TR William McClure's version using Roger Sayle's rasmol.doc for
 TR version 2.6.4 as the primary source. Changes were made in August 2000 for
 TR RasMol version 2.7.2, January 2001 for RasMol version 2.7.1.1, April 2001
 TR for RasMol version 2.7.2.1, February 2005 for RasMol version 2.7.3
-TR and November 2007 and January 2008 for RasMol version 2.7.4.
+TR and November 2007, January 2008 and March 2008 for RasMol version 2.7.4.
 TR 
 TR
-TR                Documentation Last Updated 19 January 2008
+TR                 Documentation Last Updated 18 March 2008
 TR          Edited by Herbert J. Bernstein and Frances C. Bernstein
 TR
 TR Please read the file NOTICE for important notices which apply to this
@@ -197,7 +199,7 @@ TR package and for license terms (GPL or RASLIC).
 MR.PU
 MR.TH RASMOL 1 "February 2005"
 MR.SH NAME
-MRrasmol \- Molecular Graphics Visualisation Tool v2.7.4.1
+MRrasmol \- Molecular Graphics Visualisation Tool v2.7.4.2
 
 %%
 %% VMS Help Headers
@@ -215,10 +217,10 @@ RR\f2\fmodern Courier New;
 RR}\deff0\fs20
 
 RR#{\footnote rasmol}
-RR${\footnote RasMol V2.7.4.1}
+RR${\footnote RasMol V2.7.4.2}
 RR+{\footnote doc}
 
-RR{\fs8 \par }{\fs28\b RasMol V2.7.4.1}{\fs8 \line }
+RR{\fs8 \par }{\fs28\b RasMol V2.7.4.2}{\fs8 \line }
 RR{\fs24\b Molecular Graphics Visualisation Tool}\line\pard
 RP
 %%
@@ -277,7 +279,8 @@ RR{\fs16 \tab RasMol 2.7.2.1.1 \tab Jan 04 }\line
 RR{\fs16 \tab RasMol 2.7.3     \tab Feb 05 }\line
 RR{\fs16 \tab RasMol 2.7.3.1   \tab Apr 06 }\line
 RR{\fs16 \tab RasMol 2.7.4     \tab Nov 07 }\line
-RR{\fs16 \tab RasMol 2.7.4.1   \tab Jan 08 }
+RR{\fs16 \tab RasMol 2.7.4.1   \tab Jan 08 }\line
+RR{\fs16 \tab RasMol 2.7.4.2   \tab Mar 08 }
 RR{\fs8 \par\par }
 RR{\fs16 RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,}\line
 RR{\fs16 and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by}\line
@@ -320,11 +323,11 @@ RTWilliam McClure's version using Roger Sayle's rasmol.doc for
 RTversion 2.6.4 as the primary source.  Changes have been made in
 RTAugust 2000 for RasMol version 2.7.2, January 2001 for RasMol
 RTversion 2.7.1.1, April 2001 for RasMol version 2.7.2.1,
-RTFebruary 2005 for RasMol version 2.7.3 and November 2007
-RTand January 2008 for RasMol version 2.7.4.
+RTFebruary 2005 for RasMol version 2.7.3 and November 2007,
+RTJanuary 2008 and March 2008 for RasMol version 2.7.4.
 RR}
 RP
-RR{\fs16 Documentation Last Updated 19 January 2008}\line
+RR{\fs16 Documentation Last Updated 18 March 2008}\line
 RR{\fs16 Edited by Herbert J. Bernstein and Frances C. Bernstein}
 RP
 RR{\fs16 Please read the file NOTICE for important notices which apply to this}\line
@@ -341,29 +344,29 @@ HR<HTML>
 HR<HEAD>
 HR<title>RasMol V2.7.4 Manual</title>
 HR</HEAD>
-HR<BODY BACKGROUND="../html_graphics/rasmolwallpaper.jpg">
+HR<BODY BACKGROUND="http://www.rasmol.org/software/rasmol/html_graphics/rasmolwallpaper.jpg">
 HR<font face="Helvetica,Arial,Times" size=3>
 HR<a href="http://www.iucr.org/iucr-top/welcome.html">
-HR<img alt="[IUCr Home Page]" src="../html_graphics/iucrhome.jpg"></a>
+HR<img alt="[IUCr Home Page]" src="http://www.rasmol.org/software/rasmol/html_graphics/iucrhome.jpg"></a>
 HR<a href="http://www.iucr.org/iucr-top/cif/home.html">
-HR<img alt="[CIF Home Page]" src="../html_graphics/cifhome.jpg"></a>
-HR<A HREF="../README.html"><IMG SRC="../html_graphics/rasmolbutton.jpg"
+HR<img alt="[CIF Home Page]" src="http://www.rasmol.org/software/rasmol/html_graphics/cifhome.jpg"></a>
+HR<A HREF="http://www.rasmol.org/software/rasmol/README.html"><IMG SRC="http://www.rasmol.org/software/rasmol/html_graphics/rasmolbutton.jpg"
 HRALT="[RasMol]"></A>
 HR<hr>
 HR<CENTER>
 HR| <a href="http://www.OpenrasMol.org">OpenRasMol</a> |
-HR<A href="../README.html#Copying">Copying and Distribution</A> |
-HR<A href="../README.html#Contents">Contents</A> |
-HR<A href="../INSTALL.html">Installation Instructions</A> |<br />
-HR| <A href="../ChangeLog.html">Changes</A> |
-HR<A href="../TODO.html">Things To Do</A> |
-HR<A href="../README.html#Introduction">Introduction</A> | 
-HR<A href="../README.html#CodeAndBinaries">Source Code and Binaries</A> |<br />
+HR<A href="http://www.rasmol.org/software/rasmol/README.html#Copying">Copying and Distribution</A> |
+HR<A href="http://www.rasmol.org/software/rasmol/README.html#Contents">Contents</A> |
+HR<A href="http://www.rasmol.org/software/rasmol/INSTALL.html">Installation Instructions</A> |<br />
+HR| <A href="http://www.rasmol.org/software/rasmol/ChangeLog.html">Changes</A> |
+HR<A href="http://www.rasmol.org/software/rasmol/TODO.html">Things To Do</A> |
+HR<A href="http://www.rasmol.org/software/rasmol/README.html#Introduction">Introduction</A> | 
+HR<A href="http://www.rasmol.org/software/rasmol/README.html#CodeAndBinaries">Source Code and Binaries</A> |<br />
 HR| <A href="rasmol.html">RasMol Manual</A> |
 HR<a href="esrasmol27.html">Spanish Translation of RasMol Manual</a> | 
 HR<a href="itrasmol.hlp">Italian Translation of RasMol Help File</a> |<br />
 HR| <a href=http://www.rasmol.org/donate.shtml>Donate to Support RasMol</a> |
-HR<a href="../README.html">Release README</A> |
+HR<a href="http://www.rasmol.org/software/rasmol/README.html">Release README</A> |
 HR<a href=http://www.rasmol.org/register.shtml>Register your RasMol</a> |
 HR<br />
 HR</CENTER>
@@ -371,7 +374,7 @@ HR
 HR
 HR<font color="#0808A0">
 HR<H1 ALIGN=CENTER>Manual<BR>
-HRRasMol 2.7.4.1</H1>
+HRRasMol 2.7.4.2</H1>
 HR<center>
 HR<table celpadding=0>
 HR<tr>
@@ -388,16 +391,16 @@ HR<li><a href=http://www.rasmol.org/register.shtml>Register your RasMol</a><br /
 HR</ul>
 HR</font>
 HR<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-HR<td><IMG  SRC="html_graphics/rasmollogo.jpg" ALT="RasMol">
+HR<td><IMG  SRC="http://www.rasmol.org/software/rasmol/html_graphics/rasmollogo.jpg" ALT="RasMol">
 HR<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 HR<td valign=top bgcolor="#FFFFA0"><font face="Helvetica,Arial,Times" size=2>
 HR<ul>
-HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.1_Windows_Installer.exe>RasMol
-HR2.7.4.1 Windows Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;<br />
-HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.1.tar.gz.exe>RasMol
-HR2.7.4.1 Source Tarball</a><br />&nbsp;<br />
-HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.1_Manual.html>RasMol
-HR2.7.4.1 Manual</a><br />&nbsp;<br />
+HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2_Windows_Installer.exe>RasMol
+HR2.7.4.2 Windows Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;<br />
+HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2.tar.gz.exe>RasMol
+HR2.7.4.2 Source Tarball</a><br />&nbsp;<br />
+HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2_Manual.html>RasMol
+HR2.7.4.2 Manual</a><br />&nbsp;<br />
 HR<li><a href=http://www.rasmol.org/donate.shtml>Donate to Support RasMol </a><br />
 HR<li><a href=http://www.rasmol.org/register.shtml>Register your RasMol</a><br />
 HR</ul>
@@ -406,7 +409,7 @@ HR</table>
 HR</center>
 HR<H3 ALIGN=CENTER>
 HRMolecular Graphics Visualisation Tool<BR>
-HR19 November 2007 (rev. 19 January 2008)<br />
+HR19 November 2007 (rev. 17 March 2008)<br />
 HR</H3>
 HR</font><font color="#000000">
 HR<CENTER>
@@ -434,6 +437,7 @@ HRRasMol 2.7.2 August 2000<br>RasMol 2.7.2.1 April 2001<BR>
 HRRasMol 2.7.2.1.1 January 2004<br>RasMol 2.7.3 February 2005<BR>
 HRRasMol 2.7.3.1 Apr 06<br>RasMol 2.7.4 November 2007<br>
 HRRasMol 2.7.4.1 January 2008<br>
+HRRasMol 2.7.4.2 March 2008<br>
 HR<td valign="top">&#169 Herbert J. Bernstein 1998-2008
 HR</table>
 HR</CENTER>
@@ -504,7 +508,9 @@ HRWilliam McClure's version using Roger Sayle's rasmol.doc for
 HRversion 2.6.4 as the primary source.  Changes have been made in
 HRAugust 2000 for RasMol version 2.7.2, January 2001 for RasMol
 HRversion 2.7.1.1, April 2001 for RasMol version 2.7.2.1 and
-HRFebruary 2005 for RasMol version 2.7.3.
+HRFebruary 2005 for RasMol version 2.7.3 and November 2007,
+HRJanuary 2008 and March 2008 for RasMol version 2.7.4.
+
 HP
 HR<CENTER>Documentation Last Updated 12 November 2007<br>
 HREdited by Herbert J. Bernstein and Frances C. Bernstein
@@ -714,7 +720,7 @@ NRVersions 2.5-ucb and 2.6-ucb Mods Copyright (C)
 NRUC Regents/ModularCHEM Consortium 1995, 1996
 NRRasTop 1.3 Copyright (C) Philippe Valadon 2000
 NRVersion 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 
-NR2.7.2.1.1, 2.7.3, 2.7.4, 2.7.4.1 Mods 
+NR2.7.2.1.1, 2.7.3, 2.7.4, 2.7.4.1, 2.7.4.2 Mods 
 NRCopyright (C) Herbert J. Bernstein 1998-2008
 NRrasmol@bernstein-plus-sons.com
 RTRasMol Copyright \'a9 Roger Sayle 1992-1999\par
@@ -722,7 +728,7 @@ RTVersion 2.6x1 Mods Copyright \'a9 Arne Mueller 1998\par
 RTVersions 2.5-ucb and 2.6-ucb Mods Copyright \'a9\par
 RTUC Regents/ModularCHEM Consortium 1995, 1996\par
 RTRasTop 1.3 Copyright \'a9 Philippe Valadon 2000\par
-RTVersion 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1  Mods\par
+RTVersion 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1, 2.7.4.2  Mods\par
 RTCopyright \'a9 Herbert J. Bernstein 1998-2008\par
 RTrasmol@bernstein-plus-sons.com\par
 HR<P><BR>RasMol Copyright &#169; Roger Sayle 1992-1999
@@ -730,8 +736,8 @@ HR<BR>Version 2.6x1 Mods Copyright &#169; Arne Mueller 1998
 HR<BR>Versions 2.5-ucb and 2.6-ucb Mods Copyright &#169;
 HRUC Regents/ModularCHEM Consortium 1995, 1996
 HR<BR>RasTop 1.3 Copyright &#169; Philippe Valadon 2000
-HR<BR>Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1 Mods
-HRCopyright &#169; Herbert J. Bernstein 1998-2009
+HR<BR>Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1, 2.7.4.2 Mods
+HRCopyright &#169; Herbert J. Bernstein 1998-2008
 HR<BR><address><a href="mailto:rasmol@rasmol.org">rasmol@rasmol.org</a></address>
 AP
 
@@ -872,9 +878,9 @@ AChelp oldnotice.
 AB
 
 NSCopyright
-NR                               RasMol 2.7.4.1
+NR                               RasMol 2.7.4.2
 NR                     Molecular Graphics Visualisation Tool
-NR                    19 November 2007 (rev. 19 January 2008)
+NR                    19 November 2007 (rev. 17 March 2008)
 NR
 NR                      Based on RasMol 2.6 by Roger Sayle
 NR       Biomolecular Structures Group,Glaxo Wellcome Research & Development
@@ -902,6 +908,7 @@ NR                    RasMol 2.7.3     Feb 05
 NR                    RasMol 2.7.3.1   Apr 06
 NR                    RasMol 2.7.4     Nov 07
 NR                    RasMol 2.7.4.1   Jan 08
+NR                    RasMol 2.7.4.2   Mar 08
 NR
 NR RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,
 NR and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
@@ -963,7 +970,7 @@ ATversion 2.7.1.1 and RasTop version 1.3 and indirectly on
 ATthe RasMol 2.5-ucb and 2.6-ucb versions and version 
 AT2.6_CIF.2, RasMol 2.6x1 and RasMol_2.6.4.
 AP
-ATRasMol 2.7.4.1 may be distributed under the terms of the GNU
+ATRasMol 2.7.4.2 may be distributed under the terms of the GNU
 ATGeneral Public License (the GPL), see
 AP 
 AT          http://www.gnu.org/licenses/gpl.txt
@@ -971,7 +978,7 @@ AP
 ATor the file GPL or type the command
 AXGPL help GPL
 AP
-ATor RasMol 2.7.4.1 may be distributed under the RASMOL license.
+ATor RasMol 2.7.4.2 may be distributed under the RASMOL license.
 ATSee the file NOTICE
 ATor type the command
 AXRASLIC help RASLIC
@@ -1656,7 +1663,7 @@ NRVersion 2.5-ucb, 2.6-ucb Mods
 NR  Copyright (C) UC Regents/ModularCHEM Consortium 1995, 1996
 NRRasTop 1.3 Copyright (C) Philippe Valadon 2000
 NRVersion 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 
-NR        2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1 Mods 
+NR        2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1, 2.7.4.2 Mods 
 NR  Copyright (C) Herbert J. Bernstein 1998-2008 
 NR  (yaya@bernstein-plus-sons.com)
 AB
@@ -1733,6 +1740,13 @@ HRthe script commands are applied to it. If either file is not found,
 HRthe program displays the error message 'Error: File not found!' and 
 HRthe user is presented the RasMol prompt.<BR>
 HR<P>
+HRIt is also possible to specify the initial graphics window
+HRsize or position or both the size and the position with the
+HRoptions '-height <it>nnnn<it>', '-width <it>nnnn<it>',
+HR'-xpos <it>nnnn<it>' and '-ypos <it>nnnn<it>'.  The numeric
+HRvalues are in pixels.  The position is specified in terms of
+HRthe top left corner of the rendering area.
+HR<P>
 HRIn order to leave RasMol, the user can type the command quit or 
 HRexit at the RasMol prompt, and the program will return the user 
 HRto the familiar unix prompt. Alternatively, if a prompt other 
@@ -1771,6 +1785,13 @@ HRspecified on the command line, the molecule is loaded first, then
 HRthe script commands are applied to it. If either file is not found,
 HRthe program displays the error message 'Error: File not found!' and 
 HRthe user is presented the RasMol prompt.<BR>
+HR<P>
+HRIt is also possible to specify the initial graphics window
+HRsize or position or both the size and the position with the
+HRoptions '-height <it>nnnn<it>', '-width <it>nnnn<it>',
+HR'-xpos <it>nnnn<it>' and '-ypos <it>nnnn<it>'.  The numeric
+HRvalues are in pixels.  The position is specified in terms of
+HRthe top left corner of the rendering area.
 HR<P>
 
 HR<A NAME="go_mac"></A>
@@ -5760,7 +5781,7 @@ HRThe character sets used by RasMol rendered with fixed spacing with
 HRsingle-pixel-width strokes and with proportional spacing with
 HR2-pixel-radius cylinder strokes are shown in the following sample:
 HP
-HR<CENTER><IMG SRC="../html_graphics/fontsample.jpg" ALT="[font sample]">
+HR<CENTER><IMG SRC="http://www.rasmol.org/software/rasmol/html_graphics/fontsample.jpg" ALT="[font sample]">
 HR</CENTER>
 HP
 ATTo display atom labels on the screen use the RasMol
@@ -10545,23 +10566,23 @@ RR}
 HR<hr>
 HR<CENTER>
 HR| <a href="http://www.OpenrasMol.org">OpenRasMol</a> |
-HR<A href="../README.html#Copying">Copying and Distribution</A> |
-HR<A href="../README.html#Contents">Contents</A> |
-HR<A href="../INSTALL.html">Installation Instructions</A> |<br />
-HR| <A href="../ChangeLog.html">Changes</A> |
-HR<A href="../TODO.html">Things To Do</A> |
-HR<A href="../README.html#Introduction">Introduction</A> | 
-HR<A href="../README.html#CodeAndBinaries">Source Code and Binaries</A> |<br />
+HR<A href="http://www.rasmol.org/software/rasmol/README.html#Copying">Copying and Distribution</A> |
+HR<A href="http://www.rasmol.org/software/rasmol/README.html#Contents">Contents</A> |
+HR<A href="http://www.rasmol.org/software/rasmol/INSTALL.html">Installation Instructions</A> |<br />
+HR| <A href="http://www.rasmol.org/software/rasmol/ChangeLog.html">Changes</A> |
+HR<A href="http://www.rasmol.org/software/rasmol/TODO.html">Things To Do</A> |
+HR<A href="http://www.rasmol.org/software/rasmol/README.html#Introduction">Introduction</A> | 
+HR<A href="http://www.rasmol.org/software/rasmol/README.html#CodeAndBinaries">Source Code and Binaries</A> |<br />
 HR| <A href="rasmol.html">RasMol Manual</A> |
 HR<a href="esrasmol27.html">Spanish Translation of RasMol Manual</a> | 
 HR<a href="itrasmol.hlp">Italian Translation of RasMol Help File</a> |<br />
 HR| <a href=http://www.rasmol.org/donate.shtml>Donate to Support RasMol</a> |
-HR<a href="../README.html">Release README</A> |
+HR<a href="http://www.rasmol.org/software/rasmol/README.html">Release README</A> |
 HR<a href=http://www.rasmol.org/register.shtml>Register your RasMol</a> |
 HR<br />
 HR</CENTER>
 HR<HR>
-HRUpdated 19 January 2008.<BR>
+HRUpdated 18 March 2008.<BR>
 HRHerbert J. Bernstein<BR>
 HRBernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA<BR>
 HR<script language="javascript" type="text/javascript">

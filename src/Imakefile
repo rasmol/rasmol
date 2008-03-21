@@ -115,8 +115,9 @@ DEPTHDEF = -DTHIRTYTWOBIT
   LOCALEDEF =
 #endif
 
-# #define GTKWIN
+#ifndef GTKWIN
 #define X11WIN
+#endif
 
 #ifdef GTKWIN
 GTKLIBS = $(shell pkg-config --libs vte gtk+-2.0)

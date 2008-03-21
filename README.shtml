@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-RasMol  V2.7.4.1 README
+RasMol  V2.7.4.2 README
 </TITLE>
 </HEAD>
 <BODY BACKGROUND="html_graphics/rasmolwallpaper.jpg">
@@ -61,7 +61,7 @@ visits since 15 April 2001
 
 <font color="#0808A0">
 <H1 ALIGN=CENTER>README<BR>
-RasMol 2.7.4.1</H1>
+RasMol 2.7.4.2</H1>
 <center>
 <table celpadding=0>
 <tr>
@@ -82,11 +82,11 @@ RasMol 2.7.4.1</H1>
 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <td valign=top bgcolor="#FFFFA0"><font face="Helvetica,Arial,Times" size=2>
 <ul>
-<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.1_Windows_Installer.exe>RasMol 2.7.4.1 Windows Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2_Windows_Installer.exe>RasMol 2.7.4.2 Windows Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
 &nbsp;<br />
-<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.1.tar.gz>RasMol 2.7.4.1 Source Tarball</a><br />
+<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2.tar.gz>RasMol 2.7.4.2 Source Tarball</a><br />
 &nbsp;<br />
-<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.1_Manual.html>RasMol 2.7.4.1 Manual</a><br />
+<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2_Manual.html>RasMol 2.7.4.2 Manual</a><br />
 &nbsp;<br />
 <li><a href=http://www.rasmol.org/donate.shtml>Donate to Support RasMol </a><br />
 <li><a href=http://www.rasmol.org/register.shtml>Register your RasMol</a><br />
@@ -97,7 +97,7 @@ RasMol 2.7.4.1</H1>
 <H3 ALIGN=CENTER>
 Molecular Graphics Visualisation Tool<br />
 19 November 2007 (rev. 19 January 2008)<br />
-</H3>
+</h3>
 </font><font color="#000000">
 <CENTER>
 Based on RasMol 2.6
@@ -120,7 +120,14 @@ and Based on Mods by
 <tr><td>Philippe Valadon<td>RasTop 1.3 August 2000<td>&#169 Philippe Valadon 2000
 <tr><td valign="top">Herbert J. Bernstein<td>RasMol 2.7.0 March 1999<br>
 RasMol 2.7.1 June 1999<br>RasMol 2.7.1.1 January 2001<br />
-RasMol 2.7.2 August 2000<br>RasMol 2.7.2.1 April 2001<br>RasMol 2.7.2.1.1 January 2004<br />RasMol 2.7.3 February 2005<br />RasMol 2.7.3.1 Apr 06<br />RasMol 2.7.4 Nov 07<br />RasMol 2.7.4.1 Jan 08<br />
+RasMol 2.7.2 August 2000<br>
+RasMol 2.7.2.1 April 2001<br>
+RasMol 2.7.2.1.1 January 2004<br />
+RasMol 2.7.3 February 2005<br />
+RasMol 2.7.3.1 Apr 06<br />
+RasMol 2.7.4 Nov 07<br />
+RasMol 2.7.4.1 Jan 08<br />
+RasMol 2.7.4.2 Mar 08<br />
 <td valign="top">&#169 Herbert J. Bernstein 1998-2008
 </table>
 </CENTER>
@@ -265,9 +272,9 @@ license terms (<a href=GPL>GPL</a> or <A href=RASLIC>RASLIC</a>).
 <HR>
 <H3 ALIGN=CENTER><A NAME="Introduction">Introduction</A></H3>
 <P>This posting is made to announce the releases of RasMol version
-2.7.4.1.  This release is based on RasMol 2.7.4 and
+2.7.4.2.  This release is based on RasMol 2.7.4 and RasMol 2.7.4.1 and
 <a href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.3.1">RasMol 2.7.3.1</a>,
-the final reference release for the 2.7.3 series.  The changes from the 2.7.3.1 release the
+the final reference release for the 2.7.3 series.  The changes from the 2.7.3.1 release to the
 2.7.4.1 release include:
 <ul>
   <li> Support for maps.
@@ -278,7 +285,20 @@ Our thanks to G. Pozhvanov, G. Todorov, Nan Jia, Mamoru Yamanishi and Katajima H
   <li> Code to read remediated PDB entries as suggested by Huanwang Yang
   <li> Updated icons.
   <li> Extended export menus.
-</UL>
+</ul>
+The changes from the 2.7.4.1 release to the 2.7.4.2 release include
+<ul>
+  <li>Alignment of command line sizing and positioning options for 
+Windows and X-Windows version.  The command line options -height nnnn,
+-width nnnn, -xpos nnnn and -ypos nnnn may be used to set the size
+and position of the initial window.
+  <li>Change of the encoding for Japanese messages and menus from SJIS to
+EUC-JP, and corrections to the fontset handling for Chinese and Japanese.
+Thanks to Mamoru Yamanishi for contributing the improved fontset logic.
+  <li>Updates to the rasmol_install.sh and rasmol_run.sh scripts to
+support Chinese and Japanese using cxterm.
+  <li>Optional use of GTK.  Thanks to Teemu Ikonen for the new GTK code.
+</ul>
 
 For more detail on these and earlier changes, see the <a href=ChangeLog.html>Change Log</a>.
   
@@ -357,12 +377,12 @@ by
 anonymous FTP at:
 <P>
     <A 
-href="ftp://ftp.bernstein-plus-sons.com/software/RasMol_2.7.4.1.tar.gz">ftp://ftp.bernstein-plus-sons.com/software/RasMol_2.7.4.1.tar.gz</A>
+href="ftp://ftp.bernstein-plus-sons.com/software/RasMol_2.7.4.2.tar.gz">ftp://ftp.bernstein-plus-sons.com/software/RasMol_2.7.4.2.tar.gz</A>
 <P>
 or on the web at:
 <P>
     <A 
-href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.4.1.tar.gz">http://www.bernstein-plus-sons.com/software/RasMol_2.7.4.1.tar.gz</A>
+href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.4.2.tar.gz">http://www.bernstein-plus-sons.com/software/RasMol_2.7.4.2.tar.gz</A>
 <P>	
 As compiled version become available, they will be posted at <a href=http://blondie.dowling.edu/projects/rasmol>http://blondie.dowling.edu/projects/rasmol</a>
 and
@@ -394,7 +414,7 @@ modified version of RasMol should be directed to
 </CENTER>
 
 <HR>
-Updated 4 February  2008.<BR>
+Updated 4 February 2008.<BR>
 Herbert J. Bernstein<BR>
 Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA<BR>
 <script language="javascript" type="text/javascript">

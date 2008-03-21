@@ -74,11 +74,11 @@
 /* #define IBMPC        */
 /* #define MSWIN        */
 /* #define APPLEMAC     */
-/* #define X11WIN */ /* defined in the Imakefile now */
+/* #define X11WIN       */    /* X11WIN or GTKWIN defined in Imakefile */
 #define UNIX
 
 /* #define DIALBOX      */
-#ifndef GTK
+#ifndef GTKWIN
 #define SOCKETS
 #endif
 #define TERMIOS
