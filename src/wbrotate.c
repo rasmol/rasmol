@@ -65,6 +65,18 @@
  ***************************************************************************/
 /* wbrotate.c
  $Log: not supported by cvs2svn $
+ Revision 1.8  2008/03/19 01:33:11  yaya
+ Documentation update. -- HJB
+
+ Revision 1.8  2008/03/17 11:35:23  yaya-hjb
+ Release 2.7.4.2 update and T. Ikonen GTK update -- HJB
+
+ Revision 1.5  2008/03/17 03:26:07  yaya-hjb
+ Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
+ Japanese for Linux and Mac OS X versions using rasmol_install and
+ rasmol_run scripts, and align command line options for size and
+ position of initial window. -- HJB
+
  Revision 1.5  2008/03/17 01:32:41  yaya
  Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
 

@@ -1,7 +1,7 @@
 <!doctype html public "-//IETF//DTD HTML 2.0//EN">
 <HTML>
 <HEAD>
-<title>RasMol V2.7.4.1 ChangeLog</title>
+<title>RasMol V2.7.4.2 ChangeLog</title>
 </HEAD>
 <BODY BACKGROUND="html_graphics/rasmolwallpaper.jpg">
 <font face="Helvetica,Arial,Times" size=3>
@@ -32,7 +32,7 @@ ALT="[RasMol]"></A>
 
 <font color="#0808A0">
 <H1 ALIGN=CENTER>ChangeLog<br />
-RasMol 2.7.4.1</H1>
+RasMol 2.7.4.2</H1>
 
 
 <center>
@@ -55,11 +55,11 @@ RasMol 2.7.4.1</H1>
 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <td valign=top bgcolor="#FFFFA0"><font face="Helvetica,Arial,Times" size=2>
 <ul>
-<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.1_Windows_Installer.exe>RasMol 2.7.4.1 Windows Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2_Windows_Installer.exe>RasMol 2.7.4.2 Windows Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
 &nbsp;<br />
-<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.1.tar.gz>RasMol 2.7.4.1 Source Tarball</a><br />
+<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2.tar.gz>RasMol 2.7.4.2 Source Tarball</a><br />
 &nbsp;<br />
-<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.1_Manual.html>RasMol 2.7.4.1 Manual</a><br />
+<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2_Manual.html>RasMol 2.7.4.2 Manual</a><br />
 &nbsp;<br />
 <li><a href=http://www.rasmol.org/donate.shtml>Donate to Support RasMol </a><br />
 <li><a href=http://www.rasmol.org/register.shtml>Register your RasMol</a><br />
@@ -71,7 +71,7 @@ RasMol 2.7.4.1</H1>
 
 <H3 ALIGN=CENTER>
 Molecular Graphics Visualisation Tool<br />
-19 November 2007 (rev. 19 January 2008)<br />
+19 November 2007 (rev. 17 March 2008)<br />
 </h3>
 </font><font color="#000000">
 <CENTER>
@@ -95,7 +95,14 @@ and Based on Mods by
 <tr><td>Philippe Valadon<td>RasTop 1.3 August 2000<td>&#169 Philippe Valadon 2000
 <tr><td valign="top">Herbert J. Bernstein<td>RasMol 2.7.0 March 1999<br>
 RasMol 2.7.1 June 1999<br>RasMol 2.7.1.1 January 2001<br />
-RasMol 2.7.2 August 2000<br>RasMol 2.7.2.1 April 2001<br>RasMol 2.7.2.1.1 January 2004<br />RasMol 2.7.3 February 2005<br />RasMol 2.7.3.1 Apr 06<br />RasMol 2.7.4 Nov 07<br />RasMol 2.7.4.1 Jan 08<br />
+RasMol 2.7.2 August 2000<br>
+RasMol 2.7.2.1 April 2001<br>
+RasMol 2.7.2.1.1 January 2004<br />
+RasMol 2.7.3 February 2005<br />
+RasMol 2.7.3.1 Apr 06<br />
+RasMol 2.7.4 Nov 07<br />
+RasMol 2.7.4.1 Jan 08<br />
+RasMol 2.7.4.2 Mar 08<br />
 <td valign="top">&#169 Herbert J. Bernstein 1998-2008
 </table>
 </CENTER>
@@ -139,6 +146,53 @@ freely to the community in the hopes of advancing science.  If you make
 changes, please make them in a responsible manner, and please offer
 us the opportunity to include those changes in future versions of RasMol.
 <HR>
+<P>
+<h3>Changes from RasMol 2.7.4.1 to RasMol 2.7.4.2 include:</h3>
+<ul>
+  <li>Alignment of command line sizing and positioning options for 
+Windows and X-Windows version.  The command line options -height nnnn,
+-width nnnn, -xpos nnnn and -ypos nnnn may be used to set the size
+and position of the initial window.
+  <li>Change of the encoding for Japanese messages and menus from SJIS to
+EUC-JP, and corrections to the fontset handling for Chinese and Japanese.
+Thanks to Mamoru Yamanishi for contributing the improved fontset logic.
+  <li>Updates to the rasmol_install.sh and rasmol_run.sh scripts to
+support Chinese and Japanese using cxterm.
+  <li>Optional use of GTK.  Thanks to Teemu Ikonen for the new GTK code.
+</ul>
+<P>
+<h3>Changes to RasMol 2.7.4 to create RasMol 2.7.4.1:</h3>
+
+<PRE>
+[18/03/2008]    HJB graphics.h mswin31.c rasmol.c rastxt.c
+		raswin.c x11win.c
+		Add global InitWidth, InitHeight, InitXPos, InitYPos
+		to support common implementation of command line
+		options -height nnnn -width nnnn -xpos nnnn -ypos nnnn
+		to control initial window size and position
+
+[18/03/2008]    HJB x11win.c
+		Redo Japanese and Chinese fontset logic as per suggestion
+		by Mamoru Yamanishi
+
+[18/03/2008]    HJB Imakefile
+		Allow use of old X locale.
+
+[18/03/2008]    HJB langsel_unix.c
+		Switch Japanese for unix from SJIS to EUC-JP, introducing
+		langsel_unix.c
+
+[21/02/2008]    TPI actionmenu.gtk egg-macros.h eggfileformatchooser.c
+		eggfileformatchosser.h graphics.h gtkwin.c Imakefile 
+		multiple.c printing-resolution.glade rasmol.c sizechooser.glade
+		transfor.c wbrotate.c
+		Addition of GTK interface by T. Ikonen, including new routines
+		actionmenu.gtk egg-macros.h eggfileformatchooser.c
+		eggfileformatchosser.h gtkwin.c printing-resolution.glade
+		sizechooser.glade
+
+</PRE>
+
 <P>
 <h3>Changes from RasMol 2.7.3 to RasMol 2.7.4.1 include:</h3>
 <ul>
@@ -1808,7 +1862,7 @@ The complete version 2 change history is in the directory <A HREF="ChangeLog/">C
 <br />
 </CENTER>
 <HR>
-Updated 26 January 2008.<br />
+Updated 20 March 2008.<br />
 Herbert J. Bernstein<br />
 Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA<br />
 <script language="javascript" type="text/javascript">
