@@ -1,9 +1,10 @@
 /***************************************************************************
- *                               RasMol 2.7.4                              *
+ *                             RasMol 2.7.4.2                              *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
  *                            19 November 2007                             *
+ *                          (rev. 21 March 2008)                           *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -20,7 +21,7 @@
  *Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   *
  *                                                                         *
  *Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    * 
- *Bernstein          RasMol 2.7.1   Jun 99         1998-2007               *
+ *Bernstein          RasMol 2.7.1   Jun 99         1998-2008               *
  *                   RasMol 2.7.1.1 Jan 01                                 *
  *                   RasMol 2.7.2   Aug 00                                 *
  *                   RasMol 2.7.2.1 Apr 01                                 *
@@ -28,6 +29,8 @@
  *                   RasMol 2.7.3   Feb 05                                 *
  *                   RasMol 2.7.3.1 Apr 06                                 *
  *                   RasMol 2.7.4   Nov 07                                 *
+ *                   RasMol 2.7.4.1 Jan 08                                 *
+ *                   RasMol 2.7.4.2 Mar 08                                 *
  *                                                                         *
  * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
  * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
@@ -39,6 +42,9 @@
  * Institute of General Medical Sciences (NIGMS). The content is solely    *
  * the responsibility of the authors and does not necessarily represent    * 
  * the official views of the funding organizations.                        *
+ *                                                                         *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
+ * Teemu  Ikonen.                                                          *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -57,13 +63,14 @@
  *                             This Release by                             *
  * Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA*
  *                       yaya@bernstein-plus-sons.com                      *
- *               Copyright(C) Herbert J. Bernstein 1998-2007               *
+ *               Copyright(C) Herbert J. Bernstein 1998-2008               *
  *                                                                         *
  *                READ THE FILE NOTICE FOR RASMOL LICENSES                 *
  *Please read the file NOTICE for important notices which apply to this    *
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
-/* langsel.c
+ 
+ /* langsel.c
  */
 
 /***************************************************************************

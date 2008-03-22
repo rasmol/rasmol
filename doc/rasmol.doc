@@ -41,6 +41,9 @@
 %%  Institute of General Medical Sciences (NIGMS). The content is solely
 %%  the responsibility of the authors and does not necessarily represent
 %%  the official views of the funding organizations.
+%% 
+%%  The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
+%%  Teemu Ikonen.
 %%
 %%                     and Incorporating Translations by
 %%   Author                               Item                     Language
@@ -77,7 +80,7 @@
 %% and November 2007, January 2008 and March 2008 for RasMol version 2.7.4.
 %% 
 %%
-%%                 Documentation Last Updated 18 March 2008
+%%                 Documentation Last Updated 22 March 2008
 %%          Edited by Herbert J. Bernstein and Frances C. Bernstein
 %%
 %% Please read the file NOTICE for important notices which apply to this
@@ -153,6 +156,9 @@ TR  Institute of General Medical Sciences (NIGMS). The content is solely
 TR  the responsibility of the authors and does not necessarily represent
 TR  the official views of the funding organizations.
 TR
+TR  The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
+TR  Teemu Ikonen.
+TR
 TR                     and Incorporating Translations by
 TR   Author                               Item                     Language
 TR   Isabel Servan Martinez,
@@ -188,7 +194,7 @@ TR for RasMol version 2.7.2.1, February 2005 for RasMol version 2.7.3
 TR and November 2007, January 2008 and March 2008 for RasMol version 2.7.4.
 TR 
 TR
-TR                 Documentation Last Updated 18 March 2008
+TR                 Documentation Last Updated 22 March 2008
 TR          Edited by Herbert J. Bernstein and Frances C. Bernstein
 TR
 TR Please read the file NOTICE for important notices which apply to this
@@ -197,7 +203,7 @@ TR package and for license terms (GPL or RASLIC).
 %% UNIX man(1) Headers
 %%
 MR.PU
-MR.TH RASMOL 1 "February 2005"
+MR.TH RASMOL 1 "March 2008"
 MR.SH NAME
 MRrasmol \- Molecular Graphics Visualisation Tool v2.7.4.2
 
@@ -292,6 +298,9 @@ RR{\fs16 2.7.4 supported in part by grant 1R15GM078077-01 from the National}\lin
 RR{\fs16 Institute of General Medical Sciences (NIGMS). The content is solely}\line
 RR{\fs16 the responsibility of the authors and does not necessarily represent}\line
 RR{\fs16 the official views of the funding organizations.}\line
+RR{\fs8 \par\par }
+RR{\fs16 The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by}\line
+RR{\fs16 Teemu Ikonen.}\line
 RR{\fs8 \par\par }
 RR{\fs16 and Incorporating Translations by}{\fs8 \par\par }}
 RR{\tx3400\tx6000\tx8000
@@ -397,7 +406,7 @@ HR<td valign=top bgcolor="#FFFFA0"><font face="Helvetica,Arial,Times" size=2>
 HR<ul>
 HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2_Windows_Installer.exe>RasMol
 HR2.7.4.2 Windows Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;<br />
-HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2.tar.gz.exe>RasMol
+HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2.tar.gz>RasMol
 HR2.7.4.2 Source Tarball</a><br />&nbsp;<br />
 HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2_Manual.html>RasMol
 HR2.7.4.2 Manual</a><br />&nbsp;<br />
@@ -452,6 +461,9 @@ HR 2.7.4 supported in part by grant 1R15GM078077-01 from the National
 HR Institute of General Medical Sciences (NIGMS). The content is solely 
 HR the responsibility of the authors and does not necessarily represent 
 HR the official views of the funding organizations.
+HR<P>
+HR The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
+HR Teemu Ikonen.
 HR<P>
 HR<CENTER>
 HRand Incorporating Translations by
@@ -921,6 +933,8 @@ NR Institute of General Medical Sciences (NGMS). The content is solely
 NR the responsibility of the authors and does not necessarily represent 
 NR the official views of the funding organizations.
 NR
+NR  The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
+NR  Teemu Ikonen.
 NR
 NR                     and Incorporating Translations by
 NR                     

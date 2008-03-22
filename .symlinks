@@ -4,7 +4,7 @@ if ( ! -Le index.shtml ) then
 endif
 foreach extension ( tar.gz )
   if ( ! -Le RasMol.$extension ) then
-    ln -s ../RasMol_2.7.4.1.$extension RasMol.$extension
+    ln -s ../RasMol_2.7.4.2.$extension RasMol.$extension
   endif
 end
 foreach file (*)
