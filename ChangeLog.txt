@@ -1,8 +1,7 @@
                                    ChangeLog
-                                 RasMol 2.7.4.1
-
+                                 RasMol 2.7.4.2
                      Molecular Graphics Visualisation Tool
-                    19 November 2007 (rev. 19 January 2008)
+                     19 November 2007 (rev. 17 March 2008)
 
                        Based on RasMol 2.6 by Roger Sayle
 Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
@@ -45,6 +44,8 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 |                   | RasMol 2.7.4 Nov 07  |                                   |
 |                   | RasMol 2.7.4.1 Jan   |                                   |
 |                   | 08                   |                                   |
+|                   | RasMol 2.7.4.2 Mar   |                                   |
+|                   | 08                   |                                   |
 +------------------------------------------------------------------------------+
 
                                 This Release by
@@ -73,6 +74,50 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
    opportunity to include those changes in future versions of RasMol.
 
      ----------------------------------------------------------------------
+
+  Changes from RasMol 2.7.4.1 to RasMol 2.7.4.2 include:
+
+     * Alignment of command line sizing and positioning options for Windows
+       and X-Windows version. The command line options -height nnnn, -width
+       nnnn, -xpos nnnn and -ypos nnnn may be used to set the size and
+       position of the initial window.
+     * Change of the encoding for Japanese messages and menus from SJIS to
+       EUC-JP, and corrections to the fontset handling for Chinese and
+       Japanese. Thanks to Mamoru Yamanishi for contributing the improved
+       fontset logic.
+     * Updates to the rasmol_install.sh and rasmol_run.sh scripts to support
+       Chinese and Japanese using cxterm.
+     * Optional use of GTK. Thanks to Teemu Ikonen for the new GTK code.
+
+  Changes to RasMol 2.7.4 to create RasMol 2.7.4.1:
+
+ [18/03/2008]    HJB graphics.h mswin31.c rasmol.c rastxt.c
+                 raswin.c x11win.c
+                 Add global InitWidth, InitHeight, InitXPos, InitYPos
+                 to support common implementation of command line
+                 options -height nnnn -width nnnn -xpos nnnn -ypos nnnn
+                 to control initial window size and position
+
+ [18/03/2008]    HJB x11win.c
+                 Redo Japanese and Chinese fontset logic as per suggestion
+                 by Mamoru Yamanishi
+
+ [18/03/2008]    HJB Imakefile
+                 Allow use of old X locale.
+
+ [18/03/2008]    HJB langsel_unix.c
+                 Switch Japanese for unix from SJIS to EUC-JP, introducing
+                 langsel_unix.c
+
+ [21/02/2008]    TPI actionmenu.gtk egg-macros.h eggfileformatchooser.c
+                 eggfileformatchosser.h graphics.h gtkwin.c Imakefile
+                 multiple.c printing-resolution.glade rasmol.c sizechooser.glade
+                 transfor.c wbrotate.c
+                 Addition of GTK interface by T. Ikonen, including new routines
+                 actionmenu.gtk egg-macros.h eggfileformatchooser.c
+                 eggfileformatchosser.h gtkwin.c printing-resolution.glade
+                 sizechooser.glade
+
 
   Changes from RasMol 2.7.3 to RasMol 2.7.4.1 include:
 
@@ -1697,7 +1742,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
      ----------------------------------------------------------------------
 
-   Updated 26 January 2008.
+   Updated 20 March 2008.
    Herbert J. Bernstein
    Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA
    yaya@bernstein-plus-sons.com
