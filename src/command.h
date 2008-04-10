@@ -71,6 +71,9 @@
  ***************************************************************************/
 /* command.h
  $Log: not supported by cvs2svn $
+ Revision 1.6  2008/03/22 19:23:09  yaya-hjb
+ Post release cleanup and add Ikonen credit for GTK to file headers. -- HJB
+
  Revision 1.5  2008/03/21 19:49:05  yaya-hjb
  Update documentation and comments -- HJB
 
@@ -154,8 +157,8 @@
  */
 
 /* Format values are related to Tokens */
-#define Tok2Format(x) ((x)-359)
-#define Format2Tok(x) ((x)+359)
+#define Tok2Format(x) ((x)-PDBTok+1)
+#define Format2Tok(x) ((x)+PDBTok-1)
 
 #define IsMoleculeFormat(x)  ((x)<=16)
 

@@ -379,7 +379,7 @@ else
     /usr/openwin/lib/X11/fonts/Japanese.X \
     ;
   do
-    if [ -d $chinesefdir ] ; then
+    if [ -d $japanesefdir ] ; then
       savecurdir=`pwd`;
       cd $japanesefdir;
       RASMOL_JAPANESEFDIR=$japanesefdir;
@@ -589,6 +589,15 @@ if [ "$RASMOL_LANG" = "Russian" ] ; then
     xterm -font "$RASMOL_CP1251TERMFONT" -e $RASMOLPATH/$RASMOL_BIN "$@" &
   fi
 else
+if [ "$RASMOL_LANG" = "Bulgarian" ] ; then
+  if [ "$RASMOL_DEBUG" ] ; then echo "Starting xterm with CP 1251 font $RASMOL_CP1251TERMFONT" ;
+  fi
+  if [ "$RASMOL_NOSPAWN" ] ; then
+    exec $RASMOLPATH/$RASMOL_BIN "$@"
+  else
+    xterm -font "$RASMOL_CP1251TERMFONT" -e $RASMOLPATH/$RASMOL_BIN "$@" &
+  fi
+else
   if [ "$RASMOL_DEBUG" ] ; then echo "Starting xterm with Latin1 font $RASMOL_LATIN1TERMFONT" ;
   fi
   if [ "$RASMOL_NOSPAWN" ] ; then
@@ -596,6 +605,7 @@ else
   else
     xterm -font "$RASMOL_LATIN1TERMFONT" -e $RASMOLPATH/$RASMOL_BIN "$@" &
   fi
+fi
 fi
 fi
 fi
