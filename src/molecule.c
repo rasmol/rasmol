@@ -71,6 +71,9 @@
  ***************************************************************************/
 /* molecule.c
  $Log: not supported by cvs2svn $
+ Revision 1.9  2008/03/22 19:24:22  yaya-hjb
+ Post release cleanup and add Ikonen GTK credit to file headers. -- HJB
+
  Revision 1.8  2008/03/17 11:35:22  yaya-hjb
  Release 2.7.4.2 update and T. Ikonen GTK update -- HJB
 
@@ -253,7 +256,7 @@
 #define MaxHBondDsq    ((Long)(MaxHBondDist*MaxHBondDist))
 #define MaxBondDsq     ((Long)(MaxBondDist*MaxBondDist))
 #define MinBondDsq     ((Long)(MinBondDist*MinBondDist))
-#define AbsMaxBondDist 600      /* 2.4 Angstroms */
+#define AbsMaxBondDist 700      /* 2.8 Angstroms */
 #define AbsMaxAtomRad  750      /* 3.0 Angstroms */
 #define AbsMaxAtomDiam AbsMaxAtomRad*2
 
