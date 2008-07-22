@@ -71,14 +71,17 @@
  ***************************************************************************/
 /* repres.c
  $Log: not supported by cvs2svn $
- Revision 1.8  2008/03/17 11:35:22  yaya-hjb
- Release 2.7.4.2 update and T. Ikonen GTK update -- HJB
+ Revision 1.22  2008/06/11 01:42:41  yaya
+ Finish map surface update. -- HJB
 
- Revision 1.5  2008/03/17 03:26:07  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.21  2008/04/01 17:31:19  hk0i
+ updated new color mode feature for dots
+
+ Revision 1.20  2008/03/22 18:42:55  yaya
+ Post release cleanup and credit to Ikonen in file headers. -- HJB
+
+ Revision 1.19  2008/03/17 03:01:31  yaya
+ Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
 
  Revision 1.6  2008/03/17 01:32:41  yaya
  Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
@@ -1103,6 +1106,8 @@ void CalculateSurface( int density )
  
     if( !Database )
         return;
+
+	DotCount = density;
  
     DeleteSurface();
     ResetVoxelData();
@@ -1399,9 +1404,9 @@ void DisplayMapTangles( void ) {
           	);
           } */
           for (ii=0; ii<3; ii++ ) {
-            normals[ii][0] = ((Long)rint((worldnormals[ii][0]*RotX[0]+worldnormals[ii][1]*RotX[1]+worldnormals[ii][2]*RotX[2]))/30.);
-            normals[ii][1] = ((Long)rint((worldnormals[ii][0]*RotY[0]+worldnormals[ii][1]*RotY[1]+worldnormals[ii][2]*RotY[2]))/30.);
-            normals[ii][2] = ((Long)rint((worldnormals[ii][0]*RotZ[0]+worldnormals[ii][1]*RotZ[1]+worldnormals[ii][2]*RotZ[2]))/30.);
+            normals[ii][0] = ((Long)rint((worldnormals[ii][0]*RotX[0]+worldnormals[ii][1]*RotX[1]+worldnormals[ii][2]*RotX[2]))/18.);
+            normals[ii][1] = ((Long)rint((worldnormals[ii][0]*RotY[0]+worldnormals[ii][1]*RotY[1]+worldnormals[ii][2]*RotY[2]))/18.);
+            normals[ii][2] = ((Long)rint((worldnormals[ii][0]*RotZ[0]+worldnormals[ii][1]*RotZ[1]+worldnormals[ii][2]*RotZ[2]))/18.);
           }
           /* if (i==0) 
           {
@@ -1437,8 +1442,8 @@ void DisplayMapTangles( void ) {
           tangle.v[2].inten = inten;
           tangle.count = 3;
           ClipPolygon(&tangle);
-          /*  Debug code for surface normals 
-          for(ii=0;ii<3;ii++) {
+          /* Debug code for surface normals */ 
+          /* for(ii=0;ii<3;ii++) {
             ClipTwinVector(tangle.v[ii].x,tangle.v[ii].y,tangle.v[ii].z,
               tangle.v[ii].x+normals[ii][0]/10,tangle.v[ii].y+normals[ii][1]/10,tangle.v[ii].z+normals[ii][2]/10,
                (MapPointsPtr->array[dst]).col,(MapPointsPtr->array[dst]).col,' ');          	

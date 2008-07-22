@@ -71,17 +71,23 @@
  ***************************************************************************/
 /* molecule.c
  $Log: not supported by cvs2svn $
- Revision 1.9  2008/03/22 19:24:22  yaya-hjb
- Post release cleanup and add Ikonen GTK credit to file headers. -- HJB
+ Revision 1.21  2008/06/11 01:40:54  yaya
+ Improve gradient for map surfaces and brighten image;
+ Add parenthesized selections before all commands;
+ Change saveSelection and loadSelection to
+ SaveAtomSelection and LoadAtomSelection -- HJB
 
- Revision 1.8  2008/03/17 11:35:22  yaya-hjb
- Release 2.7.4.2 update and T. Ikonen GTK update -- HJB
+ Revision 1.20  2008/06/09 17:48:11  hk0i
+ added loadSelection() and saveSelection() routines for new color commands. *gm*
 
- Revision 1.4  2008/03/17 03:26:06  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.19  2008/05/27 18:30:59  darakevn
+ Increased AbsMaxBondDist from 600 (2.4 angstroms) to 700 (2.8 angstroms)
+
+ Revision 1.18  2008/03/22 18:42:53  yaya
+ Post release cleanup and credit to Ikonen in file headers. -- HJB
+
+ Revision 1.17  2008/03/17 03:01:31  yaya
+ Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
 
  Revision 1.5  2008/03/17 01:32:41  yaya
  Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
@@ -3281,3 +3287,33 @@ void InitialiseDatabase( void )
     ResetDatabase();
 }
 
+void LoadAtomSelection ( void )
+{
+	/* restores SelectFlag from SaveFlag */
+	register Chain __far *chain;
+	register Group __far *group;
+	register RAtom __far *aptr;
+
+	ForEachAtom
+		if (aptr->flag&SaveFlag)
+		{
+			aptr->flag |= SelectFlag;
+			aptr->flag &= ~SaveFlag;
+		}
+		else
+			aptr->flag &= ~SelectFlag;
+}
+
+void SaveAtomSelection ( void )
+{
+	/* saves selection to SaveFlag */
+	register Chain __far *chain;
+	register Group __far *group;
+	register RAtom __far *aptr;
+
+	ForEachAtom
+		if (aptr->flag & SelectFlag)
+		{
+			aptr->flag |= SaveFlag;
+		}
+}

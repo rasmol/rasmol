@@ -71,14 +71,23 @@
  ***************************************************************************/
 /* mswin31.c
  $Log: not supported by cvs2svn $
- Revision 1.6  2008/03/17 11:35:22  yaya-hjb
- Release 2.7.4.2 update and T. Ikonen GTK update -- HJB
+ Revision 1.8  2008/06/27 02:47:58  yaya
+ Finished update of windows code for 32-bit color -- HJB
 
- Revision 1.4  2008/03/17 03:26:06  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.7  2008/06/11 01:40:54  yaya
+ Improve gradient for map surfaces and brighten image;
+ Add parenthesized selections before all commands;
+ Change saveSelection and loadSelection to
+ SaveAtomSelection and LoadAtomSelection -- HJB
+
+ Revision 1.6  2008/03/22 17:06:48  yaya
+ Post release cleanup with credits to Ikonen in file headers. -- HJB
+
+ Revision 1.5  2008/03/21 19:13:47  yaya
+ Update documentation and comments -- HJB
+
+ Revision 1.5  2008/03/17 03:01:31  yaya
+ Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
 
  Revision 1.4  2008/03/17 01:32:41  yaya
  Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
@@ -176,6 +185,7 @@ static HMENU hMenu;
 
 void AllocateColourMap( void )
 {
+#ifdef EIGHTBIT			
     register COLORREF ref;      
     register int i;
     
@@ -205,7 +215,8 @@ void AllocateColourMap( void )
        if( ULut[i] )
        {   ref = RGB(RLut[i],GLut[i],BLut[i]);
            Lut[i] = GetNearestPaletteIndex(ColourMap,ref);
-       }    
+       } 
+#endif   
 }
 
 
@@ -223,7 +234,9 @@ int CreateImage( void )
 
 void TransferImage( void )
 {
+#ifdef EIGHTBIT
     HPALETTE OldCMap;
+#endif
     HDC hDC;
         
     if( PixMap )
@@ -236,16 +249,19 @@ void TransferImage( void )
     FBuffer = (Pixel  __huge*)GlobalLock(FBufHandle);
     /* CreateBitMap(XRange,YRange,1,8,FBuffer); */
 
+#ifdef EIGHTBIT
     if( ColourMap )
     {   OldCMap = SelectPalette(hDC,ColourMap,FALSE);
         RealizePalette(hDC);  /* GDI Bug?? */
     }
+#endif
         
     PixMap = CreateDIBitmap( hDC, (BITMAPINFOHEADER __far *)BitInfo, 
                              CBM_INIT, FBuffer, BitInfo, DIB_RGB_COLORS);
-        
+#ifdef EIGHTBIT
     if( ColourMap && OldCMap )                         
         SelectPalette(hDC,OldCMap,False);
+#endif
 
     GlobalUnlock(FBufHandle);
     ReleaseDC(NULL,hDC);
@@ -378,14 +394,22 @@ int ClipboardImage( void )
 
         if( PixMap )
         {   len = (long)XRange*YRange*sizeof(Pixel);
+#ifdef EIGHTBIT
             size = sizeof(BITMAPINFOHEADER) + 256*sizeof(RGBQUAD);
+#else
+            size = sizeof(BITMAPINFOHEADER);
+#endif
             if( (hand=GlobalAlloc(GHND,size+len)) )
             {   bitmap = (BITMAPINFO __far *)GlobalLock(hand);
                 bitmap->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
                 bitmap->bmiHeader.biWidth = XRange;
                 bitmap->bmiHeader.biHeight = YRange;
                 bitmap->bmiHeader.biPlanes = 1;
+#ifdef EIGHTBIT
                 bitmap->bmiHeader.biBitCount = 8;
+#else
+                bitmap->bmiHeader.biBitCount = 32;
+#endif
                 bitmap->bmiHeader.biCompression = BI_RGB;
                 bitmap->bmiHeader.biSizeImage = len;
                 bitmap->bmiHeader.biXPelsPerMeter = 0;
@@ -393,16 +417,22 @@ int ClipboardImage( void )
                 bitmap->bmiHeader.biClrImportant = 0;
                 bitmap->bmiHeader.biClrUsed = 0;
 
+#ifdef EIGHTBIT
                 for( i=0; i<256; i++ )
                     if( ULut[i] )
                     {   bitmap->bmiColors[Lut[i]].rgbBlue  = BLut[i];
                         bitmap->bmiColors[Lut[i]].rgbGreen = GLut[i];
                         bitmap->bmiColors[Lut[i]].rgbRed   = RLut[i];
                     }
+#endif
 
 
                 src = (Pixel __huge*)GlobalLock(FBufHandle);
+#ifdef EIGHTBIT
                 dst = ((Pixel __huge*)bitmap)+size;
+#else
+                dst = ((Pixel __huge*)bitmap)+size/4;
+#endif
 
                 /* Transfer the frame buffer */
                 while( len-- ) *dst++ = *src++;
@@ -666,7 +696,11 @@ int OpenDisplay( HANDLE instance, int mode )
     BitInfo->bmiHeader.biYPelsPerMeter = 0;
     BitInfo->bmiHeader.biClrImportant = 0;
     BitInfo->bmiHeader.biSizeImage = 0;
+#ifdef EIGHTBIT
     BitInfo->bmiHeader.biBitCount = 8;
+#else
+    BitInfo->bmiHeader.biBitCount = 32;
+#endif
     BitInfo->bmiHeader.biPlanes = 1;
 
     /* Initialise Palette! */

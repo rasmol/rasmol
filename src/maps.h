@@ -183,9 +183,9 @@ typedef struct {
      dzpos =  MapR2M(map,2,0)*(gradient)[0] + MapR2M(map,2,1)*(gradient)[1] + MapR2M(map,2,2)*(gradient)[2]; \
      glen = sqrt(dxpos*dxpos+dypos*dypos+dzpos*dzpos); \
      if (glen > 0.) {                                  \
-       (mp).Un[0] = -(Long)(4096.*(dxpos/glen)); \
-       (mp).Un[1] = -(Long)(4096.*(dypos/glen)); \
-       (mp).Un[2] = -(Long)(4096.*(dzpos/glen)); \
+       (mp).Un[0] = -(Long)(4095.*(dxpos/glen)); \
+       (mp).Un[1] = -(Long)(4095.*(dypos/glen)); \
+       (mp).Un[2] = -(Long)(4095.*(dzpos/glen)); \
      } \
      } \
   }

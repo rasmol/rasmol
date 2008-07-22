@@ -2312,6 +2312,18 @@ ATeither upper or lower case letters. All whitespace characters are
 ATignored except to separate keywords and their arguments.
 AP
 
+ATAll commands may be prefixed by a parenthesized
+AXchexprs atom expression
+ATto temporarily select certain atoms just for the execution
+ATof that one command.  After execution of the command, the
+ATprevious selection is restored except for the commands
+AXselect select
+AT,
+AXrestrict restrict
+ATand
+AXscript script.
+AP
+
 ATThe commands/keywords currently recognised by RasMol are given below.
 PRType "help <command>" for more information on each RasMol function.
 AP
@@ -3380,7 +3392,12 @@ ACPDB,
 ACCIF,
 ATor
 ACmmCIF
-ATis assumed by default. Up to 5 molecules may be loaded at a time.
+ATis assumed by default. Up to 20 molecules may be loaded at a time.
+ATIf CHEM_COMP ligand models are included in an mmCIF file, they will be loaded
+ATas NMR models, first giving the all the NMR models for model 
+ATcoordinates if specified and then giving all the NMR models for
+ATideal model coordinates.
+AP
 ATTo delete a molecule prior to loading another use the RasMol
 AXzap zap
 ATcommand.  To select a molecule for manipulation use the RasMol
@@ -4140,7 +4157,9 @@ AXbackbone backbone
 ATrepresentations in the non-selected region.
 AP
 
-ATType "help expression" for more information on RasMol atom expressions.
+ATType "help expression" for more information on RasMol atom expressions or
+ATsee section
+AXchexprs Atom Expressions.
 AB
 
 
@@ -4377,7 +4396,9 @@ AXset hydrogen
 ATparameters.
 AP
 
-ATType "help expression" for more information on RasMol atom expressions.
+ATType "help expression" for more information on RasMol atom expressions or
+ATsee section
+AXchexprs Atom Expressions.
 AB
 
 ASSet

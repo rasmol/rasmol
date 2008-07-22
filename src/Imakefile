@@ -143,7 +143,7 @@ GUIDEF = -DX11WIN
 
 # Definitions for CBFLIB
 #
-CBFLIB_VERSION = 0.7.9
+CBFLIB_VERSION = 0.8.0
 CBFLIB_TARBALL = CBFlib_$(CBFLIB_VERSION).tar.gz
 CBFLIB_TARBALLDIR = ../
 CBFLIB_TARBALL_URL = http://www.bernstein-plus-sons.com/software/$(CBFLIB_TARBALL)

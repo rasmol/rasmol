@@ -114,12 +114,11 @@
 /*========================*/
 
 #ifdef IBMPC
-#undef THIRTYTWOBIT
 #undef SIXTEENBIT
 #endif
 
 #if !defined(EIGHTBIT) && !defined(THIRTYTWOBIT) && !defined(SIXTEENBIT)
-#define EIGHTBIT
+#define THIRTYTWOBIT
 #endif
 
 #ifndef RASMOLDIR

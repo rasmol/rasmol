@@ -191,7 +191,6 @@
  * 5 Abbey Square, Chester CH1 2HU, England.                          *
  **********************************************************************/
 
-
 #define YYBISON 1  /* Identify Bison output.  */
 
 #define	DATA	258
@@ -217,6 +216,8 @@ extern "C" {
 
 #endif
 
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -230,6 +231,9 @@ extern "C" {
 #endif
 
 #include "rasmol.h"
+
+#ifdef USE_CBFLIB
+#else
 
 #ifdef IBMPC
 #include <windows.h>
@@ -1317,7 +1321,7 @@ yyerrhandle:
   goto yynewstate;
 }
 
-
+#endif
 
 #ifdef __cplusplus
 

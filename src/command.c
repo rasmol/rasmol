@@ -1221,6 +1221,36 @@ static void FetchFloat( Long value, int scale )
     TokenValue = value*scale + mant;
 }
 
+static void FetchBracketedTriple(Long Triple[3]) {
+	int index, neg;
+	for (index = 0; index < 3; index++) {
+		FetchToken();
+		Triple[index] = 0;
+		if (CurToken == '-') {
+			FetchToken();
+			neg = True;
+		} else {
+			neg = False;
+		}
+		if (CurToken == NumberTok)  {
+		    if (*TokenPtr=='.')  {
+		    	TokenPtr++;
+                FetchFloat(TokenValue,250);
+		    }
+		} else if( CurToken=='.' ) {
+		    FetchFloat(0,250);
+        } else CommandError(MsgStrs[ErrNotNum]);
+	    Triple[index] = neg?(-TokenValue):TokenValue;
+	    FetchToken();
+	    if( !(CurToken == ',' && index < 2) && 
+          !(CurToken == ']' && index == 2 )) {   
+          CommandError(MsgStrs[ErrSyntax]);
+          return;
+        }
+	}
+	return;
+}
+
 
 static int ParseColour( void )
 {
@@ -1647,7 +1677,9 @@ static void ExecuteCentreCommand( void )
 
     if ( CurToken == '[' )
     {   Long CenV[3];
-        int icen, negcen;
+    
+        
+/*      int icen, negcen;
 
         for (icen = 0; icen < 3; icen++)
 	{ FetchToken();
@@ -1668,6 +1700,9 @@ static void ExecuteCentreCommand( void )
               return;
           }
         }
+*/
+
+        FetchBracketedTriple(CenV);
 
 #ifdef INVERT
         CenV[1] = -CenV[1];
@@ -1742,6 +1777,7 @@ static void ExecuteLoadCommand( void )
     register int format;
     register int info;
     register FILE *fp;
+	int checkfile = False;
 
     FetchToken();
     format = FormatPDB;
@@ -1786,9 +1822,12 @@ static void ExecuteLoadCommand( void )
   	    { DivertToData( format, info );
             } else CommandError(MsgStrs[ErrOutScrpt]);
         } else if( CurToken==StringTok )
-        {      FetchFile(format,info,TokenIdent);
-        } else FetchFile(format,info,TokenStart);
-        DefaultRepresentation();
+        {      checkfile = FetchFile(format,info,TokenIdent);
+        } else checkfile = FetchFile(format,info,TokenStart);
+		
+		/* don't color the molecule unless it's actually loaded! */
+		if (checkfile == True)
+			DefaultRepresentation();
     } else /* format == FormatDots  || format == FormatMap */
     {   if( !Database )
         {   CommandError(MsgStrs[ErrBadMolDB]);
@@ -2777,7 +2816,8 @@ static void ExecuteColourCommand( void )
                                       ReDrawFlag |= RFColour; break;
 
                 default:  if( ParseColour() )
-                          {   MonoColourAttrib(RVal,GVal,BVal);
+                          {   ColourBondNone();
+							  MonoColourAttrib(RVal,GVal,BVal);
                               ReDrawFlag |= RFColour;
                           } else if( CurToken )
                           {      CommandError(MsgStrs[ErrColour]);
@@ -3405,6 +3445,7 @@ static void ReadAtomSelection( int start )
 void ZapDatabase( void )
 {
     register int i;
+	int s; 			/* 's' is for "shade" */
 
     for( i=0; i<10; i++ )
         DialValue[i] = 0.0;
@@ -3421,6 +3462,9 @@ void ZapDatabase( void )
     ZoneBoth = True;
     HetaGroups = True;    
     Hydrogens = True;
+
+	for (s = 0; s < LastShade; s++)
+		Shade[s].refcount = 0;
 
 #if 0 /* [GSG 11/10/95] */
     BackR = BackG = BackB = 0;
@@ -4265,7 +4309,82 @@ static int ExecuteGenerateCommand( int mapflags ) {
   return 0;
 }
 
+/* Execute a command given as
+   {(<selection>){.}}command
+   if a selection is provided, it applies only during
+   execution of this command, except for the following
+   commands, the prior selection is not restored:
+   
+     Select
+     Restrict
+     Script
+   
+  */
+
+
+int ExecuteCommandOne( int * );
+
 int ExecuteCommand( void )
+{
+
+    int xret;
+    int restore;
+
+    TokenPtr = CurLine;
+    if( !FetchToken() )
+    {   TokenPtr = NULL;
+        return False;
+    }
+    
+    restore = 1;
+    
+    if (CurToken == '(') {
+      SaveAtomSelection();
+      FetchToken();
+      if( CurToken==AllTok )
+      {   SelectZone(AllAtomFlag);
+      } else if( CurToken==NoneTok )
+      {   SelectZone(0x00);
+      } else if( CurToken==ViewTok )
+      {   SelectArea(False,True,1,1,XRange,YRange);
+      } else if( CurToken=='<' )
+	  {	  ReadAtomSelection(True);
+      } else if( CurToken=='>' )
+      {	  ReadAtomSelection(False);
+      } else if ( CurToken != ')')
+      {   QueryExpr = ParseExpression(0);
+           if( QueryExpr )
+           {   if( CurToken == ')' )
+               {   SelectZoneExpr(QueryExpr);
+                   FetchToken();
+                   xret=ExecuteCommandOne(&restore);
+                   if ( restore ) LoadAtomSelection();
+                   DeAllocateExpr(QueryExpr);
+                   return xret;
+               } else CommandError(MsgStrs[ErrSyntax]);
+               DeAllocateExpr(QueryExpr);
+           }
+      } else 
+      {  CommandError(MsgStrs[ErrSyntax]);
+         return False;      	
+      }
+      FetchToken();
+      if( CurToken == ')' )  {
+         FetchToken();
+         xret=ExecuteCommandOne(&restore);
+         if ( restore ) LoadAtomSelection();
+      	 return xret;
+      }else 
+      {  CommandError(MsgStrs[ErrSyntax]);
+         return False;      	
+      }
+       
+    }
+    else return ExecuteCommandOne(&restore);
+}
+
+
+int ExecuteCommandOne( int * restore )
 {
     register char *param;
     register int option;
@@ -4274,11 +4393,22 @@ int ExecuteCommand( void )
 	int suboption;
     FILE *script;
 
-    TokenPtr = CurLine;
-    if( !FetchToken() )
-    {   TokenPtr = NULL;
-        return False;
+    if( !CurToken ) {
+      TokenPtr = NULL;
+      return False;
     }
+    
+    if (CurToken=='.')  {
+      if( !FetchToken() ) {
+        TokenPtr = NULL;
+        return False;
+      }
+    }
+    
+    *restore = 1;
+    if (CurToken == SelectTok 
+      || CurToken == RestrictTok
+      || CurToken == ScriptTok) *restore = 0;
 
     switch( CurToken )
     {   case(AxesTok):       ExecuteAxesCommand();       break;
@@ -5403,6 +5533,7 @@ int ExecuteCommand( void )
                           } else if( CurToken==FalseTok )
                           {   ReDrawFlag |= RFRefresh;
                               DeleteSurface();
+							  DotCount = 0;
                           } else if( (CurToken==TrueTok) || !CurToken )
                           {   ReDrawFlag |= RFRefresh;
                               CalculateSurface(100);
@@ -5599,6 +5730,10 @@ int ExecuteCommand( void )
                                   } else {
                                     double xtemp;
                                     
+                                    if (option < 0) {
+                                       CommandError(MsgStrs[ErrSyntax]);
+                                       break;                                 	
+                                    }
                                     if (RotMode == RotAll) {
                                       xtemp = WRotValue[option];
                                     } else {

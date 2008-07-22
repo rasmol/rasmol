@@ -107,13 +107,14 @@
 #define RFColour   0x0200
 #define RFRefresh  0x0400
 #define RFRotBond  0x0800
+#define RFRotGen   0x1000
 
 #define RFTrans    0x0070
-#define RFRotate   0x0807
-#define RFApply    0x097F
+#define RFRotate   0x1807
+#define RFApply    0x197F
 #define RFDials    0x00FF
 #define RFMagnify  0x0108
-#define RFInitial  0x09FF
+#define RFInitial  0x19FF
 
 
 #define DialRX      0
@@ -126,6 +127,7 @@
 #define DialSlab    7
 #define DialBClip   8
 #define DialBRot    9
+#define DialGRot   10
 
 #ifdef X11WIN
 #define DLGScale        ((FontHigh+8)/9)
@@ -159,7 +161,7 @@ typedef struct _DLGItem {
 
 
 #ifdef GRAPHICS
-double DialValue[10];
+double DialValue[11];
 int XRange, WRange;
 int YRange, HRange;
 int ZRange;
@@ -283,7 +285,7 @@ DLGItem AboutDLG[AboutDLGCount] = {
 
 
 #else /* GRAPHICS */
-extern double DialValue[10];
+extern double DialValue[11];
 extern int XRange, WRange;
 extern int YRange, HRange;
 extern int ZRange;

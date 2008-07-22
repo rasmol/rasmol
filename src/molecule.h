@@ -71,14 +71,20 @@
  ***************************************************************************/
 /* molecule.h
  $Log: not supported by cvs2svn $
- Revision 1.5  2008/03/17 11:35:22  yaya-hjb
- Release 2.7.4.2 update and T. Ikonen GTK update -- HJB
+ Revision 1.9  2008/06/11 01:40:54  yaya
+ Improve gradient for map surfaces and brighten image;
+ Add parenthesized selections before all commands;
+ Change saveSelection and loadSelection to
+ SaveAtomSelection and LoadAtomSelection -- HJB
 
- Revision 1.4  2008/03/17 03:26:06  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.8  2008/06/09 17:48:11  hk0i
+ added loadSelection() and saveSelection() routines for new color commands. *gm*
+
+ Revision 1.7  2008/03/22 18:42:53  yaya
+ Post release cleanup and credit to Ikonen in file headers. -- HJB
+
+ Revision 1.6  2008/03/17 03:01:31  yaya
+ Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
 
  Revision 1.3  2008/03/17 01:32:41  yaya
  Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
@@ -198,6 +204,7 @@
 /*=================*/
 
 #define SelectFlag      0x01
+#define SaveFlag		0x1000
 #define DrawBondFlag    0x0e
 #define AllAtomFlag     0x1c
 #define HelixFlag       0x03
@@ -660,6 +667,9 @@ void ReviseTitle( void );
 void DescribeMolecule( void );
 void DestroyDatabase( void );
 void PurgeDatabase( void );
+
+void LoadAtomSelection( void );
+void SaveAtomSelection( void );
 #ifdef APPLEMAC
 void RegisterAlloc( void *);
 #endif

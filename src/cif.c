@@ -271,6 +271,25 @@ extern "C" {
 
 #include "rasmol.h"
 
+#ifdef USE_CBFLIB
+#include "cmndline.h"
+#include "cif.h"
+#include <string.h>
+#include <stdio.h>
+
+int cif_read_file (cbf_handle handle, FILE *stream) 
+{
+  cbf_failnez(cbf_read_buffered_file(handle,stream,
+	MSG_DIGEST|PARSE_WIDE,Recycle,Recycle?strlen(Recycle):0))
+	
+  return 0;
+}
+
+
+
+#else
+
+
 #ifdef IBMPC
 #include <windows.h>
 #include <malloc.h>
@@ -1491,7 +1510,7 @@ int cif_get_character (cif_file __far *file)
           file->last_read = '\n';
         }
       } else {
-        file->last_read = getc (file->stream);
+        file->last_read = fgetc (file->stream);
         ++(file->fpos);
         if (file->fpos > file->fend) file->fend = file->fpos;
       }
@@ -1546,6 +1565,58 @@ int cif_return_text (int code, YYSTYPE __far *val, int offset,
   }
   return code;
 }
+
+
+  /* Get the name of the current data block */
+int cif_datablock_name (cif_handle handle, char __far * __far * datablockname)
+{
+  cif_node *node;
+
+  if (!handle)
+
+    return CIF_ARGUMENT;
+
+
+    /* Find the data block node */
+
+  cif_failnez (cif_find_parent (&node, handle->node, CIF_DATABLOCK))
+
+
+    /* Get the name */
+
+  return cif_get_name (datablockname, node);
+}
+
+
+
+
+
+  /* Make the first data block the current data block */
+
+int cif_rewind_datablock (cif_handle handle)
+{
+  cif_node *node;
+
+  if (!handle)
+    return CIF_ARGUMENT;
+
+
+    /* Find the root node */
+
+  cif_failnez (cif_find_parent (&node, handle->node, CIF_ROOT))
+
+
+    /* Find the first child */
+
+  cif_failnez (cif_get_child (&node, node, 0))
+  handle->node = node;
+
+
+    /* Success */
+
+  return 0;
+}
+
 
 
   /* Get the next token */
@@ -2153,7 +2224,7 @@ int cif_count_columns (cif_handle handle, unsigned int __far *columns)
 
   return cif_count_children (columns, node);
 }
-
+#endif
 
 
 #ifdef __cplusplus

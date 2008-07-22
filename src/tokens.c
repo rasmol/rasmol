@@ -71,14 +71,24 @@
  ***************************************************************************/
 /* tokens.c
  $Log: not supported by cvs2svn $
- Revision 1.6  2008/03/17 11:35:22  yaya-hjb
- Release 2.7.4.2 update and T. Ikonen GTK update -- HJB
+ Revision 1.17  2008/06/19 19:03:39  yaya
+ Fix missing } -- HJB
 
- Revision 1.4  2008/03/17 03:26:07  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.16  2008/06/19 18:54:26  yaya
+ Fix missing } -- HJB
+
+ Revision 1.15  2008/06/19 18:50:51  yaya
+ Fix some missing ;'s -- HJB
+
+ Revision 1.14  2008/06/18 20:04:53  yaya
+ Start in infrastructure for animation
+ Start on WPDB code -- HJB
+
+ Revision 1.13  2008/03/22 18:42:55  yaya
+ Post release cleanup and credit to Ikonen in file headers. -- HJB
+
+ Revision 1.12  2008/03/17 03:01:31  yaya
+ Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
 
  Revision 1.3  2008/03/17 01:32:41  yaya
  Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
@@ -196,6 +206,8 @@ int LookUpKeyword( char *ptr )
         AND                  AndTok
         ANGLE                AngleTok
         ANGLES               AngleTok
+        ANIM                 AnimateTok
+        ANIMATE              AnimateTok
         AROMATIC             AromaticTok
         ASSE                 AxesTok
         ASSI                 AxesTok
@@ -247,6 +259,8 @@ int LookUpKeyword( char *ptr )
                         return( AngleTok );
                     } else if( !strcmp(ptr,"GLES") ) {
                         return( AngleTok );
+                    } else if (!strcmp(ptr,"IMATE") ||  !strcmp(ptr,"IM") ) {
+                        return( AnimateTok);
                     }
                     break;
 
@@ -554,6 +568,7 @@ int LookUpKeyword( char *ptr )
         DISTANCES            DistanceTok
         DNA                  DNATok
         DOTS                 DotsTok
+        DOWN                 DownTok
       */
 
         case('D'):
@@ -599,6 +614,8 @@ int LookUpKeyword( char *ptr )
                 case('O'):
                     if( !strcmp(ptr,"TS") ) {
                         return( DotsTok );
+                    } else if( !strcmp(ptr,"WN") ) {
+                        return( DownTok );
                     }
                     break;
 
@@ -701,6 +718,8 @@ int LookUpKeyword( char *ptr )
         FILI                 StrandsTok  
         FONTSIZE             FontSizeTok
         FONTSTROKE           FontStrokeTok
+        FPS                  FramesTok
+        FRAMES               FramesTok
         FRENCH               FrenchTok
         FS                   FSTok
       */
@@ -735,8 +754,17 @@ int LookUpKeyword( char *ptr )
                     }
                     break;
                 
+                case('P'):
+                    if( !strcmp(ptr,"S") ) {
+                        return( FramesTok );
+                    }
+                    break;
+
+                
                 case('R'):
-                    if( !strcmp(ptr,"ENCH") ) {
+                    if( !strcmp(ptr,"AMES") ) {
+                        return( FramesTok );
+                    } else if( !strcmp(ptr,"ENCH") ) {
                         return( FrenchTok );
                     }
                     break;
@@ -893,6 +921,7 @@ int LookUpKeyword( char *ptr )
         IDENT                IdentifyTok
         IDENTIFY             IdentifyTok
 		IMAGE				 ImageTok
+		IN                   InTok
         INFO                 InfoTok
         INFORMATION          InfoTok
         INLINE               InLineTok
@@ -919,7 +948,9 @@ int LookUpKeyword( char *ptr )
 					break;
 
                 case('N'):
-                    if( !strcmp(ptr,"FO") ) {
+                    if( !*ptr ) {
+                    	return( InTok );
+                    } else if( !strcmp(ptr,"FO") ) {
                         return( InfoTok );
                     } else if( !strcmp(ptr,"FORMATION") ) {
                         return( InfoTok );
@@ -980,7 +1011,9 @@ int LookUpKeyword( char *ptr )
         LABEL                LabelTok
         LABELS               LabelTok
         LARGE                LargeTok
+        LEFT                 LeftTok
         LEVEL                LevelTok (ContourTok)
+        LH                   LeftTok
         LIGAND               LigandTok
         LIGANDS              LigandTok
         LOAD                 LoadTok
@@ -1001,8 +1034,17 @@ int LookUpKeyword( char *ptr )
             	case('E'):
             	    if( !strcmp(ptr,"VEL") ){
             	        return( LevelTok);
+            	    } else if( !strcmp(ptr,"FT") ) {
+                        return( LeftTok );
+                    }
+            	    break;
+
+                case('H'):
+                    if( !*ptr ) {
+                        return( LeftTok );
             	    }
             	    break;
+
 
                 case('I'):
                     if( !strcmp(ptr,"GAND") ) {
@@ -1048,6 +1090,8 @@ int LookUpKeyword( char *ptr )
         MOSTRAR              DisplayTok
         MOUSE                MouseTok
         MOUSEMODE            MouseTok
+        MOVE                 MoveTok
+        MOVETO               MoveToTok
       */
 
         case('M'):
@@ -1125,6 +1169,10 @@ int LookUpKeyword( char *ptr )
                         return( MouseTok );
                     } else if( !strcmp(ptr,"USEMODE") ) {
                         return( MouseTok );
+                    } else if( !strcmp(ptr,"MOVE") ) {
+                        return( MoveTok );
+                    } else if( !strcmp(ptr,"MOVETO") ) {
+                        return( MoveToTok );
                     }
                     break;
 
@@ -1199,6 +1247,7 @@ int LookUpKeyword( char *ptr )
         OR                   OrTok
         ORANGE               OrangeTok
         ORIGIN               OriginTok
+        OUT                  OutTok
       */
         case('O'):
             switch(*ptr++) {
@@ -1223,6 +1272,12 @@ int LookUpKeyword( char *ptr )
                         return( OriginTok );
                     }
                     break;
+                    
+               case('U'):
+                   if (!strcmp(ptr,"T") )  {
+                   	    return ( OutTok );
+                   }
+
 
             }
             break;
@@ -1398,6 +1453,7 @@ int LookUpKeyword( char *ptr )
         RESOLUTION           ResolutionTok
         RESTRICT             RestrictTok
         RGB                  IRISTok
+        RH                   RightTok
         RIBBON               RibbonTok
         RIBBON1              Ribbon1Tok
         RIBBON2              Ribbon2Tok
@@ -1405,6 +1461,7 @@ int LookUpKeyword( char *ptr )
         RIBBONS1             Ribbon1Tok
         RIBBONS2             Ribbon2Tok
         RIEMPIMENTO          SpacefillTok
+        RIGHT                RightTok
         RNA                  RNATok
         ROT                  RotateTok
         ROTATE               RotateTok
@@ -1486,6 +1543,12 @@ int LookUpKeyword( char *ptr )
                     }
                     break;
 
+                case('H'):
+                    if( !*ptr ) {
+                        return( RightTok );
+                    }
+                    break;
+
                 case('I'):
                     if( !strcmp(ptr,"BBON") ) {
                         return( RibbonTok );
@@ -1501,6 +1564,8 @@ int LookUpKeyword( char *ptr )
                         return( Ribbon2Tok );
                     } else if( !strcmp(ptr,"EMPIMENTO") ) {
                         return( SpacefillTok );
+                    } else if( !strcmp(ptr,"GHT") ) {
+                        return( RightTok );
                     }
                     break;
 
@@ -1811,6 +1876,7 @@ int LookUpKeyword( char *ptr )
       /*
         UNBOND               UnBondTok
         UNITCELL             UnitCellTok
+        UP                   UpTok
         USER                 UserTok
       */
 
@@ -1823,6 +1889,13 @@ int LookUpKeyword( char *ptr )
                         return( UnBondTok );
                     }
                     break;
+
+                case('P'):
+                    if( !*ptr ) {
+                        return( UpTok );
+                    }
+                    break;
+
 
                 case('S'):
                     if( !strcmp(ptr,"ER") ) {
@@ -1886,6 +1959,7 @@ int LookUpKeyword( char *ptr )
         WIDTH                WidthTok (SpreadTok)
         WIREFRAME            WireframeTok
         WITHIN               WithinTok
+        WPDB                 WPDBTok
         WRITE                WriteTok
       */
 
@@ -1914,6 +1988,12 @@ int LookUpKeyword( char *ptr )
                         return( WireframeTok );
                     } else if( !strcmp(ptr,"THIN") ) {
                         return( WithinTok );
+                    }
+                    break;
+
+                case('P'):
+                    if( !strcmp(ptr,"DB") ) {
+                        return( WPDBTok );
                     }
                     break;
 

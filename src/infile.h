@@ -71,14 +71,14 @@
  ***************************************************************************/
 /* infile.h
  $Log: not supported by cvs2svn $
- Revision 1.5  2008/03/17 11:35:22  yaya-hjb
- Release 2.7.4.2 update and T. Ikonen GTK update -- HJB
+ Revision 1.6  2008/06/27 02:47:58  yaya
+ Finished update of windows code for 32-bit color -- HJB
 
- Revision 1.4  2008/03/17 03:26:06  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.5  2008/03/22 18:42:52  yaya
+ Post release cleanup and credit to Ikonen in file headers. -- HJB
+
+ Revision 1.4  2008/03/17 03:01:31  yaya
+ Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
 
  Revision 1.3  2008/03/17 01:32:41  yaya
  Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
@@ -157,3 +157,4 @@ int SaveMDLMolecule( char* );
 int SaveXYZMolecule( char* );
 int SaveCIFMolecule( char* );
 int SaveCEXMolecule( char* );
+int SaveWPDBMolecule( char* );

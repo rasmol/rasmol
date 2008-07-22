@@ -72,14 +72,18 @@
 
 /* tokens.h
  $Log: not supported by cvs2svn $
- Revision 1.6  2008/03/17 11:35:22  yaya-hjb
- Release 2.7.4.2 update and T. Ikonen GTK update -- HJB
+ Revision 1.14  2008/06/19 19:13:37  yaya
+ Insert WPDBTok -- HJB
 
- Revision 1.4  2008/03/17 03:26:07  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.13  2008/06/18 20:04:53  yaya
+ Start in infrastructure for animation
+ Start on WPDB code -- HJB
+
+ Revision 1.12  2008/03/22 18:42:55  yaya
+ Post release cleanup and credit to Ikonen in file headers. -- HJB
+
+ Revision 1.11  2008/03/17 03:01:31  yaya
+ Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
 
  Revision 1.3  2008/03/17 01:32:41  yaya
  Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
@@ -185,62 +189,64 @@
 
 /* Command Tokens */
 #define AdviseTok      260
-#define BackboneTok    261
-#define CartoonTok     262
-#define CentreTok      263
-#define ClipboardTok   264
-#define ColourTok      265
-#define ColourModeTok  609
-#define ConnectTok     266
-#define DashTok        267
-#define DefineTok      268
-#define DelayTok       269
-#define DepthTok       270
-#define DisplayTok     271
-#define EchoTok        272
-#define ExitTok        273
-#define GenerateTok    274
-#define HelpTok        275
-#define LabelTok       276
-#define LoadTok        277
-#define LoopTok        278
-#define MapTok         279
-#define MaskTok        280
-#define MoleculeTok    281
-#define MolSurfTok     282 
-#define MonitorTok     283
-#define MoveTok        284
-#define NoToggleTok    610
-#define PrintTok       285
-#define QuitTok        286
-#define RefreshTok     287
-#define RenumTok       288
-#define ResetTok       289
-#define ResizeTok      290
-#define RestoreTok     291
-#define RestrictTok    292
-#define RotateTok      293
-#define SaveTok        294
-#define ScriptTok      295
-#define SelectTok      296
-#define SetTok         297
-#define ShowTok        298
-#define SlabTok        299
-#define SourceTok      300
-#define SpacefillTok   301
-#define StarTok        302
-#define StructureTok   303
-#define SurfaceTok     304
-#define SymmetryTok    305
-#define TitleTok       306
-#define TraceTok       307
-#define TranslateTok   308
-#define ViewTok        309
-#define WaitTok        310
-#define WireframeTok   311
-#define WriteTok       312
-#define ZapTok         313
-#define ZoomTok        314
+#define AnimateTok     260
+#define BackboneTok    262
+#define CartoonTok     263
+#define CentreTok      264
+#define ClipboardTok   265
+#define ColourTok      266
+#define ColourModeTok  267
+#define ConnectTok     268
+#define DashTok        269
+#define DefineTok      270
+#define DelayTok       271
+#define DepthTok       272
+#define DisplayTok     273
+#define EchoTok        274
+#define ExitTok        275
+#define GenerateTok    276
+#define HelpTok        277
+#define LabelTok       278
+#define LoadTok        279
+#define LoopTok        280
+#define MapTok         281
+#define MaskTok        282
+#define MoleculeTok    283
+#define MolSurfTok     284 
+#define MonitorTok     285
+#define MoveTok        286
+#define MoveToTok      287
+#define NoToggleTok    288
+#define PrintTok       289
+#define QuitTok        290
+#define RefreshTok     291
+#define RenumTok       292
+#define ResetTok       293
+#define ResizeTok      294
+#define RestoreTok     295
+#define RestrictTok    296
+#define RotateTok      297
+#define SaveTok        298
+#define ScriptTok      299
+#define SelectTok      300
+#define SetTok         301
+#define ShowTok        302
+#define SlabTok        303
+#define SourceTok      304
+#define SpacefillTok   305
+#define StarTok        306
+#define StructureTok   307
+#define SurfaceTok     308
+#define SymmetryTok    309
+#define TitleTok       310
+#define TraceTok       311
+#define TranslateTok   312
+#define ViewTok        313
+#define WaitTok        314
+#define WireframeTok   315
+#define WriteTok       316
+#define ZapTok         317
+#define ZoomTok        318
 
 /* Predicate Tokens */
 #define IsPredTok(x)   (((x)>=320) && ((x)<=358))
@@ -302,7 +308,7 @@
 
 /* File Format Tokens */
 /* Warning! Tokens are related to Format values */
-#define IsMoleculeToken(x)  (((x)>=370) && ((x)<=385))
+#define IsMoleculeToken(x)  (((x)>=370) && ((x)<=386))
 
 #define PDBTok         370
 #define MacroModelTok  371
@@ -320,6 +326,7 @@
 #define XYZTok         383
 #define CIFTok         384
 #define CEXTok         385
+#define WPDBTok        386
 
 /* Raster Tokens */
 #define IsImageToken(x) (((((x)>=390) && ((x)<=409)) || ((x) == PhiPsiTok)))
@@ -424,7 +431,8 @@
 #define DepthCueTok    488
 #define FontSizeTok    489
 #define FontStrokeTok  490
-#define HourGlassTok   491
+#define FramesTok      491
+#define HourGlassTok   492
 #define LevelTok       ContourTok
 #define MenusTok       493
 #define MouseTok       494
@@ -468,31 +476,38 @@
 #define HardwareTok    531
 
 /* Axis Tokens */
-#define XTok           532
-#define YTok           533
-#define ZTok           534
+#define XTok           541
+#define YTok           542
+#define ZTok           543
+#define RightTok       544
+#define LeftTok        545
+#define UpTok          546
+#define DownTok        547
+#define InTok          548
+#define OutTok         549
 
 /* Picking Tokens */
-#define IdentifyTok    535
-#define CoordTok       536
-#define DistanceTok    537
-#define AngleTok       538
-#define TorsionTok     539
-#define OriginTok      540
+#define IdentifyTok    550
+#define CoordTok       551
+#define DistanceTok    552
+#define AngleTok       553
+#define TorsionTok     554
+#define OriginTok      555
 
 /* Misc Tokens */
-#define InLineTok      541
-#define VDWTok         542
-#define HeaderTok      543
-#define CIFDataTok     544
-#define FSTok          545
+#define InLineTok      560
+#define VDWTok         561
+#define HeaderTok      562
+#define CIFDataTok     563
+#define FSTok          564
+
 #define PSTok          EPSFTok
 
 /* Clipboard Tokens */
-#define ImageTok       546
-#define PositionTok    547
-#define CopyTok        548
-#define PasteTok       549
+#define ImageTok       570
+#define PositionTok    571
+#define CopyTok        572
+#define PasteTok       573
 
 /* Language Tokens */
 #define EnglishTok     600

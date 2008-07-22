@@ -197,6 +197,31 @@ extern "C" {
 
 #endif
 
+#ifdef USE_CBFLIB
+
+#include <cbf.h>
+
+
+  /* Read a file */
+int cif_read_file (cbf_handle handle, FILE *stream);
+ 
+#define cif_column_number(handle,column_number) cbf_column_number((handle),(column_number) )
+#define cif_count_rows(handle,rows) cbf_count_rows((handle),(rows) )
+#define cif_datablock_name(handle,dbname) cbf_datablock_name((handle),(const char **)(dbname))
+#define cif_findtag(handle,tag) cbf_find_tag((handle), (const char *)(tag) )
+#define cif_find_column(handle,column) cbf_find_column((handle), (column))
+#define cif_free_handle(handle) cbf_free_handle((handle) )
+#define cif_make_handle(handle) cbf_make_handle((handle))
+#define cif_rewind_datablock(handle) cbf_rewind_datablock((handle))
+#define cif_select_column(handle,column) cbf_select_column((handle), (column))
+#define cif_select_row(handle,rownum) cbf_select_row((handle), (rownum))
+#define cif_get_value(handle,value) cbf_get_value((handle), (const char **)(value))
+#define CIF_TOKEN_NULL CBF_TOKEN_NULL
+typedef cbf_handle cif_handle;
+
+#else
+
+
 #if !defined(IBMPC) || defined(_WIN32)
 #ifndef __far
 #define __far
@@ -438,8 +463,15 @@ int cif_count_rows (cif_handle handle, unsigned int __far *rows);
 int cif_delete_row (cif_handle handle, const int rownumber);
   /* Count the columns in the current category */
 int cif_count_columns (cif_handle handle, unsigned int __far *columns);
+  /* Get the name of the current data block */
+int cif_datablock_name (cif_handle handle, char __far * __far *datablockname);
+  /* Make the first data block the current data block */
+int cif_rewind_datablock (cif_handle handle);
+
 
 int cif_parse (void *context);
+
+#endif
 
 #ifdef __cplusplus
 

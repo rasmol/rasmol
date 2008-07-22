@@ -71,14 +71,24 @@
  ***************************************************************************/
 /* transfor.c
  $Log: not supported by cvs2svn $
- Revision 1.5  2008/03/17 11:35:22  yaya-hjb
- Release 2.7.4.2 update and T. Ikonen GTK update -- HJB
+ Revision 1.13  2008/06/18 20:04:53  yaya
+ Start in infrastructure for animation
+ Start on WPDB code -- HJB
 
- Revision 1.5  2008/03/17 03:26:07  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.12  2008/06/09 17:48:12  hk0i
+ added loadSelection() and saveSelection() routines for new color commands. *gm*
+
+ Revision 1.11  2008/04/15 19:25:37  hk0i
+ fixed 'color bond' bug
+
+ Revision 1.10  2008/04/01 17:31:19  hk0i
+ updated new color mode feature for dots
+
+ Revision 1.9  2008/03/22 18:42:55  yaya
+ Post release cleanup and credit to Ikonen in file headers. -- HJB
+
+ Revision 1.8  2008/03/17 03:01:31  yaya
+ Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
 
  Revision 1.5  2008/03/17 01:32:41  yaya
  Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
@@ -2433,6 +2443,7 @@ void ScaleColourAttrib( int attr )
     register int i;
 
     if( !Database ) return;
+	ColourBondNone();
 
     switch( attr )
     {   case(ChainAttr):   attrno = Info.chaincount;   
@@ -2622,6 +2633,8 @@ void ScaleColourAttrib( int attr )
     /* Now add colours for any alternate conformations used */    
 
     AddAltlColours();
+	if (DotCount && !UseOldColorCode)
+		CalculateSurface(DotCount);
     return;      
 
 }
@@ -2776,6 +2789,54 @@ void UserMaskAttrib( int fields )
     }
 }
 
+/* REMOVE THIS... maybe */
+void testFlags (void)
+{
+	/* test function for loadSelection and saveSelection */
+	register Chain __far *chain;
+	register Group __far *group;
+	register RAtom __far *ptr;
+
+	int i = 0;
+	char tmp[255];
+
+	WriteString("Showing Flags:\n"
+			  "\tAtom#\tName\tSaved?\tSelected?\n");
+
+	ForEachAtom
+	{
+		sprintf(tmp,"\t%d\t%s",i,ElemDesc[ptr->refno]);
+		WriteString(tmp);
+		if (ptr->flag & SaveFlag)
+		{
+			sprintf(tmp, "\tSaved");
+			WriteString(tmp);
+		}
+		else
+		{
+			sprintf(tmp,"\tNo");
+			WriteString(tmp);
+		}
+
+		if (ptr->flag & SelectFlag)
+		{
+			sprintf(tmp,"\tSelected");
+			WriteString(tmp);
+		}
+		else
+		{
+			sprintf(tmp,"\tNo");
+			WriteString(tmp);
+		}
+		sprintf(tmp,"\n");
+		WriteString(tmp);
+		i++;
+	}
+}
+
+
+
+	
 
 void CPKColourAttrib( void )
 {
@@ -2786,10 +2847,19 @@ void CPKColourAttrib( void )
     register int i;
 
     if( !Database ) return;
+	ColourBondNone();
     for( i=0; i<CPKMAX; i++ )
         CPKShade[i].col = 0;
     ResetColourAttrib();
     ScaleColourMap(CPKMAX);
+
+	/* test for saveSelection 
+	WriteString("Saving Selection...\n");
+	saveSelection();
+	testFlags();
+
+	SelectZone(AllAtomFlag);
+	testFlags();*/
 
     ForEachAtom
         if( ptr->flag&SelectFlag )
@@ -2804,6 +2874,12 @@ void CPKColourAttrib( void )
         }
 
     AddAltlColours();
+	if (DotCount && !UseOldColorCode)
+		CalculateSurface(DotCount);
+
+	/*WriteString("Loading selection...\n");
+	loadSelection();
+	testFlags();*/
 
 }
 
@@ -2816,6 +2892,7 @@ void CpkNewColourAttrib( void )
     register int i;
 
     if ( !Database ) return;
+	ColourBondNone();
     for ( i=0; i<CpkNewMax; i++ )
 	 CpkNewShade[i].col = 0;
     ResetColourAttrib();
@@ -2833,7 +2910,8 @@ void CpkNewColourAttrib( void )
 	    ptr->col = ref->col;
 	}
     AddAltlColours();
-
+	if (DotCount && !UseOldColorCode)
+		CalculateSurface(DotCount);
 }
 
 
@@ -2847,6 +2925,7 @@ void AminoColourAttrib( void )
     register int i;
 
     if( !Database ) return;
+	ColourBondNone();
     for( i=0; i<13; i++ )
         AminoShade[i].col = 0;
     ResetColourAttrib();
@@ -2867,6 +2946,8 @@ void AminoColourAttrib( void )
         }
 
     AddAltlColours();
+	if (DotCount && !UseOldColorCode)
+		CalculateSurface(DotCount);
 
 }
 
@@ -2880,6 +2961,7 @@ void ShapelyColourAttrib( void )
     register int i;
 
     if( !Database ) return;
+	ColourBondNone();
     for( i=0; i<30; i++ )
         Shapely[i].col = 0;
     ResetColourAttrib();
@@ -2913,6 +2995,8 @@ void ShapelyColourAttrib( void )
         }
 
     AddAltlColours();
+	if (DotCount && !UseOldColorCode)
+		CalculateSurface(DotCount);
 
 }
 
@@ -2927,6 +3011,7 @@ void StructColourAttrib( void )
 
     if( !Database )
         return;
+	ColourBondNone();
 
     if( Info.helixcount < 0 )
         DetermineStructure(False);
@@ -2954,6 +3039,8 @@ void StructColourAttrib( void )
         }
 
     AddAltlColours();
+	if (DotCount && !UseOldColorCode)
+		CalculateSurface(DotCount);
 
 }
 
@@ -3104,12 +3191,8 @@ void ReviseInvMatrix( void )
 }
 
 /*
-    RMatZtoV computes rotation matrix, RMat, to rotate the Z axis
-    into nomalized vector V, keeping the axis orthogonal to the
-    VZ plane fixed.
-
-    Returns 0 if sucessful, nonzero if the computation fails
-
+    RMatInv computes the inverse of a rotation matrix given
+    three vectors.
   */
 
 void RMatInv( Real RMX[3], Real RMY[3], Real RMZ[3],
@@ -3131,6 +3214,16 @@ void RMatInv( Real RMX[3], Real RMY[3], Real RMZ[3],
   
 }
 
+/*
+    RMatVec applies a rotation matrix given a three rows
+  
+      |  RMX  |
+      |  RMY  |
+      |  RMZ  |
+      
+    applies it to VecIn and returns VecOut
+  */
+  
 void RMatVec( Real VecOut[3], 
               Real RMX[3], Real RMY[3], Real RMZ[3],
               Real VecIn[3] ) {
@@ -3140,6 +3233,12 @@ void RMatVec( Real VecOut[3],
   VecOut[2] = RMZ[0]*VecIn[0] + RMZ[1]*VecIn[1] + RMZ[2]*VecIn[2];
   return;
 }
+ 
+/*
+   RMatRMat applies a rotation matrix given as three rows
+   and applies it to 3x3 matrix MatIn and returns MatOut
+
+   */
  
 void RMatRMat( Real MatOut[3][3], 
               Real RMX[3], Real RMY[3], Real RMZ[3],
@@ -3154,6 +3253,13 @@ void RMatRMat( Real MatOut[3][3],
   }
   return;
 }
+
+/*
+    Rv2RMat creates a rotation matrix as three rows from
+    three rotation dial values ranging from -1 for -PI radians
+    to +1 for PI radians
+
+  */
 
 void RV2RMat( Real RX, Real RY, Real RZ, 
   Real RMX[3], Real RMY[3], Real RMZ[3]  ) {

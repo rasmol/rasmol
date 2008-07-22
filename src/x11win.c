@@ -71,14 +71,23 @@
  ***************************************************************************/
 /* x11win.c
  $Log: not supported by cvs2svn $
- Revision 1.5  2008/03/17 11:35:23  yaya-hjb
- Release 2.7.4.2 update and T. Ikonen GTK update -- HJB
+ Revision 1.13  2008/06/28 14:25:26  yaya
+ Make more IPC errors non-fatal.  -- HJB
 
- Revision 1.7  2008/03/17 03:26:07  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.12  2008/06/28 14:06:37  yaya
+ Fix unused variable warning in command.c
+ Start changes for loading models in infile.c
+ Make handling of IPC errors non-fatal in x11win.c -- HJB
+
+ Revision 1.11  2008/06/18 20:04:53  yaya
+ Start in infrastructure for animation
+ Start on WPDB code -- HJB
+
+ Revision 1.10  2008/03/22 18:42:56  yaya
+ Post release cleanup and credit to Ikonen in file headers. -- HJB
+
+ Revision 1.9  2008/03/17 03:01:32  yaya
+ Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
 
  Revision 1.6  2008/03/17 01:32:41  yaya
  Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
@@ -500,6 +509,8 @@ static int UseDials;
 XShmSegmentInfo xshminfo;
 int SharedMemOption;
 int SharedMemFlag;
+#else
+#define SharedMemOption False
 #endif
 
 #define XScrlDial  1 /*1*/
@@ -962,19 +973,27 @@ static int RegisterInterpName( char *name )
 
     register int result;
     register char *ptr;
+    register int (*handler)();
 
     registry = NULL;
+    handler = XSetErrorHandler( HandleIPCError );
     result = XGetWindowProperty(dpy, RootWindow(dpy,0), InterpAtom,
                                 0, 100000, False, XA_STRING, &type,
                                 &format, &len, &left, &registry );
+    XSync(dpy,False);
+    XSetErrorHandler(handler);
 
     if( (result!=Success) || (format!=8) || (type!=XA_STRING) )
     {   if( (type!=None) && registry ) XFree( (char*)registry );
 
         sprintf(buffer,"%x %s",(int)MainWin,name);
+        handler = XSetErrorHandler( HandleIPCError );
         XChangeProperty( dpy, RootWindow(dpy,0), InterpAtom, XA_STRING, 
                          8, PropModeReplace, (unsigned char*)buffer, 
                          (int)strlen(buffer)+1 );
+        XSync(dpy,False);
+        XSetErrorHandler(handler);
+
         return( True );
     }
 
@@ -995,9 +1014,12 @@ static int RegisterInterpName( char *name )
 
     XFree( (char*)registry );
     sprintf(buffer,"%x %s",(int)MainWin,name);
+    handler = XSetErrorHandler( HandleIPCError );
     XChangeProperty( dpy, RootWindow(dpy,0), InterpAtom, XA_STRING, 
                      8, PropModeAppend, (unsigned char*)buffer, 
                      (int)strlen(buffer)+1 );
+    XSync(dpy,False);
+    XSetErrorHandler(handler);
     return( True );
 }
 
@@ -1011,19 +1033,26 @@ static void DeRegisterInterpName( char *name )
 
     register char *src, *dst;
     register int result;
+    register int (*handler)();
 
     /* Avoid compiler warnings */
     src = (char *)0;
  
     registry = NULL;
+    handler = XSetErrorHandler( HandleIPCError );    
     result = XGetWindowProperty(dpy, RootWindow(dpy,0), InterpAtom,
                                 0, 100000, False, XA_STRING, &type,
                                 &format, &len, &left, &registry );
+    XSync(dpy,False);
+    XSetErrorHandler(handler);
     if( type==None )
         return;
 
     if( (result!=Success) || (format!=8) || (type!=XA_STRING) )
-    {   XDeleteProperty( dpy, RootWindow(dpy,0), InterpAtom );
+    {   handler = XSetErrorHandler( HandleIPCError );
+        XDeleteProperty( dpy, RootWindow(dpy,0), InterpAtom );
+        XSync(dpy,False);
+        XSetErrorHandler(handler);
         if( registry ) XFree( (char*)registry );
         return;
     }
@@ -1049,9 +1078,11 @@ static void DeRegisterInterpName( char *name )
         while( *src )
             while( (*dst++ = *src++) );
         *dst = 0;
-
+        handler = XSetErrorHandler( HandleIPCError );
         XChangeProperty( dpy, RootWindow(dpy,0), InterpAtom, XA_STRING,
                          8, PropModeReplace, registry, (int)(dst-(char*)registry) );
+        XSync(dpy,False);
+        XSetErrorHandler(handler);
     }
     XFree( (char*)registry );
 }
@@ -1061,18 +1092,23 @@ static void OpenIPCComms( void )
 {
     auto char buffer[16];
     register int i;
+    register int (*handler)();
 
     CommAtom = XInternAtom( dpy, "Comm", False );
     InterpAtom = XInternAtom( dpy, "InterpRegistry", False );
     AppNameAtom = XInternAtom(dpy, "TK_APPLICATION", False );
     DelWinXAtom = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
+    XSync(dpy, False);
     /* XSetWMProtocols(dpy,MainWin,&DelWinXAtom,True); */
-    if( (ProtoXAtom = XInternAtom(dpy,"WM_PROTOCOLS",False)) )
+    if( (ProtoXAtom = XInternAtom(dpy,"WM_PROTOCOLS",False)) ) {
+    	handler = XSetErrorHandler( HandleIPCError );
         XChangeProperty( dpy, MainWin, ProtoXAtom, XA_ATOM, 32, 
                         PropModeReplace, (Byte*)&DelWinXAtom, True );
-
+        XSync(dpy,False);
+        XSetErrorHandler(handler);
+    }
     i = 0;
-    XGrabServer( dpy );
+    XSync(dpy,False);
     if( !RegisterInterpName("rasmol") )
     {   strcpy(TkInterp,"rasmol #0");
         for( i=1; i<10; i++ )
@@ -1084,12 +1120,18 @@ static void OpenIPCComms( void )
         if( i < 10 ) 
         {   /* Tk4.0 and later! */
             strcpy(buffer,"{rasmol #0}");  buffer[9] = i+'0';
+    	    handler = XSetErrorHandler( HandleIPCError );
             XChangeProperty( dpy, MainWin, AppNameAtom, XA_STRING, 
                              8, PropModeReplace, (Byte*)buffer, 12 );
+            XSync(dpy,False);
+            XSetErrorHandler(handler);
         } else *TkInterp = 0;
-    } else 
-    {   XChangeProperty( dpy, MainWin, AppNameAtom, XA_STRING,
+    } else  {  
+        handler = XSetErrorHandler( HandleIPCError );
+        XChangeProperty( dpy, MainWin, AppNameAtom, XA_STRING,
                          8, PropModeReplace, (Byte*)"rasmol", 7 );
+        XSync(dpy,False);
+        XSetErrorHandler(handler);
         strcpy(TkInterp,"rasmol");
     }
     XUngrabServer( dpy );
@@ -2619,7 +2661,7 @@ int OpenDisplay( void )
     Monochrome = False;
     XHeldButton = -1;
 
-    for( i=0; i<8; i++ )
+    for( i=0; i<11; i++ )
          DialValue[i] = 0.0;
 
     RLut[0]=0;   GLut[0]=0;   BLut[0]=0;    ULut[0]=True;

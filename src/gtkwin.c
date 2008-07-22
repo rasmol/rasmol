@@ -1437,7 +1437,7 @@ int OpenDisplay( int x, int y )
 
    	sprintf (VersionStr,"RasMol Version %s", VERSION);
 
-    for( i=0; i<8; i++ )
+    for( i=0; i<11; i++ )
          DialValue[i] = 0.0;
 
     RLut[0]=0;   GLut[0]=0;   BLut[0]=0;    ULut[0]=True;

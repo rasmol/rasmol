@@ -1621,6 +1621,17 @@ a separate line. Keywords are case insensitive and may be entered in
 either upper or lower case letters. All whitespace characters are
 ignored except to separate keywords and their arguments.
 <p>
+All commands may be prefixed by a parenthesized
+'<a href="#chexprs"><tt><b>atom expression</b></tt></a>'
+to temporarily select certain atoms just for the execution
+of that one command.  After execution of the command, the
+previous selection is restored except for the commands
+'<a href="#select"><tt><b>select</b></tt></a>'
+,
+'<a href="#restrict"><tt><b>restrict</b></tt></a>'
+and
+'<a href="#script"><tt><b>script</b></tt></a>'.
+<p>
 The commands/keywords currently recognised by RasMol are given below.
 <p>
 <center>
@@ -2801,7 +2812,9 @@ and
 '<a href="#backbone"><tt><b>backbone</b></tt></a>'
 representations in the non-selected region.
 <p>
-Type &quot;help expression&quot; for more information on RasMol atom expressions.
+Type &quot;help expression&quot; for more information on RasMol atom expressions or
+see section
+'<a href="#chexprs"><tt><b>Atom Expressions</b></tt></a>'.
 <p><hr>
 <a name="ribbons"><h3>Ribbons</h3></a><p>
 <pre>
@@ -2961,7 +2974,9 @@ and
 '<a href="#set"><tt><b>hydrogen</b></tt></a>'
 parameters.
 <p>
-Type &quot;help expression&quot; for more information on RasMol atom expressions.
+Type &quot;help expression&quot; for more information on RasMol atom expressions or
+see section
+'<a href="#chexprs"><tt><b>Atom Expressions</b></tt></a>'.
 <p><hr>
 <a name="set"><h3>Set</h3></a><p>
 <pre>

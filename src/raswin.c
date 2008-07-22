@@ -72,14 +72,23 @@
  ***************************************************************************/
 /* raswin.c
  $Log: not supported by cvs2svn $
- Revision 1.5  2008/03/17 11:35:22  yaya-hjb
- Release 2.7.4.2 update and T. Ikonen GTK update -- HJB
+ Revision 1.8  2008/06/27 02:47:58  yaya
+ Finished update of windows code for 32-bit color -- HJB
 
- Revision 1.4  2008/03/17 03:26:07  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.7  2008/06/11 01:40:54  yaya
+ Improve gradient for map surfaces and brighten image;
+ Add parenthesized selections before all commands;
+ Change saveSelection and loadSelection to
+ SaveAtomSelection and LoadAtomSelection -- HJB
+
+ Revision 1.6  2008/03/22 17:06:49  yaya
+ Post release cleanup with credits to Ikonen in file headers. -- HJB
+
+ Revision 1.5  2008/03/21 19:13:48  yaya
+ Update documentation and comments -- HJB
+
+ Revision 1.5  2008/03/17 03:01:31  yaya
+ Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
 
  Revision 1.4  2008/03/17 01:32:41  yaya
  Add gtk mods by tpikonen, and intergate with 2.7.4.2 mods -- HJB
@@ -1393,16 +1402,24 @@ static HANDLE RenderClipboard( WPARAM format )
     register int i; 
    
     if( format==CF_PALETTE )
+#ifdef EIGHTBIT
     {   if( ColourMap )
 	{   return CreatePalette(Palette);
 	} else return NULL;
-    }    
+    }
+#else
+      return NULL;
+#endif
     
     if( !PixMap || (format!=CF_DIB) )
 	return NULL;
 
     len = (long)XRange*YRange*sizeof(Pixel);
-    size = sizeof(BITMAPINFOHEADER) + 256*sizeof(RGBQUAD);
+#ifdef EIGHTBIT
+    size = sizeof(BITMAPINFOHEADER)  + 256*sizeof(RGBQUAD);
+#else
+    size = sizeof(BITMAPINFOHEADER);
+#endif
     if( !(result=GlobalAlloc(GHND,size+len)) ) return NULL;
     
     bitmap = (BITMAPINFO __far *)GlobalLock(result);
@@ -1410,7 +1427,11 @@ static HANDLE RenderClipboard( WPARAM format )
     bitmap->bmiHeader.biWidth = XRange;
     bitmap->bmiHeader.biHeight = YRange;
     bitmap->bmiHeader.biPlanes = 1;
+#ifdef EIGHTBIT
     bitmap->bmiHeader.biBitCount = 8;
+#else
+    bitmap->bmiHeader.biBitCount = 32;
+#endif
     bitmap->bmiHeader.biCompression = BI_RGB;
     bitmap->bmiHeader.biSizeImage = len;
     bitmap->bmiHeader.biXPelsPerMeter = 0;
@@ -1418,16 +1439,21 @@ static HANDLE RenderClipboard( WPARAM format )
     bitmap->bmiHeader.biClrImportant = 0;
     bitmap->bmiHeader.biClrUsed = 0;
     
+#ifdef EIGHTBIT
     for( i=0; i<256; i++ )
 	if( ULut[i] )
 	{   bitmap->bmiColors[Lut[i]].rgbBlue  = BLut[i];
 	    bitmap->bmiColors[Lut[i]].rgbGreen = GLut[i];
 	    bitmap->bmiColors[Lut[i]].rgbRed   = RLut[i];
 	}
-    
+#endif
    
     src = (Pixel __huge*)GlobalLock(FBufHandle);
+#ifdef EIGHTBIT
     dst = ((Pixel __huge*)bitmap)+size;
+#else
+    dst = ((Pixel __huge*)bitmap)+size/4;
+#endif
     
     /* Transfer the frame buffer */
     while( len-- ) *dst++ = *src++;
@@ -3038,8 +3064,10 @@ LONG FAR PASCAL MainCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
     register int pos,status;
     register int x,y;
 
-    register COLORREF BackColRef;    
+    register COLORREF BackColRef;
+#ifdef EIGHTBIT    
     register HPALETTE hCMap;
+#endif
     register HANDLE hand;
     register HDC hMemDC;
     register HDC hDC;
@@ -3093,21 +3121,23 @@ LONG FAR PASCAL MainCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 #endif
 
 	case(WM_QUERYNEWPALETTE):
+#ifdef EIGHTBIT
 			      if( ColourMap )
 			      {   hDC = GetDC(hWin);
 				  hCMap = SelectPalette(hDC,ColourMap,False);
 				  status = RealizePalette(hDC);
 				  if( hCMap ) SelectPalette(hDC,hCMap,False);
 				  ReleaseDC(hWin,hDC);
-				  
 				  if( status )
 				  {   InvalidateRect(hWin,NULL,True);
 				      return True;
 				  }
 			      }
+#endif
 			      return 0L;
 			      
 	case(WM_PALETTECHANGED):
+#ifdef EIGHTBIT
 			      if( ColourMap && ((HWND)wArg != hWin) )
 			      {   hDC = GetDC(hWin);
 				  hCMap = SelectPalette(hDC,ColourMap,False);
@@ -3116,6 +3146,7 @@ LONG FAR PASCAL MainCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 				  if( hCMap ) SelectPalette(hDC,hCMap,False);
 				  ReleaseDC(hWin,hDC);
 			      }
+#endif
 			      return 0L;
 			      			     
 	case(WM_INITMENUPOPUP):  /* Initialise Checks */
@@ -3235,9 +3266,11 @@ LONG FAR PASCAL MainCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 	
 	case(WM_PAINT):       hDC = BeginPaint(hWin,&ps);
 			      SetBkMode(hDC,TRANSPARENT);
+#ifdef EIGHTBIT
 			      if( PixMap )
 			      {   hCMap = SelectPalette(hDC,ColourMap,False);
 				  RealizePalette(hDC);
+#endif
 #ifdef _WIN32
 				  SetWindowOrgEx(hDC,0,0,NULL);
 #else
@@ -3248,19 +3281,32 @@ LONG FAR PASCAL MainCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 				  BitBlt(hDC,0,0,XRange,YRange,
 					 hMemDC,0,0,SRCCOPY);
 					 
-				  SelectPalette(hDC,hCMap,False);      
+#ifdef EIGHTBIT
+				  SelectPalette(hDC,hCMap,False);
+#endif      
 				  DeleteDC(hMemDC);
+#ifdef EIGHTBIT
 			      } else /* Erase Update Region */
-			      {    if( ColourMap )
+#endif
+			      {
+#ifdef EIGHTBIT
+			       if( ColourMap )
 				   {   hCMap=SelectPalette(hDC,ColourMap,0);
+			           BackColRef = RGB(BackR,BackG,BackB);
 				       RealizePalette(hDC);
+				   } else {
+				   	   BackColRef = RGB(0,0,0);
 				   }
+#else
 				   BackColRef = RGB(BackR,BackG,BackB);
+#endif
 				   hand = CreateSolidBrush(BackColRef);
 				   GetUpdateRect(hWin,&rc,False);
 				   FillRect( hDC, &rc, hand );
+#ifdef EIGHTBIT
 				   if( ColourMap && hCMap )
 				       SelectPalette(hDC,hCMap,False);
+#endif
 				   DeleteObject(hand);
 			      }
 			      EndPaint(hWin,&ps);

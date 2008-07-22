@@ -769,6 +769,11 @@ line. Keywords are case insensitive and may be entered in either upper or
 lower case letters. All whitespace characters are ignored except to separate 
 keywords and their arguments. 
 
+All commands may be prefixed by a parenthesized 'atom expression' to 
+temporarily select certain atoms just for the execution of that one command. 
+After execution of the command, the previous selection is restored except 
+for the commands 'select' , 'restrict' and 'script'. 
+
 The commands/keywords currently recognised by RasMol are given below. 
 Type "help <command>" for more information on each RasMol function.
 
@@ -1538,7 +1543,8 @@ very similar to the RasMol 'select' command, except 'restrict' disables the
 'wireframe', 'spacefill' and 'backbone' representations in the non-selected 
 region. 
 
-Type "help expression" for more information on RasMol atom expressions. 
+Type "help expression" for more information on RasMol atom expressions or 
+see section 'Atom Expressions'. 
 
 ?ribbon
 ?ribbons
@@ -1648,7 +1654,8 @@ molecule use the RasMol command 'select all'. The behaviour of the 'select'
 command without any parameters is determined by the RasMol 'hetero' and 
 'hydrogen' parameters. 
 
-Type "help expression" for more information on RasMol atom expressions. 
+Type "help expression" for more information on RasMol atom expressions or 
+see section 'Atom Expressions'. 
 
 ?set
 Set
