@@ -1,6 +1,0 @@
-#!/bin/sh
-
-./genlangsel_mswin
-./genlangsel_mac
-./genlangsel_unix
-./genlangsel_master

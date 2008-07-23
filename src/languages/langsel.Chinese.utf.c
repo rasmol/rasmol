@@ -1,7 +1,5 @@
   { "Error: NoToggle mode enabled; "
     "type 'set notoggle off' to disabled.\n",          ErrNoToggle, Chinese,0},
-  { "2.7.3 Color compatibility mode enabled.\n",       StrCCompOn,  Chinese,0},
-  { "2.7.3 Color compatibility mode disabled.\n",      StrCCompOff, Chinese,0},
   { "NoToggle mode: enabled.\n",                       StrNoTogOn,  Chinese,0},
   { "NoToggle mode: disabled.\n",                      StrNoTogOff, Chinese,0},
 
