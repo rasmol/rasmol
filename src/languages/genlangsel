@@ -1,0 +1,251 @@
+#!/bin/bash
+
+################################################################################
+# GENLANGSEL
+#	THE REALLY REALLY BIG VERSION
+################################################################################
+#
+#  Created: 01 July 2008
+#
+#  DESCRIPTION
+#   Converts encoding from UTF8 master files to their proper encodings, and
+#   concatenates them.
+#
+#  ENCODINGS USED
+#   Bulgarian - CP1251 (Windows, Mac, Unix)
+#   Chinese   - GB18030 (Windows, Mac, Unix)
+#   French    - Latin 1 (Windows, Unix)
+#             - MacRoman (Mac)
+#   Italian   - Latin 1 (Windows, Unix)
+#             - MacRoman (Mac)
+#   Japanese  - Shift_JIS (Windows)
+#			  - CP932 (Mac)
+#             - EUC_JP (Unix)
+#   Russian   - GB18030 (Windows, Mac, Unix)
+#   Spanish   - Latin 1 (Windows, Unix)
+#             - MacRoman
+#
+################################################################################
+
+# No longer being used.
+function clean()
+{
+	LANGS="Bulgarian Chinese English Italian Japanese French Russian Spanish"
+	for LANG in $LANGS
+	do
+		if [ $1 = "mac" ]; then
+			FILE=langsel.${LANG}.mac.c
+		else
+			FILE=langsel.${LANG}.c
+		fi
+
+		if [ ${LANG} = "Japanese" ]; then
+			if [ $1 = "unix" ]; then
+				FILE="langsel.Japanese.EUC.c"
+			fi
+		fi
+		if [ -f ${FILE} ]; then
+			echo "Deleting temp file $FILE."
+			rm ${FILE}
+		fi
+	done
+	if [ -f *~ ]; then
+		rm *~
+	fi
+}
+
+function jp2win ()
+{
+	#convert japanese to windows -- requires some tweaks.
+
+	#clear temp files.
+	if [ -f tmp_jp ]; then
+		rm tmp_jp
+	fi
+	if [ -f tmp_jp2 ]; then
+		rm tmp_jp2
+	fi
+
+	tr \\ \\$ < langsel.Japanese.utf.c > tmp_jp
+	iconv -f utf8 -t sjis < tmp_jp > tmp_jp2
+	tr \\$ \\ < tmp_jp2 > conversions/langsel.Japanese.c
+
+	rm tmp_jp tmp_jp2
+}
+
+function catunix
+{
+
+	cat header.c > output/langsel_unix.c
+	cat conversions/langsel.English.c >> output/langsel_unix.c
+	echo "" >> output/langsel_unix.c
+	cat conversions/langsel.Spanish.c >> output/langsel_unix.c
+	echo "" >> output/langsel_unix.c
+	cat conversions/langsel.Italian.c >> output/langsel_unix.c
+	echo "" >> output/langsel_unix.c
+	cat conversions/langsel.French.c >> output/langsel_unix.c
+	echo "" >> output/langsel_unix.c
+	cat conversions/langsel.Russian.c >> output/langsel_unix.c
+	echo "" >> output/langsel_unix.c
+	cat conversions/langsel.Bulgarian.c >> output/langsel_unix.c
+	echo "" >> output/langsel_unix.c
+	cat conversions/langsel.Chinese.c >> output/langsel_unix.c
+	echo "" >> output/langsel_unix.c
+	cat conversions/langsel.Japanese.EUC.c >> output/langsel_unix.c
+	cat footer.c >> output/langsel_unix.c
+}
+
+function iconvit()
+{
+	#does iconv AND concatenates files.
+	echo "iconv-ing files for mswin..."
+
+	#latin1 files.
+	iconv -f utf8 -t latin1 < langsel.English.utf.c > conversions/langsel.English.c
+	iconv -f utf8 -t latin1 < langsel.French.utf.c > conversions/langsel.French.c
+	iconv -f utf8 -t latin1 < langsel.Italian.utf.c > conversions/langsel.Italian.c
+	iconv -f utf8 -t latin1 < langsel.Spanish.utf.c > conversions/langsel.Spanish.c
+
+	iconv -f utf8 -t cp1251 < langsel.Bulgarian.utf.c > conversions/langsel.Bulgarian.c
+	iconv -f utf8 -t gb18030 < langsel.Chinese.utf.c > conversions/langsel.Chinese.c
+	if [ $1 = "unix" ]; then
+		iconv -f utf8 -t eucjp < langsel.Japanese.utf.c > conversions/langsel.Japanese.EUC.c
+	else
+		jp2win
+	fi
+
+	iconv -f utf8 -t cp1251 < langsel.Russian.utf.c > conversions/langsel.Russian.c	
+	
+	echo "concatenating files..."
+
+	if [ $1 = "unix" ]; then
+		catunix
+	else
+		cat header.c > output/langsel_mswin.c
+		cat conversions/langsel.English.c >> output/langsel_mswin.c
+		echo "" >> output/langsel_mswin.c
+		cat conversions/langsel.Spanish.c >> output/langsel_mswin.c
+		echo "" >> output/langsel_mswin.c
+		cat conversions/langsel.Italian.c >> output/langsel_mswin.c
+		echo "" >> output/langsel_mswin.c
+		cat conversions/langsel.French.c >> output/langsel_mswin.c
+		echo "" >> output/langsel_mswin.c
+		cat conversions/langsel.Russian.c >> output/langsel_mswin.c
+		echo "" >> output/langsel_mswin.c
+		cat conversions/langsel.Bulgarian.c >> output/langsel_mswin.c
+		echo "" >> output/langsel_mswin.c
+		cat conversions/langsel.Chinese.c >> output/langsel_mswin.c
+		echo "" >> output/langsel_mswin.c
+		cat conversions/langsel.Japanese.c >> output/langsel_mswin.c
+		cat footer.c >> output/langsel_mswin.c
+	fi
+
+	echo "Done."
+}
+
+function iconvmac()
+{
+	#does iconv AND concatenates files.
+	echo "iconv-ing files for mac..."
+
+	#latin1 files.
+	iconv -f utf8 -t latin1 < langsel.English.utf.c > conversions/langsel.English.mac.c
+	iconv -f utf8 -t latin1 < langsel.French.utf.c > conversions/langsel.French.mac.c
+	iconv -f utf8 -t latin1 < langsel.Italian.utf.c > conversions/langsel.Italian.mac.c
+	iconv -f utf8 -t latin1 < langsel.Spanish.utf.c > conversions/langsel.Spanish.mac.c
+
+	iconv -f utf8 -t cp1251 < langsel.Bulgarian.utf.c > conversions/langsel.Bulgarian.mac.c
+	iconv -f utf8 -t gb18030 < langsel.Chinese.utf.c > conversions/langsel.Chinese.mac.c
+	iconv -f utf8 -t cp932 < langsel.Japanese.utf.c > conversions/langsel.Japanese.mac.c
+	iconv -f utf8 -t cp1251 < langsel.Russian.utf.c > conversions/langsel.Russian.mac.c
+	
+	echo "concatenating files..."
+	cat header.c > output/langsel_mac.c
+	cat conversions/langsel.English.mac.c >> output/langsel_mac.c
+	echo "" >> output/langsel_mac.c
+	cat conversions/langsel.Spanish.mac.c >> output/langsel_mac.c
+	echo "" >> output/langsel_mac.c
+	cat conversions/langsel.Italian.mac.c >> output/langsel_mac.c
+	echo "" >> output/langsel_mac.c
+	cat conversions/langsel.French.mac.c >> output/langsel_mac.c
+	echo "" >> output/langsel_mac.c
+	cat conversions/langsel.Russian.mac.c >> output/langsel_mac.c
+	echo "" >> output/langsel_mac.c
+	cat conversions/langsel.Bulgarian.mac.c >> output/langsel_mac.c
+	echo "" >> output/langsel_mac.c
+	cat conversions/langsel.Chinese.mac.c >> output/langsel_mac.c
+	echo "" >> output/langsel_mac.c
+	cat conversions/langsel.Japanese.mac.c >> output/langsel_mac.c
+	cat footer.c >> output/langsel_mac.c
+
+}
+
+if [ ! -d conversions ]; then
+	mkdir conversions
+fi
+if [ ! -d output ]; then
+	mkdir output
+fi
+
+# Clean up old stuff... if it's still there ;)
+clean mac
+clean win
+clean unix
+
+case $1 in
+
+	--help)
+		echo "genlangsel v1.0."
+		echo "DESCRIPTION"
+		echo -e "\tGenerates langsel.c files using proper encodings."
+		echo
+		echo "USAGE"
+		echo -e "\tgenlangsel [platform]"
+		echo
+		echo -e "\tIf no platform is specified, ALL platform langsel files"
+		echo -e "\twill be generated"
+		echo
+		echo "PLATFORMS"
+		echo "Acceptable arguments for 'platform' are:"
+		echo -e "\tmswin - generate windows langsel.c"
+		echo -e "\tunix - generate unix langsel_unix.c"
+		echo -e "\tmac - generate mac langsel_mac.c"
+		echo -e "\tall - generate all langsel files."
+		echo -e "\tIf no platform is specified the script defaults to 'all'"
+		echo
+		echo "Using: genlangsel --help will bring up this message."
+		echo
+		echo "NOTES"
+		echo -e "\tIf this script is not in \$PATH, run with the ./ prefix:"
+		echo -e "\t./genlangsel all"
+		echo -e "\tAll temporary converted files are located in conversions/ path."
+		echo -e "\tThe final output is stored in output/ and should be moved up to the rasmol/src directory after compiling."
+
+		exit 0;
+
+		;;
+
+	mac)
+		iconvmac
+		;;
+
+	mswin)
+		iconvit mswin
+		;;
+
+	unix)
+		iconvit unix
+		;;
+
+	all)
+		iconvit mswin
+		iconvit unix
+		iconvmac
+		;;
+
+	*)
+		iconvit mswin
+		iconvit unix
+		iconvmac
+		;;
+esac
