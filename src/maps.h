@@ -262,6 +262,7 @@ typedef struct {
 #define MapMeshDashFlag 0x210    /* Represent map as dashed mesh    */
 #define MapSurfFlag     0x400    /* Represent map as surface        */
 #define MapMeanFlag     0x800    /* Map level relative to MEAN      */
+#define MapScaleFlag    0x1000   /* Map scaled to atomic no. Z      */
 #define MAP_ORTHOGONAL  0x000    /* Orthogonal map coordinates      */
 #define MAP_FRACTIONAL  0x001    /* Fractional map coordinates      */
 
@@ -321,6 +322,7 @@ extern Long               MapPointRad; /* global radius for
 extern Long               MapSpacing;  /* global map spacing   */
 extern Real               MapSpread;   /* global map spread    */
 extern Long               MapFlag;     /* global map flags     */
+
 extern int                MapRGBCol[3];/* global map color     */
 extern Card               MapRadius;   /* global map radius    */
 extern char*              MapLabel;    /* global map label     */
@@ -424,7 +426,8 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno );
       
    Each atom is mapped to a 3D Gaussian based on sig_per_rad
    sigmas per radius, with the Gaussian treated as zero
-   at 4.5 sigma.  The Gaussian is scaled to the atomic number.
+   at 4.5 sigma.  If ScaletoAN is set, the Gaussian is scaled to the 
+   atomic number, otherwise it is scaled to 1.
    
    sig_per_rad is the reciprocal of the spread.
    
@@ -433,7 +436,8 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno );
 int generate_map(MapStruct **map, 
                             Long xint, Long yint, Long zint,
                             Long xorig, Long yorig, Long zorig,
-                            Long buffer, double sig_per_rad);
+                            Long buffer, double sig_per_rad,
+                            int ScaletoAN);
                             
                             
 /* Interpolate a map value from map at position [xpos,ypos,zpos]

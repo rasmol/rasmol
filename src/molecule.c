@@ -3164,7 +3164,7 @@ static void ResetDatabase( void )
     NullBonds = 0;
     
     MapLevel = 0.;
-    MapFlag = MapMeanFlag;
+    MapFlag = MapMeanFlag|MapScaleFlag;
     MapSpacing = 250L;
     MapSpread = .6667;
     MapRGBCol[0] = 0xFA;
@@ -3271,7 +3271,7 @@ void InitialiseDatabase( void )
     Info.cisbondcount = -1; /* to ititialize it has to be < 0 */   
     CisBondCutOff = CIS;
     MapLevel = 0.;
-    MapFlag = MapMeanFlag;
+    MapFlag = MapMeanFlag|MapScaleFlag;
     MapSpacing = 250L;
     MapSpread = .6667;
     MapRGBCol[0] = 0xFA;

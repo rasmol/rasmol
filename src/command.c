@@ -4053,7 +4053,7 @@ int ApplyMapMask(int mapno ) {
             if(generate_map(&mapmaskptr,MapSpacing/2, 
               MapSpacing/2, MapSpacing/2, 0L, 0L, 0L,
               (Long)(250.*(1.+MapSpread)+MapSpacing), 
-              1./MapSpread )){
+              1./MapSpread, (flag&MapScaleFlag)?1:0 )){
                 CommandError(MsgStrs[StrMalloc]);
            	    return 1;
             }
@@ -4061,7 +4061,7 @@ int ApplyMapMask(int mapno ) {
             if(generate_map(&mapmaskptr,MapSpacing,
               MapSpacing, MapSpacing, 0L, 0L, 0L,
               (Long)(250.*(1.+MapSpread)+MapSpacing),
-              1./MapSpread ) ) {
+              1./MapSpread, (flag&MapScaleFlag)?1:0 ) ) {
                 CommandError(MsgStrs[StrMalloc]);
            	    return 1;
             }
@@ -4262,10 +4262,12 @@ static int ExecuteGenerateCommand( int mapflags ) {
 
   if (mapinfo.flag&MapSurfFlag) {
     generate_map(&mapinfo.MapPtr,mapinfo.MapSpacing/2, mapinfo.MapSpacing/2, mapinfo.MapSpacing/2, 0L, 0L, 0L,
-      (Long)(250.*(1.+mapinfo.MapSpread)+mapinfo.MapSpacing), 1./mapinfo.MapSpread );
+      (Long)(250.*(1.+mapinfo.MapSpread)+mapinfo.MapSpacing), 1./mapinfo.MapSpread,
+      (mapinfo.flag&MapScaleFlag)?1:0 );
   } else{
     generate_map(&mapinfo.MapPtr,mapinfo.MapSpacing, mapinfo.MapSpacing, mapinfo.MapSpacing, 0L, 0L, 0L,
-      (Long)(250.*(1.+mapinfo.MapSpread)+mapinfo.MapSpacing), 1./mapinfo.MapSpread );
+      (Long)(250.*(1.+mapinfo.MapSpread)+mapinfo.MapSpacing), 1./mapinfo.MapSpread,
+      (mapinfo.flag&MapScaleFlag)?1:0);
   }
   
   vector_create((GenericVec __far **)&mapinfo.MapGenSel,sizeof(MapAtmSel),10);
@@ -4719,6 +4721,21 @@ int ExecuteCommandOne( int * restore )
                                 }
                                 ReDrawFlag |= RFRefresh;
                                 break;
+                                
+                              case(ScaleTok):
+                              	FetchToken();
+                              	if (CurToken == TrueTok || CurToken==ZTok || !CurToken) {
+                                  MapFlag |= MapScaleFlag;
+                              	} else if (CurToken == NoneTok || CurToken == FalseTok)  {
+                                  MapFlag &= ~MapScaleFlag;                              		
+                              	} else { CommandError(MsgStrs[ErrBadArg]);
+                              	  break;
+                              	}
+                              	ApplyMapSelection();
+                                ReDrawFlag |= RFRefresh;
+                                break;
+                                ApplyMapFlag();
+
 
                               case(GenerateTok):
                                 mapflags = MapFlag;

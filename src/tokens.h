@@ -500,6 +500,7 @@
 #define HeaderTok      562
 #define CIFDataTok     563
 #define FSTok          564
+#define ScaleTok       565
 
 #define PSTok          EPSFTok
 

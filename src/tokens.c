@@ -1602,6 +1602,7 @@ int LookUpKeyword( char *ptr )
       /*
         SALIR                ExitTok
         SAVE                 SaveTok
+        SCALE                ScaleTok
         SCHELETRO            BackboneTok
         SCRIPT               ScriptTok
         SECTION              SectionTok
@@ -1659,7 +1660,9 @@ int LookUpKeyword( char *ptr )
                     break;
 
                 case('C'):
-                    if( !strcmp(ptr,"RIPT") ) {
+                    if( !strcmp(ptr,"ALE") ) {
+                        return( ScaleTok );
+                    }else if( !strcmp(ptr,"RIPT") ) {
                         return( ScriptTok );
                     } else if( !strcmp(ptr,"HELETRO") ) {
                         return( BackboneTok );

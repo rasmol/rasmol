@@ -1985,7 +1985,7 @@ void InitialiseRepres( void )
     DotPtr = (DotStruct __far*)0;
     MapInfoPtr = (MapInfoVec __far *)0;
     MapLevel = 0.0;
-    MapFlag = MapMeanFlag;
+    MapFlag = MapMeanFlag|MapScaleFlag;
     MapSpacing = 250L;
     MapSpread = .6667;
     MapRGBCol[0] = 0xFA;

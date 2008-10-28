@@ -1279,6 +1279,11 @@ static void WriteScriptMaps()
             fprintf(OutFile,"map new spacing %-.2lf\n",((double)mapinfo->MapSpacing/250.) );
             fprintf(OutFile,"map new spread %-.2lf\n",mapinfo->MapSpread);	
           }
+          if (mapinfo->flag&MapScaleFlag) {
+            fprintf(OutFile,"map new scale Z\n" );
+          } else {
+            fprintf(OutFile,"map new scale none\n" );          	          	
+          }
           if (mapinfo->MapFile) {
             fprintf(OutFile,"map new load \"%s\"\n",mapinfo->MapFile);
           } else {

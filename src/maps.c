@@ -3648,14 +3648,16 @@ int vector_free(GenericVec __far * __far * vector) {
       
    Each atom is mapped to a 3D Gaussian based on sig_per_rad
    sigmas per radius, with the Gaussian treated as zero
-   at 4.5 sigma.  The Gaussian is scaled to the atomic number.
+   at 4.5 sigma.  If ScaletoAN is set, the Gaussian is scaled to the 
+   atomic number, otherwise it is scaled to 1.
    
    */
    
 int generate_map(MapStruct **map, 
                             Long xint, Long yint, Long zint,
                             Long xorig, Long yorig, Long zorig,
-                            Long buffer, double sig_per_rad) {
+                            Long buffer, double sig_per_rad,
+                            int ScaletoAN) {
 
     register Chain __far *chain;
     register Group __far *group;
@@ -3793,6 +3795,8 @@ int generate_map(MapStruct **map,
         
         double sig, coeff;
         
+        double scaleg;
+        
         radius = ptr->radius;
         if (radius < 10) radius = Element[ptr->elemno].vdwrad;
         
@@ -3805,6 +3809,16 @@ int generate_map(MapStruct **map,
         sig /= 250.;
         
         coeff = 1/(sig*sig*sig*sqrt2pi3);
+        
+        if (ScaletoAN) {
+        	
+          scaleg = (double)(ptr->elemno)*coeff;
+        
+        } else {
+        
+          scaleg = 1.;
+  
+        }
         
         xpos = ptr->xorg + ptr->fxorg +OrigCX -xorig;
 #ifdef INVERT
@@ -3859,7 +3873,8 @@ int generate_map(MapStruct **map,
                    
                  distsq /= 62500.;
             
-            	 MapEldouble((*map),xel,yel,zel) += ((double)(ptr->elemno)*coeff*exp(-distsq/(2.*sig*sig)));
+            
+            	 MapEldouble((*map),xel,yel,zel) += scaleg*exp(-distsq/(2.*sig*sig));
             	 
             	 /* fprintf (stderr,"MapEl(%ld,%ld,%ld) = %g\n",xel,yel,zel,MapEldouble((*map),xel,yel,zel)); */
             }
