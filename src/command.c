@@ -3849,7 +3849,7 @@ static void ApplyMapFlag( void ) {
         if (mapinfo->flag&(MapSurfFlag))
           vector_create((GenericVec __far **)&mapinfo->MapTanglePtr,sizeof(MapTangle),1000);
         map_points(mapinfo->MapPtr, 
-          mapinfo->MapLevel+(MapFlag&MapMeanFlag)?mapinfo->MapPtr->mapdatamean:0, 
+          mapinfo->MapLevel+((mapinfo->flag&MapMeanFlag)?mapinfo->MapPtr->mapdatamean:0.), 
           mapinfo->MapSpacing, mapinfo->MapPointsPtr,mapinfo->MapBondsPtr,mapinfo->MapTanglePtr,
           mapinfo->MapMaskPtr, mapinfo->MapRGBCol );
         if (mapinfo->flag&MapColourPot) ColourPointPotential(j);
@@ -3956,7 +3956,7 @@ void ApplyMapShow( void ) {
     sprintf(buffer,"map new %s %s %#lg spacing %#lg spread %#lg\n",
     MapFlag&MapSurfFlag?"surface":(MapFlag&MapMeshFlag?"mesh":(
       MapFlag&MapPointFlag?"dots":"unknown") ),
-      MapFlag&MapMeanFlag?"Level MEAN ":"MEAN",(double)MapLevel,
+      MapFlag&MapMeanFlag?"level MEAN ":"level ",(double)MapLevel,
       (double)MapSpacing/250., (double)MapSpread);
     WriteString(buffer); 
     if (MapMaskPtr) {
@@ -3976,7 +3976,7 @@ void ApplyMapShow( void ) {
         sprintf(buffer,"map %d: %s %s %lg spacing %#lg spread %#lg %s %s\n",j+1,
             mapinfo->flag&MapSurfFlag?"surface":(mapinfo->flag&MapMeshFlag?"mesh":(
               mapinfo->flag&MapPointFlag?"dots":"unknown") ),
-              mapinfo->flag&MapMeanFlag?"level MEAN ":"MEAN",(double)mapinfo->MapLevel,
+              mapinfo->flag&MapMeanFlag?"level MEAN ":"level ",(double)mapinfo->MapLevel,
               (double)mapinfo->MapSpacing/250., (double)mapinfo->MapSpread,
               mapinfo->MapFile?"file: ":"",
               mapinfo->MapFile?mapinfo->MapFile:"");
@@ -4281,7 +4281,7 @@ static int ExecuteGenerateCommand( int mapflags ) {
     if (mapinfo.flag&(MapSurfFlag))
       vector_create((GenericVec __far **)&mapinfo.MapTanglePtr,sizeof(MapTangle),1000);
     map_points(mapinfo.MapPtr, 
-      mapinfo.MapLevel+(MapFlag&MapMeanFlag)?mapinfo.MapPtr->mapdatamean:0, 
+      mapinfo.MapLevel+((mapinfo.flag&MapMeanFlag)?mapinfo.MapPtr->mapdatamean:0.), 
       mapinfo.MapSpacing, mapinfo.MapPointsPtr,mapinfo.MapBondsPtr,mapinfo.MapTanglePtr,
       mapinfo.MapMaskPtr, mapinfo.MapRGBCol );
     

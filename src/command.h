@@ -70,7 +70,7 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* command.h
- $Log: not supported by cvs2svn $
+ $Log$
  Revision 1.12  2008/04/10 13:42:54  yaya
  Fix handling of load pdb and add Bulgarian to rasmol_run.sh -- HJB
 

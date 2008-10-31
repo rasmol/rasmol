@@ -70,7 +70,7 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* font.h
- $Log: not supported by cvs2svn $
+ $Log$
  Revision 1.5  2008/03/22 18:42:51  yaya
  Post release cleanup and credit to Ikonen in file headers. -- HJB
 

@@ -2937,7 +2937,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
         vector_create((GenericVec __far **)&mapinfo.MapTanglePtr,sizeof(MapTangle),1000);
 
       cbf_failnez(map_points(mapinfo.MapPtr, 
-      mapinfo.MapLevel+((mapinfo.flag&MapMeanFlag)?mapinfo.MapPtr->mapdatamean:0), 
+      mapinfo.MapLevel+((mapinfo.flag&MapMeanFlag)?mapinfo.MapPtr->mapdatamean:0.), 
       mapinfo.MapSpacing, mapinfo.MapPointsPtr,mapinfo.MapBondsPtr,mapinfo.MapTanglePtr,
       mapinfo.MapMaskPtr, mapinfo.MapRGBCol ))
 
@@ -3413,7 +3413,7 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
     }
 
     cbf_failnez(map_points(mapinfo.MapPtr, 
-    mapinfo.MapLevel+((mapinfo.flag&MapMeanFlag)?mapinfo.MapPtr->mapdatamean:0), 
+    mapinfo.MapLevel+((mapinfo.flag&MapMeanFlag)?mapinfo.MapPtr->mapdatamean:0.), 
     mapinfo.MapSpacing, mapinfo.MapPointsPtr,mapinfo.MapBondsPtr,mapinfo.MapTanglePtr,
     mapinfo.MapMaskPtr, mapinfo.MapRGBCol ))
 
