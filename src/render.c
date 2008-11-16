@@ -676,9 +676,7 @@ static void VoxelInsert( RAtom __far *ptr,  int ref )
     if( !FreeItem )
     {   datum = (Item __far*)_fmalloc( PoolSize*sizeof(Item) );
 	if( !datum ) FatalRenderError("voxel item");
-#ifdef RASTOPWIN
 	RegisterAlloc( datum );
-#endif
     for( i=1; i<PoolSize; i++ )
 	{   datum->list = FreeItem;
 	    FreeItem = datum++;

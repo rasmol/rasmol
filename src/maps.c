@@ -3667,7 +3667,7 @@ int generate_map(MapStruct **map,
     register long xel, yel, zel;
     register int radius;
     size_t mapcount;
-    double test;
+    double test, pr;
     int ii, jj;
     
     double pi,sqrt2pi3;
@@ -3676,7 +3676,11 @@ int generate_map(MapStruct **map,
     
     sqrt2pi3 = 2.*pi*sqrt(2.*pi);
     
-    
+    pr = 350.;
+        
+    if (ProbeRadius > 100) pr = (double)ProbeRadius;
+
+
     /* First intialize the map */
     
     *map = (MapStruct*)_fmalloc(sizeof(MapStruct));
@@ -3723,11 +3727,19 @@ int generate_map(MapStruct **map,
         double sig;
         
         radius = ptr->radius;
-        if (radius < 10) radius = Element[ptr->elemno].vdwrad;
+        if (radius < 100) radius = Element[ptr->elemno].vdwrad;
         
-        rad = radius + ProbeRadius;
+        rad = radius;
         
-        sig = ((double)rad)/sig_per_rad;
+        if (sig_per_rad > 0.) {
+        	
+          sig = ((double)rad)/sig_per_rad;
+          
+        } else  {
+         	
+          sig = ((double)rad)*(2.*pr*pr + rad*pr - rad*sqrt(4.*(rad+pr)*(rad+pr) - 4.*rad*rad))/(2.*log(2.)*rad*rad);
+
+        }
         
         sig6 = (Long)(6* sig);
 
@@ -3798,11 +3810,19 @@ int generate_map(MapStruct **map,
         double scaleg;
         
         radius = ptr->radius;
-        if (radius < 10) radius = Element[ptr->elemno].vdwrad;
+        if (radius < 100) radius = Element[ptr->elemno].vdwrad;
         
-        rad = radius + ProbeRadius;
+        rad = radius;
         
-        sig = ((double)rad)/sig_per_rad;
+        if (sig_per_rad > 0.) {
+        	
+          sig = ((double)rad)/sig_per_rad;
+          
+        } else  {
+                	
+          sig = ((double)rad)*(2.*pr*pr + rad*pr - rad*sqrt(4.*(rad+pr)*(rad+pr) - 4.*rad*rad))/(2.*log(2.)*rad*rad);
+
+        }
         
         sig6 = (Long)(6* sig);
         
@@ -3816,7 +3836,7 @@ int generate_map(MapStruct **map,
         
         } else {
         
-          scaleg = 1.;
+          scaleg = exp(rad*rad/(62500.*2.*sig*sig));
   
         }
         
@@ -3872,7 +3892,7 @@ int generate_map(MapStruct **map,
                    + ((double)(zel*zint-zpos))*((double)(zel*zint-zpos));
                    
                  distsq /= 62500.;
-            
+                 
             
             	 MapEldouble((*map),xel,yel,zel) += scaleg*exp(-distsq/(2.*sig*sig));
             	 
@@ -4623,6 +4643,8 @@ int map_points(MapStruct __far *map, double level, Long spacing,
           for (iy = 0; iy < ypts-1; iy ++) {
             for (ix = 0; ix < xpts-1; ix ++) {
               for (ii=0; ii<3; ii++) {
+              
+                square[0] = square[1] = square[2] = square[3] = 0;
             
                 switch (ii) {
             	

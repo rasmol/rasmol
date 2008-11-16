@@ -70,7 +70,17 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* infile.c
- $Log: not supported by cvs2svn $
+ $Log: infile.c,v $
+ Revision 1.14  2008/07/18 01:11:01  yaya
+ Report a syntax error on rotate all 3 in command.c
+ Change const char * to char * for datablock name in infile.c -- HJB
+
+ Revision 1.13  2008/06/28 22:38:45  yaya
+ Update for mmCIF CHEM_COMP ligand support.  Add notes
+ to rasmol.doc; cif_datablock_name and cif_rewind_datablock;
+ add logic to read CHEM_COMP_ATOM and CHEM_COMP_BOND parses
+ to LoadCIFMolecule, putting models in a NMR models. -- HJB
+
  Revision 1.12  2008/06/28 14:06:37  yaya
  Fix unused variable warning in command.c
  Start changes for loading models in infile.c

@@ -4053,7 +4053,7 @@ int ApplyMapMask(int mapno ) {
             if(generate_map(&mapmaskptr,MapSpacing/2, 
               MapSpacing/2, MapSpacing/2, 0L, 0L, 0L,
               (Long)(250.*(1.+MapSpread)+MapSpacing), 
-              1./MapSpread, (flag&MapScaleFlag)?1:0 )){
+              (MapSpread > 0.)?(1./MapSpread):0., (flag&MapScaleFlag)?1:0 )){
                 CommandError(MsgStrs[StrMalloc]);
            	    return 1;
             }
@@ -4061,7 +4061,7 @@ int ApplyMapMask(int mapno ) {
             if(generate_map(&mapmaskptr,MapSpacing,
               MapSpacing, MapSpacing, 0L, 0L, 0L,
               (Long)(250.*(1.+MapSpread)+MapSpacing),
-              1./MapSpread, (flag&MapScaleFlag)?1:0 ) ) {
+              (MapSpread > 0.)?(1./MapSpread):0., (flag&MapScaleFlag)?1:0 ) ) {
                 CommandError(MsgStrs[StrMalloc]);
            	    return 1;
             }
