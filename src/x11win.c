@@ -70,7 +70,7 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* x11win.c
- $Log: not supported by cvs2svn $
+ $Log$
  Revision 1.13  2008/06/28 14:25:26  yaya
  Make more IPC errors non-fatal.  -- HJB
 

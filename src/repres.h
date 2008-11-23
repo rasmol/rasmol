@@ -70,7 +70,7 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* repres.h
- $Log: not supported by cvs2svn $
+ $Log$
  Revision 1.8  2008/04/01 17:31:19  hk0i
  updated new color mode feature for dots
 

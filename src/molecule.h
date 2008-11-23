@@ -70,7 +70,7 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* molecule.h
- $Log: not supported by cvs2svn $
+ $Log$
  Revision 1.9  2008/06/11 01:40:54  yaya
  Improve gradient for map surfaces and brighten image;
  Add parenthesized selections before all commands;

@@ -2286,7 +2286,12 @@ formats are
 '<tt><b>CIF</b></tt>',
 or
 '<tt><b>mmCIF</b></tt>'
-is assumed by default. Up to 5 molecules may be loaded at a time.
+is assumed by default. Up to 20 molecules may be loaded at a time.
+If CHEM_COMP ligand models are included in an mmCIF file, they will be loaded
+as NMR models, first giving the all the NMR models for model
+coordinates if specified and then giving all the NMR models for
+ideal model coordinates.
+<p>
 To delete a molecule prior to loading another use the RasMol
 '<a href="#zap"><tt><b>zap</b></tt></a>'
 command.  To select a molecule for manipulation use the RasMol
@@ -2344,7 +2349,7 @@ files or generated from Gaussian density distributions
 around atoms.
 <p>
 '<a href="#mapgenerate"><tt><b>map generate</b></tt></a>',
-to generate a map from selected atoms,
+to generate a map from selected atoms based on pseudo-Gaussians,
 '<a href="#maplevel"><tt><b>map level</b></tt></a>',
 to set the contouring level for selected maps,
 '<a href="#mapload"><tt><b>map load</b></tt></a>',
@@ -2357,6 +2362,8 @@ to set the resolution for contouring selected maps,
 to select one or more maps and to disable all others,
 '<a href="#mapsave"><tt><b>map save</b></tt></a>',
 to save map information to a file,
+'<a href="#mapscale"><tt><b>map scale</b></tt></a>',
+'<a href="#to"><tt><b>control the scaling of pseudo-Gaussians when generating maps</b></tt></a>',
 '<a href="#mapselect"><tt><b>map select</b></tt></a>',
 to select one or more maps,
 '<a href="#mapshow"><tt><b>map show</b></tt></a>',
@@ -2390,16 +2397,27 @@ The RasMol
 '<tt><b>map generate</b></tt>'
 command generates a map from whatever atoms are currently selected,
 by summing electron densities approximated by Gaussian distributions.
-Each Gaussian has a height proportional to the atomic number of the
-element type of the atom and a standard deviation determined by the
-most recently specified spread or resolution.  If a spread has been
+The height of each Gaussian is determined by the setting of the
+'<a href="#mapscale"><tt><b> map scale</b></tt></a>'
+command.
+In the default of map scale true, each Gaussian has a height proportional
+element type of the atom.
+If map scale false has been executed, each Gaussian is scaled so that
+the Gaussian contour level 1 is at the van der Waals radius.
+In either case a standard deviation determined by the
+most recently specified spread or resolution is used.  If a non-zero spread has been
 given the radius of the atom is multiplied by the spread to find the
 standard deviation.  The default is 2/3rds.  If a resolution
 has been given, the spread is inferred as 2/3rds of the resolution.
+<p>
 For example, if the resolution is given as 1., and the atom in question
 is a Carbon with a van der Waals radius of 468 RasMol units (1.87 &Aring;ngstroms),
 the inferred spead is .6667, and the standard deviation of the Gaussian
 is taken as 1.25 &Aring;ngstroms.
+<p>
+If the spread has been set to zero, the spread for each atom is determined
+from the van der Waals radius and the probe atom radius to simulate the
+effect of a Lee-Richards surface.
 <p>
 If no specific map was given by the map selector, the new map is
 given the next available map number.
@@ -2528,6 +2546,23 @@ If no specific map was given by the map selector, the currently
 selected maps and their masks are written to the file, one
 map and mask pair per data block.
 <p><hr>
+<a name="mapscale"><h3>Map scale</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} scale &lt;boolean&gt;
+
+</pre><p>
+The RasMol
+'<tt><b>map scale</b></tt>'
+command selects the scaling of pseudo-Gaussians in the
+'<a href="#mapgenerate"><tt><b>map generate</b></tt></a>'
+commands.
+In the default of map scale true, each Gaussian has a height proportional
+element type of the atom.
+If map scale false has been executed, each Gaussian is scaled so that
+the Gaussian contour level 1 is at the van der Waals radius.
+In either case a standard deviation determined by the
+most recently specified spread or resolution is used.
+<p><hr>
 <a name="mapselect"><h3>Map select</h3></a><p>
 <pre>
 Syntax:  map {&lt;map_selector&gt;} select
@@ -2576,8 +2611,12 @@ The RasMol
 command specifies the reciprocal of the number of
 standard deviations per radius to be used in
 generating maps as sums of Gaussians centered
-on atomic positions.  The default spead is one
+on atomic positions.  The default spread is one
 two thirds (<i>i.e.</i> each radius covers 1.5 standard deviations).
+<p>
+If the spread has been set to zero, the spread for each atom is determined
+from the van der Waals radius and the probe atom radius to simulate the
+effect of a Lee-Richards surface.
 <p><hr>
 <a name="mapzap"><h3>Map zap</h3></a><p>
 <pre>

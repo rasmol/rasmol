@@ -70,7 +70,7 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* transfor.h
- $Log: not supported by cvs2svn $
+ $Log$
  Revision 1.7  2008/03/22 18:42:55  yaya
  Post release cleanup and credit to Ikonen in file headers. -- HJB
 

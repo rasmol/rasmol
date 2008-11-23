@@ -70,7 +70,7 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* transfor.c
- $Log: not supported by cvs2svn $
+ $Log$
  Revision 1.13  2008/06/18 20:04:53  yaya
  Start in infrastructure for animation
  Start on WPDB code -- HJB

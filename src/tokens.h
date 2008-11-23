@@ -71,7 +71,7 @@
  ***************************************************************************/
 
 /* tokens.h
- $Log: not supported by cvs2svn $
+ $Log$
  Revision 1.14  2008/06/19 19:13:37  yaya
  Insert WPDBTok -- HJB
 

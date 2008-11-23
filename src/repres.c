@@ -70,7 +70,7 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* repres.c
- $Log: not supported by cvs2svn $
+ $Log$
  Revision 1.22  2008/06/11 01:42:41  yaya
  Finish map surface update. -- HJB
 

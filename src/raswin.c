@@ -71,7 +71,7 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* raswin.c
- $Log: not supported by cvs2svn $
+ $Log$
  Revision 1.8  2008/06/27 02:47:58  yaya
  Finished update of windows code for 32-bit color -- HJB
 

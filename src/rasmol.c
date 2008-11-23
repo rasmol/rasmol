@@ -70,7 +70,7 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* rasmol.c
- $Log: not supported by cvs2svn $
+ $Log$
  Revision 1.5  2008/03/22 18:42:54  yaya
  Post release cleanup and credit to Ikonen in file headers. -- HJB
 

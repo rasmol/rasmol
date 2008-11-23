@@ -70,7 +70,7 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* tokens.c
- $Log: not supported by cvs2svn $
+ $Log$
  Revision 1.17  2008/06/19 19:03:39  yaya
  Fix missing } -- HJB
 

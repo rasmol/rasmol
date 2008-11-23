@@ -3469,7 +3469,7 @@ all, next and new (or none) may also be used as map selectors.
 AP
 The map subcommands are
 AXmapgenerate map generate,
-ATto generate a map from selected atoms,
+ATto generate a map from selected atoms based on pseudo-Gaussians,
 AXmaplevel map level,
 ATto set the contouring level for selected maps,
 AXmapload map load,
@@ -3482,6 +3482,8 @@ AXmaprestrict map restrict,
 ATto select one or more maps and to disable all others,
 AXmapsave map save,
 ATto save map information to a file,
+AXmapscale map scale,
+AXto control the scaling of pseudo-Gaussians when generating maps,
 AXmapselect map select,
 ATto select one or more maps,
 AXmapshow map show,
@@ -3530,16 +3532,28 @@ ATThe RasMol
 ACmap generate
 ATcommand generates a map from whatever atoms are currently selected,
 ATby summing electron densities approximated by Gaussian distributions.
-ATEach Gaussian has a height proportional to the atomic number of the
-ATelement type of the atom and a standard deviation determined by the
-ATmost recently specified spread or resolution.  If a spread has been
+ATThe height of each Gaussian is determined by the setting of the
+AXmapscale  map scale
+ATcommand.
+ATIn the default of map scale true, each Gaussian has a height proportional 
+to the atomic number of the
+ATelement type of the atom.
+ATIf map scale false has been executed, each Gaussian is scaled so that
+ATthe Gaussian contour level 1 is at the van der Waals radius.
+ATIn either case a standard deviation determined by the
+ATmost recently specified spread or resolution is used.  If a non-zero spread has been
 ATgiven the radius of the atom is multiplied by the spread to find the
 ATstandard deviation.  The default is 2/3rds.  If a resolution
 AThas been given, the spread is inferred as 2/3rds of the resolution.
+AP
 ATFor example, if the resolution is given as 1., and the atom in question
 ATis a Carbon with a van der Waals radius of 468 RasMol units (1.87 Angstroms),
 ATthe inferred spead is .6667, and the standard deviation of the Gaussian
 ATis taken as 1.25 Angstroms.
+AP
+ATIf the spread has been set to zero, the spread for each atom is determined
+ATfrom the van der Waals radius and the probe atom radius to simulate the
+ATeffect of a Lee-Richards surface.
 AP
 ATIf no specific map was given by the map selector, the new map is
 ATgiven the next available map number.
@@ -3732,6 +3746,35 @@ ATselected maps and their masks are written to the file, one
 ATmap and mask pair per data block.
 AB
 
+PR?mapscale
+ASMap scale
+NRSyntax:  map {<map_selector>} scale <boolean>
+NR
+HR<pre>
+HRSyntax:  map {&lt;map_selector&gt;} scale &lt;boolean&gt;
+HR
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRmap \{<map_selector>\}  scale <boolean>
+RR}\pard\par
+
+ATThe RasMol
+ACmap scale
+ATcommand selects the scaling of pseudo-Gaussians in the
+AXmapgenerate map generate
+ATcommands. 
+ATIn the default of map scale true, each Gaussian has a height proportional 
+to the atomic number of the
+ATelement type of the atom.
+ATIf map scale false has been executed, each Gaussian is scaled so that
+ATthe Gaussian contour level 1 is at the van der Waals radius.
+ATIn either case a standard deviation determined by the
+ATmost recently specified spread or resolution is used. 
+AB
+
+
+
 PR?mapselect
 ASMap select
 NRSyntax:  map {<map_selector>} select
@@ -3817,8 +3860,12 @@ ACmap spread
 ATcommand specifies the reciprocal of the number of
 ATstandard deviations per radius to be used in
 ATgenerating maps as sums of Gaussians centered
-ATon atomic positions.  The default spead is one
+ATon atomic positions.  The default spread is one
 ATtwo thirds (i.e. each radius covers 1.5 standard deviations).
+AP
+ATIf the spread has been set to zero, the spread for each atom is determined
+ATfrom the van der Waals radius and the probe atom radius to simulate the
+ATeffect of a Lee-Richards surface.
 AB
 
 

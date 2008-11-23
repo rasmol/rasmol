@@ -70,7 +70,7 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* molecule.c
- $Log: not supported by cvs2svn $
+ $Log$
  Revision 1.21  2008/06/11 01:40:54  yaya
  Improve gradient for map surfaces and brighten image;
  Add parenthesized selections before all commands;
@@ -1647,7 +1647,7 @@ static int PreTestSurface(  RAtom __far *sptr,  RAtom __far *dptr,
     
     /* Sum of van der Waals radii */
 	dist = srad + drad;
-	maxT = dist*dist/16;
+	maxT = dist*dist/64;
     dist += ProbeRadius+ProbeRadius;
     maxS = dist*dist;  
     
@@ -1711,7 +1711,7 @@ static void TestSurface(  RAtom __far *sptr,  RAtom __far *dptr )
     dz = sptr->zorg-dptr->zorg
          + sptr->fzorg-dptr->fzorg;   if( (dist+=dz*dz)>=maxS ) return;
 
-    if( dist > (srad+drad-ProbeRadius)*(srad+drad-ProbeRadius) )
+    if( dist > (srad+drad)*(srad+drad)/64. )
     {   /* Reset Non-bonded flags! */
         sptr->flag &= ~NonBondFlag;
         dptr->flag &= ~NonBondFlag;

@@ -2910,7 +2910,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
       mapinfo.MapLevel = MapLevel;
       mapinfo.MapLabel = NULL;          /* clear the map label */
       mapinfo.MapSpacing = MapSpacing;
-      if (MapSpread < 0.1) MapSpread = 2.*((double)MapSpacing)/750.;
+      if (MapSpread < 0.) MapSpread = 2.*((double)MapSpacing)/750.;
       mapinfo.MapSpread = MapSpread;
       if (!(MapFlag & (MapPointFlag|MapMeshFlag|MapSurfFlag)) ) MapFlag |= MapPointFlag;
       mapinfo.flag = SelectFlag|MapFlag;
@@ -3014,7 +3014,7 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
     mapinfo.MapLevel = MapLevel;
     mapinfo.MapLabel = NULL;          /* clear the map label */
     mapinfo.MapSpacing = MapSpacing;
-    if (MapSpread < 0.1) MapSpread = 2.*((double)MapSpacing)/750.;
+    if (MapSpread < 0.) MapSpread = 2.*((double)MapSpacing)/750.;
     mapinfo.MapSpread = MapSpread;
     if (!(MapFlag & (MapPointFlag|MapMeshFlag|MapSurfFlag)) ) MapFlag |= MapPointFlag;
     mapinfo.flag = SelectFlag|MapFlag;
@@ -3737,7 +3737,7 @@ int generate_map(MapStruct **map,
           
         } else  {
          	
-          sig = ((double)rad)*(2.*pr*pr + rad*pr - rad*sqrt(4.*(rad+pr)*(rad+pr) - 4.*rad*rad))/(2.*log(2.)*rad*rad);
+            sig = sqrt((2.*pr*pr + 2.*rad*pr - pr*sqrt(4.*(rad+pr)*(rad+pr) - 4.*rad*rad))/(2.*log(2.)));
 
         }
         
@@ -3820,7 +3820,7 @@ int generate_map(MapStruct **map,
           
         } else  {
                 	
-          sig = ((double)rad)*(2.*pr*pr + rad*pr - rad*sqrt(4.*(rad+pr)*(rad+pr) - 4.*rad*rad))/(2.*log(2.)*rad*rad);
+          sig = sqrt((2.*pr*pr + 2.*rad*pr - pr*sqrt(4.*(rad+pr)*(rad+pr) - 4.*rad*rad))/(2.*log(2.)));
 
         }
         
