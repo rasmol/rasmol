@@ -263,6 +263,7 @@ typedef struct {
 #define MapSurfFlag     0x400    /* Represent map as surface        */
 #define MapMeanFlag     0x800    /* Map level relative to MEAN      */
 #define MapScaleFlag    0x1000   /* Map scaled to atomic no. Z      */
+#define MapLRSurfFlag   0x2000   /* Map with Lee-Richards approx    */  
 #define MAP_ORTHOGONAL  0x000    /* Orthogonal map coordinates      */
 #define MAP_FRACTIONAL  0x001    /* Fractional map coordinates      */
 

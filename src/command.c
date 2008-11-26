@@ -4181,9 +4181,15 @@ static int ExecuteGenerateCommand( int mapflags ) {
   
   mapinfo.MapLevel = MapLevel;
   mapinfo.MapSpacing = MapSpacing;
+    if (mapinfo.MapSpacing < 0.1) mapinfo.MapSpacing = 0.1;
   if (MapSpread < 0.) MapSpread = 2.*((double)(MapSpacing))/750.;
   mapinfo.MapSpread = MapSpread;
   mapinfo.flag = SelectFlag|mapflags;
+  if (mapinfo.flag&MapLRSurfFlag) {
+      mapinfo.MapSpread = 0.;
+      mapinfo.MapLevel = 1.;
+      mapinfo.flag &= ~(MapMeanFlag|MapScaleFlag);
+  }
   mapinfo.MapPointsPtr = NULL;
   mapinfo.MapBondsPtr = NULL;
   mapinfo.MapTanglePtr = NULL;
@@ -4740,15 +4746,26 @@ int ExecuteCommandOne( int * restore )
                               case(GenerateTok):
                                 mapflags = MapFlag;
                                 FetchToken();
-                                if ( CurToken==DotsTok) {
+                                if (CurToken==MolSurfTok) {
+                                  mapflags |= MapLRSurfFlag;
+                                  FetchToken();
+                                }
+                                if (CurToken==DotsTok) {
                                   mapflags &= ~(MapPointFlag|MapMeshFlag|MapSurfFlag);
                                   mapflags |= MapPointFlag;
+                                  FetchToken();
                                 } else if (CurToken==WireframeTok) {
                                   mapflags &= ~(MapPointFlag|MapMeshFlag|MapSurfFlag);
                                   mapflags |= MapMeshFlag;
+                                  FetchToken();
                                 } else if (CurToken==SurfaceTok) {
                                   mapflags &= ~(MapPointFlag|MapMeshFlag|MapSurfFlag);
                                   mapflags |= MapSurfFlag;
+                                  FetchToken();
+                                }
+                                if (CurToken==MolSurfTok) {
+                                  mapflags |= MapLRSurfFlag;
+                                  FetchToken();
                                 } else if (CurToken) { 
                                   CommandError(MsgStrs[ErrBadArg]);
                                   break;

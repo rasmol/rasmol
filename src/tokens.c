@@ -1013,10 +1013,12 @@ int LookUpKeyword( char *ptr )
         LARGE                LargeTok
         LEFT                 LeftTok
         LEVEL                LevelTok (ContourTok)
+        LEERICHARDS          MolSurfTok
         LH                   LeftTok
         LIGAND               LigandTok
         LIGANDS              LigandTok
         LOAD                 LoadTok
+        LRSURF               MolSurfTok
       */
 
         case('L'):
@@ -1032,7 +1034,9 @@ int LookUpKeyword( char *ptr )
                     break;
                     
             	case('E'):
-            	    if( !strcmp(ptr,"VEL") ){
+            	    if( !strcmp(ptr,"ERCHARDS") ){
+            	        return( MolSurfTok);
+            	    } else if( !strcmp(ptr,"VEL") ){
             	        return( LevelTok);
             	    } else if( !strcmp(ptr,"FT") ) {
                         return( LeftTok );
@@ -1060,6 +1064,12 @@ int LookUpKeyword( char *ptr )
                     }
                     break;
 
+                case('R'):
+                    if( !strcmp(ptr,"SURF") ) {
+                        return( MolSurfTok );
+                    }
+                    break;
+                    
             }
             break;
 

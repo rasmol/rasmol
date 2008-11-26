@@ -134,9 +134,9 @@ void InitialiseMaps( void ) {
   if (vector_create((GenericVec __far * __far *)&MapInfoPtr,
     sizeof(MapInfo),10) ){
       InvalidateCmndLine();
-      RasMolFatalExit(MsgStrs[StrMalloc]);  	
+      RasMolFatalExit(MsgStrs[StrMalloc]);      
   }
-	
+    
 }
 
 /* Delete Maps 
@@ -228,18 +228,18 @@ void DeleteMap( int map, int keepmap ) {
       shade = DefineShade(mapinfo->MapRGBCol[0],mapinfo->MapRGBCol[1],mapinfo->MapRGBCol[2]);
       if (mapinfo->MapPointsPtr) {
         vector_free((GenericVec __far * __far *)&(mapinfo->MapPointsPtr) );
-      	Shade[shade].refcount--;
-      	mapinfo->MapPointsPtr = NULL;
+          Shade[shade].refcount--;
+          mapinfo->MapPointsPtr = NULL;
       }
       if (mapinfo->MapBondsPtr){
         vector_free((GenericVec __far * __far *)&(mapinfo->MapBondsPtr) );
-      	Shade[shade].refcount--;
-      	mapinfo->MapBondsPtr = NULL;
+          Shade[shade].refcount--;
+          mapinfo->MapBondsPtr = NULL;
       }
       if (mapinfo->MapTanglePtr){
         vector_free((GenericVec __far * __far *)&(mapinfo->MapTanglePtr ) );
-      	Shade[shade].refcount--;
-      	mapinfo->MapTanglePtr = NULL;
+          Shade[shade].refcount--;
+          mapinfo->MapTanglePtr = NULL;
       }
 
       if (!keepmap && mapinfo->MapPtr) {
@@ -298,7 +298,7 @@ void DeleteAllMaps( void ) {
     SaveMolecule = MoleculeIndex;
     for (i = 0; i < NumMolecules; i++) {
         SwitchMolecule(i);
-        DeleteMaps();  	
+        DeleteMaps();      
     }
     SwitchMolecule(SaveMolecule);
 };
@@ -312,7 +312,7 @@ void MapReRadius( void ) {
     MapInfo mapinfo;
     
     MapRadius = 0;
-	
+    
     if (MapInfoPtr)
         for (j=0; j<MapInfoPtr->size; j++) {
             vector_get_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,j );
@@ -468,14 +468,14 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
               ocmap_axisvec[ii] = (map->mapxlate[ii]+OrigC[ii])*rc2oc[ii];
               for (jj=0; jj<3; jj++) {
                 ocmap_axismat[ii][jj] = MapM2R(map,ii,jj)*rc2oc[ii];
-                templen[jj] +=  ocmap_axismat[ii][jj]*ocmap_axismat[ii][jj];              	
-              }	
+                templen[jj] +=  ocmap_axismat[ii][jj]*ocmap_axismat[ii][jj];                  
+              }    
             }
             for (jj = 0; jj < 3; jj++) templen[jj] = sqrt(templen[jj]);
             for (ii=0 ; ii<3; ii++) {
               for (jj=0; jj<3; jj++) {
                 ocmap_axismat[ii][jj] /= templen[jj];
-              }	
+              }    
             }
             
             matmul(Info.mato2f, ocmap_axismat, fcmap_axismat);
@@ -484,14 +484,14 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
             for (jj = 0; jj < 3; jj++) templen[jj] = 0;
             for (ii = 0; ii < 3; ii++) {
               for (jj=0; jj<3; jj++) {
-                templen[jj] +=  fcmap_axismat[ii][jj]*fcmap_axismat[ii][jj];              	
-              }	
+                templen[jj] +=  fcmap_axismat[ii][jj]*fcmap_axismat[ii][jj];                  
+              }    
             }
             for (jj = 0; jj < 3; jj++) templen[jj] = sqrt(templen[jj]);
             for (ii=0 ; ii<3; ii++) {
               for (jj=0; jj<3; jj++) {
                 fcmap_axismat[ii][jj] /= templen[jj];
-              }	
+              }    
             }
 
 
@@ -536,14 +536,14 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
               ocmapmask_axisvec[ii] = (mapmask->mapxlate[ii]+OrigC[ii])*rc2oc[ii];
               for (jj=0; jj<3; jj++) {
                 ocmapmask_axismat[ii][jj] = MapM2R(mapmask,ii,jj)*rc2oc[ii];
-                templen[jj] +=  ocmapmask_axismat[ii][jj]*ocmapmask_axismat[ii][jj];              	
-              }	
+                templen[jj] +=  ocmapmask_axismat[ii][jj]*ocmapmask_axismat[ii][jj];                  
+              }    
             }
             for (jj = 0; jj < 3; jj++) templen[jj] = sqrt(templen[jj]);
             for (ii=0 ; ii<3; ii++) {
               for (jj=0; jj<3; jj++) {
                 ocmapmask_axismat[ii][jj] /= templen[jj];
-              }	
+              }    
             }
             
             matmul(Info.mato2f, ocmapmask_axismat, fcmapmask_axismat);
@@ -552,14 +552,14 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
             for (jj = 0; jj < 3; jj++) templen[jj] = 0;
             for (ii = 0; ii < 3; ii++) {
               for (jj=0; jj<3; jj++) {
-                templen[jj] +=  fcmapmask_axismat[ii][jj]*fcmapmask_axismat[ii][jj];              	
-              }	
+                templen[jj] +=  fcmapmask_axismat[ii][jj]*fcmapmask_axismat[ii][jj];                  
+              }    
             }
             for (jj = 0; jj < 3; jj++) templen[jj] = sqrt(templen[jj]);
             for (ii=0 ; ii<3; ii++) {
               for (jj=0; jj<3; jj++) {
                 fcmapmask_axismat[ii][jj] /= templen[jj];
-              }	
+              }    
             }
 
 
@@ -701,7 +701,7 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
                 default:  return CBF_FORMAT;
                     
             }
-          	
+              
         }
         
         cbf_failnez (cbf_new_category(cbf,"array_structure_list"))
@@ -725,9 +725,9 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
                 
                 cbf_failnez (cbf_new_column(cbf,"axis_set_id"))
                 if (map->maptype==MAP_FRACTIONAL) {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_X"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_X"))          
                 } else {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_X"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_X"))          
                 }
                 
                 cbf_failnez (cbf_new_row(cbf))
@@ -749,9 +749,9 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
                 
                 cbf_failnez (cbf_find_column(cbf,"axis_set_id")) 
                 if (map->maptype==MAP_FRACTIONAL) {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Y"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Y"))          
                 } else {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Y"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Y"))          
                 }
                 
                 cbf_failnez (cbf_new_row(cbf))
@@ -773,9 +773,9 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
                 
                 cbf_failnez (cbf_find_column(cbf,"axis_set_id"))
                 if (map->maptype==MAP_FRACTIONAL) {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Z"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Z"))          
                 } else {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Z"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Z"))          
                 }
                 
             }
@@ -801,9 +801,9 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
             
             cbf_failnez (cbf_require_column(cbf,"axis_set_id"))
             if (mapmask->maptype==MAP_FRACTIONAL) {
-                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_X"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_X"))          
             } else {
-                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_X"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_X"))          
             }
             
             cbf_failnez (cbf_new_row(cbf))
@@ -825,9 +825,9 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
             
             cbf_failnez (cbf_find_column(cbf,"axis_set_id"))
             if (mapmask->maptype==MAP_FRACTIONAL) {
-                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Y"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Y"))          
             } else {
-                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Y"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Y"))          
             }
             
             cbf_failnez (cbf_new_row(cbf))
@@ -849,9 +849,9 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
             
             cbf_failnez (cbf_find_column(cbf,"axis_set_id"))
             if (mapmask->maptype==MAP_FRACTIONAL) {
-                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Z"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Z"))          
             } else {
-                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Z"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Z"))          
             }
             
         }
@@ -862,16 +862,16 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
                 
                 cbf_failnez (cbf_new_column(cbf,"axis_id"))
                 if (map->maptype==MAP_FRACTIONAL) {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_X"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_X"))          
                 } else {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_X"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_X"))          
                 }
                 
                 cbf_failnez (cbf_new_column(cbf,"axis_set_id"))
                 if (map->maptype==MAP_FRACTIONAL) {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_X"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_X"))          
                 } else {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_X"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_X"))          
                 }
                 
                 if (map->maptype == MAP_ORTHOGONAL) {
@@ -897,16 +897,16 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
                 cbf_failnez (cbf_new_row(cbf))
                 cbf_failnez (cbf_find_column(cbf,"axis_id"))
                 if (map->maptype==MAP_FRACTIONAL) {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Y"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Y"))          
                 } else {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Y"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Y"))          
                 }
                 
                 cbf_failnez (cbf_find_column(cbf,"axis_set_id"))
                 if (map->maptype==MAP_FRACTIONAL) {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Y"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Y"))          
                 } else {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Y"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Y"))          
                 }
                 
                 if (map->maptype == MAP_ORTHOGONAL) {
@@ -932,16 +932,16 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
                 cbf_failnez (cbf_new_row(cbf))
                 cbf_failnez (cbf_find_column(cbf,"axis_id"))
                 if (map->maptype==MAP_FRACTIONAL) {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Z"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Z"))          
                 } else {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Z"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Z"))          
                 }
                 
                 cbf_failnez (cbf_find_column(cbf,"axis_set_id"))
                 if (map->maptype==MAP_FRACTIONAL) {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Z"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_CELL_Z"))          
                 } else {
-                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Z"))      	
+                    cbf_failnez (cbf_set_value(cbf,"MAP_ORTHOGONAL_Z"))          
                 }
                 
                 if (map->maptype == MAP_ORTHOGONAL) {
@@ -972,16 +972,16 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
             cbf_failnez (cbf_new_row(cbf))
             cbf_failnez (cbf_require_column(cbf,"axis_id"))
             if (mapmask->maptype==MAP_FRACTIONAL) {
-                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_X"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_X"))          
             } else {
-                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_X"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_X"))          
             }
             
             cbf_failnez (cbf_require_column(cbf,"axis_set_id"))
             if (mapmask->maptype==MAP_FRACTIONAL) {
-                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_X"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_X"))          
             } else {
-                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_X"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_X"))          
             }
             
             if (mapmask->maptype == MAP_ORTHOGONAL) {
@@ -1007,16 +1007,16 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
             cbf_failnez (cbf_new_row(cbf))
             cbf_failnez (cbf_find_column(cbf,"axis_id"))
             if (mapmask->maptype==MAP_FRACTIONAL) {
-                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Y"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Y"))          
             } else {
-                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Y"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Y"))          
             }
             
             cbf_failnez (cbf_find_column(cbf,"axis_set_id"))
             if (mapmask->maptype==MAP_FRACTIONAL) {
-                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Y"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Y"))          
             } else {
-                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Y"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Y"))          
             }
             
             if (mapmask->maptype == MAP_ORTHOGONAL) {
@@ -1042,16 +1042,16 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
             cbf_failnez (cbf_new_row(cbf))
             cbf_failnez (cbf_find_column(cbf,"axis_id"))
             if (mapmask->maptype==MAP_FRACTIONAL) {
-                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Z"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Z"))          
             } else {
-                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Z"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Z"))          
             }
             
             cbf_failnez (cbf_find_column(cbf,"axis_set_id"))
             if (mapmask->maptype==MAP_FRACTIONAL) {
-                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Z"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_CELL_Z"))          
             } else {
-                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Z"))      	
+                cbf_failnez (cbf_set_value(cbf,"MASK_ORTHOGONAL_Z"))          
             }
             
             if (mapmask->maptype == MAP_ORTHOGONAL) {
@@ -1241,7 +1241,7 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
             cbf_failnez (cbf_find_column(cbf,"offset[3]"))
             cbf_failnez (cbf_set_value(cbf,"0")) 
            
-         	
+             
         }
         
         if (map && map->maptype == MAP_ORTHOGONAL)  {
@@ -1323,7 +1323,7 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
             
             cbf_failnez (cbf_find_column(cbf,"offset[3]"))
             cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmap_axisvec[2])) 
-         	
+             
         }
         
         if (map && map->maptype == MAP_FRACTIONAL)  {
@@ -1405,7 +1405,7 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
             
             cbf_failnez (cbf_find_column(cbf,"offset[3]"))
             cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmap_axisvec[2])) 
-         	
+             
         }
 
         if (mapmask && mapmask->maptype == MAP_ORTHOGONAL)  {
@@ -1487,7 +1487,7 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
             
             cbf_failnez (cbf_find_column(cbf,"offset[3]"))
             cbf_failnez (cbf_set_doublevalue(cbf,"%-g",ocmapmask_axisvec[2])) 
-         	
+             
         }
         
         if (mapmask && mapmask->maptype == MAP_FRACTIONAL)  {
@@ -1569,7 +1569,7 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
             
             cbf_failnez (cbf_find_column(cbf,"offset[3]"))
             cbf_failnez (cbf_set_doublevalue(cbf,"%-g",fcmapmask_axisvec[2])) 
-         	
+             
         }
 
 
@@ -1724,7 +1724,7 @@ int SaveMapFile( FILE *fp, int info, int mapno ) {
         
         return 0;
     
-	
+    
 }
 
 
@@ -1841,11 +1841,11 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
         cbf_get_integervalue(cbf,&mask_bin_id);
       
       if (map_structure_id && map_structure_id[0]) {
-      	map = _fmalloc(sizeof(MapStruct));
+          map = _fmalloc(sizeof(MapStruct));
       }
  
       if (mask_structure_id && mask_structure_id[0]) {
-      	mask = _fmalloc(sizeof(MapStruct));
+          mask = _fmalloc(sizeof(MapStruct));
       }
      
       if (cbf_find_category(cbf,"array_structure")) continue;
@@ -1949,7 +1949,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
             if (!cbf_cistrcmp("increasing",tempval)) map_dir[precedence-1] = 1;
             if (!cbf_cistrcmp("decreasing",tempval)) map_dir[precedence-1] = -1;
 
-          	if (cbf_find_column(cbf,"axis_set_id") 
+              if (cbf_find_column(cbf,"axis_set_id") 
               || cbf_get_value(cbf,(const char **)&map_axis_set_id[precedence-1])
               || !map_axis_set_id[precedence-1] 
               || !map_axis_set_id[precedence-1][0]) {
@@ -1958,7 +1958,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
             }
 
           }
-        	
+            
         }
         if (mask && !cbf_cistrcmp(tempval,mask_structure_id)) {
           if (!cbf_find_column(cbf,"precedence") 
@@ -1984,19 +1984,19 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
             mask_dir[precedence-1] = 0;
             if (!cbf_cistrcmp("increasing",tempval)) mask_dir[precedence-1] = 1;
             if (!cbf_cistrcmp("decreasing",tempval)) mask_dir[precedence-1] = -1;
-          	if (cbf_find_column(cbf,"axis_set_id") 
+              if (cbf_find_column(cbf,"axis_set_id") 
               || cbf_get_value(cbf,(const char **)&map_axis_set_id[precedence-1])
               || !mask_axis_set_id[precedence-1] 
               || !mask_axis_set_id[precedence-1][0]) {
               if (map) _ffree(map); 
               if (mask) _ffree(mask); return CBF_FORMAT;
             }
-          	
+              
           }
-        	
+            
         }
         
-      	
+          
       }
       
       cbf_onfailnez(cbf_find_category(cbf,"array_structure_list_axis"),
@@ -2036,9 +2036,9 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
                 cbf_onfailnez(cbf_get_doublevalue(cbf,&map_fract_displacement_increment[precedence-1]),
                   {if (map) _ffree(map); if (mask) _ffree(mask);})
               }
-              break;	
+              break;    
             }
-          	
+              
           }
           if (mask) for (precedence=1; precedence<4; precedence++) {
             if (mask_axis_set_id[precedence-1]
@@ -2059,13 +2059,13 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
                 cbf_onfailnez(cbf_get_doublevalue(cbf,&mask_fract_displacement_increment[precedence-1]),
                   {if (map) _ffree(map); if (mask) _ffree(mask);})
               }
-              break;	
+              break;    
             }
-          	
+              
           }
-        	
+            
         }
-      	
+          
       }
       
       cbf_onfailnez(cbf_find_category(cbf,"axis"),
@@ -2183,8 +2183,8 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
             map->cdiv = rint(1./fabs(map_fract_displacement_increment[2]));
         } else if (!cbf_cistrcmp(map_system,"orthogonal")) {
           map->adiv = map->bdiv = map->cdiv = 1;
-          map->maptype = MAP_ORTHOGONAL;        	
-        }   	
+          map->maptype = MAP_ORTHOGONAL;            
+        }       
       }
       
       if (mask) {
@@ -2200,8 +2200,8 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
         } else if (!cbf_cistrcmp(mask_system,"orthogonal"))
         {
           mask->adiv = mask->bdiv = mask->cdiv = 1;
-          mask->maptype = MAP_ORTHOGONAL;        	
-        }      	
+          mask->maptype = MAP_ORTHOGONAL;            
+        }          
       }
       
       
@@ -2233,7 +2233,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
         cbf_onfailnez(cbf_get_doublevalue(cbf,&cell_gamma),
           {if (map) _ffree(map); if (mask) _ffree(mask);})
       }
-     	  
+           
       if (!cbf_find_category(cbf,"atom_sites")) {
         if (!cbf_find_column(cbf,"Cartn_transf_matrix[1][1]")) {
           cbf_get_doublevalue(cbf,&matf2o[0][0]);
@@ -2295,13 +2295,13 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
         matf2o[2][2] = sqrt(fabs(d1*d1 - d2*d2 - d3*d3));
         if ( fabs(det(matf2o)) < 
           (fabs(cell_a*cell_b*cell_c) + 1.)*1.e-9 )
-          {if (map) _ffree(map); if (mask) _ffree(mask); return CBF_FORMAT;}     	
+          {if (map) _ffree(map); if (mask) _ffree(mask); return CBF_FORMAT;}         
       } else {
-      	for (ii=0; ii < 3; ii++) {
-      	  vecf2o[ii] = Info.vecf2o[ii];
-      	  for (jj=0; jj < 3; jj++)
-      	    matf2o[ii][jj] = Info.matf2o[ii][jj];
-      	}
+          for (ii=0; ii < 3; ii++) {
+            vecf2o[ii] = Info.vecf2o[ii];
+            for (jj=0; jj < 3; jj++)
+              matf2o[ii][jj] = Info.matf2o[ii][jj];
+          }
       }
       
       /* Now we have the coordinate system for the map and the mask organized
@@ -2322,8 +2322,8 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
             for (jj=0; jj<3; ii++) {
               map_axis_vector[ii][jj] = -map_axis_vector[ii][jj];
             }
-          	map_displacement_increment[ii] = -map_displacement_increment[ii];
-          	map_fract_displacement_increment[ii] = -map_fract_displacement_increment[ii];
+              map_displacement_increment[ii] = -map_displacement_increment[ii];
+              map_fract_displacement_increment[ii] = -map_fract_displacement_increment[ii];
           }
         }
       }
@@ -2340,8 +2340,8 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
             for (jj=0; jj<3; ii++) {
               mask_axis_vector[ii][jj] = -mask_axis_vector[ii][jj];
             }
-          	mask_displacement_increment[ii] = -mask_displacement_increment[ii];
-          	mask_fract_displacement_increment[ii] = -mask_fract_displacement_increment[ii];
+              mask_displacement_increment[ii] = -mask_displacement_increment[ii];
+              mask_fract_displacement_increment[ii] = -mask_fract_displacement_increment[ii];
           }
         }
       }
@@ -2429,30 +2429,30 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
         if (map->maptype == MAP_ORTHOGONAL) {
           for (ii=0; ii < 3; ii++)  {
             map->mapxlate[ii] = 0.;
-          	for (jj=0; jj < 3; jj++) {
-          	  MapM2R(map,ii,jj) = map_axis_vector[jj][ii];
-          	  map->mapxlate[jj] += map_axis_offset[ii][jj];
-          	}
+              for (jj=0; jj < 3; jj++) {
+                MapM2R(map,ii,jj) = map_axis_vector[jj][ii];
+                map->mapxlate[jj] += map_axis_offset[ii][jj];
+              }
           }
-        	
+            
         } else  if (map->maptype == MAP_FRACTIONAL) {
           for (ii=0; ii < 3; ii++)  {
             map->mapxlate[ii] = 0.;
-          	for (jj=0; jj < 3; jj++) {
-          	  MapM2R(map,ii,jj) = (matf2o[jj][0]*map_axis_vector[ii][0]
-          	                    + matf2o[jj][1]*map_axis_vector[ii][1]
-          	                    + matf2o[jj][2]*map_axis_vector[ii][2])/
-          	                    map_axis_length[ii];
-          	                   
-          	  map->mapxlate[jj] += matf2o[jj][0]*map_axis_offset[ii][0]
-          	                    + matf2o[jj][1]*map_axis_offset[ii][1]
-          	                    + matf2o[jj][2]*map_axis_offset[ii][2];
-          	}
+              for (jj=0; jj < 3; jj++) {
+                MapM2R(map,ii,jj) = (matf2o[jj][0]*map_axis_vector[ii][0]
+                                  + matf2o[jj][1]*map_axis_vector[ii][1]
+                                  + matf2o[jj][2]*map_axis_vector[ii][2])/
+                                  map_axis_length[ii];
+                                 
+                map->mapxlate[jj] += matf2o[jj][0]*map_axis_offset[ii][0]
+                                  + matf2o[jj][1]*map_axis_offset[ii][1]
+                                  + matf2o[jj][2]*map_axis_offset[ii][2];
+              }
           }
           
-        	
+            
         } else {if (map) _ffree(map); if (mask) _ffree(mask); return CBF_FORMAT;}
-      	map->mapxlate[0] = 250.*(map->mapxlate[0])-OrigCX;
+          map->mapxlate[0] = 250.*(map->mapxlate[0])-OrigCX;
 #ifdef INVERT
         map->mapxlate[1] = -(250.*map->mapxlate[1])-OrigCY;
 #else
@@ -2488,32 +2488,32 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
         if (mask->maptype == MAP_ORTHOGONAL) {
           for (ii=0; ii < 3; ii++)  {
             mask->mapxlate[ii] = 0.;
-          	for (jj=0; jj < 3; jj++) {
-          	  MapM2R(mask,ii,jj) = mask_axis_vector[jj][ii];
-          	  mask->mapxlate[jj] += mask_axis_offset[ii][jj];
-          	}
-          	
+              for (jj=0; jj < 3; jj++) {
+                MapM2R(mask,ii,jj) = mask_axis_vector[jj][ii];
+                mask->mapxlate[jj] += mask_axis_offset[ii][jj];
+              }
+              
           }
-        	
+            
         } else  if (mask->maptype == MAP_FRACTIONAL) {
           for (ii=0; ii < 3; ii++)  {
             map->mapxlate[ii] = 0.;
-          	for (jj=0; jj < 3; jj++) {
-          	  MapM2R(mask,ii,jj) = (matf2o[jj][0]*mask_axis_vector[ii][0]
-          	                    + matf2o[jj][1]*mask_axis_vector[ii][1]
-          	                    + matf2o[jj][2]*mask_axis_vector[ii][2])/
-          	                    mask_axis_length[ii];
-          	  mask->mapxlate[jj] += matf2o[jj][0]*mask_axis_offset[ii][0]
-          	                    + matf2o[jj][1]*mask_axis_offset[ii][1]
-          	                    + matf2o[jj][2]*mask_axis_offset[ii][2];
-          	}
-          	
+              for (jj=0; jj < 3; jj++) {
+                MapM2R(mask,ii,jj) = (matf2o[jj][0]*mask_axis_vector[ii][0]
+                                  + matf2o[jj][1]*mask_axis_vector[ii][1]
+                                  + matf2o[jj][2]*mask_axis_vector[ii][2])/
+                                  mask_axis_length[ii];
+                mask->mapxlate[jj] += matf2o[jj][0]*mask_axis_offset[ii][0]
+                                  + matf2o[jj][1]*mask_axis_offset[ii][1]
+                                  + matf2o[jj][2]*mask_axis_offset[ii][2];
+              }
+              
           }
           
-        	
+            
         } else {if (map) _ffree(map); if (mask) _ffree(mask); return CBF_FORMAT;}
 
-      	mask->mapxlate[0] = 250.*(mask->mapxlate[0])-OrigCX;
+          mask->mapxlate[0] = 250.*(mask->mapxlate[0])-OrigCX;
 #ifdef INVERT
         mask->mapxlate[1] = -(250.*mask->mapxlate[1])-OrigCY;
 #else
@@ -2539,7 +2539,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
             MapR2M(mask,ii,jj) = tempmatout[ii][jj];
           }
         }
-      	
+          
       }
 
       cbf_onfailnez(cbf_find_category(cbf,"array_data"),
@@ -2626,7 +2626,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
                 map->mapdatamean = datasum/(double)elements;
                 map->mapdataesd= sqrt(datasqsum/(double)elements-
                   map->mapdatamean*map->mapdatamean);
-              	
+                  
               } else if (elsize==sizeof(int)) {
                 double datamin, datamax, datasum, datasqsum;
                 register double data;
@@ -2645,7 +2645,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
                 map->mapdatamean = datasum/(double)elements;
                 map->mapdataesd= sqrt(datasqsum/(double)elements-
                   map->mapdatamean*map->mapdatamean);
-              	
+                  
               }
               else {if (map) { _ffree(map->mapdata); _ffree(map);} if (mask) _ffree(mask); return CBF_FORMAT;}
             } else {
@@ -2689,7 +2689,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
                 map->mapdatamean = datasum/(double)elements;
                 map->mapdataesd= sqrt(datasqsum/(double)elements-
                   map->mapdatamean*map->mapdatamean);
-              	
+                  
               }
               else {if (map) { _ffree(map->mapdata); _ffree(map);} if (mask) _ffree(mask); return CBF_FORMAT;}
             }
@@ -2776,7 +2776,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
                 mask->mapdatamean = datasum/(double)elements;
                 mask->mapdataesd= sqrt(datasqsum/(double)elements-
                   mask->mapdatamean*mask->mapdatamean);
-              	
+                  
               } else if (elsize==sizeof(int)) {
                 double datamin, datamax, datasum, datasqsum;
                 register double data;
@@ -2795,7 +2795,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
                 mask->mapdatamean = datasum/(double)elements;
                 mask->mapdataesd= sqrt(datasqsum/(double)elements-
                   mask->mapdatamean*mask->mapdatamean);
-              	
+                  
               }
               else {if (map) { _ffree(map->mapdata); _ffree(map);} if (mask) _ffree(mask); return CBF_FORMAT;}
             } else {
@@ -2839,7 +2839,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
                 mask->mapdatamean = datasum/(double)elements;
                 mask->mapdataesd= sqrt(datasqsum/(double)elements-
                   mask->mapdatamean*mask->mapdatamean);
-              	
+                  
               }
               else {if (map) { _ffree(map->mapdata); _ffree(map);} if (mask) _ffree(mask); return CBF_FORMAT;}
             }
@@ -2855,7 +2855,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
         if(!mask) {
           CommandError(MsgStrs[StrMalloc]);
           if (map) { _ffree(map->mapdata); _ffree(map);}
-          return 1;	
+          return 1;    
         }
         mask->mapdata = _fmalloc(MapMaskPtr->elsize*
          (MapMaskPtr->xhigh-MapMaskPtr->xlow+1)*
@@ -2902,9 +2902,9 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
          *((mask)->zhigh-(mask)->zlow+1)
          *((mask)->elsize));
 
-      	
+          
       }
-      	
+          
           /* Initialize a mapinfo struct */
   
       mapinfo.MapLevel = MapLevel;
@@ -2949,7 +2949,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
       else
         vector_set_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,mapno);
     
-   	
+       
     } while (!cbf_next_datablock(cbf));
     
     
@@ -3039,7 +3039,7 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
       ,cbf_free_file(&mapfile))
       
     cbf_onfailnez(cbf_set_fileposition(mapfile, 208L, SEEK_SET)
-      ,cbf_free_file(&mapfile))	
+      ,cbf_free_file(&mapfile))    
 
     errorcnt = 0 ;
     for (ii=0; ii<4; ii++) {                                  /*  53 */
@@ -3051,14 +3051,14 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
     if (cbf_cistrncmp(MAP,"MAP ",4)) errorcnt++;
 
     cbf_onfailnez(cbf_set_fileposition(mapfile, fpos, SEEK_SET)
-      ,cbf_free_file(&mapfile))	
+      ,cbf_free_file(&mapfile))    
 
     if (errorcnt) {
       
       cbf_failnez(cbf_free_file(&mapfile));
       
       return CBF_FORMAT;
-    	
+        
     }
 
     
@@ -3115,17 +3115,17 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
     
     for (ii=0; ii<9; ii++) {                                  /*  26 -- 34 */
       cbf_onfailnez(cbf_get_integer(mapfile,(int *)(SKWMAT+ii),0,32)
-      ,cbf_free_file(&mapfile))	
+      ,cbf_free_file(&mapfile))    
     }
 
     for (ii=0; ii<3; ii++) {                                  /*  35 -- 37 */
       cbf_onfailnez(cbf_get_integer(mapfile,(int *)(SKWTRAN+ii),0,32)
-      ,cbf_free_file(&mapfile))	 	
+      ,cbf_free_file(&mapfile))         
     }
     
     for (ii=38; ii<53; ii++) {                                /*  38 -- 52 */
       cbf_onfailnez(cbf_get_integer(mapfile,&DUMMY,0,32)
-      ,cbf_free_file(&mapfile))	 	
+      ,cbf_free_file(&mapfile))         
     }
     
     for (ii=0; ii<4; ii++) {                                  /*  53 */
@@ -3138,21 +3138,21 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
     if (cbf_cistrncmp(MAP,"MAP ",4)) {
     
 
-      cbf_failnez (cbf_free_file(&mapfile))	
+      cbf_failnez (cbf_free_file(&mapfile))    
       
       return CBF_FORMAT;
-    	
+        
     }
 
     for (ii=0; ii<4; ii++) {                                  /*  54 */
       cbf_onfailnez(cbf_get_integer(mapfile,(int *)(MACHST+ii),0,8)
-      ,cbf_free_file(&mapfile))	 
+      ,cbf_free_file(&mapfile))     
     }
     
     cbf_onfailnez(cbf_get_integer(mapfile,(int *)&ARMS,0,32)
-      ,cbf_free_file(&mapfile))	                              /*  55 */
+      ,cbf_free_file(&mapfile))                                  /*  55 */
     cbf_onfailnez(cbf_get_integer(mapfile,&NLABL,0,32)
-      ,cbf_free_file(&mapfile))	                              /*  56 */
+      ,cbf_free_file(&mapfile))                                  /*  56 */
 
     for (ii=0; ii<800; ii++) {                                /*  57 -- 256 */                          
       cbf_onfailnez(cbf_get_integer(mapfile,(int *)(LABEL+ii),0,8)
@@ -3176,28 +3176,28 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
 
     switch (MODE) {
     
-    	case 0:
-    	case 5:           /* signed bytes */
-    	  rawelsize = 1;
-    	  (map)->elsize = sizeof(signed char);
-    	  (map)->eltype = CBF_INTEGER;
-    	  break;
-    	case 1:	          /* integer *2   */
-    	  rawelsize = 2;
-    	  (map)->elsize = sizeof(short);
-    	  (map)->eltype = CBF_INTEGER;
-    	  break;
-    	case 2:           /* real *2      */
-    	  rawelsize = 2;
-    	  (map)->elsize = sizeof(float);
-    	  (map)->eltype = CBF_FLOAT;
-    	  break;
-    	case 3:           /* complex integer *2 */
-    	  return CBF_FORMAT;
-    	case 4:           /* complex real *2 */
-    	  return CBF_FORMAT;
-    	default:
-    	  return CBF_FORMAT;
+        case 0:
+        case 5:           /* signed bytes */
+          rawelsize = 1;
+          (map)->elsize = sizeof(signed char);
+          (map)->eltype = CBF_INTEGER;
+          break;
+        case 1:              /* integer *2   */
+          rawelsize = 2;
+          (map)->elsize = sizeof(short);
+          (map)->eltype = CBF_INTEGER;
+          break;
+        case 2:           /* real *2      */
+          rawelsize = 2;
+          (map)->elsize = sizeof(float);
+          (map)->eltype = CBF_FLOAT;
+          break;
+        case 3:           /* complex integer *2 */
+          return CBF_FORMAT;
+        case 4:           /* complex real *2 */
+          return CBF_FORMAT;
+        default:
+          return CBF_FORMAT;
     }
     
     (map)->maptype = MAP_FRACTIONAL;
@@ -3320,7 +3320,7 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
         for (ID[1] = 0; ID[1] < NCRS[1]; ID[1]++)
           for (ID[0] = 0; ID[0] < NCRS[0]; ID[0]++) {
             cbf_onfailnez(cbf_get_integer(mapfile,(int *)&bytetemp,0,8)
-              ,cbf_free_file(&mapfile))	                              
+              ,cbf_free_file(&mapfile))                                  
             MapElchar(map,ID[AXIS_XYZ[0]],ID[AXIS_XYZ[1]],ID[AXIS_XYZ[2]]) = bytetemp;
             datasq += (double)(bytetemp*bytetemp); 
           }
@@ -3355,7 +3355,7 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
       mapmaskptr = _fmalloc(sizeof(MapStruct));
       if(!mapmaskptr) {
         CommandError(MsgStrs[StrMalloc]);
-        return 1;	
+        return 1;    
       }
       mapmaskptr->mapdata = _fmalloc(MapMaskPtr->elsize*
        (MapMaskPtr->xhigh-MapMaskPtr->xlow+1)*
@@ -3409,7 +3409,7 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
          vector_set_element((GenericVec __far *)mapmaskgensel,mapatmsel,i);
        }
        mapinfo.MapGenSel=mapmaskgensel;
-     }	
+     }    
     }
 
     cbf_failnez(map_points(mapinfo.MapPtr, 
@@ -3493,7 +3493,7 @@ int vector_add_element(GenericVec __far * vector, void __far * element) {
        if (newcap < vector->capacity+1024); newcap = vector->capacity;
        temparray = _fmalloc(newcap*vector->elementsize);
        if (!temparray) {
-       	 CommandError(MsgStrs[StrMalloc]);
+            CommandError(MsgStrs[StrMalloc]);
          return -1;
        }
      }
@@ -3521,12 +3521,12 @@ int vector_get_element(GenericVec __far * vector, void __far * element, size_t i
       vector->elementsize);
       
     return 0;
-  	
+      
   } else {
-  	
-  	return -1;
+      
+      return -1;
   }
-	
+    
 }
 
 
@@ -3539,12 +3539,12 @@ int vector_get_elementptr(GenericVec __far * vector, void __far ** elementptr, s
     *elementptr = (void __far*)(((char *)(vector->array))+index*vector->elementsize);
 
     return 0;
-  	
+      
   } else {
-  	
-  	return -1;
+      
+      return -1;
   }
-	
+    
 }
 
 
@@ -3566,7 +3566,7 @@ int vector_set_element(GenericVec __far * vector, void __far * element, size_t i
        if (newcap < index+1024); newcap = index+1024;
        temparray = _fmalloc(newcap*vector->elementsize);
        if (!temparray) {
-       	 CommandError(MsgStrs[StrMalloc]);
+            CommandError(MsgStrs[StrMalloc]);
          return -1;
        }
      }
@@ -3587,12 +3587,12 @@ int vector_set_element(GenericVec __far * vector, void __far * element, size_t i
       
     if (index >= vector->size) vector->size = index+1;
     return 0;
-  	
+      
   } else {
-  	
-  	return -1;
+      
+      return -1;
   }
-	
+    
 }
 
 
@@ -3603,19 +3603,19 @@ int vector_free(GenericVec __far * __far * vector) {
   if (*vector) {
     
     if ((*vector)->array) {
-      	
+          
       _ffree((*vector)->array);
         
     }
       
     _ffree(*vector);
-    	
+        
   }
     
   *vector = 0;
     
   return 0;
-	
+    
 }
 
 
@@ -3732,12 +3732,12 @@ int generate_map(MapStruct **map,
         rad = radius;
         
         if (sig_per_rad > 0.) {
-        	
+            
           sig = ((double)rad)/sig_per_rad;
           
         } else  {
-         	
-            sig = sqrt((2.*pr*pr + 2.*rad*pr - pr*sqrt(4.*(rad+pr)*(rad+pr) - 4.*rad*rad))/(2.*log(2.)));
+             
+          sig = sqrt((2.*pr*pr + 2.*rad*pr - pr*sqrt(4.*(rad+pr)*(rad+pr) - 4.*rad*rad))/(2.*log(2.)));
 
         }
         
@@ -3781,7 +3781,7 @@ int generate_map(MapStruct **map,
       ((*map)->zhigh-(*map)->zlow+1));
       
       if (!(*map)->mapdata) {
-      	_ffree(*map);
+          _ffree(*map);
         *map = NULL;
         CommandError(MsgStrs[StrMalloc]);
         return 1;
@@ -3815,12 +3815,13 @@ int generate_map(MapStruct **map,
         rad = radius;
         
         if (sig_per_rad > 0.) {
-        	
+            
           sig = ((double)rad)/sig_per_rad;
           
         } else  {
-                	
+                    
           sig = sqrt((2.*pr*pr + 2.*rad*pr - pr*sqrt(4.*(rad+pr)*(rad+pr) - 4.*rad*rad))/(2.*log(2.)));
+         /*  sig = sqrt((pr*rad)/log(2.)); */
 
         }
         
@@ -3831,7 +3832,7 @@ int generate_map(MapStruct **map,
         coeff = 1/(sig*sig*sig*sqrt2pi3);
         
         if (ScaletoAN) {
-        	
+            
           scaleg = (double)(ptr->elemno)*coeff;
         
         } else {
@@ -3892,14 +3893,22 @@ int generate_map(MapStruct **map,
                    + ((double)(zel*zint-zpos))*((double)(zel*zint-zpos));
                    
                  distsq /= 62500.;
+#ifdef LRSUMPROD
+                if (ScaletoAN) {
+#endif
+                   MapEldouble((*map),xel,yel,zel) += scaleg*exp(-distsq/(2.*sig*sig));
+#ifdef LRSUMPROD
+                } else {
+                   MapEldouble((*map),xel,yel,zel) = MapEldouble((*map),xel,yel,zel)+scaleg*exp(-distsq/(2.*sig*sig))
+                     + MapEldouble((*map),xel,yel,zel)*scaleg*exp(-distsq/(2.*sig*sig));
+                }
+#endif
+
                  
-            
-            	 MapEldouble((*map),xel,yel,zel) += scaleg*exp(-distsq/(2.*sig*sig));
-            	 
-            	 /* fprintf (stderr,"MapEl(%ld,%ld,%ld) = %g\n",xel,yel,zel,MapEldouble((*map),xel,yel,zel)); */
+                 /* fprintf (stderr,"MapEl(%ld,%ld,%ld) = %g\n",xel,yel,zel,MapEldouble((*map),xel,yel,zel)); */
             }
     
-    	
+        
       }
       
       
@@ -3921,7 +3930,7 @@ int generate_map(MapStruct **map,
               (*map)->mapdataesd += test*test;
             }
           }
-      if (mapcount) {	
+      if (mapcount) {    
         (*map)->mapdatamean /= (double)mapcount;
         (*map)->mapdataesd /= (double)mapcount;
         (*map)->mapdataesd = (*map)->mapdataesd-((*map)->mapdatamean)*((*map)->mapdatamean);
@@ -3950,7 +3959,7 @@ int generate_map(MapStruct **map,
       (*map)->mapxlate[2] = -OrigCZ;
       
       {char buffer[132];
-      	
+          
       sprintf(buffer,"\nmap generate normal completion \n X:[%ld,%ld], Y:[%ld,%ld], Z:[%ld,%ld]\n",
         (*map)->xlow,(*map)->xhigh,(*map)->ylow,(*map)->yhigh,(*map)->zlow,(*map)->zhigh);
         
@@ -3960,7 +3969,7 @@ int generate_map(MapStruct **map,
       
       
       return 0;
-	
+    
 }
 
 /*  map_point_distance_sq -- find the square of the
@@ -3981,7 +3990,7 @@ Long map_point_distance_sq(MapPointVec * PointVec,
   dz = dst.zpos-src.zpos;
 
   return dx*dx+dy*dy+dz*dz;
-	
+    
 }
 
 
@@ -4036,29 +4045,29 @@ int interpolate_map_value(MapStruct __far *map,
     
   switch(map->eltype) {
   
-  	case CBF_INTEGER:
-  	  if (map->elsize == sizeof(char) ) {
-  	  	mapval[0] = (double)(MapElchar(map,xp[0]  ,yp[0]  ,zp[0] ) );
-  	  } else if (map->elsize == sizeof(short) ) {
-  	  	mapval[0] = (double)(MapElshort(map,xp[0]  ,yp[0]  ,zp[0] ) );
-  	  } else if (map->elsize == sizeof(int) ) {
-  	    mapval[0] = (double)(MapElint(map,xp[0]  ,yp[0]  ,zp[0] ) );
-  	  } else if (map->elsize == sizeof(long) ) {
-  	  	mapval[0] = (double)(MapEllong(map,xp[0]  ,yp[0]  ,zp[0] )  );
-  	  } else { 
-  	    return -1;
-  	  }
-  	  break;
-  	
-  	case CBF_FLOAT:
-  	  if(map->elsize ==  sizeof(float)) {
+      case CBF_INTEGER:
+        if (map->elsize == sizeof(char) ) {
+            mapval[0] = (double)(MapElchar(map,xp[0]  ,yp[0]  ,zp[0] ) );
+        } else if (map->elsize == sizeof(short) ) {
+            mapval[0] = (double)(MapElshort(map,xp[0]  ,yp[0]  ,zp[0] ) );
+        } else if (map->elsize == sizeof(int) ) {
+          mapval[0] = (double)(MapElint(map,xp[0]  ,yp[0]  ,zp[0] ) );
+        } else if (map->elsize == sizeof(long) ) {
+            mapval[0] = (double)(MapEllong(map,xp[0]  ,yp[0]  ,zp[0] )  );
+        } else { 
+          return -1;
+        }
+        break;
+      
+      case CBF_FLOAT:
+        if(map->elsize ==  sizeof(float)) {
         mapval[0] = (double)(MapElfloat(map,xp[0]  ,yp[0]  ,zp[0] ) );
       } else if (map->elsize ==  sizeof(double)) {
-   	    mapval[0] = (double)(MapEldouble(map,xp[0]  ,yp[0]  ,zp[0] ) );
-  	  } else { 
-  	    return -1;
-  	  }
-  	  break;
+           mapval[0] = (double)(MapEldouble(map,xp[0]  ,yp[0]  ,zp[0] ) );
+        } else { 
+          return -1;
+        }
+        break;
   }
   
   
@@ -4072,14 +4081,14 @@ int interpolate_map_value(MapStruct __far *map,
   if (d[0] < 3 && !gradient)  {
     
     if (uselog){
-    	*value = LogMapVal(mapval[0]);
+        *value = LogMapVal(mapval[0]);
     } else {
-    	*value = mapval[0];
+        *value = mapval[0];
     }
-  	
-  	/* if (mapval[0]) fprintf (stderr, "using map point %ld %ld %ld %g\n", xp[0], yp[0], zp[0], *value);*/
-  	
-  	return 0;
+      
+      /* if (mapval[0]) fprintf (stderr, "using map point %ld %ld %ld %g\n", xp[0], yp[0], zp[0], *value);*/
+      
+      return 0;
   }
       
   xp[7] = (xp[0] < map->xhigh)?xp[0]+1:xp[0]-1;
@@ -4088,8 +4097,8 @@ int interpolate_map_value(MapStruct __far *map,
 
   switch(map->eltype) {
   
-  	case CBF_INTEGER:
-  	  if(map->elsize == sizeof(char) ){
+      case CBF_INTEGER:
+        if(map->elsize == sizeof(char) ){
         mapval[1] = (double)MapElchar(map,xp[0]  ,yp[0]  ,zp[7] );
         mapval[2] = (double)MapElchar(map,xp[0]  ,yp[7]  ,zp[0] );
         mapval[3] = (double)MapElchar(map,xp[0]  ,yp[7]  ,zp[7] );
@@ -4097,15 +4106,15 @@ int interpolate_map_value(MapStruct __far *map,
         mapval[5] = (double)MapElchar(map,xp[7]  ,yp[0]  ,zp[7] );
         mapval[6] = (double)MapElchar(map,xp[7]  ,yp[7]  ,zp[0] );
         mapval[7] = (double)MapElchar(map,xp[7]  ,yp[7]  ,zp[7] );
-  	  } else if (map->elsize == sizeof(short) ) {
-  	    mapval[1] = (double)MapElshort(map,xp[0]  ,yp[0]  ,zp[7] );
+        } else if (map->elsize == sizeof(short) ) {
+          mapval[1] = (double)MapElshort(map,xp[0]  ,yp[0]  ,zp[7] );
         mapval[2] = (double)MapElshort(map,xp[0]  ,yp[7]  ,zp[0] );
         mapval[3] = (double)MapElshort(map,xp[0]  ,yp[7]  ,zp[7] );
         mapval[4] = (double)MapElshort(map,xp[7]  ,yp[0]  ,zp[0] );
         mapval[5] = (double)MapElshort(map,xp[7]  ,yp[0]  ,zp[7] );
         mapval[6] = (double)MapElshort(map,xp[7]  ,yp[7]  ,zp[0] );
         mapval[7] = (double)MapElshort(map,xp[7]  ,yp[7]  ,zp[7] );
-  	  } else if (map->elsize == sizeof(int) ) {
+        } else if (map->elsize == sizeof(int) ) {
         mapval[1] = (double)MapElint(map,xp[0]  ,yp[0]  ,zp[7] );
         mapval[2] = (double)MapElint(map,xp[0]  ,yp[7]  ,zp[0] );
         mapval[3] = (double)MapElint(map,xp[0]  ,yp[7]  ,zp[7] );
@@ -4113,7 +4122,7 @@ int interpolate_map_value(MapStruct __far *map,
         mapval[5] = (double)MapElint(map,xp[7]  ,yp[0]  ,zp[7] );
         mapval[6] = (double)MapElint(map,xp[7]  ,yp[7]  ,zp[0] );
         mapval[7] = (double)MapElint(map,xp[7]  ,yp[7]  ,zp[7] );
-  	  } else if (map->elsize == sizeof(long) ) {
+        } else if (map->elsize == sizeof(long) ) {
         mapval[1] = (double)MapEllong(map,xp[0]  ,yp[0]  ,zp[7] );
         mapval[2] = (double)MapEllong(map,xp[0]  ,yp[7]  ,zp[0] );
         mapval[3] = (double)MapEllong(map,xp[0]  ,yp[7]  ,zp[7] );
@@ -4121,21 +4130,21 @@ int interpolate_map_value(MapStruct __far *map,
         mapval[5] = (double)MapEllong(map,xp[7]  ,yp[0]  ,zp[7] );
         mapval[6] = (double)MapEllong(map,xp[7]  ,yp[7]  ,zp[0] );
         mapval[7] = (double)MapEllong(map,xp[7]  ,yp[7]  ,zp[7] );
-  	  } else {
+        } else {
         return -1;
-  	  }
-  	  break;
-  	
-  	case CBF_FLOAT:
-  	   if (map->elsize== sizeof(float) ) {
-  	     mapval[1] = (double)MapElfloat(map,xp[0]  ,yp[0]  ,zp[7] );
+        }
+        break;
+      
+      case CBF_FLOAT:
+         if (map->elsize== sizeof(float) ) {
+           mapval[1] = (double)MapElfloat(map,xp[0]  ,yp[0]  ,zp[7] );
          mapval[2] = (double)MapElfloat(map,xp[0]  ,yp[7]  ,zp[0] );
          mapval[3] = (double)MapElfloat(map,xp[0]  ,yp[7]  ,zp[7] );
          mapval[4] = (double)MapElfloat(map,xp[7]  ,yp[0]  ,zp[0] );
          mapval[5] = (double)MapElfloat(map,xp[7]  ,yp[0]  ,zp[7] );
          mapval[6] = (double)MapElfloat(map,xp[7]  ,yp[7]  ,zp[0] );
          mapval[7] = (double)MapElfloat(map,xp[7]  ,yp[7]  ,zp[7] );
-  	   } else if (map->elsize== sizeof(double) ) {
+         } else if (map->elsize== sizeof(double) ) {
          mapval[1] = (double)MapEldouble(map,xp[0]  ,yp[0]  ,zp[7] );
          mapval[2] = (double)MapEldouble(map,xp[0]  ,yp[7]  ,zp[0] );
          mapval[3] = (double)MapEldouble(map,xp[0]  ,yp[7]  ,zp[7] );
@@ -4143,13 +4152,13 @@ int interpolate_map_value(MapStruct __far *map,
          mapval[5] = (double)MapEldouble(map,xp[7]  ,yp[0]  ,zp[7] );
          mapval[6] = (double)MapEldouble(map,xp[7]  ,yp[7]  ,zp[0] );
          mapval[7] = (double)MapEldouble(map,xp[7]  ,yp[7]  ,zp[7] );
-  	   } else  {
- 	     return -1;
-  	   }
-  	   break;
-  	
-  	default: return -1;
-  	
+         } else  {
+          return -1;
+         }
+         break;
+      
+      default: return -1;
+      
   }
   
   xp[1] = xp[2] = xp[3] = xp[0];
@@ -4181,7 +4190,7 @@ int interpolate_map_value(MapStruct __far *map,
      weighed average of the map box selected */
               
   if (uselog){
-  	
+      
     for (ii = 0; ii < 8; ii++) {
       logmapval[ii] = LogMapVal(mapval[ii]);
     }
@@ -4189,7 +4198,7 @@ int interpolate_map_value(MapStruct __far *map,
               
     ki = -1;
     for (ii = 0; ii < 8; ii++) {
-      if (d[ii] < 3.) { ki = ii; break; }  	
+      if (d[ii] < 3.) { ki = ii; break; }      
     }
     if (ki == -1)  {
       logmapest = logmapval[0]/d[0];
@@ -4207,7 +4216,7 @@ int interpolate_map_value(MapStruct __far *map,
 
     ki = -1;
     for (ii = 0; ii < 8; ii++) {
-      if (d[ii] < 3.) { ki = ii; break; }  	
+      if (d[ii] < 3.) { ki = ii; break; }      
     }
     if (ki == -1)  {
       mapest = mapval[0]/d[0];
@@ -4219,7 +4228,7 @@ int interpolate_map_value(MapStruct __far *map,
     
     *value = mapest;
     if (!gradient) return 0;
-  	
+      
   }
   
   /* A gradient has been requested */
@@ -4228,20 +4237,20 @@ int interpolate_map_value(MapStruct __far *map,
   if (xpos-delta >= xbase && xpos+delta <= xtop)  {
     interpolate_map_value(map,xpos-delta,ypos,zpos,uselog,&lowval,NULL);
     interpolate_map_value(map,xpos+delta,ypos,zpos,uselog,&highval,NULL);
-    gradient[0] = (highval-lowval)/(double)(2*delta);	
+    gradient[0] = (highval-lowval)/(double)(2*delta);    
   } else {
     if (xabs(xppos[0]-xpos) > xabs(xppos[7]-xpos) ) {
       interpolate_map_value(map,xppos[0],ypos,zpos,uselog,&otherx,NULL);
       gradient[0] = (otherx-mapest)/(double)(xppos[0]-xpos);
     } else {
       interpolate_map_value(map,xppos[7],ypos,zpos,uselog,&otherx,NULL);
-      gradient[0] = (otherx-mapest)/(double)(xppos[7]-xpos);    	
+      gradient[0] = (otherx-mapest)/(double)(xppos[7]-xpos);        
     }
   }
   if (ypos-delta >= ybase && ypos+delta <= ytop)  {
     interpolate_map_value(map,xpos,ypos-delta,zpos,uselog,&lowval,NULL);
     interpolate_map_value(map,xpos,ypos+delta,zpos,uselog,&highval,NULL);
-    gradient[1] = (highval-lowval)/(double)(2*delta);	
+    gradient[1] = (highval-lowval)/(double)(2*delta);    
   } else {
     if (xabs(yppos[0]-ypos) > xabs(yppos[7]-ypos) ) {
       interpolate_map_value(map,xpos,yppos[0],zpos,uselog,&othery,NULL);
@@ -4254,7 +4263,7 @@ int interpolate_map_value(MapStruct __far *map,
   if (zpos-delta >= zbase && zpos+delta <= ztop)  {
     interpolate_map_value(map,xpos,ypos,zpos-delta,uselog,&lowval,NULL);
     interpolate_map_value(map,xpos,ypos,zpos+delta,uselog,&highval,NULL);
-    gradient[2] = (highval-lowval)/(double)(2*delta);	
+    gradient[2] = (highval-lowval)/(double)(2*delta);    
   } else {
     if (xabs(zppos[0]-zpos) > xabs(zppos[7]-zpos) ) {
       interpolate_map_value(map,xpos,ypos,zppos[0],uselog,&otherz,NULL);
@@ -4370,7 +4379,7 @@ int map_points(MapStruct __far *map, double level, Long spacing,
       loglevel = LogMapVal(level);
       masklevel = 0.;
       maskmin = 0.;
-      if (mapmask) {      	
+      if (mapmask) {          
         masklevel = LogMapVal(mapmask->mapdatamean);
         maskmin   = LogMapVal(map->mapdatamin);
       }
@@ -4439,7 +4448,7 @@ int map_points(MapStruct __far *map, double level, Long spacing,
           for (ix = 0; ix < xpts; ix ++) {
 
             if (BondVec||TangleVec) {
-            	
+                
               vector_set_element(PointsUsed,&zero,3*(ix+iy*xpts+zalt*xpts*ypts));
               vector_set_element(PointsUsed,&zero,1+3*(ix+iy*xpts+zalt*xpts*ypts));
               vector_set_element(PointsUsed,&zero,2+3*(ix+iy*xpts+zalt*xpts*ypts));
@@ -4449,7 +4458,7 @@ int map_points(MapStruct __far *map, double level, Long spacing,
             havemapval[0]=!interpolate_map_value(map,xp[0],yp[0],zp[0],1,&(mapval[0]),NULL);
 
             if ( havemapval[0] ) {
-            	
+                
             havemapval[1]=!interpolate_map_value(map,xp[7],yp[0],zp[0],1,&(mapval[1]),NULL);
             havemapval[2]=!interpolate_map_value(map,xp[0],yp[7],zp[0],1,&(mapval[2]),NULL);
             havemapval[3]=!interpolate_map_value(map,xp[7],yp[7],zp[0],1,&(mapval[3]),NULL);
@@ -4484,7 +4493,7 @@ int map_points(MapStruct __far *map, double level, Long spacing,
                       mapval[ii] = maskmin;
                     }
                   } else {
-                  	havemapval[ii] = 0;
+                      havemapval[ii] = 0;
                   }
                 }
               }
@@ -4520,7 +4529,7 @@ int map_points(MapStruct __far *map, double level, Long spacing,
                       MapPointm2o(map,mp,gradient);
                       if (mapmask) {
                         if(!interpolate_oc_map_value(mapmask,mp.xpos,mp.ypos,mp.zpos,1,&testlevel)){
-                          if (testlevel < masklevel) continue;	
+                          if (testlevel < masklevel) continue;    
                         }
                         else continue;
                       }
@@ -4536,14 +4545,14 @@ int map_points(MapStruct __far *map, double level, Long spacing,
                     } else {
                       if (!((marked[jj] && valdist[jj]+valdist[kk] > 250*valdist[jj]) ||
                           (marked[kk] && valdist[jj]+valdist[kk] > 250*valdist[kk])) )  {
-                      	mp.xpos = (xp[jj]*valdist[kk]+xp[kk]*valdist[jj])/(valdist[jj]+valdist[kk]);
+                          mp.xpos = (xp[jj]*valdist[kk]+xp[kk]*valdist[jj])/(valdist[jj]+valdist[kk]);
                         mp.ypos = (yp[jj]*valdist[kk]+yp[kk]*valdist[jj])/(valdist[jj]+valdist[kk]);
                         mp.zpos = (zp[jj]*valdist[kk]+zp[kk]*valdist[jj])/(valdist[jj]+valdist[kk]);
                         interpolate_map_value(map,mp.xpos,mp.ypos,mp.zpos,1,&dummy,gradient);
                         MapPointm2o(map,mp,gradient);
                         if (mapmask) {
                           if(!interpolate_oc_map_value(mapmask,mp.xpos,mp.ypos,mp.zpos,1,&testlevel)){
-                            if (testlevel < masklevel) continue;	
+                            if (testlevel < masklevel) continue;    
                           }
                           else continue;
                         }
@@ -4568,7 +4577,7 @@ int map_points(MapStruct __far *map, double level, Long spacing,
                           }
                         } else {
                           if ((marked[kk] && valdist[jj]+valdist[kk] > 250*valdist[jj]) ) {
-                      	    haveedges[ii] = marked[kk];
+                              haveedges[ii] = marked[kk];
                             if (BondVec || TangleVec) {
                               int kloc;
                               kloc =  haveedges[ii];
@@ -4640,14 +4649,14 @@ int map_points(MapStruct __far *map, double level, Long spacing,
           int square[4];
           int squarebase;
           
+          square[0] = square[1] = square[2] = square[3] = squarebase = 0;
+            
           for (iy = 0; iy < ypts-1; iy ++) {
             for (ix = 0; ix < xpts-1; ix ++) {
               for (ii=0; ii<3; ii++) {
               
-                square[0] = square[1] = square[2] = square[3] = 0;
-            
                 switch (ii) {
-            	
+                
                   case (0):  /* Extact the contours in the base layer X-Y plane */
             
                   squarebase= 3*(ix+iy*xpts+(1-zalt)*xpts*ypts);
@@ -4691,58 +4700,58 @@ int map_points(MapStruct __far *map, double level, Long spacing,
                 } else {
                   if (square[1]) {
                     mb.src = square[0]-1;
-                    mb.dst = square[1]-1;                	
+                    mb.dst = square[1]-1;                    
                     vector_add_element((GenericVec __far *) BondVec,(void __far *)&mb);
                   }
                   if (square[3]) {
-              	    mb.src = square[0]-1;
-                    mb.dst = square[3]-1;                	
+                      mb.src = square[0]-1;
+                    mb.dst = square[3]-1;                    
                     vector_add_element((GenericVec __far *) BondVec,(void __far *)&mb);
                   }
-                }	
+                }    
               } else  {
                 if (square[2]) {
                   if (square[1]) {
-              	    mb.src = square[2]-1;
-                    mb.dst = square[1]-1;                	
+                      mb.src = square[2]-1;
+                    mb.dst = square[1]-1;                    
                     vector_add_element((GenericVec __far *) BondVec,(void __far *)&mb);
                   }
                   if (square[3]) {
-              	    mb.src = square[2]-1;
-                    mb.dst = square[3]-1;                	
+                      mb.src = square[2]-1;
+                    mb.dst = square[3]-1;                    
                     vector_add_element((GenericVec __far *) BondVec,(void __far *)&mb);
-                  }              	
+                  }                  
                 }
               }
             
               if (square[1]) {
                 if (square[3]) {
-              	  mb.src = square[1]-1;
+                    mb.src = square[1]-1;
                   mb.dst = square[3]-1;
                   vector_add_element((GenericVec __far *) BondVec,(void __far *)&mb);
                 } else  {
-              	  if (square[0] && square[2]) {
-              	    mb.src = square[0]-1;
-                    mb.dst = square[1]-1;                	
+                    if (square[0] && square[2]) {
+                      mb.src = square[0]-1;
+                    mb.dst = square[1]-1;                    
                     vector_add_element((GenericVec __far *) BondVec,(void __far *)&mb);
-              	    mb.src = square[2]-1;
-                    mb.dst = square[1]-1;                	
-                    vector_add_element((GenericVec __far *) BondVec,(void __far *)&mb);              		
-        	      }
-                }	
+                      mb.src = square[2]-1;
+                    mb.dst = square[1]-1;                    
+                    vector_add_element((GenericVec __far *) BondVec,(void __far *)&mb);                      
+                  }
+                }    
               } else {
                 if (square[3] && square[0] && square[2]) {
-              	  mb.src = square[0]-1;
-                  mb.dst = square[3]-1;                	
+                    mb.src = square[0]-1;
+                  mb.dst = square[3]-1;                    
                   vector_add_element((GenericVec __far *) BondVec,(void __far *)&mb);
-              	  mb.src = square[2]-1;
-                  mb.dst = square[3]-1;                	
-                  vector_add_element((GenericVec __far *) BondVec,(void __far *)&mb);              		
+                    mb.src = square[2]-1;
+                  mb.dst = square[3]-1;                    
+                  vector_add_element((GenericVec __far *) BondVec,(void __far *)&mb);                      
                 }
               }
             }
           }
-        }	
+        }    
         }
         
         /* Now for the surfaces.  Our approach is to build lists of points from
@@ -4766,49 +4775,49 @@ int map_points(MapStruct __far *map, double level, Long spacing,
               numpoints = 0;
             
               for (ii=0; ii< 3; ii++) {
-            	jj=((int *)(PointsUsed->array))[cubebase+ii]; /* pick up X,Y,Z base corner*/
-            	if (jj) {
+                jj=((int *)(PointsUsed->array))[cubebase+ii]; /* pick up X,Y,Z base corner*/
+                if (jj) {
                   cube[numpoints]=jj; numpoints++;
-            	}
+                }
               }
               
               cubebase += 3;                                    /* base layer, up in X, pick up Y and Z */
  
               for (ii=1; ii< 3; ii++) {
-            	jj=((int *)(PointsUsed->array))[cubebase+ii]; 
-            	if (jj)  {
-            	  cube[numpoints]=jj; numpoints++;
-            	}
+                jj=((int *)(PointsUsed->array))[cubebase+ii]; 
+                if (jj)  {
+                  cube[numpoints]=jj; numpoints++;
+                }
               }
 
               cubebase += (-3+xpts*3); /* base layer, up in Y, pick up X and Z */
  
               for (ii=0; ii< 3; ii+=2) {
-            	jj=((int *)(PointsUsed->array))[cubebase+ii];
-            	if (jj) {
-            	  cube[numpoints]=jj; numpoints++;
-            	}
+                jj=((int *)(PointsUsed->array))[cubebase+ii];
+                if (jj) {
+                  cube[numpoints]=jj; numpoints++;
+                }
               }
              
               cubebase += 3;           /* base layer, up in X and Y, pick up Z */
               jj = ((int *)(PointsUsed->array))[cubebase+2];
               if (jj) {
-            	cube[numpoints]=jj; numpoints++;
+                cube[numpoints]=jj; numpoints++;
               }
               
               cubebase = 3*(ix+iy*xpts+zalt*xpts*ypts);         /* top layer, pick up  X and Y */
               
               for (ii=0; ii< 2; ii++) {
-            	jj=((int *)(PointsUsed->array))[cubebase+ii];   /* pick up X,Y top corner*/
-            	if (jj) {
-            	  cube[numpoints]=jj; numpoints++;
-            	}
+                jj=((int *)(PointsUsed->array))[cubebase+ii];   /* pick up X,Y top corner*/
+                if (jj) {
+                  cube[numpoints]=jj; numpoints++;
+                }
               }
 
               cubebase += 3;                                    /* top layer, up in X, pick up Y */
               jj = ((int *)(PointsUsed->array))[cubebase+1];
               if (jj) {
-            	cube[numpoints]=jj; numpoints++;
+                cube[numpoints]=jj; numpoints++;
               }
               
               cubebase += (-3+xpts*3);                          /* top layer, up in Y, pick up X */
@@ -4868,7 +4877,7 @@ int map_points(MapStruct __far *map, double level, Long spacing,
                 }*/
               }
             }
-          	
+              
           }
           }
 
@@ -4881,7 +4890,7 @@ int map_points(MapStruct __far *map, double level, Long spacing,
    if (BondVec || TangleVec) vector_free(&PointsUsed);
          
    return 0;
-	
+    
 }
  
  
