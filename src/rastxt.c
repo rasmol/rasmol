@@ -447,12 +447,12 @@ void RefreshScreen( void )
         if( ReDrawFlag & RFColour )
             DefineColourMap();
 
+        NextReDrawFlag = 0;
         if( Database )
         {   if( ReDrawFlag & RFApply ) 
                 ApplyTransform();
             DrawFrame();
         }
-        ReDrawFlag = 0;
     }
 }
 
@@ -671,6 +671,7 @@ int main( int argc, char *argv[] )
         SetRibbonCartoons();
         EnableWireframe(WireFlag,0,0);
         RefreshScreen();
+        ReDrawFlag = NextReDrawFlag;
 
         /* Avoid Pending Events */
         ProfileExecution();
@@ -687,6 +688,7 @@ int main( int argc, char *argv[] )
         if( done )
         {   DefaultRepresentation();
             RefreshScreen();
+            ReDrawFlag = NextReDrawFlag;
         }
     }
 
@@ -714,6 +716,7 @@ int main( int argc, char *argv[] )
             {   RefreshScreen();
                 if( !CommandActive )
                     ResetCommandLine(0);
+                ReDrawFlag = NextReDrawFlag;
             } else done = True;
         }
     }

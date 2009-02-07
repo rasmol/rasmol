@@ -259,8 +259,10 @@ gboolean handlemenu_cb(GtkAction *action, gpointer user_data)
 	if(menu == m_o_stereo) {
 		gtk_toggle_action_set_active((GtkToggleAction *)action, UseStereo);
 	}
-	if( ReDrawFlag )
+	if( ReDrawFlag ) {
     	RefreshScreen();
+    	ReDrawFlag = NextReDrawFlag;
+	}
 	return FALSE;
 }
 
@@ -270,8 +272,10 @@ void radio_cb (GtkRadioAction *action, GtkRadioAction *current, gpointer user_da
 
 	value = gtk_radio_action_get_current_value (action);
 	HandleMenu(value);
-	if( ReDrawFlag )
+	if( ReDrawFlag ) {
     	RefreshScreen();
+    	ReDrawFlag = NextReDrawFlag;
+	}
 }
 
 void open_cb(GtkAction *action, gpointer user_data)
@@ -303,6 +307,7 @@ void open_cb(GtkAction *action, gpointer user_data)
 			gtk_recent_manager_add_item(rman, tmp);
 			DefaultRepresentation();
 			RefreshScreen();	
+			ReDrawFlag = NextReDrawFlag;	
 		} else {
 			;
 		}
@@ -389,6 +394,7 @@ void render_buffer(Pixel *buf, int xsize, int ysize)
 	
 	ReDrawFlag |= RFReSize;
 	RefreshScreen();
+	ReDrawFlag = NextReDrawFlag;
 }
 
 gboolean sizespin_cb(GtkSpinButton button, gpointer data)
@@ -894,6 +900,7 @@ void recent_cb(GtkAction *recent, gpointer user_data)
 		FetchFile(FormatPDB, False, uri+5);
 		DefaultRepresentation();
 		RefreshScreen();	
+		ReDrawFlag  = NextReDrawFlag;
 	}
 }
 
@@ -901,10 +908,10 @@ static const GtkActionEntry menuentries[] = {
   { "FileMenu", NULL, "_File" },
   { "Open", GTK_STOCK_OPEN, "_Open...", "<control>O", "Open a file", G_CALLBACK(open_cb) },
   { "SaveAs", GTK_STOCK_SAVE_AS, "_Save As...", "<control>S", "Save a file", G_CALLBACK(save_cb) }, 
-  { "Export", GTK_STOCK_CONVERT, "_Export...", "<shift><control>E", "Export current image", G_CALLBACK(export_cb) },    
-  { "Close", GTK_STOCK_CLOSE, "_Close", "<control>W", "Close the selected molecule", NULL },
+  { "Export", GTK_STOCK_CONVERT, "_Export...", "<control>E", "Export current image", G_CALLBACK(export_cb) },    
+  { "Close", GTK_STOCK_CLOSE, "_Close", "", "Close the selected molecule", NULL },
   { "PageSetup", NULL, "Page Set_up...", "", "Set the page parameters", G_CALLBACK(pagesetup_cb) },
-  { "Print", GTK_STOCK_PRINT, "_Print...", "<control>P", "Print the current image", G_CALLBACK(print_cb) },
+  { "Print", GTK_STOCK_PRINT, "_Print...", "", "Print the current image", G_CALLBACK(print_cb) },
   { "Exit", GTK_STOCK_QUIT, "E_xit", "<control>Q", "Exit the program", gtk_main_quit },
   { "ViewMenu", NULL, "_View" },
   { "Setfont", NULL, "Set command font...", "", "", G_CALLBACK(setfont_cb) },
@@ -913,9 +920,9 @@ static const GtkActionEntry menuentries[] = {
   { "Backbone", NULL, "_Backbone", "", "", NULL },
   { "Sticks", NULL, "S_ticks", "", "", NULL },
   { "Spheres", NULL, "_Spacefill", "", "", NULL},
-  { "Ballstick", NULL, "B_all & stick", "", "", NULL },
+  { "Ballstick", NULL, "_Ball & stick", "", "", NULL },
   { "Ribbons", NULL, "_Ribbons", "", "", NULL },
-  { "Strands", NULL, "Stran_ds", "", "", NULL },
+  { "Strands", NULL, "Str_ands", "", "", NULL },
   { "Cartoons", NULL, "_Cartoons", "", "", NULL },
   { "MolSurf", NULL, "_Molecular Surface", "", "", NULL },
   { "ColMenu", NULL, "_Colours" },
@@ -932,24 +939,24 @@ static const GtkActionEntry menuentries[] = {
   { "OptMenu", NULL, "_Options" },
   { "SetMenu", NULL, "_Settings" },
   { "HelpMenu", NULL, "_Help" },
-  { "Manual", GTK_STOCK_HELP, "_User Manual", "F1", "", NULL },
+  { "Manual", GTK_STOCK_HELP, "_User Manual", "", "", NULL },
   { "Register", NULL, "_Register", "", "", NULL },
   { "Donate", NULL, "_Donate", "", "", NULL },
   { "About", GTK_STOCK_ABOUT, "_About", "", "", G_CALLBACK(about_cb) },
 };
 
 static const GtkToggleActionEntry view_toggles[] = {
-  { "Command", NULL, "_Command prompt", "F7", "", NULL, FALSE },
-  { "Scrolls", NULL, "_Scrollbars", "F8", "", NULL, FALSE },
-  { "Menus",   NULL, "_Menubar", "F9", "", NULL, TRUE },
-  { "Fullscreen",   NULL, "_Full Screen", "F11", "", NULL, FALSE },
+  { "Command", NULL, "_Command prompt", "", "", NULL, FALSE },
+  { "Scrolls", NULL, "_Scrollbars", "", "", NULL, FALSE },
+  { "Menus",   NULL, "_Menubar", "", "", NULL, TRUE },
+  { "Fullscreen",   NULL, "_Full Screen", "", "", NULL, FALSE },
 };
 
 static const GtkToggleActionEntry opt_toggles[] = {
   { "Slab", NULL, "_Slab Mode", "", "", NULL, FALSE },
-  { "Hydrogens", NULL, "Hy_drogens", "", "", NULL, FALSE },
+  { "Hydrogens", NULL, "H_ydrogens", "", "", NULL, FALSE },
   { "Heteros", NULL, "He_tero Atoms", "", "", NULL, FALSE },
-  { "Specular", NULL, "Spe_cular", "", "", NULL, FALSE },
+  { "Specular", NULL, "S_pecular", "", "", NULL, FALSE },
   { "Shadows", NULL, "S_hadows", "", "", NULL, FALSE },
   { "Stereo", NULL, "Stere_o", "", "", NULL, FALSE },
   { "Labels", NULL, "_Labels", "", "", NULL, FALSE }
@@ -1291,6 +1298,7 @@ gboolean configure_cb(GtkWidget *widget, GdkEventConfigure *event, gpointer user
     
     ReDrawFlag |= RFReSize;
 	RefreshScreen();
+	ReDrawFlag = NextReDrawFlag;
 	
     return FALSE;
 }
@@ -1301,6 +1309,7 @@ void vscroll_cb(GtkRange *range, gpointer user_data)
     WRotValue[YScrlDial] = gtk_range_get_value(range);
     ReDrawFlag |= (1<<YScrlDial);
     RefreshScreen();
+    ReDrawFlag = NextReDrawFlag;
 }
 
 void hscroll_cb(GtkRange *range, gpointer user_data)
@@ -1316,6 +1325,7 @@ void hscroll_cb(GtkRange *range, gpointer user_data)
     	ReDrawFlag |= (1<<XScrlDial);
 	}
     RefreshScreen();
+    ReDrawFlag = NextReDrawFlag;
 }
 
 static gboolean popup_cb (GtkWidget *widget)
@@ -1332,8 +1342,10 @@ gboolean motion_cb(GtkWidget *canvas, GdkEventMotion *event, gpointer user_data)
 	dragging = TRUE;
     stat = GetStatus(event->state);
     ProcessMouseMove(event->x,event->y,stat);
-    if(ReDrawFlag)
+    if(ReDrawFlag) {
 		RefreshScreen();
+        ReDrawFlag = NextReDrawFlag;
+    }
     xorig = event->x;
     yorig = event->y;
     gdk_window_get_pointer(canvas->window, &x, &y, &mask);
@@ -1375,6 +1387,7 @@ void do_char(char c)
 	 	if( !CommandActive ) {
         	ResetCommandLine(0);
 			RefreshScreen();
+			ReDrawFlag = NextReDrawFlag;
 		}
     }	
 }

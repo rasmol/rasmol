@@ -282,6 +282,9 @@ Real LastRX,LastRY,LastRZ;
 Real LastTX,LastTY,LastTZ;
 Real Zoom;
 
+double record_fps, play_fps, record_aps, record_dwell;
+
+
 
 #else
 extern ShadeDesc Shade[LastShade];
@@ -335,6 +338,9 @@ extern Real RotX[3],RotY[3],RotZ[3];
 extern Real LastRX,LastRY,LastRZ;
 extern Real LastTX,LastTY,LastTZ;
 extern Real Zoom;
+
+
+extern double record_fps, play_fps, record_aps, record_dwell;
 
 #endif
 

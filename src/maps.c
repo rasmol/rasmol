@@ -3490,7 +3490,7 @@ int vector_add_element(GenericVec __far * vector, void __far * element) {
      temparray = _fmalloc(newcap*vector->elementsize);
      if (!temparray)  {
        newcap = vector->capacity*1.2;
-       if (newcap < vector->capacity+1024); newcap = vector->capacity;
+       if (newcap < vector->capacity+512) newcap = vector->capacity+512;
        temparray = _fmalloc(newcap*vector->elementsize);
        if (!temparray) {
             CommandError(MsgStrs[StrMalloc]);
@@ -3563,7 +3563,7 @@ int vector_set_element(GenericVec __far * vector, void __far * element, size_t i
      temparray = _fmalloc(newcap*vector->elementsize);
      if (!temparray)  {
        newcap = index*1.2;
-       if (newcap < index+1024); newcap = index+1024;
+       if (newcap < index+128) newcap = index+128;
        temparray = _fmalloc(newcap*vector->elementsize);
        if (!temparray) {
             CommandError(MsgStrs[StrMalloc]);

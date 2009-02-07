@@ -208,6 +208,7 @@ int LookUpKeyword( char *ptr )
         ANGLES               AngleTok
         ANIM                 AnimateTok
         ANIMATE              AnimateTok
+             APS                  APSTok
         AROMATIC             AromaticTok
         ASSE                 AxesTok
         ASSI                 AxesTok
@@ -264,6 +265,12 @@ int LookUpKeyword( char *ptr )
                     }
                     break;
 
+                case('P'):
+                    if( (*ptr=='S') && !ptr[1] ) {
+                        return( APSTok );
+                    }
+                    break;
+                    
                 case('R'):
                     if( !strcmp(ptr,"OMATIC") ) {
                         return( AromaticTok );
@@ -558,6 +565,7 @@ int LookUpKeyword( char *ptr )
         DASH                 DashTok
         DASHES               DashTok
         DATA_...             CIFDataTok
+             DEFER                DeferTok
         DEFINE               DefineTok
 		DEPTH                DepthTok
         DEPTHCUE             DepthCueTok
@@ -569,6 +577,7 @@ int LookUpKeyword( char *ptr )
         DNA                  DNATok
         DOTS                 DotsTok
         DOWN                 DownTok
+             DWELL                DwellTok
       */
 
         case('D'):
@@ -584,7 +593,9 @@ int LookUpKeyword( char *ptr )
                     break;
 
                 case('E'):
-                    if( !strcmp(ptr,"FINE") ) {
+                    if( !strcmp(ptr,"FER") ) {
+                        return( DeferTok );
+                    } else if( !strcmp(ptr,"FINE") ) {
                         return( DefineTok );
                     } else if( !strcmp(ptr,"PTH") ) {
                         return( DepthTok );
@@ -618,6 +629,12 @@ int LookUpKeyword( char *ptr )
                         return( DownTok );
                     }
                     break;
+                    
+                case('W'):
+                    if( !strcmp(ptr,"ELL") ) {
+                        return( DwellTok );
+                    }
+                    
 
             }
             break;
@@ -626,6 +643,7 @@ int LookUpKeyword( char *ptr )
         E                    AndTok
         ECHO                 EchoTok
         EJE                  AxesTok
+             EJECT                EjectTok
         EJES                 AxesTok
         ELANCE               BondTok
         ELANCES              BondTok
@@ -640,6 +658,7 @@ int LookUpKeyword( char *ptr )
         ETIQUETAS            LabelTok
         ETICHETTA            LabelTok
         ETICHETTE            LabelTok  
+             EXECUTE              ExecuteTok
         EXIT                 ExitTok
       */
 
@@ -658,6 +677,8 @@ int LookUpKeyword( char *ptr )
                 case('J'):
                     if( *ptr=='E' && (!ptr[1] || ptr[1]=='S')) {
                         return( AxesTok );
+                    } else if ( !strcmp(ptr,"ECT") ) {
+                        return( EjectTok);
                     }
                     break;
  
@@ -702,7 +723,9 @@ int LookUpKeyword( char *ptr )
                     break;
 
                 case('X'):
-                    if( !strcmp(ptr,"IT") ) {
+                    if( !strcmp(ptr,"ECUTE") ) {
+                        return( ExecuteTok );
+                    } else if( !strcmp(ptr,"IT") ) {
                         return( ExitTok );
                     }
                     break;
@@ -718,9 +741,10 @@ int LookUpKeyword( char *ptr )
         FILI                 StrandsTok  
         FONTSIZE             FontSizeTok
         FONTSTROKE           FontStrokeTok
-        FPS                  FramesTok
+             FPS                  FPSTok
         FRAMES               FramesTok
         FRENCH               FrenchTok
+             FROM                 FromTok
         FS                   FSTok
       */
 
@@ -756,7 +780,7 @@ int LookUpKeyword( char *ptr )
                 
                 case('P'):
                     if( !strcmp(ptr,"S") ) {
-                        return( FramesTok );
+                        return( FPSTok );
                     }
                     break;
 
@@ -766,6 +790,8 @@ int LookUpKeyword( char *ptr )
                         return( FramesTok );
                     } else if( !strcmp(ptr,"ENCH") ) {
                         return( FrenchTok );
+                    } else if( !strcmp(ptr,"OM") ) {
+                        return( FromTok );
                     }
                     break;
 
@@ -1302,10 +1328,11 @@ int LookUpKeyword( char *ptr )
         PICT                 PICTTok
         PINK                 PinkTok
         PINKTINT             PinkTintTok
+             PLAY                 PlayTok
         PNG                  PNGTok
         POLAR                PolarTok
         POSITIVE             BasicTok
-		POSITION			 PositionTok
+             POSITION			  PositionTok
         POTENTIAL            PotentialTok
         POVRAY               POVRayTok
         POVRAY2              POVRay2Tok
@@ -1356,6 +1383,12 @@ int LookUpKeyword( char *ptr )
                     }
                     break;
 
+                case('L'):
+                    if (!strcmp(ptr,"AY") ) {
+                        return( PlayTok );
+                    }
+                    break;
+                    
                 case('N'):
                     if( (*ptr=='G') && !ptr[1] ) {
                         return( PNGTok );
@@ -1449,6 +1482,7 @@ int LookUpKeyword( char *ptr )
         RASTER3D             Raster3DTok
         RASWIN               RasMolTok
         RDF                  RamachanTok
+             RECORD               RecordTok
         RED                  RedTok
         REDORANGE            RedOrangeTok
         REFRESH              RefreshTok
@@ -1518,7 +1552,9 @@ int LookUpKeyword( char *ptr )
                     break;
 
                 case('E'):
-                    if( (*ptr=='D') && !ptr[1] ) {
+                    if( !strcmp(ptr,"CORD") ) {
+                        return ( RecordTok );
+                    } else if( (*ptr=='D') && !ptr[1] ) {
                         return( RedTok );
                     } else if( !strcmp(ptr,"DORANGE") ) {
                         return( RedOrangeTok );
@@ -1889,6 +1925,7 @@ int LookUpKeyword( char *ptr )
       /*
         UNBOND               UnBondTok
         UNITCELL             UnitCellTok
+             UNTIL                UntilTok
         UP                   UpTok
         USER                 UserTok
       */
@@ -1900,6 +1937,8 @@ int LookUpKeyword( char *ptr )
                         return( UnitCellTok );
                     } else if( !strcmp(ptr,"BOND") ) {
                         return( UnBondTok );
+                    } else if( !strcmp(ptr,"TIL") ) {
+                        return( UntilTok );
                     }
                     break;
 

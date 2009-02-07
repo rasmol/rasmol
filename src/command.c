@@ -2551,6 +2551,79 @@ static void ExecuteSetCommand( void )
 			}
 			break;
 
+            /* set play.fps command */
+        case (PlayTok):
+        {   int errorcode = 0;
+            
+            FetchToken();
+            if (CurToken == '.') {
+                FetchToken();
+                if(CurToken == FPSTok) {
+                  FetchToken();
+                    if (CurToken == NumberTok ) {
+                        play_fps = (double)TokenValue;
+                        if( *TokenPtr=='.') {
+                            TokenPtr++;
+                            FetchFloat(TokenValue,1000);
+                            play_fps = (double)TokenValue/1000.;
+                        }
+                     } else if (CurToken=='.') {
+                         FetchFloat(0,1000);
+                         play_fps = (double)TokenValue/1000.;
+                     } else {
+                        if (!CurToken) {
+                            play_fps = 24.;
+                        } else errorcode++;
+                    }
+                } else errorcode++;
+             }
+             if (errorcode) CommandError(MsgStrs[ErrBadArg]);
+            break;
+        }
+            
+                        /* set record.fps <n> command 
+                           set record.aps <n> command 
+                           set record.dwell <n> <what> command
+                         
+                           handling of <what> deferred */
+        case (RecordTok):
+        {   int errorcode = 0;
+            double __far * settarget;
+            double targetdefault = 24.;
+            
+            FetchToken();
+            if (CurToken == '.') {
+                FetchToken();
+                switch (CurToken) {
+                    case FPSTok: settarget = &record_fps; break;
+                    case APSTok: settarget = &record_aps; targetdefault = 10.;break;
+                    case DwellTok: settarget = &record_dwell; targetdefault = 0.5; break;
+                    default: settarget = (double __far *)NULL;
+                }
+                if(settarget) {
+                  FetchToken();
+                    if (CurToken == NumberTok ) {
+                        *settarget = (double)TokenValue;
+                        if( *TokenPtr=='.') {
+                            TokenPtr++;
+                            FetchFloat(TokenValue,1000);
+                            *settarget = (double)TokenValue/1000.;
+                        }
+                     } else if (CurToken=='.') {
+                         FetchFloat(0,1000);
+                         *settarget = (double)TokenValue/1000.;
+                     } else {
+                        if (!CurToken) {
+                           *settarget = targetdefault;
+                        } else errorcode++;
+                    }
+                } else errorcode++;
+             }
+             if (errorcode) CommandError(MsgStrs[ErrBadArg]);
+            break;
+        }
+
+            
         default:
             CommandError(MsgStrs[ErrParam]);
     }
@@ -3306,8 +3379,22 @@ static void ExecuteShowCommand( void )
                     sprintf(buffer,"zoom %d\n",(int)(temp+100));
                     WriteString(buffer);
                  }
+            break;
+            
+        case(FPSTok):
+            InvalidateCmndLine();
+            sprintf(buffer,"set play.fps %g\n",play_fps);
+                WriteString(buffer);
+            sprintf(buffer,"set record.fps %g\n",record_fps);
+                WriteString(buffer);
                  break;
 
+        case(APSTok):
+            InvalidateCmndLine();
+            sprintf(buffer,"set record.aps %g\n",record_aps);
+            WriteString(buffer);
+            break;
+            
         default:
             CommandError(MsgStrs[ErrBadArg]);
     }
@@ -4444,7 +4531,8 @@ int ExecuteCommandOne( int * restore )
         case(TitleTok):      ExecuteTitleCommand();      break;
         case(UnitCellTok):   ExecuteUnitCellCommand();   break;
 
-        case(RefreshTok):    RefreshScreen();            break;
+        case(RefreshTok):    RefreshScreen();
+                             ReDrawFlag = NextReDrawFlag; break;
         
         
         case(ZapTok):        FetchToken();
@@ -4889,6 +4977,7 @@ int ExecuteCommandOne( int * restore )
                                 } else CommandError(MsgStrs[ErrBadArg]);
                                 break;
                               }
+                        
                                 
                               case(SaveTok):
                               case(WriteTok):
@@ -4902,6 +4991,7 @@ int ExecuteCommandOne( int * restore )
                                   CommandError(MsgStrs[ErrBadMolDB]);
                                   break;
                                 }
+
 
                                 if( !CurToken ) {
                                   CommandError(MsgStrs[ErrFilNam]);
@@ -6001,11 +6091,113 @@ int ExecuteCommandOne( int * restore )
                           } else CommandError(MsgStrs[ErrNoCol]);
                           break;
 
+        case(RecordTok):
+        {
+            int newRecordFrom, newRecordUntil;
+            
+            newRecordFrom = RecordFrom;
+            newRecordUntil = RecordUntil;
+            if (RecordTemplate[0]==0){
+                newRecordFrom = 0;
+                newRecordUntil = -1;
+            }
+            if( !AllowWrite )
+                if( (FileDepth!=-1) && LineStack[FileDepth] )
+                {   CommandError(MsgStrs[ErrInScrpt]);
+                    break;
+                }
+            if( !Database ) { 
+                CommandError(MsgStrs[ErrBadMolDB]);
+                break;
+            }
+            FetchToken();
+            do {
+                if (CurToken == FromTok) {
+                    FetchToken();
+                    if( (CurToken==NumberTok) || (CurToken=='.') ) {   
+                        if( CurToken==NumberTok ) {
+                            if( *TokenPtr=='.' ) {   
+                                TokenPtr++;
+                                FetchFloat(TokenValue,1000);
+                            } else TokenValue *= 1000;
+                        } else FetchFloat(0,1000);
+                        newRecordFrom = (double)TokenValue;
+                        RecordFrom = newRecordFrom;
+                    } else {
+                        CommandError(MsgStrs[ErrSyntax]);
+                        break;
+                    }
+                } else if (CurToken == UntilTok) {
+                    FetchToken();
+                    if( (CurToken==NumberTok) || (CurToken=='.') ) {   
+                        if( CurToken==NumberTok ) {
+                            if( *TokenPtr=='.' ) {   
+                                TokenPtr++;
+                                FetchFloat(TokenValue,1000);
+                            } else TokenValue *= 1000;
+                        } else FetchFloat(0,1000);
+                        newRecordUntil = (double)TokenValue;
+                        RecordUntil = newRecordUntil;
+                    } else {
+                        CommandError(MsgStrs[ErrSyntax]);
+                        break;
+                    }
+                } else if (CurToken == OnTok){
+                    FetchToken();
+                    option = CurToken;
+                    suboption = 0;
+                    if( (option==RasMolTok) || (option==ScriptTok)
+                       || (IsMoleculeToken(option))
+                       || (IsImageToken(option)) )
+                    {   if( !*TokenPtr || *TokenPtr==' ' )
+                        suboption = FetchToken();
+                        if (suboption == MirrorTok || suboption == RotateTok) 
+                        {  if (!*TokenPtr || *TokenPtr==' ')
+                            FetchToken();
+                        }
+                        else suboption = 0;
+                    } else option = 0;
+                    
+                    if( !CurToken )
+                    {   CommandError(MsgStrs[ErrFilNam]);
+                        break;
+                    } else if( CurToken==StringTok )
+                    {      ProcessFileName(TokenIdent);
+                    } else {
+                        ProcessFileName(TokenStart);
+                        CurToken=0;
+                    }
+                    strcpy(RecordTemplate,DataFileName);
+                    param = DataFileName;
+                    RecordOption = option;
+                    RecordSubOption = suboption;
+                    RecordPause = 0;
+                    RecordFrom = newRecordFrom;
+                    RecordUntil = newRecordUntil;
+                } else if (CurToken == OffTok ) {
+                    RecordPause = 1;
+                    FetchToken();
+                    if (!CurToken) break;
+                    RecordTemplate[0] = 0;
+                } else {
+                    CommandError(MsgStrs[ErrSyntax]);
+                    break;
+                }
+                if (CurToken) FetchToken();
+            } while (CurToken != 0);
+            break;
+        }
+
+            
         case(WriteTok):
         case(SaveTok):    i = CurToken; /* Save keyword! */
                           if( !AllowWrite )
                               if( (FileDepth!=-1) && LineStack[FileDepth] )
                               {   CommandError(MsgStrs[ErrInScrpt]);
+                    break;
+                }
+            if( !Database ) { 
+                CommandError(MsgStrs[ErrBadMolDB]);
                                   break;
                               }
 
@@ -6035,7 +6227,10 @@ int ExecuteCommandOne( int * restore )
                           CurToken = 0;
 
                           if( !IsMoleculeToken(option) )
-                          {   if( ReDrawFlag ) RefreshScreen();
+            {   if( ReDrawFlag )  {
+            	  RefreshScreen();
+                  ReDrawFlag = NextReDrawFlag;
+                }
                               WriteImageFile( param, option, suboption );
 
                           } else switch(option)

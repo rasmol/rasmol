@@ -1775,6 +1775,7 @@ void RefreshScreen( void )
 	    DefineColourMap();
 	}
 
+    NextReDrawFlag = 0;
 	if( Database )
 	{   BeginWait();
 	    if( ReDrawFlag & RFApply ) 
@@ -1786,7 +1787,6 @@ void RefreshScreen( void )
 	{   ClearBuffers();
 	    TransferImage();
 	}
-	ReDrawFlag = 0;
     }
 }
 
@@ -1999,8 +1999,11 @@ LONG FAR PASCAL DDECallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
                     if( (stat==IPC_Quit) || (stat==IPC_Exit) )
                         RasMolExit();
 
-                    if( ReDrawFlag )
+                    if( ReDrawFlag ) {
                         RefreshScreen();
+                        ReDrawFlag = NextReDrawFlag;
+                    }
+                    
                     if( !CommandActive )
                         ResetCommandLine(0);
                     return 0L;
@@ -2233,8 +2236,10 @@ LONG FAR PASCAL CmndCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 	 default:  return DefWindowProc(hWin,uMsg,wArg,lArg);
     }
 
-    if( ReDrawFlag )
+    if( ReDrawFlag ) {
 	RefreshScreen();
+      ReDrawFlag = NextReDrawFlag;
+    }
     if( !CommandActive )
 	ResetCommandLine(0);
     return 0L;
@@ -3387,8 +3392,11 @@ LONG FAR PASCAL MainCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 
     }
 	
-    if( ReDrawFlag )
+    if( ReDrawFlag ) {
 	RefreshScreen();
+      ReDrawFlag = NextReDrawFlag;
+    }
+    
     if( !CommandActive )
 	ResetCommandLine(0);	
     return 0L;
@@ -3930,6 +3938,7 @@ int PASCAL WinMain( HINSTANCE hCurrent, HINSTANCE hPrevious,
     }
 
     RefreshScreen();
+    ReDrawFlag = NextReDrawFlag;
     if( !CommandActive )
 	ResetCommandLine(0);
 

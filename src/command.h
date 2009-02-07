@@ -189,6 +189,10 @@
 #ifdef COMMAND
 int DataFileFormat;
 char DataFileName[1024];
+char RecordTemplate[1024];
+char PlayTemplate[1024];
+double RecordCurrent, RecordFrom, RecordUntil, PlayCurrent, PlayFrom, PlayUntil;
+int RecordOption, RecordSubOption, RecordPause;
 Long SelectCount;
 int Interactive;
 int FileDepth;
@@ -206,6 +210,10 @@ int NoToggle          = 0;
 #else
 extern int DataFileFormat;
 extern char DataFileName[1024];
+extern char RecordTemplate[1024];
+extern char PlayTemplate[1024];
+extern double RecordCurrent, RecordFrom, RecordUntil, PlayCurrent, PlayFrom, PlayUntil;
+extern int RecordOption, RecordSubOption, RecordPause;
 extern Long SelectCount;
 extern int Interactive;
 extern int FileDepth;

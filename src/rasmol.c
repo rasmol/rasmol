@@ -1828,6 +1828,7 @@ void RefreshScreen( void )
             DefineColourMap();
         }
 
+          NextReDrawFlag = 0;
         if( Database )
         {   if( Interactive )
                 BeginWait();
@@ -1842,7 +1843,6 @@ void RefreshScreen( void )
         {   ClearBuffers();
             TransferImage();
         }
-        ReDrawFlag = 0;
     }
 }
 
@@ -1995,14 +1995,18 @@ static int HandleEvents( int wait )
 {
     register int result;
 
+    NextReDrawFlag = 0;
     result = FetchEvent( wait );
     while( ReDrawFlag || result )
     {   if( !result )
-        {   if( ReDrawFlag )
+        {   if( ReDrawFlag )  {
                 RefreshScreen();
+            }
+                
         } else if( !IsPaused )
             HandleMenu( result );
         result = FetchEvent( False );
+        ReDrawFlag = NextReDrawFlag;
     }
     return( True );
 }
@@ -2393,12 +2397,16 @@ int main( int argc, char *argv[] )
         SetRibbonCartoons();
         EnableWireframe(WireFlag,0,0);
         RefreshScreen();
+        ReDrawFlag = NextReDrawFlag;
 
         /* Avoid Pending Events */
         if( Interactive ) 
         {   FetchEvent(False);
-            if( ReDrawFlag )
+            if( ReDrawFlag ) {
                 RefreshScreen();
+                ReDrawFlag = NextReDrawFlag;
+            }
+                
         }
         ProfileExecution();
         RasMolExit();
@@ -2415,6 +2423,7 @@ int main( int argc, char *argv[] )
         if( done )
         {   DefaultRepresentation();
             RefreshScreen();
+            ReDrawFlag = NextReDrawFlag;
         }
     }
 
@@ -2453,6 +2462,7 @@ int main( int argc, char *argv[] )
             if( ProcessCharacter(ch) )
             {   if( !ProcessCommand() )
                 {   RefreshScreen();
+                    ReDrawFlag = NextReDrawFlag;
                 } else done = True;
             }
         }
@@ -2476,6 +2486,7 @@ int main( int argc, char *argv[] )
         if( ProcessCharacter(ch) )
         {   if( !ProcessCommand() )
             {   RefreshScreen();
+                ReDrawFlag = NextReDrawFlag;
             } else done = True;
         }
     }
@@ -2495,6 +2506,7 @@ int main( int argc, char *argv[] )
             if( ProcessCharacter(ch) )
             {   if( !ProcessCommand() )
                 {   RefreshScreen();
+                    ReDrawFlag = NextReDrawFag;
                 } else done = True;
             }
         }

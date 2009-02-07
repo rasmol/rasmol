@@ -896,6 +896,7 @@ void RefreshScreen( void )
             DefineColourMap();
         }
         
+        NextReDrawFlag = 0;
         if( Database )
         {   BeginWait();
             if( ReDrawFlag & RFApply )
@@ -908,7 +909,6 @@ void RefreshScreen( void )
         {   ClearBuffers();
             ClearImage();
         }
-        ReDrawFlag = 0;
     }
 }
 
@@ -2669,6 +2669,7 @@ static void HandleEvents( void )
     
     if( ReDrawFlag )
         RefreshScreen();
+        ReDrawFlag = NextReDrawFlag;
     if( !CommandActive )
         ResetCommandLine(0);
     if( ShowAbout ) {

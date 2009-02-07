@@ -3167,6 +3167,17 @@ void InitialTransform( void )
       ZoomRange = Range;
       MaxZoom -= 1.0;
     }
+    
+    /* Movie and animation intialization */
+    
+    play_fps = record_fps = 24.;  /* default to 24 fps */;
+    record_aps = 10.;             /* default to 10 Angstroms per second */
+    record_dwell = 0.5;           /* dwell half second per command (12 frames) */
+    RecordTemplate[0] = 0;        /* no initial recording */
+    PlayTemplate[0] = 0;          /* no initial playback  */
+    RecordCurrent = RecordFrom = RecordUntil 
+    = PlayCurrent = PlayFrom = PlayUntil = 0.;
+    RecordPause = 1;
 }
 
 
@@ -3374,22 +3385,71 @@ void PrepareTransform( void )
     
     Real NRotX[3], NRotY[3], NRotZ[3];
     Real RMat[3][3], SMat[3][3], TMat[3][3];
-    
+    Real DialValueOffset[11], DialValueBalance[11];
     Real VecIn[3], VecOut[3];
 
     if ( BondSelected )
 	BondRotate();
 
+    for (ii=DialTX; ii<DialTZ+1; ii++) {
+    	DialValueOffset[ii] = DialValue[ii];
+    	DialValueBalance[ii] = 0;
+    }
+    for (ii=DialRX; ii<DialRZ+1; ii++) {
+    	DialValueOffset[ii] = DialValue[ii];
+    	DialValueBalance[ii] = 0;
+    }
+    DialValueOffset[DialTX] -= LastTX;
+    DialValueOffset[DialTY] -= LastTY;
+    DialValueOffset[DialTZ] -= LastTZ;
+    DialValueOffset[DialRX] -= LastRX;
+    DialValueOffset[DialRY] -= LastRY;
+    DialValueOffset[DialRZ] -= LastRZ;
+
     if( ReDrawFlag )
     {         
  
-    if ( (DialValue[DialTX] != LastTX ) ||
-         (DialValue[DialTY] != LastTY ) ||
-         (DialValue[DialTZ] != LastTZ ) ) {
+    if ( (DialValueOffset[DialTX] != 0 ) ||
+         (DialValueOffset[DialTY] != 0 ) ||
+         (DialValueOffset[DialTZ] != 0 ) ) {
+
+      if (record_aps > 0. || record_fps > 0.) 
+      {
+      	Real tlimit;
+      	tlimit = Scale*250.*record_aps/record_fps;
+        DialValueOffset[DialTX] *= XRange;
+        DialValueOffset[DialTY] *= YRange;
+        DialValueOffset[DialTZ] *= ZRange;
+          
+      	if (DialValueOffset[DialTX]>tlimit) { 
+      	   DialValueBalance[DialTX] = DialValueOffset[DialTX] - tlimit;
+      	   DialValueOffset[DialTX]=tlimit; NextReDrawFlag = ReDrawFlag;
+      	}
+      	if (DialValueOffset[DialTX]<-tlimit) { 
+      	   DialValueBalance[DialTX] = DialValueOffset[DialTX] + tlimit;
+      	   DialValueOffset[DialTX]=-tlimit;  NextReDrawFlag = ReDrawFlag;
+      	}
+      	if (DialValueOffset[DialTY]>tlimit) { 
+      	   DialValueBalance[DialTY] = DialValueOffset[DialTY] - tlimit;
+      	   DialValueOffset[DialTY]=tlimit; NextReDrawFlag = ReDrawFlag;
+      	}
+      	if (DialValueOffset[DialTY]<-tlimit) {
+      	   DialValueBalance[DialTY] = DialValueOffset[DialTY] + tlimit;
+      	   DialValueOffset[DialTY]=-tlimit;  NextReDrawFlag = ReDrawFlag;
+      	}
+      	if (DialValueOffset[DialTZ]>tlimit) { 
+      	   DialValueBalance[DialTZ] = DialValueOffset[DialTZ] - tlimit;
+      	   DialValueOffset[DialTZ]=tlimit; NextReDrawFlag = ReDrawFlag;
+      	}
+      	if (DialValueOffset[DialTZ]<-tlimit) { 
+      	   DialValueBalance[DialTZ] = DialValueOffset[DialTZ] + tlimit;
+      	   DialValueOffset[DialTZ]=-tlimit;  NextReDrawFlag = ReDrawFlag;
+      	}
+      } 
          
-      VecIn[0] = (DialValue[DialTX]-LastTX)*XRange;
-      VecIn[1] = (DialValue[DialTY]-LastTY)*YRange;
-      VecIn[2] = (DialValue[DialTZ]-LastTZ)*ZRange;
+      VecIn[0] = DialValueOffset[DialTX];
+      VecIn[1] = DialValueOffset[DialTY];
+      VecIn[2] = DialValueOffset[DialTZ];
 
       RMatVec(VecOut,WIRotX,WIRotY,WIRotZ,VecIn);
       
@@ -3397,76 +3457,109 @@ void PrepareTransform( void )
       LastTY += VecOut[1]/YRange;
       LastTZ += VecOut[2]/ZRange;
       
-      DialValue[DialTX] = LastTX;
-      DialValue[DialTY] = LastTY;
-      DialValue[DialTZ] = LastTZ;
+      DialValue[DialTX] = LastTX+DialValueBalance[DialTX]/XRange;
+      DialValue[DialTY] = LastTY+DialValueBalance[DialTY]/YRange;
+      DialValue[DialTZ] = LastTZ+DialValueBalance[DialTZ]/ZRange;
      
     } 
 
-    LOffset[0] = WRange + (int)rint(Zoom*DialValue[DialTX]*XRange);
-    LOffset[1] = HRange + (int)rint(Zoom*DialValue[DialTY]*YRange);
-    LOffset[2] = 10000 + (int)rint(Zoom*DialValue[DialTZ]*ZRange);
+    LOffset[0] = WRange + (int)rint(Zoom*LastTX*XRange);
+    LOffset[1] = HRange + (int)rint(Zoom*LastTY*YRange);
+    LOffset[2] = 10000 + (int)rint(Zoom*LastTZ*ZRange);
         
 
-    if ( ( DialValue[DialRX] != LastRX ) || 
-         ( DialValue[DialRY] != LastRY ) ||
-         ( DialValue[DialRZ] != LastRZ ) ) {
-         
-      RV2RMat(DialValue[DialRX]-LastRX,
-        DialValue[DialRY]-LastRY,
-        DialValue[DialRZ]-LastRZ,
-        SMat[0],SMat[1],SMat[2]);
-      
-      /* SMat is the incremental rotation on the World frame       */
-      /* We transform to WInv S W, the rotation in the local frame */
-      
-      RMatRMat(TMat,WIRotX,WIRotY,WIRotZ,SMat);
-      
-      for (ii = 0; ii < 3; ii++) {
-        RMat[0][ii] = WLRotX[ii];
-        RMat[1][ii] = WLRotY[ii];
-        RMat[2][ii] = WLRotZ[ii];
-      }
-      RMatRMat(SMat,TMat[0],TMat[1],TMat[2],RMat);
-      
-      for (ii = 0; ii < 3; ii++) {
-        RMat[0][ii] = LRotX[ii];
-        RMat[1][ii] = LRotY[ii];
-        RMat[2][ii] = LRotZ[ii];
-        NRotX[ii] = SMat[0][ii];
-        NRotY[ii] = SMat[1][ii];
-        NRotZ[ii] = SMat[2][ii];
-      }
-
-      LRotX[0] = NRotX[0]*RMat[0][0]+NRotX[1]*RMat[1][0]+NRotX[2]*RMat[2][0];
-      LRotX[1] = NRotX[0]*RMat[0][1]+NRotX[1]*RMat[1][1]+NRotX[2]*RMat[2][1];
-      LRotX[2] = NRotX[0]*RMat[0][2]+NRotX[1]*RMat[1][2]+NRotX[2]*RMat[2][2];
-
-      LRotY[0] = NRotY[0]*RMat[0][0]+NRotY[1]*RMat[1][0]+NRotY[2]*RMat[2][0];
-      LRotY[1] = NRotY[0]*RMat[0][1]+NRotY[1]*RMat[1][1]+NRotY[2]*RMat[2][1];
-      LRotY[2] = NRotY[0]*RMat[0][2]+NRotY[1]*RMat[1][2]+NRotY[2]*RMat[2][2];
-
-      LRotZ[0] = NRotZ[0]*RMat[0][0]+NRotZ[1]*RMat[1][0]+NRotZ[2]*RMat[2][0];
-      LRotZ[1] = NRotZ[0]*RMat[0][1]+NRotZ[1]*RMat[1][1]+NRotZ[2]*RMat[2][1];
-      LRotZ[2] = NRotZ[0]*RMat[0][2]+NRotZ[1]*RMat[1][2]+NRotZ[2]*RMat[2][2];
-      
-      RMat2RV(&(DialValue[0]), 
-        &(DialValue[1]), 
-        &(DialValue[2]), 
-        LRotX, LRotY, LRotZ);
-
-      RV2RMat(DialValue[0], DialValue[1], DialValue[2],
-        LRotX, LRotY, LRotZ);
-
-      LastRX = DialValue[0];
-      LastRY = DialValue[1];
-      LastRZ = DialValue[2];
- 
-/*    } else {
-    
-      RV2RMat(DialValue[0], DialValue[1], DialValue[2],
-        LRotX, LRotY, LRotZ);
- */
+    if ( ( DialValueOffset[DialRX] != LastRX ) || 
+         ( DialValueOffset[DialRY] != LastRY ) ||
+        ( DialValueOffset[DialRZ] != LastRZ ) ) {
+        
+        if (record_aps > 0. || record_fps > 0.) 
+        {
+            Real slimit;
+            slimit = 39.788*record_aps/record_fps/WorldRadius;
+            if (DialValueOffset[DialRX] > 1. ) DialValueOffset[DialRX] -=2.;
+            if (DialValueOffset[DialRX] < -1. ) DialValueOffset[DialRX] +=2.;
+            if (DialValueOffset[DialRY] > 1. ) DialValueOffset[DialRY] -=2.;
+            if (DialValueOffset[DialRY] < -1. ) DialValueOffset[DialRY] +=2.;
+            if (DialValueOffset[DialRZ] > 1. ) DialValueOffset[DialRZ] -=2.;
+            if (DialValueOffset[DialRZ] < -1. ) DialValueOffset[DialRZ] +=2.;
+            if (DialValueOffset[DialRX]>slimit) { 
+                DialValueBalance[DialRX] = DialValueOffset[DialRX] - slimit;
+                DialValueOffset[DialRX]=slimit; NextReDrawFlag = ReDrawFlag;
+            }
+            if (DialValueOffset[DialRX]<-slimit) { 
+                DialValueBalance[DialRX] = DialValueOffset[DialRX] + slimit;
+                DialValueOffset[DialRX]=-slimit;  NextReDrawFlag = ReDrawFlag;
+            }
+            if (DialValueOffset[DialRY]>slimit) { 
+                DialValueBalance[DialRY] = DialValueOffset[DialRY] - slimit;
+                DialValueOffset[DialRY]=slimit; NextReDrawFlag = ReDrawFlag;
+            }
+            if (DialValueOffset[DialRY]<-slimit) {
+                DialValueBalance[DialRY] = DialValueOffset[DialRY] + slimit;
+                DialValueOffset[DialRY]=-slimit;  NextReDrawFlag = ReDrawFlag;
+            }
+            if (DialValueOffset[DialRZ]>slimit) { 
+                DialValueBalance[DialRZ] = DialValueOffset[DialRZ] - slimit;
+                DialValueOffset[DialRZ]=slimit; NextReDrawFlag = ReDrawFlag;
+            }
+            if (DialValueOffset[DialRZ]<-slimit) { 
+                DialValueBalance[DialRZ] = DialValueOffset[DialRZ] + slimit;
+                DialValueOffset[DialRZ]=-slimit;  NextReDrawFlag = ReDrawFlag;
+            }
+        } 
+      	
+        RV2RMat(DialValueOffset[DialRX], DialValueOffset[DialRY], DialValueOffset[DialRZ],
+                SMat[0],SMat[1],SMat[2]);
+        
+        /* SMat is the incremental rotation on the World frame       */
+        /* We transform to WInv S W, the rotation in the local frame */
+        
+        RMatRMat(TMat,WIRotX,WIRotY,WIRotZ,SMat);
+        
+        for (ii = 0; ii < 3; ii++) {
+            RMat[0][ii] = WLRotX[ii];
+            RMat[1][ii] = WLRotY[ii];
+            RMat[2][ii] = WLRotZ[ii];
+        }
+        RMatRMat(SMat,TMat[0],TMat[1],TMat[2],RMat);
+        
+        for (ii = 0; ii < 3; ii++) {
+            RMat[0][ii] = LRotX[ii];
+            RMat[1][ii] = LRotY[ii];
+            RMat[2][ii] = LRotZ[ii];
+            NRotX[ii] = SMat[0][ii];
+            NRotY[ii] = SMat[1][ii];
+            NRotZ[ii] = SMat[2][ii];
+        }
+        
+        LRotX[0] = NRotX[0]*RMat[0][0]+NRotX[1]*RMat[1][0]+NRotX[2]*RMat[2][0];
+        LRotX[1] = NRotX[0]*RMat[0][1]+NRotX[1]*RMat[1][1]+NRotX[2]*RMat[2][1];
+        LRotX[2] = NRotX[0]*RMat[0][2]+NRotX[1]*RMat[1][2]+NRotX[2]*RMat[2][2];
+        
+        LRotY[0] = NRotY[0]*RMat[0][0]+NRotY[1]*RMat[1][0]+NRotY[2]*RMat[2][0];
+        LRotY[1] = NRotY[0]*RMat[0][1]+NRotY[1]*RMat[1][1]+NRotY[2]*RMat[2][1];
+        LRotY[2] = NRotY[0]*RMat[0][2]+NRotY[1]*RMat[1][2]+NRotY[2]*RMat[2][2];
+        
+        LRotZ[0] = NRotZ[0]*RMat[0][0]+NRotZ[1]*RMat[1][0]+NRotZ[2]*RMat[2][0];
+        LRotZ[1] = NRotZ[0]*RMat[0][1]+NRotZ[1]*RMat[1][1]+NRotZ[2]*RMat[2][1];
+        LRotZ[2] = NRotZ[0]*RMat[0][2]+NRotZ[1]*RMat[1][2]+NRotZ[2]*RMat[2][2];
+        
+        RMat2RV(&LastRX, 
+                &LastRY, 
+                &LastRZ, 
+                LRotX, LRotY, LRotZ);
+        
+        DialValue[DialRX] = LastRX+DialValueBalance[DialRX];
+        DialValue[DialRY] = LastRY+DialValueBalance[DialRY];
+        DialValue[DialRZ] = LastRZ+DialValueBalance[DialRZ];
+        
+        for (ii=DialRX; ii <=DialRY; ii++) {
+            if (DialValue[ii] > 1.) DialValue[ii] -=2.;
+            if (DialValue[ii] < -1.) DialValue[ii] +=2.;
+        }
+        
+        RV2RMat(LastRX, LastRY, LastRZ,
+                LRotX, LRotY, LRotZ);
     }
     }
     WorldRotate();
@@ -3483,12 +3576,26 @@ static void ApplyTransformOne( void )
     register RAtom __far *ptr;
 
     if( ReDrawFlag & (RFMagnify | RFZoom) )
-    {   
+    {   Real ZoomSave, zlimit;
+        
+        ZoomSave = Zoom;
 
         if( DialValue[DialZoom] <= 0.0 )
         {   Zoom = DialValue[DialZoom]+1.0;
             if( Zoom<0.1 ) Zoom=0.1;
         } else Zoom = (DialValue[DialZoom]*MaxZoom) + 1.0;
+        
+        if (record_aps != 0. && record_fps != 0) {
+            zlimit = 250.*record_aps/record_fps/WorldRadius;
+            if (Zoom-ZoomSave > zlimit ) {
+                Zoom = ZoomSave+zlimit;
+                NextReDrawFlag |= RFMagnify | RFZoom;
+            }
+            if (Zoom-ZoomSave < -zlimit )  {
+                Zoom = ZoomSave-zlimit;
+                NextReDrawFlag |= RFMagnify | RFZoom;
+            }
+        }
 
         Scale = Zoom*DScale*Range;
         LScale = (Long)(Scale*256);

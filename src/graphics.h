@@ -168,6 +168,7 @@ int ZRange;
 int UseHourGlass;
 int DisableMenu;
 int ReDrawFlag;
+int NextReDrawFlag;
 int Range;
 int InitWidth, InitHeight, InitXPos, InitYPos;
 
@@ -292,6 +293,7 @@ extern int ZRange;
 extern int UseHourGlass;
 extern int DisableMenu;
 extern int ReDrawFlag;
+extern int NextReDrawFlag;
 extern int Range;
 extern int InitWidth, InitHeight, InitXPos, InitYPos;
 

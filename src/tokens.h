@@ -189,336 +189,354 @@
 
 /* Command Tokens */
 #define AdviseTok      260
-#define AnimateTok     260
-#define BackboneTok    262
-#define CartoonTok     263
-#define CentreTok      264
-#define ClipboardTok   265
-#define ColourTok      266
-#define ColourModeTok  267
-#define ConnectTok     268
-#define DashTok        269
-#define DefineTok      270
-#define DelayTok       271
-#define DepthTok       272
-#define DisplayTok     273
-#define EchoTok        274
-#define ExitTok        275
-#define GenerateTok    276
-#define HelpTok        277
-#define LabelTok       278
-#define LoadTok        279
-#define LoopTok        280
-#define MapTok         281
-#define MaskTok        282
-#define MoleculeTok    283
-#define MolSurfTok     284 
-#define MonitorTok     285
-#define MoveTok        286
-#define MoveToTok      287
-#define NoToggleTok    288
-#define PrintTok       289
-#define QuitTok        290
-#define RefreshTok     291
-#define RenumTok       292
-#define ResetTok       293
-#define ResizeTok      294
-#define RestoreTok     295
-#define RestrictTok    296
-#define RotateTok      297
-#define SaveTok        298
-#define ScriptTok      299
-#define SelectTok      300
-#define SetTok         301
-#define ShowTok        302
-#define SlabTok        303
-#define SourceTok      304
-#define SpacefillTok   305
-#define StarTok        306
-#define StructureTok   307
-#define SurfaceTok     308
-#define SymmetryTok    309
-#define TitleTok       310
-#define TraceTok       311
-#define TranslateTok   312
-#define ViewTok        313
-#define WaitTok        314
-#define WireframeTok   315
-#define WriteTok       316
-#define ZapTok         317
-#define ZoomTok        318
+#define AnimateTok     261
+#define APSTok         262
+#define BackboneTok    263
+#define CartoonTok     264
+#define CentreTok      265
+#define ClipboardTok   266
+#define ColourTok      267
+#define ColourModeTok  268
+#define ConnectTok     269
+#define DashTok        270
+
+#define DeferTok       271
+#define DefineTok      272
+#define DelayTok       273
+#define DepthTok       274
+#define DisplayTok     275
+#define DwellTok       276
+#define EchoTok        277
+#define EjectTok       278
+#define ExitTok        279
+#define ExecuteTok     280
+
+#define FPSTok         281
+#define GenerateTok    282
+#define HelpTok        283
+#define LabelTok       284
+#define LoadTok        285
+#define LoopTok        286
+#define MapTok         287
+#define MaskTok        288
+#define MoleculeTok    289
+#define MolSurfTok     290 
+
+#define MonitorTok     291
+#define MoveTok        292
+#define MoveToTok      293
+#define NoToggleTok    294
+#define PlayTok        295
+#define PrintTok       296
+#define QuitTok        297
+#define RecordTok      298
+#define RefreshTok     299
+#define RenumTok       300
+
+#define ResetTok       301
+#define ResizeTok      302
+#define RestoreTok     303
+#define RestrictTok    304
+#define RotateTok      305
+#define SaveTok        306
+#define ScriptTok      307
+#define SelectTok      308
+#define SetTok         309
+#define ShowTok        310
+
+#define SlabTok        311
+#define SourceTok      312
+#define SpacefillTok   313
+#define StarTok        314
+#define StructureTok   315
+#define SurfaceTok     316
+#define SymmetryTok    317
+#define TitleTok       318
+#define TraceTok       319
+#define TranslateTok   320
+
+#define ViewTok        321
+#define WaitTok        322
+#define WireframeTok   323
+#define WriteTok       324
+#define ZapTok         325
+#define ZoomTok        326
 
 /* Predicate Tokens */
-#define IsPredTok(x)   (((x)>=320) && ((x)<=358))
-#define PredTokOrd(x)  ((x)-320)
-#define PredTokChr(x)  ((x)+320)
+#define IsPredTok(x)   (((x)>=AlphaTok) && ((x)<=SmallTok))
+#define PredTokOrd(x)  ((x)-AlphaTok)
+#define PredTokChr(x)  ((x)+AlphaTok)
 
-#define AlphaTok       320
-#define AminoTok       321
-#define ATTok          322
-#define BondedTok      323
-#define CGTok          324
-#define CystineTok     325
-#define DNATok         326
-#define HelixTok       327
-#define HeteroTok      328
-#define HydrogenTok    329
-#define IonTok         330
-#define LigandTok      331
-#define MainChainTok   332
-#define NucleicTok     333
-#define ProteinTok     334
-#define PurineTok      335
-#define PyrimidineTok  336
-#define RNATok         337
-#define SelectedTok    338
-#define SheetTok       339
-#define SidechainTok   340
-#define SolventTok     341
-#define TurnTok        342
-#define WaterTok       343
+#define AlphaTok       400
+#define AminoTok       401
+#define ATTok          402
+#define BondedTok      403
+#define CGTok          404
+#define CystineTok     405
+#define DNATok         406
+#define HelixTok       407
+#define HeteroTok      408
+#define HydrogenTok    409
+#define IonTok         410
+#define LigandTok      411
+#define MainChainTok   412
+#define NucleicTok     413
+#define ProteinTok     414
+#define PurineTok      415
+#define PyrimidineTok  416
+#define RNATok         417
+#define SelectedTok    418
+#define SheetTok       419
+#define SidechainTok   420
+#define SolventTok     421
+#define TurnTok        422
+#define WaterTok       423
 
-#define AcidicTok      344
-#define AcyclicTok     345
-#define AliphaticTok   346
-#define AromaticTok    347
-#define BasicTok       348
-#define BuriedTok      349
-#define ChargedTok     350
-#define CisBondedTok   351
-#define CyclicTok      352
-#define HydrophobicTok 353
-#define LargeTok       354
-#define MediumTok      355
-#define NeutralTok     356
-#define PolarTok       357
-#define SmallTok       358
+#define AcidicTok      424
+#define AcyclicTok     425
+#define AliphaticTok   426
+#define AromaticTok    427
+#define BasicTok       428
+#define BuriedTok      429
+#define ChargedTok     430
+#define CisBondedTok   431
+#define CyclicTok      432
+#define HydrophobicTok 433
+#define LargeTok       434
+#define MediumTok      435
+#define NeutralTok     436
+#define PolarTok       437
+#define SmallTok       438
 
 
 
 /* Property Tokens */
-#define IsPropTok(x)   (((x)>=360) && ((x)<=366))
-#define TemperatureTok 360
-#define RadiusTok      361
-#define AtomNoTok      362
-#define ElemNoTok      363
-#define ModelTok       364
-#define ResNoTok       365
-#define AltlTok        366
+#define IsPropTok(x)   (((x)>=TemperatureTok) && ((x)<=AltlTok))
+#define TemperatureTok 460
+#define RadiusTok      461
+#define AtomNoTok      462
+#define ElemNoTok      463
+#define ModelTok       464
+#define ResNoTok       465
+#define AltlTok        466
 
 /* File Format Tokens */
 /* Warning! Tokens are related to Format values */
-#define IsMoleculeToken(x)  (((x)>=370) && ((x)<=386))
+#define IsMoleculeToken(x)  (((x)>=PDBTok) && ((x)<=WPDBTok))
 
-#define PDBTok         370
-#define MacroModelTok  371
-#define GaussianTok    372
-#define AlchemyTok     373
-#define NMRPDBTok      374
-#define CharmmTok      375
-#define BiosymTok      376
-#define MOPACTok       377
-#define SHELXTok       378
-#define Mol2Tok        379
-#define FDATTok        380
-#define MMDBTok        381
-#define MDLTok         382
-#define XYZTok         383
-#define CIFTok         384
-#define CEXTok         385
-#define WPDBTok        386
+#define PDBTok         470
+#define MacroModelTok  471
+#define GaussianTok    472
+#define AlchemyTok     473
+#define NMRPDBTok      474
+#define CharmmTok      475
+#define BiosymTok      476
+#define MOPACTok       477
+#define SHELXTok       478
+#define Mol2Tok        479
+#define FDATTok        480
+#define MMDBTok        481
+#define MDLTok         482
+#define XYZTok         483
+#define CIFTok         484
+#define CEXTok         485
+#define WPDBTok        486
 
 /* Raster Tokens */
-#define IsImageToken(x) (((((x)>=390) && ((x)<=409)) || ((x) == PhiPsiTok)))
-#define GIFTok         390
-#define PPMTok         391
-#define SUNTok         392
-#define SUNRLETok      393
-#define EPSFTok        394
-#define PICTTok        395
-#define IRISTok        396
-#define BMPTok         397
-#define MonoPSTok      398
-#define JPEGTok        399
-#define PNGTok         400
-#define VectPSTok      401
-#define KinemageTok    402
-#define MolScriptTok   403
-#define POVRayTok      404
-#define POVRay2Tok     404
-#define POVRay3Tok     405
-#define VRMLTok        406
-#define Raster3DTok    407
-#define RamachanTok    408  /* ok, this isn't a real image format ... */
-#define RamPrintTok    409
-#define MirrorTok      410
+#define IsImageToken(x) (((((x)>=GIFTok) && ((x)<=RamPrintTok)) || ((x) == PhiPsiTok)))
+#define GIFTok         490
+#define PPMTok         491
+#define SUNTok         492
+#define SUNRLETok      493
+#define EPSFTok        494
+#define PICTTok        495
+#define IRISTok        496
+#define BMPTok         497
+#define MonoPSTok      498
+#define JPEGTok        499
+#define PNGTok         500
+#define VectPSTok      501
+#define KinemageTok    502
+#define MolScriptTok   503
+#define POVRayTok      504
+#define POVRay2Tok     504
+#define POVRay3Tok     505
+#define VRMLTok        506
+#define Raster3DTok    507
+#define RamachanTok    508  /* ok, this isn't a real image format ... */
+#define RamPrintTok    509
+#define MirrorTok      510
 
 /* Feature Tokens */
-#define AtomTok        421
-#define BondTok        422
-#define DotsTok        423
-#define HBondTok       424
-#define RibbonTok      425
-#define SSBondTok      426
-#define Ribbon1Tok     427
-#define Ribbon2Tok     428
-#define UnBondTok      429
+#define AtomTok        521
+#define BondTok        522
+#define DotsTok        523
+#define HBondTok       524
+#define RibbonTok      525
+#define SSBondTok      526
+#define Ribbon1Tok     527
+#define Ribbon2Tok     528
+#define UnBondTok      529
 
 /* Expression Tokens */
-#define TrueTok        430
-#define FalseTok       431
-#define AllTok         432
-#define NoneTok        433
-#define AndTok         434
-#define OrTok          435
-#define NotTok         436
-#define WithinTok      437
-#define XorTok         438
-#define MeanTok        439
-#define NextTok        440
-#define NewTok         441
+#define AllTok         530
+#define AndTok         531
+#define FalseTok       532
+#define FromTok        533
+#define MeanTok        534
+#define NewTok         535
+#define NextTok        536
+#define NoneTok        537
+#define NotTok         538
+#define OnTok          TrueTok
+#define OffTok         FalseTok
+#define OrTok          539
+#define TrueTok        540
+#define UntilTok       541
+#define WithinTok      542
+#define XorTok         543
 
 /* Colour Tokens */
 /* Warning! Tokens are related to colour values */
-#define IsColourToken(x) (((x)>=442) && ((x)<=465))
-#define Token2Colour(x)  ((x)-442)
+#define IsColourToken(x) (((x)>=BlackTok) && ((x)<=YellowTintTok))
+#define Token2Colour(x)  ((x)-BlackTok)
 
-#define BlackTok       442
-#define BlueTok        443
-#define BlueTintTok    444
-#define BrownTok       445
-#define CyanTok        446
-#define GoldTok        447
-#define GrayTok        448
-#define GreenTok       449
-#define GreenBlueTok   450
-#define GreenTintTok   451
-#define HotPinkTok     452
-#define MagentaTok     453
-#define OrangeTok      454
-#define PinkTok        455
-#define PinkTintTok    456
-#define PurpleTok      457
-#define RedTok         458
-#define RedOrangeTok   459
-#define SeaGreenTok    460
-#define SkyBlueTok     461
-#define VioletTok      462
-#define WhiteTok       463
-#define YellowTok      464
-#define YellowTintTok  465
+#define BlackTok       642
+#define BlueTok        643
+#define BlueTintTok    644
+#define BrownTok       645
+#define CyanTok        646
+#define GoldTok        647
+#define GrayTok        648
+#define GreenTok       649
+#define GreenBlueTok   650
+#define GreenTintTok   651
+#define HotPinkTok     652
+#define MagentaTok     653
+#define OrangeTok      654
+#define PinkTok        655
+#define PinkTintTok    656
+#define PurpleTok      657
+#define RedTok         658
+#define RedOrangeTok   659
+#define SeaGreenTok    660
+#define SkyBlueTok     661
+#define VioletTok      662
+#define WhiteTok       663
+#define YellowTok      664
+#define YellowTintTok  665
 
-#define CPKTok         466
-#define ShapelyTok     467
-#define ResidueTok     468
-#define UserTok        469
-#define GroupTok       470
-#define ChainTok       471
-#define TypeTok        472
-#define PotentialTok   473
-#define ChargeTok      474
-#define CpkNewTok      475
+#define CPKTok         666
+#define ShapelyTok     667
+#define ResidueTok     668
+#define UserTok        669
+#define GroupTok       670
+#define ChainTok       671
+#define TypeTok        672
+#define PotentialTok   673
+#define ChargeTok      674
+#define CpkNewTok      675
 
 /* Variable Tokens */
-#define AmbientTok     480
-#define AxesTok        481
-#define BackFadeTok    482
-#define BackgroundTok  483
-#define BondModeTok    484
-#define BoundBoxTok    485
-#define CisAngleTok    486
-#define ContourTok     487
-#define DepthCueTok    488
-#define FontSizeTok    489
-#define FontStrokeTok  490
-#define FramesTok      491
-#define HourGlassTok   492
+#define AmbientTok     680
+#define AxesTok        681
+#define BackFadeTok    682
+#define BackgroundTok  683
+#define BondModeTok    684
+#define BoundBoxTok    685
+#define CisAngleTok    686
+#define ContourTok     687
+#define DepthCueTok    688
+#define FontSizeTok    689
+#define FontStrokeTok  690
+#define FramesTok      691
+#define HourGlassTok   692
 #define LevelTok       ContourTok
-#define MenusTok       493
-#define MouseTok       494
-#define PickingTok     495
-#define ResolutionTok  496
-#define ShadePowerTok  497
-#define ShadowTok      498
-#define SlabModeTok    499
-#define SpacingTok     500
-#define SpecularTok    501
-#define SpecPowerTok   502
-#define SpreadTok      503
-#define StrandsTok     504
-#define TransparentTok 505
-#define UnitCellTok    506
+#define MenusTok       693
+#define MouseTok       694
+#define PickingTok     695
+#define ResolutionTok  696
+#define ShadePowerTok  697
+#define ShadowTok      698
+#define SlabModeTok    699
+#define SpacingTok     700
+#define SpecularTok    701
+#define SpecPowerTok   702
+#define SpreadTok      703
+#define StrandsTok     704
+#define TransparentTok 705
+#define UnitCellTok    706
 #define WidthTok       SpreadTok
 
 /* SlabMode Tokens */
-#define RejectTok      510
-#define HalfTok        511
-#define HollowTok      512
-#define SolidTok       513
-#define SectionTok     514
+#define RejectTok      710
+#define HalfTok        711
+#define HollowTok      712
+#define SolidTok       713
+#define SectionTok     714
 
 /* MouseMode Tokens */
-#define RasMolTok      520
-#define InsightTok     521
-#define QuantaTok      522
-#define SybylTok       523
+#define RasMolTok      720
+#define InsightTok     721
+#define QuantaTok      722
+#define SybylTok       723
 
 /* Information Tokens */
-#define InfoTok        524
-#define SequenceTok    525
-#define VersionTok     526
-#define PhiPsiTok      527
+#define InfoTok        724
+#define SequenceTok    725
+#define VersionTok     726
+#define PhiPsiTok      727
 
 /* Display Mode Tokens */
-#define NormalTok      528
-#define StereoTok      529
-#define MonoTok        530
-#define HardwareTok    531
+#define NormalTok      728
+#define StereoTok      729
+#define MonoTok        730
+#define HardwareTok    731
 
 /* Axis Tokens */
-#define XTok           541
-#define YTok           542
-#define ZTok           543
-#define RightTok       544
-#define LeftTok        545
-#define UpTok          546
-#define DownTok        547
-#define InTok          548
-#define OutTok         549
+#define XTok           741
+#define YTok           742
+#define ZTok           743
+#define RightTok       744
+#define LeftTok        745
+#define UpTok          746
+#define DownTok        747
+#define InTok          748
+#define OutTok         749
 
 /* Picking Tokens */
-#define IdentifyTok    550
-#define CoordTok       551
-#define DistanceTok    552
-#define AngleTok       553
-#define TorsionTok     554
-#define OriginTok      555
+#define IdentifyTok    750
+#define CoordTok       751
+#define DistanceTok    752
+#define AngleTok       753
+#define TorsionTok     754
+#define OriginTok      755
 
 /* Misc Tokens */
-#define InLineTok      560
-#define VDWTok         561
-#define HeaderTok      562
-#define CIFDataTok     563
-#define FSTok          564
-#define ScaleTok       565
+#define InLineTok      760
+#define VDWTok         761
+#define HeaderTok      762
+#define CIFDataTok     763
+#define FSTok          764
+#define ScaleTok       765
 
 #define PSTok          EPSFTok
 
 /* Clipboard Tokens */
-#define ImageTok       570
-#define PositionTok    571
-#define CopyTok        572
-#define PasteTok       573
+#define ImageTok       770
+#define PositionTok    771
+#define CopyTok        772
+#define PasteTok       773
 
 /* Language Tokens */
-#define EnglishTok     600
-#define FrenchTok      601
-#define GermanTok      602
-#define ItalianTok     603
-#define SpanishTok     604
-#define RussianTok     605
-#define ChineseTok     606
-#define JapaneseTok    607
-#define BulgarianTok   608
+#define EnglishTok     800
+#define FrenchTok      801
+#define GermanTok      802
+#define ItalianTok     803
+#define SpanishTok     804
+#define RussianTok     805
+#define ChineseTok     806
+#define JapaneseTok    807
+#define BulgarianTok   808
 int LookUpKeyword( char *ptr );
 
