@@ -436,6 +436,8 @@ void AdviseUpdate( int item )
 
 void RefreshScreen( void )
 {
+    int ReDrawFlagSave;
+
     if( !UseSlabPlane )
     {   ReDrawFlag &= ~RFTransZ|RFSlab;
     } else ReDrawFlag &= ~RFTransZ;
@@ -453,6 +455,23 @@ void RefreshScreen( void )
                 ApplyTransform();
             DrawFrame();
         }
+        if ((ReDrawFlagSave & RFApply) && record_on[0] ) {
+	      WriteMovieFrame();
+	      record_frame[0]++;
+	      record_frame[1] = 0;
+	    } else if (record_on[1]) {
+	      WriteMovieFrame();
+	      record_frame[0]++;
+	      record_frame[1]++;
+	      if ((double)(record_frame[1]) <= record_fps*record_dwell) {
+	        NextReDrawFlag |= RFRefresh;
+	      } else {
+	      	NextReDrawFlag = 0;
+	      	record_frame[1] = 0;
+	      }
+	    }
+    }
+
     }
 }
 

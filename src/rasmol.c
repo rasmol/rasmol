@@ -1814,6 +1814,7 @@ void HandleMenu( int hand )
 
 void RefreshScreen( void )
 {
+    int ReDrawFlagSave;
     if( !UseSlabPlane )
     {   ReDrawFlag &= ~RFTransZ|RFSlab;
     } else ReDrawFlag &= ~RFTransZ;
@@ -1842,6 +1843,21 @@ void RefreshScreen( void )
         } else if( Interactive )
         {   ClearBuffers();
             TransferImage();
+          }
+	  if ((ReDrawFlagSave & RFApply) && record_on[0] && !RecordPause) {
+	      WriteMovieFrame();
+	      record_frame[0]++;
+	      record_frame[1] = 0;
+	  } else if (record_on[1] && !RecordPause) {
+	      WriteMovieFrame();
+	      record_frame[0]++;
+	      record_frame[1]++;
+	      if ((double)(record_frame[1]) <= record_fps*record_dwell) {
+	        NextReDrawFlag |= RFRefresh;
+	      } else {
+	      	NextReDrawFlag = 0;
+	      	record_frame[1] = 0;
+	      }
         }
     }
 }

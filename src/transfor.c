@@ -3172,12 +3172,16 @@ void InitialTransform( void )
     
     play_fps = record_fps = 24.;  /* default to 24 fps */;
     record_aps = 10.;             /* default to 10 Angstroms per second */
-    record_dwell = 0.5;           /* dwell half second per command (12 frames) */
+    record_on[0] = record_on[1] = False; 
+                                  /* default, not recording motion or appearance */
+    record_frame[0] = record_frame[1] = 0;
+                                  /* start the overall and dwell frame counts at 0 */ 
+    record_dwell = 0.5;           /* dwell half second per command (12 frames)   */
     RecordTemplate[0] = 0;        /* no initial recording */
     PlayTemplate[0] = 0;          /* no initial playback  */
     RecordCurrent = RecordFrom = RecordUntil 
     = PlayCurrent = PlayFrom = PlayUntil = 0.;
-    RecordPause = 1;
+    RecordPause = True;
 }
 
 
@@ -3413,7 +3417,7 @@ void PrepareTransform( void )
          (DialValueOffset[DialTY] != 0 ) ||
          (DialValueOffset[DialTZ] != 0 ) ) {
 
-      if (record_aps > 0. || record_fps > 0.) 
+      if (record_on[0] && record_aps > 0. && record_fps > 0. && !RecordPause) 
       {
       	Real tlimit;
       	tlimit = Scale*250.*record_aps/record_fps;
@@ -3472,7 +3476,7 @@ void PrepareTransform( void )
          ( DialValueOffset[DialRY] != LastRY ) ||
         ( DialValueOffset[DialRZ] != LastRZ ) ) {
         
-        if (record_aps > 0. || record_fps > 0.) 
+        if (record_on[0] && record_aps > 0. && record_fps > 0. && !RecordPause) 
         {
             Real slimit;
             slimit = 39.788*record_aps/record_fps/WorldRadius;
@@ -3585,7 +3589,7 @@ static void ApplyTransformOne( void )
             if( Zoom<0.1 ) Zoom=0.1;
         } else Zoom = (DialValue[DialZoom]*MaxZoom) + 1.0;
         
-        if (record_aps != 0. && record_fps != 0) {
+        if (record_on[0] && record_aps != 0. && record_fps != 0 && !RecordPause) {
             zlimit = 250.*record_aps/record_fps/WorldRadius;
             if (Zoom-ZoomSave > zlimit ) {
                 Zoom = ZoomSave+zlimit;

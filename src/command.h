@@ -245,3 +245,4 @@ void ResumePauseCommand( void );
 void InterruptPauseCommand( void );
 void ApplyMapColour( void );
 void ApplyMapShow( void );
+void WriteMovieFrame( void );

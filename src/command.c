@@ -6179,6 +6179,21 @@ int ExecuteCommandOne( int * restore )
                     FetchToken();
                     if (!CurToken) break;
                     RecordTemplate[0] = 0;
+                } else if (CurToken == MotionTok || CurToken==MouseTok) {
+                    FetchToken();
+                    if (CurToken ==0 || CurToken == OnTok)  {
+                    	record_on[0] = True;
+                    } else if (CurToken == OffTok ){
+                        record_on[0] = False;
+                    }
+                } else if (CurToken == AppearanceTok ) {
+                    FetchToken();
+                    if (CurToken ==0 || CurToken == OnTok)  {
+                    	record_on[1] = True;
+                    } else if (CurToken == OffTok ){
+                        record_on[1] = False;
+                    }
+                	
                 } else {
                     CommandError(MsgStrs[ErrSyntax]);
                     break;
@@ -6329,6 +6344,30 @@ int ExecuteCommandOne( int * restore )
             CommandError(MsgStrs[StrIgnore]);
     TokenPtr = NULL;
     return False;
+}
+
+void WriteMovieFrame( void ) {
+	int millisec;
+	char param[1024];
+	millisec = RecordFrom + 1000.*((double)record_frame[0])/record_fps;
+	if (RecordUntil >= RecordFrom 
+        && millisec > RecordUntil + 1000.*((double)record_frame[0])/record_fps) {
+        RecordPause = True;
+    } else {
+        sprintf(param,RecordTemplate,millisec);
+        if (!IsMoleculeToken(RecordOption)) {
+            WriteImageFile( param, RecordOption, RecordSubOption );
+        } else switch(RecordOption) {
+            case(NMRPDBTok):
+            case(PDBTok):  SavePDBMolecule(param); break;
+            case(MDLTok):  SaveMDLMolecule(param); break;
+            case(XYZTok):  SaveXYZMolecule(param); break;
+            case(CIFTok):  SaveCIFMolecule(param); break;
+            case(AlchemyTok): SaveAlchemyMolecule(param);
+                break;
+        }
+    }
+	return;
 }
 
 

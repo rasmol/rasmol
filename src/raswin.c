@@ -1759,11 +1759,12 @@ void AdviseUpdate( int item )
 
 void RefreshScreen( void )
 {
+    int ReDrawFlagSave;
     ReDrawFlag &= ~RFTransZ;
 
-    if( ReDrawFlag )
-    {   if( RasWinDDEReady )
-	{   RasWinDDEReady = False;
+    if( ReDrawFlag ) {
+      if( RasWinDDEReady ) {
+          RasWinDDEReady = False;
 	    AdviseUpdate( -4 );
 	}
 	
@@ -1776,6 +1777,7 @@ void RefreshScreen( void )
 	}
 
     NextReDrawFlag = 0;
+      ReDrawFlagSave = ReDrawFlag;
 	if( Database )
 	{   BeginWait();
 	    if( ReDrawFlag & RFApply ) 
@@ -1786,6 +1788,21 @@ void RefreshScreen( void )
 	} else
 	{   ClearBuffers();
 	    TransferImage();
+	  }
+	  if ((ReDrawFlagSave & RFApply) && record_on[0] && !RecordPause ) {
+	      WriteMovieFrame();
+	      record_frame[0]++;
+	      record_frame[1] = 0;
+	  } else if (record_on[1] && !RecordPause) {
+	      WriteMovieFrame();
+	      record_frame[0]++;
+	      record_frame[1]++;
+	      if ((double)(record_frame[1]) <= record_fps*record_dwell) {
+	        NextReDrawFlag |= RFRefresh;
+	      } else {
+	      	NextReDrawFlag = 0;
+	      	record_frame[1] = 0;
+	      }
 	}
     }
 }

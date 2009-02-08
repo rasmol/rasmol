@@ -208,8 +208,10 @@ int LookUpKeyword( char *ptr )
         ANGLES               AngleTok
         ANIM                 AnimateTok
         ANIMATE              AnimateTok
+             APPEARANCE           AppearanceTok
              APS                  APSTok
         AROMATIC             AromaticTok
+             ASPECT               AppearanceTok
         ASSE                 AxesTok
         ASSI                 AxesTok
         AT                   ATTok
@@ -266,7 +268,9 @@ int LookUpKeyword( char *ptr )
                     break;
 
                 case('P'):
-                    if( (*ptr=='S') && !ptr[1] ) {
+                    if( !strcmp(ptr,"PEARANCE") ) {
+                    	return( AppearanceTok );
+                    } else if( (*ptr=='S') && !ptr[1] ) {
                         return( APSTok );
                     }
                     break;
@@ -280,6 +284,8 @@ int LookUpKeyword( char *ptr )
                  case('S'):
                     if( !strcmp(ptr,"SE") || !strcmp(ptr,"SI")) {
                         return( AxesTok );
+                    } else if ( !strcmp(ptr,"PECT") ) {
+                    	return( AppearanceTok);
                     }
                     break;
 
@@ -1124,9 +1130,11 @@ int LookUpKeyword( char *ptr )
         MONOPS               MonoPSTok
         MOPAC                MOPACTok
         MOSTRAR              DisplayTok
+             MOTION               MotionTok
         MOUSE                MouseTok
         MOUSEMODE            MouseTok
         MOVE                 MoveTok
+             MOVEMENT             MotionTok
         MOVETO               MoveToTok
       */
 
@@ -1201,12 +1209,16 @@ int LookUpKeyword( char *ptr )
                         return( MOPACTok );
                     } else if( !strcmp(ptr,"STRAR") ) {
                         return( DisplayTok );
+                    } else if( !strcmp(ptr,"TION") ) {
+                        return( MotionTok );
                     } else if( !strcmp(ptr,"USE") ) {
                         return( MouseTok );
                     } else if( !strcmp(ptr,"USEMODE") ) {
                         return( MouseTok );
                     } else if( !strcmp(ptr,"MOVE") ) {
                         return( MoveTok );
+                    } else if( !strcmp(ptr,"MOVEMENT") ) {
+                        return( MotionTok );
                     } else if( !strcmp(ptr,"MOVETO") ) {
                         return( MoveToTok );
                     }
@@ -1319,7 +1331,7 @@ int LookUpKeyword( char *ptr )
             break;
 
       /*
-        PASTE				 PasteTok
+             PASTE				  PasteTok
         PAUSE                WaitTok
         PDB                  PDBTok
         PHIPSI               PhiPsiTok
@@ -1989,6 +2001,8 @@ int LookUpKeyword( char *ptr )
                         return( CartoonTok );
                     } else if( !strcmp(ptr,"OLET") ) {
                         return( VioletTok );
+                    } else if( !strcmp(ptr,"SAGE") ) {
+                    	return( AppearanceTok);
                     } else if( !strcmp(ptr,"SUALIZZA") ) {
                         return( DisplayTok );
                     }
