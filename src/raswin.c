@@ -1765,29 +1765,29 @@ void RefreshScreen( void )
     if( ReDrawFlag ) {
       if( RasWinDDEReady ) {
           RasWinDDEReady = False;
-	    AdviseUpdate( -4 );
-	}
+	      AdviseUpdate( -4 );
+	  }
 	
-	if( ReDrawFlag & RFReSize )
+	  if( ReDrawFlag & RFReSize )
 	    ReSizeScreen();
 
-	if( ReDrawFlag & RFColour )
-	{   ClearImage();
-	    DefineColourMap();
-	}
+	  if( ReDrawFlag & RFColour )
+	  {   ClearImage();
+	      DefineColourMap();
+	  }
 
-    NextReDrawFlag = 0;
+      NextReDrawFlag = 0;
       ReDrawFlagSave = ReDrawFlag;
-	if( Database )
-	{   BeginWait();
-	    if( ReDrawFlag & RFApply ) 
-		ApplyTransform();
-	    DrawFrame();
-	    TransferImage();
-	    EndWait();
-	} else
-	{   ClearBuffers();
-	    TransferImage();
+	  if( Database )
+	  {   BeginWait();
+	      if( ReDrawFlag & RFApply ) 
+		  ApplyTransform();
+	      DrawFrame();
+	      TransferImage();
+	      EndWait();
+	  } else
+	  {   ClearBuffers();
+	      TransferImage();
 	  }
 	  if ((ReDrawFlagSave & RFApply) && record_on[0] && !RecordPause ) {
 	      WriteMovieFrame();
@@ -1803,7 +1803,7 @@ void RefreshScreen( void )
 	      	NextReDrawFlag = 0;
 	      	record_frame[1] = 0;
 	      }
-	}
+	  }
     }
 }
 
@@ -2017,7 +2017,7 @@ LONG FAR PASCAL DDECallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
                         RasMolExit();
 
                     if( ReDrawFlag ) {
-                        RefreshScreen();
+	                    RefreshScreen();
                         ReDrawFlag = NextReDrawFlag;
                     }
                     
@@ -2254,7 +2254,7 @@ LONG FAR PASCAL CmndCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
     }
 
     if( ReDrawFlag ) {
-	RefreshScreen();
+	  RefreshScreen();
       ReDrawFlag = NextReDrawFlag;
     }
     if( !CommandActive )
@@ -3410,7 +3410,7 @@ LONG FAR PASCAL MainCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
     }
 	
     if( ReDrawFlag ) {
-	RefreshScreen();
+	  RefreshScreen();
       ReDrawFlag = NextReDrawFlag;
     }
     

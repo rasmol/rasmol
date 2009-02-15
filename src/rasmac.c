@@ -2951,7 +2951,7 @@ int main( void )
     
     ResetCommandLine(1);
     RefreshScreen();
-    
+    ReDrawFlag = NextReDrawFlag;    
 
         
     while( True )

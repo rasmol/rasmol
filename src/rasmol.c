@@ -1819,6 +1819,7 @@ void RefreshScreen( void )
     {   ReDrawFlag &= ~RFTransZ|RFSlab;
     } else ReDrawFlag &= ~RFTransZ;
 
+    ReDrawFlagSave = ReDrawFlag;
     if( ReDrawFlag )
     {   if( ReDrawFlag & RFReSize )
             ReSizeScreen();
@@ -1855,7 +1856,6 @@ void RefreshScreen( void )
 	      if ((double)(record_frame[1]) <= record_fps*record_dwell) {
 	        NextReDrawFlag |= RFRefresh;
 	      } else {
-	      	NextReDrawFlag = 0;
 	      	record_frame[1] = 0;
 	      }
         }
@@ -2017,12 +2017,12 @@ static int HandleEvents( int wait )
     {   if( !result )
         {   if( ReDrawFlag )  {
                 RefreshScreen();
+              ReDrawFlag = NextReDrawFlag;
             }
                 
         } else if( !IsPaused )
             HandleMenu( result );
         result = FetchEvent( False );
-        ReDrawFlag = NextReDrawFlag;
     }
     return( True );
 }
