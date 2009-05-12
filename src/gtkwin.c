@@ -1444,51 +1444,45 @@ void do_char(char c)
     }	
 }
 
-gboolean termin_cb(GIOChannel *source, GIOCondition condition, gpointer data) 
+void termin_cb(VteTerminal *vte, gchar *str, guint len, gpointer user_data)
 {
-	gchar buf;
-	static char prev = 0;
-	gsize bread;
-	gsize i;
-	GError *gp;
-	
-	gp = NULL;
-	if(g_io_channel_read_chars(source, &buf, 1, &bread, &gp)  != G_IO_STATUS_NORMAL) {
-		return FALSE;
-	}
-	
-	switch(prev) {
-		case '\0':
-			if(buf!=0x1b) {
-				do_char(buf);
-				prev = '\0';
-			} else {
-				prev = 0x1b;
-			}
-			break;
-		case 0x1b:
-			if( (buf!='[') && (buf!='O') ) {
-				do_char(buf);
-				prev = '\0';
-			} else {
-				prev = buf;
-			}
-			break;
-		case '[':
-		case 'O':			
-			switch( buf ) {   
-				case('A'): do_char(0x10); break;
-        		case('B'): do_char(0x0e); break;
-        		case('C'): do_char(0x06); break;
-        		case('D'): do_char(0x02); break;
-				default:
-					do_char(prev);
-					do_char(buf);
-			}
-			prev = '\0';
-    }
+    int i;
+    gchar buf;
+    static char prev = 0;
 
-	return TRUE;
+    for(i = 0; i < len; i++) {
+        buf = str[i];
+        switch(prev) {
+            case '\0':
+                if(buf!=0x1b) {
+                    do_char(buf);
+                    prev = '\0';
+                } else {
+                    prev = 0x1b;
+                }
+                break;
+            case 0x1b:
+                if( (buf!='[') && (buf!='O') ) {
+                    do_char(buf);
+                    prev = '\0';
+                } else {
+                    prev = buf;
+                }
+                break;
+            case '[':
+            case 'O':
+                switch( buf ) {
+                    case('A'): do_char(0x10); break;
+                    case('B'): do_char(0x0e); break;
+                    case('C'): do_char(0x06); break;
+                    case('D'): do_char(0x02); break;
+                    default:
+                               do_char(prev);
+                               do_char(buf);
+                }
+                prev = '\0';
+        }
+    }
 }
 
 
@@ -1568,7 +1562,7 @@ int OpenDisplay(void)
     gtk_range_set_range(GTK_RANGE(hscrollbar), -1.0, 1.0);
     gtk_range_set_increments(GTK_RANGE(hscrollbar), 0.01, 0.1);
     hscr_handler = g_signal_connect(G_OBJECT(hscrollbar), "value-changed",
-        G_CALLBACK(hscroll_cb), NULL);
+				    G_CALLBACK(hscroll_cb), NULL);
 
     int amaster;
     int aslave;
@@ -1590,12 +1584,7 @@ int OpenDisplay(void)
     vte_terminal_set_font_from_string(VTE_TERMINAL(vte), "Monospace 10");
     vte_terminal_set_pty(VTE_TERMINAL(vte), amaster);
     vte_terminal_set_scroll_on_output(VTE_TERMINAL(vte), TRUE);
-
-    GIOChannel *termin;
-    GError *errg = NULL;
-    termin = g_io_channel_unix_new(FileNo);
-    g_io_channel_set_encoding(termin, NULL, &errg);
-    g_io_add_watch(termin, G_IO_IN | G_IO_PRI, termin_cb, NULL);
+    g_signal_connect(G_OBJECT(vte), "commit", G_CALLBACK(termin_cb), NULL);
 
     termhbox = gtk_hbox_new(FALSE, 0);
     gtk_box_pack_start(GTK_BOX(termhbox), vte, TRUE, TRUE, 0);
