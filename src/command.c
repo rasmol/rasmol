@@ -312,7 +312,7 @@ void CommandError( char *error )
 /*==========================*/
 
 #ifdef IBMPC
-static char *ProcessFileName( char *name )
+void ProcessFileName( char *name )
 {
     register char *ptr;
 
@@ -329,12 +329,11 @@ static char *ProcessFileName( char *name )
     while( (ptr!=DataFileName) && (ptr[-1]==' ') )
         ptr--;
     *ptr = '\0';
-    return ptr;
 }
 #endif
 
 #ifdef APPLEMAC
-static char *ProcessFileName( char *name )
+void ProcessFileName( char *name )
 {
     register char *ptr;
 
@@ -349,12 +348,11 @@ static char *ProcessFileName( char *name )
     while( (ptr!=DataFileName) && (ptr[-1]==' ') )
         ptr--;
     *ptr = '\0';
-    return ptr;
 }
 #endif
 
 #ifdef VMS 
-static char *ProcessFileName( char *name )
+void ProcessFileName( char *name )
 {
     register char *ptr;
 
@@ -367,105 +365,20 @@ static char *ProcessFileName( char *name )
         name++;
     }
     *ptr = '\0';
-    return ptr;
 }
 #endif
-
 
 #if !defined(IBMPC) && !defined(APPLEMAC) && !defined(VMS)
-static int IsSecure( int ch )
+void ProcessFileName( char *name )
 {
-    switch( ch )
-    {   /* Dangerous characters in UNIX "popen"!  */
-        case('<'):  case('>'):  case('('):  case(')'):
-        case('{'):  case('}'):  case('['):  case(']'):
-        case('\''): case(';'):  case('|'):  case('&'):
-            return False;
-    }
-    return True;
-}
+    char *ptr;
 
-
-static char *ProcessFileName( char *name )
-{
-    register struct passwd *entry;
-    register char *temp;
-    register char *ptr;
-    char username[64];
-
-    while( *name==' ' )
-        name++;
-
-    /* Perform filename globbing */
-    if( *name=='~' )
-    {   ptr = username;  name++;
-        while( *name && (*name!=' ') && (*name!='/') )
-            *ptr++ = *name++;
-        *ptr = '\0';
-
-        ptr = DataFileName;
-        if( *username )
-        {   if( (entry=getpwnam(username)) )
-            {   temp = entry->pw_dir;
-                endpwent();
-            } else /* Unknown user! */
-            {   temp = username;
-                *ptr++ = '~';
-            }
-
-        } else if( !(temp=(char*)getenv("HOME")) )
-            temp = ".";
-
-        while( *temp )
-            *ptr++ = *temp++;
-    } else ptr = DataFileName;
-
-    /* Strip dubious characters! */
-    while( *name && (*name!=' ') )
-        if( IsSecure(*name) )
-        {   *ptr++ = *name++;
-        } else name++;
+    ptr = DataFileName;
+    while(*name)
+        *ptr++ = *name++;
     *ptr = '\0';
-    return ptr;
 }
 #endif
-
-
-#ifdef UNIX
-
-#define MaxFileExt  4
-/* UNIX Compressed Filename extensions! */
-static char *FileExt[MaxFileExt] = { "", ".Z", ".gz", ".z" };
-
-static FILE *OpenDataFile( char *begin, char *end )
-{
-    register char *src, *dst;
-    register FILE *fp;
-    register int i;
-    
-    for( i=0; i<MaxFileExt; i++ )
-    {   dst = end; src = FileExt[i];
-        while( (*dst++ = *src++) );
-        if( (fp=fopen(begin,"rb")) ) {
-          *end = '\0';
-          return fp;
-        }
-    }
-    fp = fopen(begin,"rb");
-    *end = '\0';
-    return fp;
-}
-#else /* !defined(UNIX) */
-
-static FILE *OpenDataFile( char *begin, char *end )
-{
-    register FILE *fp;
-
-    fp = fopen(begin,"rb");
-    return fp;
-}
-#endif
-
 
 int ProcessFile( int format, int info, FILE *fp )
 {
@@ -558,8 +471,8 @@ static int FetchFileOne( int format, int info, char *name )
     register FILE *fp;
 
     DataFileFormat = 0;
-    name = ProcessFileName(name);
-    fp = OpenDataFile(DataFileName,name);
+    ProcessFileName(name);
+    fp = fopen(DataFileName, "rb");
 
 #ifndef APPLEMAC
     /* Search for directory specification! */
@@ -600,7 +513,7 @@ static int FetchFileOne( int format, int info, char *name )
 
             tmp = DataFileName;
             while( *dst = *tmp++ ) dst++;
-            if( fp = OpenDataFile(buffer,dst) )
+            if( fp = fopen(buffer, "rb") )
                 strcpy(DataFileName,buffer);
 #else
             while( *src )
@@ -621,7 +534,7 @@ static int FetchFileOne( int format, int info, char *name )
                     }
                     tmp = DataFileName;
                     while( (*dst = *tmp++) ) dst++;
-                    if( (fp = OpenDataFile(buffer,dst)) )
+                    if( (fp = fopen(buffer, "rb")) )
                     {   strcpy(DataFileName,buffer);
                         break;
                     }
@@ -658,11 +571,11 @@ static int FetchFileOne( int format, int info, char *name )
 
         if( done == 0x9d )
         {   /* Should #include <signal.h> and trap "" SIGPIPE */
-            sprintf(buffer,"trap \"\" 13; uncompress -c %s 2> /dev/null\n",
+            sprintf(buffer,"trap \"\" 13; uncompress -c '%s' 2> /dev/null\n",
                                                               DataFileName);
         } else if( done == 0x8b )
         {   /* Should #include <signal.h> and trap "" SIGPIPE */
-            sprintf(buffer,"trap \"\" 13; gzip -cdq %s 2> /dev/null\n",
+            sprintf(buffer,"trap \"\" 13; gzip -cdq '%s' 2> /dev/null\n",
                                                           DataFileName);
         } else /* bad magic number! */
         {   InvalidateCmndLine();
@@ -719,6 +632,24 @@ int FetchFile( int format, int info, char *name )
     return result;
 }
 
+int FetchStdin( int format )
+{
+    int SaveMolecule = MoleculeIndex;
+    int result;
+
+    if (NumMolecules >= MAX_MOLECULES) {
+	return 0;
+    }
+    SwitchMolecule(NumMolecules);
+    result = ProcessFile( format, True, stdin );
+    if (result && Database) {
+	NumMolecules++;
+        DrawMoleculeList();
+    } else {
+	SwitchMolecule(SaveMolecule);
+    }
+    return result;
+}
 
 static int SetNewMolecule( void )
 {
@@ -860,6 +791,7 @@ void LoadScriptFile( FILE *fp,  char *name )
         WriteString(MsgStrs[StrSFile]);
         WriteString(name);  WriteString("'\n");
     }
+    *CurLine = '\0';
 }
 
 

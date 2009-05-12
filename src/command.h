@@ -233,6 +233,7 @@ extern int NoToggle;
 
 int ProcessCharacter( int );
 int FetchFile( int, int, char* );
+int FetchStdin( int );
 int ProcessFile( int, int, FILE* );
 void LoadScriptFile( FILE*, char* );
 void ResetCommandLine( int );

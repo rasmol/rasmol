@@ -380,7 +380,7 @@ static int SocketNo;
 
 static int firstpass=1;
 
-static char *FileNamePtr;
+static char *FileNamePtrs[MAX_MOLECULES];
 static char *ScriptNamePtr;
 static int FileFormat;
 static int ProfCount;
@@ -2079,8 +2079,11 @@ static void ProfileExecution( void )
 static void InitDefaultValues( void )
 {
     Interactive = True;
+    int i;
 
-    FileNamePtr = NULL;
+    for(i = 0; i < MAX_MOLECULES; i++) {
+        FileNamePtrs[i]= NULL;
+    }
     ScriptNamePtr = NULL;
     InitWidth = InitHeight = InitXPos = InitYPos = 0;
     ProfCount = 0;
@@ -2131,9 +2134,10 @@ static struct {
 static void ProcessOptions( int argc, char *argv[] )
 {
     register char *ptr;
-    register int i,j,argok;
+    register int i, j, argok, nfiles;
     register language klang;
 
+    nfiles = 0;
     for( i=1; i<argc; i++ )
     {   ptr = argv[i];
 #ifdef VMS
@@ -2227,8 +2231,8 @@ static void ProcessOptions( int argc, char *argv[] )
                     DisplayUsage();
             }
         } else
-            if( !FileNamePtr )
-            {   FileNamePtr = ptr;
+            if( nfiles < MAX_MOLECULES )
+            {   FileNamePtrs[nfiles++] = ptr;
             } else DisplayUsage();
     }
 }
@@ -2321,6 +2325,7 @@ int main( int argc, char *argv[] )
     register int done;
     register char ch;
     static char VersionStr[255];
+    int i, read_from_stdin;
   
     Interactive = False;
 	TermLanguage = English;
@@ -2393,11 +2398,13 @@ int main( int argc, char *argv[] )
 
 #ifdef PROFILE
     if( ProfCount )
-    {   if( FileNamePtr )
-        {   strcpy(DataFileName,FileNamePtr);
+    {
+      /* Only use the first filename arg when profiling */
+      if( FileNamePtrs[0] )
+        {   strcpy(DataFileName,FileNamePtrs[0]);
 
-            if( strcmp(FileNamePtr,"-") )
-            {   done = FetchFile(FileFormat,True,FileNamePtr);
+            if( strcmp(FileNamePtrs[0],"-") )
+            {   done = FetchFile(FileFormat,True,FileNamePtrs[0]);
             } else done = ProcessFile(FileFormat,True,stdin);
             if( !done )
                 RasMolFatalExit("Profile Error: Unable to read data file!");
@@ -2429,18 +2436,33 @@ int main( int argc, char *argv[] )
     }
 #endif
 
-    if( FileNamePtr )
-    {   strcpy(DataFileName,FileNamePtr);
+    i = 0;
+    read_from_stdin = False;
+    while( i < MAX_MOLECULES && FileNamePtrs[i] )
+    {   strcpy(DataFileName,FileNamePtrs[i]);
 
-        if( !strcmp(FileNamePtr,"-") )
-        {   done = ProcessFile(FileFormat,True,stdin);
-        } else done = FetchFile(FileFormat,True,FileNamePtr);
+        if( !strcmp(FileNamePtrs[i],"-") ) {
+            done = FetchStdin(FileFormat);
+            read_from_stdin = True;
+        } else
+            done = FetchFile(FileFormat,True,FileNamePtrs[i]);
 
         if( done )
-        {   DefaultRepresentation();
+        {
+#ifdef GTKWIN
+            char tmp[4096];
+
+            strcpy(tmp, "file://");
+            getcwd(tmp+7, 4000);
+            strcat(tmp, "/");
+            strcat(tmp, FileNamePtrs[i]);
+            gtk_recent_manager_add_item(gtk_recent_manager_get_default(), tmp);
+#endif // GTKWIN
+            DefaultRepresentation();
             RefreshScreen();
             ReDrawFlag = NextReDrawFlag;
         }
+        i++;
     }
 
     LexState = 0;
@@ -2453,7 +2475,7 @@ int main( int argc, char *argv[] )
         } else LoadScriptFile(fp,ScriptNamePtr);
     }
 
-    if( FileNamePtr && !strcmp(FileNamePtr,"-") )
+    if( read_from_stdin )
     {   /* Finished Processing after stdin? */
 #ifdef TERMIOS
         if( Interactive )
