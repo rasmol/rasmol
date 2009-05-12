@@ -102,6 +102,9 @@
 #define XScrlDial  1 /*1*/
 #define YScrlDial  0 /*0*/
 
+#define RASGTK_MINWIDTH  300
+#define RASGTK_MINHEIGHT 300
+
 typedef union {
     Long longword;
     Byte bytes[4];
@@ -111,10 +114,6 @@ typedef union {
 #ifdef THIRTYTWOBIT
 static int SwapBytes;
 #endif
-
-static int MaxWidth, MaxHeight;
-static int MinWidth, MinHeight;
-static int MainWide, MainHigh;
 
 extern int ProcessCommand( void );
 
@@ -280,40 +279,74 @@ void radio_cb (GtkRadioAction *action, GtkRadioAction *current, gpointer user_da
 
 void open_cb(GtkAction *action, gpointer user_data)
 {
-	static char *prevname = NULL;
-	GtkWidget *opendialog = NULL;
-	GtkRecentManager* rman = NULL;
-	
-	opendialog = gtk_file_chooser_dialog_new ("Open File",
-				      GTK_WINDOW(mainwin),
-				      GTK_FILE_CHOOSER_ACTION_OPEN,
-				      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				      GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-				      NULL);		
-	if(prevname) {
-		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER (opendialog), prevname);
-	}
-	if (gtk_dialog_run (GTK_DIALOG (opendialog)) == GTK_RESPONSE_ACCEPT) {
-		if(prevname)
-			g_free (prevname);
-    	prevname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (opendialog));
-		if(FetchFile(FormatPDB, False, prevname)) {
-			char tmp[4096];
-			
-			tmp[0] = '\0';
-			strcat(tmp, "file://");
-			strcat(tmp, prevname);
-			rman = gtk_recent_manager_get_default();
-			gtk_recent_manager_add_item(rman, tmp);
-			DefaultRepresentation();
-			RefreshScreen();	
-			ReDrawFlag = NextReDrawFlag;	
-		} else {
-			;
-		}
-  	}
+    static char *prevname = NULL;
+    GtkWidget *opendialog = NULL;
+    GtkRecentManager* rman = NULL;
+    GtkFileFilter* filter = NULL;
 
-	gtk_widget_destroy (opendialog);
+    opendialog = gtk_file_chooser_dialog_new ("Open File",
+        GTK_WINDOW(mainwin),
+        GTK_FILE_CHOOSER_ACTION_OPEN,
+        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+        GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+        NULL);
+
+    filter = gtk_file_filter_new();
+    gtk_file_filter_set_name(filter, "Molecular structures");
+    gtk_file_filter_add_pattern(filter, "*.pdb");
+    gtk_file_filter_add_pattern(filter, "*.PDB");
+    gtk_file_filter_add_pattern(filter, "*.mol");
+    gtk_file_filter_add_pattern(filter, "*.MOL");
+    gtk_file_filter_add_pattern(filter, "*.mol2");
+    gtk_file_filter_add_pattern(filter, "*.xyz");
+    gtk_file_filter_add_pattern(filter, "*.XYZ");
+    gtk_file_filter_add_pattern(filter, "*.mop");
+    gtk_file_filter_add_pattern(filter, "*.MOP");
+    gtk_file_filter_add_pattern(filter, "*.mopcrt");
+    gtk_file_filter_add_pattern(filter, "*.MOPCRT");
+    gtk_file_filter_add_pattern(filter, "*.mopint");
+    gtk_file_filter_add_pattern(filter, "*.MOPINT");
+    gtk_file_filter_add_pattern(filter, "*.mopout");
+    gtk_file_filter_add_pattern(filter, "*.MOPOUT");
+    gtk_file_filter_add_pattern(filter, "*.alc");
+    gtk_file_filter_add_pattern(filter, "*.ALC");
+    gtk_file_filter_add_pattern(filter, "*.crd");
+    gtk_file_filter_add_pattern(filter, "*.cor");
+    gtk_file_filter_add_pattern(filter, "*.cif");
+    gtk_file_filter_add_pattern(filter, "*.CIF");
+    gtk_file_filter_add_pattern(filter, "*.mmcif");
+    gtk_file_filter_add_pattern(filter, "*.mmCIF");
+    gtk_file_filter_add_pattern(filter, "*.MMCIF");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(opendialog), filter);
+    filter = gtk_file_filter_new();
+    gtk_file_filter_set_name(filter, "All files");
+    gtk_file_filter_add_pattern(filter, "*");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(opendialog), filter);
+
+    if(prevname) {
+        gtk_file_chooser_set_filename(GTK_FILE_CHOOSER (opendialog), prevname);
+    }
+    if (gtk_dialog_run (GTK_DIALOG (opendialog)) == GTK_RESPONSE_ACCEPT) {
+        if(prevname)
+            g_free (prevname);
+        prevname = gtk_file_chooser_get_filename (
+            GTK_FILE_CHOOSER (opendialog));
+        strcpy(DataFileName, prevname);
+        if(FetchFile(FormatPDB, False, prevname)) {
+            char tmp[4096];
+
+            strcpy(tmp, "file://");
+            strcat(tmp, prevname);
+            rman = gtk_recent_manager_get_default();
+            gtk_recent_manager_add_item(rman, tmp);
+            DefaultRepresentation();
+            RefreshScreen();
+        } else {
+            ;
+        }
+    }
+
+    gtk_widget_destroy (opendialog);
 }
 
 void save_cb(GtkAction *action, gpointer user_data)
@@ -893,15 +926,15 @@ void setfont_cb(GtkAction *action, gpointer user_data)
 
 void recent_cb(GtkAction *recent, gpointer user_data)
 {
-	gchar *uri;
-	
-	uri = gtk_recent_chooser_get_current_uri(GTK_RECENT_CHOOSER(recent));
-	if(strncmp(uri, "file:", 5) == 0) {
-		FetchFile(FormatPDB, False, uri+5);
-		DefaultRepresentation();
-		RefreshScreen();	
-		ReDrawFlag  = NextReDrawFlag;
-	}
+    gchar *uri;
+
+    uri = gtk_recent_chooser_get_current_uri(GTK_RECENT_CHOOSER(recent));
+    if(strncmp(uri, "file:", 5) == 0) {
+        strcpy(DataFileName, uri+5);
+        FetchFile(FormatPDB, False, uri+5);
+        DefaultRepresentation();
+        RefreshScreen();
+    }
 }
 
 static const GtkActionEntry menuentries[] = {
@@ -1440,7 +1473,7 @@ gboolean termin_cb(GIOChannel *source, GIOCondition condition, gpointer data)
 }
 
 
-int OpenDisplay( int x, int y )
+int OpenDisplay(void)
 {
 #ifdef THIRTYTWOBIT
     static ByteTest test;
@@ -1448,10 +1481,10 @@ int OpenDisplay( int x, int y )
     register int i,num;
     static char VersionStr[50];
 
-   	sprintf (VersionStr,"RasMol Version %s", VERSION);
+    sprintf (VersionStr,"RasMol Version %s", VERSION);
 
     for( i=0; i<11; i++ )
-         DialValue[i] = 0.0;
+        DialValue[i] = 0.0;
 
     RLut[0]=0;   GLut[0]=0;   BLut[0]=0;    ULut[0]=True;
     RLut[1]=100; GLut[1]=100; BLut[1]=100;  ULut[1]=True;
@@ -1459,112 +1492,116 @@ int OpenDisplay( int x, int y )
     RLut[3]=200; GLut[3]=200; BLut[3]=200;  ULut[3]=True;
     RLut[4]=255; GLut[4]=255; BLut[4]=255;  ULut[4]=True;
 
-    XRange = x;  WRange = XRange>>1;
-    YRange = y;  HRange = YRange>>1;
+    XRange = DefaultWide;
+    YRange = DefaultHigh;
+    if (InitWidth  >= RASGTK_MINWIDTH) XRange = InitWidth;
+    if (InitHeight >= RASGTK_MINHEIGHT) YRange = InitHeight;
+    WRange = XRange>>1;
+    HRange = YRange>>1;
     Range = MinFun(XRange,YRange);
 
-    if( !Interactive ) return( False );
+    if( !Interactive )
+        return( False );
 
-	g_set_application_name("RasMol");
+    g_set_application_name("RasMol");
     mainwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_widget_add_events(mainwin, GDK_KEY_PRESS_MASK);
+    gtk_widget_add_events(mainwin, GDK_KEY_PRESS_MASK);
     g_signal_connect (mainwin, "delete-event",
-		      G_CALLBACK (gtk_main_quit), NULL);
+        G_CALLBACK (gtk_main_quit), NULL);
     g_signal_connect (mainwin, "destroy",
-		      G_CALLBACK (gtk_main_quit), NULL);
+        G_CALLBACK (gtk_main_quit), NULL);
 
-	menubar = build_gtkmenu();
+    menubar = build_gtkmenu();
 
     mainvbox = gtk_vbox_new(FALSE, 0);
-    
+
     ctable = gtk_table_new(2, 2, FALSE);   
-    
+
     canvasarea = gtk_drawing_area_new();
-    gtk_widget_set_size_request(canvasarea, XRange, YRange);
     gtk_widget_add_events(canvasarea, GDK_POINTER_MOTION_HINT_MASK);
     gtk_widget_add_events(canvasarea, GDK_BUTTON_PRESS_MASK);
     gtk_widget_add_events(canvasarea, GDK_BUTTON_RELEASE_MASK);    
     gtk_widget_add_events(canvasarea, GDK_BUTTON_MOTION_MASK);        
     g_signal_connect (G_OBJECT (canvasarea), "expose-event",  
-		      G_CALLBACK (expose_cb), NULL);
+        G_CALLBACK (expose_cb), NULL);
     g_signal_connect (G_OBJECT (canvasarea), "configure-event",  
-		      G_CALLBACK (configure_cb), NULL);            
+        G_CALLBACK (configure_cb), NULL);
     g_signal_connect (G_OBJECT (canvasarea), "motion-notify-event",  
-		      G_CALLBACK (motion_cb), NULL);
+        G_CALLBACK (motion_cb), NULL);
     g_signal_connect (G_OBJECT (canvasarea), "button-press-event",  
-		      G_CALLBACK (button_press_cb), NULL);
+        G_CALLBACK (button_press_cb), NULL);
     g_signal_connect (G_OBJECT (canvasarea), "button-release-event",  
-		      G_CALLBACK (button_release_cb), NULL);
+        G_CALLBACK (button_release_cb), NULL);
     g_signal_connect (G_OBJECT (canvasarea), "popup-menu",  
-		      G_CALLBACK (popup_cb), NULL);			
-     
+        G_CALLBACK (popup_cb), NULL);
+
     vscrollbar = gtk_vscrollbar_new(NULL);
     gtk_range_set_update_policy(GTK_RANGE(vscrollbar),
-				GTK_UPDATE_CONTINUOUS);
+        GTK_UPDATE_CONTINUOUS);
     gtk_range_set_range(GTK_RANGE(vscrollbar), -1.0, 1.0);
     gtk_range_set_increments(GTK_RANGE(vscrollbar), 0.01, 0.1);
     vscr_handler = g_signal_connect(G_OBJECT(vscrollbar), "value-changed",
-				    G_CALLBACK(vscroll_cb), NULL);
-  
+        G_CALLBACK(vscroll_cb), NULL);
+
     hscrollbar = gtk_hscrollbar_new(NULL);
     gtk_range_set_update_policy(GTK_RANGE(hscrollbar),
-				GTK_UPDATE_CONTINUOUS);
+        GTK_UPDATE_CONTINUOUS);
     gtk_range_set_range(GTK_RANGE(hscrollbar), -1.0, 1.0);
     gtk_range_set_increments(GTK_RANGE(hscrollbar), 0.01, 0.1);
     hscr_handler = g_signal_connect(G_OBJECT(hscrollbar), "value-changed",
-				    G_CALLBACK(hscroll_cb), NULL);
-		 
-	int amaster;
-	int aslave;
-	if((amaster = posix_openpt(O_RDWR|O_NOCTTY)) < 0) {
-		error("Could not open master pty");
-	}
-	if((grantpt(amaster) + unlockpt(amaster)) < 0) {
-		error("Could not grant/unlock pty");
-	}
-	if((aslave = open(ptsname(amaster), O_RDWR|O_NOCTTY)) < 0) {
-		error("Could not open slave pty");
-	}	
-	OutFp = fdopen(aslave, "w");
-	setbuf(OutFp,(char *)NULL);
-	FileNo = aslave;
+        G_CALLBACK(hscroll_cb), NULL);
 
-	vte = vte_terminal_new();
-	vte_terminal_set_size(VTE_TERMINAL(vte), 80, 10);
-	vte_terminal_set_font_from_string(VTE_TERMINAL(vte), "Monospace 10");
-	vte_terminal_set_pty(VTE_TERMINAL(vte), amaster);
-	vte_terminal_set_scroll_on_output(VTE_TERMINAL(vte), TRUE);
-	
-	GIOChannel *termin;
-	GError *errg = NULL;
-	termin = g_io_channel_unix_new(FileNo);
-	g_io_channel_set_encoding(termin, NULL, &errg); 
-	g_io_add_watch(termin, G_IO_IN | G_IO_PRI, termin_cb, NULL);
-	
-	termhbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(termhbox), vte, TRUE, TRUE, 0);
-	
-	GtkWidget *termscroll;
-	termscroll = gtk_vscrollbar_new(VTE_TERMINAL(vte)->adjustment);
-	gtk_box_pack_start(GTK_BOX(termhbox), termscroll, FALSE, FALSE, 0);
-	
-	mainvpane = gtk_vpaned_new();
-	
-	build_window();
-	
+    int amaster;
+    int aslave;
+    if((amaster = posix_openpt(O_RDWR|O_NOCTTY)) < 0) {
+        error("Could not open master pty");
+    }
+    if((grantpt(amaster) + unlockpt(amaster)) < 0) {
+        error("Could not grant/unlock pty");
+    }
+    if((aslave = open(ptsname(amaster), O_RDWR|O_NOCTTY)) < 0) {
+        error("Could not open slave pty");
+    }
+    OutFp = fdopen(aslave, "w");
+    setbuf(OutFp,(char *)NULL);
+    FileNo = aslave;
+
+    vte = vte_terminal_new();
+    vte_terminal_set_size(VTE_TERMINAL(vte), 80, 10);
+    vte_terminal_set_font_from_string(VTE_TERMINAL(vte), "Monospace 10");
+    vte_terminal_set_pty(VTE_TERMINAL(vte), amaster);
+    vte_terminal_set_scroll_on_output(VTE_TERMINAL(vte), TRUE);
+
+    GIOChannel *termin;
+    GError *errg = NULL;
+    termin = g_io_channel_unix_new(FileNo);
+    g_io_channel_set_encoding(termin, NULL, &errg);
+    g_io_add_watch(termin, G_IO_IN | G_IO_PRI, termin_cb, NULL);
+
+    termhbox = gtk_hbox_new(FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(termhbox), vte, TRUE, TRUE, 0);
+
+    GtkWidget *termscroll;
+    termscroll = gtk_vscrollbar_new(VTE_TERMINAL(vte)->adjustment);
+    gtk_box_pack_start(GTK_BOX(termhbox), termscroll, FALSE, FALSE, 0);
+
+    mainvpane = gtk_vpaned_new();
+
+    build_window();
+
     GdkGeometry geo;
-    geo.min_width = 300;
-    geo.min_height = 300;
+    geo.min_width = RASGTK_MINWIDTH;
+    geo.min_height = RASGTK_MINHEIGHT;
     gtk_window_set_geometry_hints(GTK_WINDOW(mainwin), GTK_WIDGET(mainvbox),
-				  &geo, GDK_HINT_MIN_SIZE);
-				 
-	gtk_container_add (GTK_CONTAINER (mainwin), mainvbox);
-	gtk_widget_show_all (mainwin);
-     
+        &geo, GDK_HINT_MIN_SIZE);
+
+    gtk_container_add (GTK_CONTAINER (mainwin), mainvbox);
+    gtk_widget_set_size_request(mainwin, XRange, YRange);
+    gtk_widget_show_all (mainwin);
 
     test.longword = (Long)0x000000ff;    
     SwapBytes = test.bytes[0];
-    
+
     return True;
 }
 
