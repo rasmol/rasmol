@@ -129,6 +129,16 @@
 #define DialBRot    9
 #define DialGRot   10
 
+#define REP_WIREFRAME 1
+#define REP_BACKBONE  2
+#define REP_STICKS    3
+#define REP_SPHERES   4
+#define REP_BALLSTICK 5
+#define REP_RIBBONS   6
+#define REP_STRANDS   7
+#define REP_CARTOONS  8
+#define REP_MOLSURF   9
+
 #ifdef X11WIN
 #define DLGScale        ((FontHigh+8)/9)
 typedef struct _DLGItem {
@@ -171,6 +181,8 @@ int ReDrawFlag;
 int NextReDrawFlag;
 int Range;
 int InitWidth, InitHeight, InitXPos, InitYPos;
+int RepDefault;
+int ColDefault;
 
 int MouseCaptureStatus;
 int MouseUpdateStatus;
@@ -296,7 +308,8 @@ extern int ReDrawFlag;
 extern int NextReDrawFlag;
 extern int Range;
 extern int InitWidth, InitHeight, InitXPos, InitYPos;
-
+extern int RepDefault;
+extern int ColDefault;
 
 extern int MouseCaptureStatus;
 extern int MouseUpdateStatus;

@@ -96,6 +96,7 @@
 #include "vector.h"
 #include "wbrotate.h"
 #include "langsel.h"
+#include "gtkwin.h"
 #include "gtkui.h"
 #include "eggfileformatchooser.h"
 
@@ -901,10 +902,28 @@ void build_window(void)
 	}
 }
 
+
 void view_cb(GtkAction *action, gpointer user_data)
 {
 	build_window();
 }
+
+
+void set_ui_elements(int mask)
+{
+    GtkAction* a;
+
+    a = gtk_ui_manager_get_action(ui_manager, "/MainMenu/ViewMenu/Command");
+    gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(a), mask & UI_COMMAND);
+    a = gtk_ui_manager_get_action(ui_manager, "/MainMenu/ViewMenu/Scrolls");
+    gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(a), mask & UI_SCROLLS);
+    a = gtk_ui_manager_get_action(ui_manager, "/MainMenu/ViewMenu/Menus");
+    gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(a), mask & UI_MENUS);
+    a = gtk_ui_manager_get_action(ui_manager, "/MainMenu/ViewMenu/Fullscreen");
+    gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(a), mask & UI_FULLSCREEN);
+    build_window();
+}
+
 
 void setfont_cb(GtkAction *action, gpointer user_data)
 {

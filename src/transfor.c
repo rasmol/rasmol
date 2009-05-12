@@ -222,6 +222,7 @@
 #include "wbrotate.h" /* [GSG 11/14/95] */
 #include "langsel.h"
 #include "maps.h"
+#include "tokens.h"
 
 #define CPKMAX  16
 static ShadeRef CPKShade[] = {
@@ -3084,12 +3085,86 @@ int IsVDWRadius( RAtom __far *ptr )
 
 void DefaultRepresentation( void )
 {
-    if( Database )
-    {   ReDrawFlag |= RFRefresh | RFColour;
-        if( Info.bondcount < 1 )
-        {   EnableBackbone(CylinderFlag,80,64);
-        } else EnableWireframe(WireFlag,0,0);
-        CPKColourAttrib();
+    if( Database ) {
+        ReDrawFlag |= RFRefresh | RFColour;
+        switch(RepDefault) {
+            case REP_BACKBONE:
+                EnableBackbone(CylinderFlag,80,64);
+                break;
+            case REP_STICKS:
+                if( MainAtomCount<256 ) {
+                    EnableWireframe(CylinderFlag,40,32);
+                } else {
+                    EnableWireframe(CylinderFlag,80,64);
+                }
+                break;
+            case REP_SPHERES:
+                SetVanWaalRadius(SphereFlag);
+                break;
+            case REP_BALLSTICK:
+                SetRadiusValue(120, SphereFlag);
+                EnableWireframe(CylinderFlag,40,32);
+                break;
+            case REP_RIBBONS:
+                SetRibbonStatus(True,RibbonFlag,0);
+                break;
+            case REP_STRANDS:
+                SetRibbonStatus(True,StrandFlag,0);
+                break;
+            case REP_CARTOONS:
+                SetRibbonCartoons();
+                break;
+            case REP_WIREFRAME:
+            default:
+                if( Info.bondcount < 1 ) {
+                    EnableBackbone(CylinderFlag,80,64);
+                } else
+                    EnableWireframe(WireFlag,0,0);
+                break;
+        }
+        switch(ColDefault) {
+            case(CpkNewTok):
+                CpkNewColourAttrib();
+                break;
+            case(AminoTok):
+                AminoColourAttrib();
+                break;
+            case(ShapelyTok):
+                ShapelyColourAttrib();
+                break;
+            case(UserTok):
+                CPKColourAttrib();
+                UserMaskAttrib(MaskColourFlag);
+                break;
+            case(GroupTok):
+                ScaleColourAttrib(GroupAttr);
+                break;
+            case(ChainTok):
+                ScaleColourAttrib(ChainAttr);
+                break;
+            case(ModelTok):
+                ScaleColourAttrib(ModelAttr);
+                break;
+            case(AltlTok):
+                ScaleColourAttrib(AltAttr);
+                break;
+            case(ChargeTok):
+                ScaleColourAttrib(ChargeAttr);
+                break;
+            case(TemperatureTok):
+                ScaleColourAttrib(TempAttr);
+                break;
+            case(StructureTok):
+                StructColourAttrib();
+                break;
+            case(WhiteTok):
+                MonoColourAttrib(255,255,255);
+                break;
+            case(CPKTok):
+            default:
+                CPKColourAttrib();
+                break;
+        }
     }
 }
 
