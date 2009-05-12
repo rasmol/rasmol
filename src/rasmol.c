@@ -228,6 +228,7 @@
 
 #ifdef GTKWIN
 #include "gtkwin.h"
+#include <gtk/gtk.h>
 extern char filaid[];
 extern char fillang[];
 int initial_ui_elements = UI_MENUS;
@@ -399,12 +400,30 @@ extern int ProcessCommand( void );
 
 
 void WriteChar( int ch )
-{   putc(ch,OutFp);
+{
+    putc(ch,OutFp);
+#ifdef GTKWIN
+    gtk_main_iteration_do(False);
+#endif /* GTKWIN */
 }
 
 
 void WriteString( char *ptr )
-{   fputs(ptr,OutFp);
+{
+#ifdef GTKWIN
+    int slen, i, size;
+
+    slen = strlen(ptr);
+    i = 0;
+    while(i < slen) {
+        size = MIN(128, (slen - i));
+        fwrite(&ptr[i], size, 1, OutFp);
+        i += size;
+        gtk_main_iteration_do(False);
+    }
+#else
+    fputs(ptr,OutFp);
+#endif /* GTKWIN */
 }
 
 
@@ -2107,9 +2126,9 @@ static void InitDefaultValues( void )
 
 static void DisplayUsage(int retval)
 {
-    fputs("usage: rasmol [-nodisplay] [-script scriptfile] ",OutFp);
-    fputs("[[-format] file]\n    formats: -cif -pdb -nmrpdb ",OutFp);
-    fputs("-mopac -mdl -mol2 -xyz -alchemy -charmm\n\n",OutFp);
+    WriteString("usage: rasmol [-nodisplay] [-script scriptfile] ");
+    WriteString("[[-format] file]\n    formats: -cif -pdb -nmrpdb ");
+    WriteString("-mopac -mdl -mol2 -xyz -alchemy -charmm\n\n");
     exit(retval);
 }
 
