@@ -312,7 +312,7 @@ void CommandError( char *error )
 /*==========================*/
 
 #ifdef IBMPC
-void ProcessFileName( char *name )
+static char *ProcessFileName( char *name )
 {
     register char *ptr;
 
@@ -329,11 +329,12 @@ void ProcessFileName( char *name )
     while( (ptr!=DataFileName) && (ptr[-1]==' ') )
         ptr--;
     *ptr = '\0';
+    return ptr;
 }
 #endif
 
 #ifdef APPLEMAC
-void ProcessFileName( char *name )
+static char *ProcessFileName( char *name )
 {
     register char *ptr;
 
@@ -348,11 +349,12 @@ void ProcessFileName( char *name )
     while( (ptr!=DataFileName) && (ptr[-1]==' ') )
         ptr--;
     *ptr = '\0';
+    return ptr;
 }
 #endif
 
 #ifdef VMS 
-void ProcessFileName( char *name )
+static char *ProcessFileName( char *name )
 {
     register char *ptr;
 
@@ -365,20 +367,105 @@ void ProcessFileName( char *name )
         name++;
     }
     *ptr = '\0';
+    return ptr;
 }
 #endif
+
 
 #if !defined(IBMPC) && !defined(APPLEMAC) && !defined(VMS)
-void ProcessFileName( char *name )
+static int IsSecure( int ch )
 {
-    char *ptr;
+    switch( ch )
+    {   /* Dangerous characters in UNIX "popen"!  */
+        case('<'):  case('>'):  case('('):  case(')'):
+        case('{'):  case('}'):  case('['):  case(']'):
+        case('\''): case(';'):  case('|'):  case('&'):
+            return False;
+    }
+    return True;
+}
 
-    ptr = DataFileName;
-    while(*name)
-        *ptr++ = *name++;
+
+static char *ProcessFileName( char *name )
+{
+    register struct passwd *entry;
+    register char *temp;
+    register char *ptr;
+    char username[64];
+
+    while( *name==' ' )
+        name++;
+
+    /* Perform filename globbing */
+    if( *name=='~' )
+    {   ptr = username;  name++;
+        while( *name && (*name!=' ') && (*name!='/') )
+            *ptr++ = *name++;
+        *ptr = '\0';
+
+        ptr = DataFileName;
+        if( *username )
+        {   if( (entry=getpwnam(username)) )
+            {   temp = entry->pw_dir;
+                endpwent();
+            } else /* Unknown user! */
+            {   temp = username;
+                *ptr++ = '~';
+            }
+
+        } else if( !(temp=(char*)getenv("HOME")) )
+            temp = ".";
+
+        while( *temp )
+            *ptr++ = *temp++;
+    } else ptr = DataFileName;
+
+    /* Strip dubious characters! */
+    while( *name && (*name!=' ') )
+        if( IsSecure(*name) )
+        {   *ptr++ = *name++;
+        } else name++;
     *ptr = '\0';
+    return ptr;
 }
 #endif
+
+
+#ifdef UNIX
+
+#define MaxFileExt  4
+/* UNIX Compressed Filename extensions! */
+static char *FileExt[MaxFileExt] = { "", ".Z", ".gz", ".z" };
+
+static FILE *OpenDataFile( char *begin, char *end )
+{
+    register char *src, *dst;
+    register FILE *fp;
+    register int i;
+
+    for( i=0; i<MaxFileExt; i++ )
+    {   dst = end; src = FileExt[i];
+        while( (*dst++ = *src++) );
+        if( (fp=fopen(begin,"rb")) ) {
+          *end = '\0';
+          return fp;
+        }
+    }
+    fp = fopen(begin,"rb");
+    *end = '\0';
+    return fp;
+}
+#else /* !defined(UNIX) */
+
+static FILE *OpenDataFile( char *begin, char *end )
+{
+    register FILE *fp;
+
+    fp = fopen(begin,"rb");
+    return fp;
+}
+#endif
+
 
 int ProcessFile( int format, int info, FILE *fp )
 {
@@ -471,8 +558,8 @@ static int FetchFileOne( int format, int info, char *name )
     register FILE *fp;
 
     DataFileFormat = 0;
-    ProcessFileName(name);
-    fp = fopen(DataFileName, "rb");
+    name = ProcessFileName(name);
+    fp = OpenDataFile(DataFileName,name);
 
 #ifndef APPLEMAC
     /* Search for directory specification! */
@@ -513,7 +600,7 @@ static int FetchFileOne( int format, int info, char *name )
 
             tmp = DataFileName;
             while( *dst = *tmp++ ) dst++;
-            if( fp = fopen(buffer, "rb") )
+            if( fp = OpenDataFile(buffer,dst) )
                 strcpy(DataFileName,buffer);
 #else
             while( *src )
@@ -534,7 +621,7 @@ static int FetchFileOne( int format, int info, char *name )
                     }
                     tmp = DataFileName;
                     while( (*dst = *tmp++) ) dst++;
-                    if( (fp = fopen(buffer, "rb")) )
+                    if( (fp = OpenDataFile(buffer,dst)) )
                     {   strcpy(DataFileName,buffer);
                         break;
                     }
