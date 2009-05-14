@@ -259,4 +259,5 @@ gtkui.h: sizechooser.glade printing-resolution.glade actionmenu.gtk
 	 echo "const gchar *print_resolution_str = \"\\" >> gtkui.h
 	 gtk-builder-convert -w printing-resolution.glade - | sed "s/$$/\\\/" | sed 's/"/\\\"/g' >> gtkui.h
 	 echo "\";" >> gtkui.h
-	 echo >> gtkui.h	 
+	 echo >> gtkui.h
+	 gdk-pixbuf-csource --name=rasmol_icon --struct rasmol_48x48.xpm  >> gtkui.h

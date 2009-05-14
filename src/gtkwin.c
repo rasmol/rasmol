@@ -81,6 +81,7 @@
 #include <vte/vte.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <gdk-pixbuf/gdk-pixdata.h>
 
 #define GRAPHICS
 #include "rasmol.h"
@@ -1493,6 +1494,7 @@ int OpenDisplay(void)
 #endif
     register int i,num;
     static char VersionStr[50];
+    GError *gerr = NULL;
 
     sprintf (VersionStr,"RasMol Version %s", VERSION);
 
@@ -1602,6 +1604,8 @@ int OpenDisplay(void)
     geo.min_height = RASGTK_MINHEIGHT;
     gtk_window_set_geometry_hints(GTK_WINDOW(mainwin), GTK_WIDGET(mainvbox),
         &geo, GDK_HINT_MIN_SIZE);
+    gtk_window_set_default_icon(gdk_pixbuf_from_pixdata(&rasmol_icon,
+                                                        TRUE, &gerr));
 
     gtk_container_add (GTK_CONTAINER (mainwin), mainvbox);
     gtk_widget_set_size_request(mainwin, XRange, YRange);
