@@ -961,7 +961,7 @@ static const GtkActionEntry menuentries[] = {
   { "FileMenu", NULL, "_File" },
   { "Open", GTK_STOCK_OPEN, "_Open...", "<control>O", "Open a file", G_CALLBACK(open_cb) },
   { "SaveAs", GTK_STOCK_SAVE_AS, "_Save As...", "<control>S", "Save a file", G_CALLBACK(save_cb) }, 
-  { "Export", GTK_STOCK_CONVERT, "_Export...", "<control>E", "Export current image", G_CALLBACK(export_cb) },    
+  { "Export", GTK_STOCK_CONVERT, "_Export...", "<control>X", "Export current image", G_CALLBACK(export_cb) },
   { "Close", GTK_STOCK_CLOSE, "_Close", "", "Close the selected molecule", NULL },
   { "PageSetup", NULL, "Page Set_up...", "", "Set the page parameters", G_CALLBACK(pagesetup_cb) },
   { "Print", GTK_STOCK_PRINT, "_Print...", "", "Print the current image", G_CALLBACK(print_cb) },
