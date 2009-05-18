@@ -298,12 +298,8 @@ static char fpnamebuf[1048];
 #define IsIdentChar(x)  ((isalnum(x))||((x)=='_')||((x)=='$'))
 #define TwoPi           2.0*PI
 
-#ifdef GTKWIN
-FILE *OutFp;
-#else
 /* Either stdout or stderr */
 #define OutFp stdout
-#endif
 
 #ifdef VMS
 static struct {
@@ -398,32 +394,16 @@ static int LexState;
 static int HandleEvents( int );
 extern int ProcessCommand( void );
 
-
+#ifndef GTKWIN
 void WriteChar( int ch )
 {
     putc(ch,OutFp);
-#ifdef GTKWIN
-    gtk_main_iteration_do(False);
-#endif /* GTKWIN */
 }
 
 
 void WriteString( char *ptr )
 {
-#ifdef GTKWIN
-    int slen, i, size;
-
-    slen = strlen(ptr);
-    i = 0;
-    while(i < slen) {
-        size = MIN(128, (slen - i));
-        fwrite(&ptr[i], size, 1, OutFp);
-        i += size;
-        gtk_main_iteration_do(False);
-    }
-#else
     fputs(ptr,OutFp);
-#endif /* GTKWIN */
 }
 
 
@@ -486,6 +466,7 @@ void RasMolFatalExit( char *msg )
     ResetTerminal();
     exit(1);
 }
+#endif /* GTKWIN */
 
 
 #ifdef VMS
@@ -716,6 +697,7 @@ static void HandleSocketData( int conv )
 
 static void InitTerminal( int sockets )
 {
+#ifndef GTKWIN
 #ifdef TERMIOS
     register int i;
 #endif
@@ -728,9 +710,7 @@ static void InitTerminal( int sockets )
 #endif
 
 #ifdef TERMIOS
-#ifndef GTKWIN
     FileNo = fileno(stdin);
-#endif
     FD_ZERO(&OrigWaitSet);
     FD_SET(FileNo,&OrigWaitSet);
     WaitWidth = FileNo+1;
@@ -804,6 +784,7 @@ static void InitTerminal( int sockets )
 #else /* !VMS */
     setbuf(stdin,(char*)NULL);
 #endif
+#endif //GTKWIN
 }
 
 
@@ -2428,7 +2409,6 @@ int main( int argc, char *argv[] )
     InitDefaultValues();
 #ifdef GTKWIN
     gtk_init(&argc, &argv);
-    OutFp = stdout;
 #endif    
     ProcessOptions(argc,argv);
     ReDrawFlag = 0;
@@ -2643,7 +2623,7 @@ int main( int argc, char *argv[] )
         }
     }
 #endif /* TERMIOS */
-#endif /* GTKWIN */
     RasMolExit();
+#endif /* GTKWIN */
     return 0;
 }

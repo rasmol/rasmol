@@ -163,11 +163,7 @@ GtkActionGroup *action_group;
 GtkUIManager *ui_manager;
 GtkAccelGroup *accel_group;	
 guint merge_id;
-static int termfd;
-extern FILE *OutFp;
-extern int FileNo;
 gboolean dragging = FALSE;
-
 
 #define ADDSIGNAL(A,B) g_signal_connect(gtk_ui_manager_get_action(ui_manager,\
 (A)),"activate", G_CALLBACK(handlemenu_cb), (gpointer) &(B));
@@ -965,7 +961,7 @@ static const GtkActionEntry menuentries[] = {
   { "Close", GTK_STOCK_CLOSE, "_Close", "", "Close the selected molecule", NULL },
   { "PageSetup", NULL, "Page Set_up...", "", "Set the page parameters", G_CALLBACK(pagesetup_cb) },
   { "Print", GTK_STOCK_PRINT, "_Print...", "", "Print the current image", G_CALLBACK(print_cb) },
-  { "Exit", GTK_STOCK_QUIT, "E_xit", "<control>Q", "Exit the program", gtk_main_quit },
+  { "Exit", GTK_STOCK_QUIT, "E_xit", "<control>Q", "Exit the program", RasMolExit },
   { "ViewMenu", NULL, "_View" },
   { "Setfont", NULL, "Set command font...", "", "", G_CALLBACK(setfont_cb) },
   { "DispMenu", NULL, "_Display" },
@@ -1432,18 +1428,20 @@ gboolean button_release_cb(GtkWidget *canvas, GdkEventButton *event, gpointer us
     return TRUE;
 }
 
+
 void do_char(char c) 
 {
-	if(ProcessCharacter(c) ) {
-       	if( ProcessCommand() )
-        	gtk_main_quit();
-	 	if( !CommandActive ) {
-        	ResetCommandLine(0);
-			RefreshScreen();
-			ReDrawFlag = NextReDrawFlag;
-		}
+    if(ProcessCharacter(c)) {
+        if(ProcessCommand())
+            RasMolExit();
+        if(!CommandActive) {
+            ResetCommandLine(0);
+            RefreshScreen();
+            ReDrawFlag = NextReDrawFlag;
+        }
     }	
 }
+
 
 void termin_cb(VteTerminal *vte, gchar *str, guint len, gpointer user_data)
 {
@@ -1451,6 +1449,7 @@ void termin_cb(VteTerminal *vte, gchar *str, guint len, gpointer user_data)
     gchar buf;
     static char prev = 0;
 
+    /* Map xterm escape sequences to ASCII control chars */
     for(i = 0; i < len; i++) {
         buf = str[i];
         switch(prev) {
@@ -1473,17 +1472,46 @@ void termin_cb(VteTerminal *vte, gchar *str, guint len, gpointer user_data)
             case '[':
             case 'O':
                 switch( buf ) {
+                    /* Arrow keys */
                     case('A'): do_char(0x10); break;
                     case('B'): do_char(0x0e); break;
                     case('C'): do_char(0x06); break;
                     case('D'): do_char(0x02); break;
+                    /* Delete */
+                    case('3'): do_char(0x04); i++; break;
+                    /* Ignore the rest */
                     default:
-                               do_char(prev);
-                               do_char(buf);
+                        i = len;
                 }
                 prev = '\0';
         }
     }
+}
+
+
+void WriteChar(int ch)
+{
+    char buf[3];
+
+    switch(ch) {
+        case('\n'):
+            buf[0] = '\n';
+            buf[1] = '\r';
+            buf[2] = '\0';
+            vte_terminal_feed(VTE_TERMINAL(vte), buf, 2);
+            break;
+        default:
+            buf[0] = ch;
+            buf[1] = '\0';
+            vte_terminal_feed(VTE_TERMINAL(vte), buf, 1);
+    }
+}
+
+
+void WriteString(char *ptr)
+{
+    while(*ptr)
+        WriteChar(*ptr++);
 }
 
 
@@ -1522,9 +1550,7 @@ int OpenDisplay(void)
     mainwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_widget_add_events(mainwin, GDK_KEY_PRESS_MASK);
     g_signal_connect (mainwin, "delete-event",
-        G_CALLBACK (gtk_main_quit), NULL);
-    g_signal_connect (mainwin, "destroy",
-        G_CALLBACK (gtk_main_quit), NULL);
+        G_CALLBACK (RasMolExit), NULL);
 
     menubar = build_gtkmenu();
 
@@ -1566,26 +1592,13 @@ int OpenDisplay(void)
     hscr_handler = g_signal_connect(G_OBJECT(hscrollbar), "value-changed",
 				    G_CALLBACK(hscroll_cb), NULL);
 
-    int amaster;
-    int aslave;
-    if((amaster = posix_openpt(O_RDWR|O_NOCTTY)) < 0) {
-        error("Could not open master pty");
-    }
-    if((grantpt(amaster) + unlockpt(amaster)) < 0) {
-        error("Could not grant/unlock pty");
-    }
-    if((aslave = open(ptsname(amaster), O_RDWR|O_NOCTTY)) < 0) {
-        error("Could not open slave pty");
-    }
-    OutFp = fdopen(aslave, "w");
-    setbuf(OutFp,(char *)NULL);
-    FileNo = aslave;
-
     vte = vte_terminal_new();
+    g_assert(vte);
     vte_terminal_set_size(VTE_TERMINAL(vte), 80, 10);
     vte_terminal_set_font_from_string(VTE_TERMINAL(vte), "Monospace 10");
-    vte_terminal_set_pty(VTE_TERMINAL(vte), amaster);
     vte_terminal_set_scroll_on_output(VTE_TERMINAL(vte), TRUE);
+    vte_terminal_set_backspace_binding(VTE_TERMINAL(vte), VTE_ERASE_ASCII_BACKSPACE);
+    vte_terminal_set_delete_binding(VTE_TERMINAL(vte), VTE_ERASE_DELETE_SEQUENCE);
     g_signal_connect(G_OBJECT(vte), "commit", G_CALLBACK(termin_cb), NULL);
 
     termhbox = gtk_hbox_new(FALSE, 0);
@@ -1679,4 +1692,21 @@ void EndWait( void )
 void CloseDisplay( void )
 {
 
+}
+
+
+void RasMolExit( void )
+{
+    gtk_main_quit();
+    exit(0);
+}
+
+
+void RasMolFatalExit( char *msg )
+{
+    putc('\n', stdout);
+    fputs(msg, stdout);
+    putc('\n', stdout);
+    gtk_main_quit();
+    exit(1);
 }
