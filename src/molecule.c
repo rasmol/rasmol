@@ -330,25 +330,29 @@ static void FatalDataError( char *ptr )
 
 void ReviseTitle( void )
 {
-    char buffer[60];
+#define TLEN 60
+    char buffer[TLEN];
 
     buffer[0] = 0;
-    buffer[58] = 0;
-    buffer[59] = 0;
-    
+    buffer[TLEN-2] = 0;
+    buffer[TLEN-1] = 0;
+
     strncpy(buffer,"RasMol - ", 9);
     buffer[9]=0;
-    
-    if( *Info.identcode ) {
-      strncat(buffer,Info.identcode, 10);
-      strncat(buffer," ",1);
+
+    if(*Info.identcode) {
+        strncat(buffer,Info.identcode, 10);
+        strncat(buffer," ",1);
+    } else if(*Info.filename) {
+        strncat(buffer,(const char *)basename(Info.filename), 40);
+        strncat(buffer," ",1);
     }
 
-    if( *Info.technique ) {
-      strncat(buffer,Info.technique, 49-strlen(Info.identcode));
+    if(*Info.technique) {
+        strncat(buffer,Info.technique, (TLEN-2)-strlen(buffer));
     }
 
-    SetCanvasTitle( buffer );
+    SetCanvasTitle(buffer);
 }
 
 void DescribeMolecule( void )
