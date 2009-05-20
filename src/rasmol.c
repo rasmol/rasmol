@@ -2523,13 +2523,13 @@ int main( int argc, char *argv[] )
         if( done )
         {
 #ifdef GTKWIN
-            char tmp[4096];
+            char tmp[PATH_MAX+10];
 
             strcpy(tmp, "file://");
-            getcwd(tmp+7, 4000);
-            strcat(tmp, "/");
-            strcat(tmp, FileNamePtrs[i]);
-            gtk_recent_manager_add_item(gtk_recent_manager_get_default(), tmp);
+            if(realpath(FileNamePtrs[i], tmp+7)) {
+                gtk_recent_manager_add_item(gtk_recent_manager_get_default(),
+                                            tmp);
+            }
 #endif // GTKWIN
             DefaultRepresentation();
             RefreshScreen();

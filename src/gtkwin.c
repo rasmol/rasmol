@@ -331,12 +331,13 @@ void open_cb(GtkAction *action, gpointer user_data)
             GTK_FILE_CHOOSER (opendialog));
         strcpy(DataFileName, prevname);
         if(FetchFile(FormatPDB, False, prevname)) {
-            char tmp[4096];
+            char tmp[PATH_MAX+10];
 
             strcpy(tmp, "file://");
-            strcat(tmp, prevname);
-            rman = gtk_recent_manager_get_default();
-            gtk_recent_manager_add_item(rman, tmp);
+            if(realpath(prevname, tmp+7)) {
+                rman = gtk_recent_manager_get_default();
+                gtk_recent_manager_add_item(rman, tmp);
+            }
             DefaultRepresentation();
             RefreshScreen();
         } else {
@@ -1128,88 +1129,101 @@ void UpdateGtkMoleculeList(void)
 
 GtkWidget *build_gtkmenu(void)
 {
-	GError *error;
-	GtkAction *recentaction = NULL;
-	GtkRecentFilter *filter = NULL;
-	int i;
-	
-	action_group = gtk_action_group_new ("MenuActions");
-	gtk_action_group_add_actions (action_group, menuentries, G_N_ELEMENTS (menuentries), NULL);
- 	
-	recentaction = gtk_recent_action_new("Recent", "Open _Recent", "Open a recently opened file", NULL);
-	filter = gtk_recent_filter_new();
-	gtk_recent_filter_add_application(filter, "RasMol");
-	gtk_recent_chooser_set_local_only(GTK_RECENT_CHOOSER(recentaction), TRUE);
-	gtk_recent_chooser_set_filter(GTK_RECENT_CHOOSER(recentaction), filter);
-//	gtk_recent_action_set_show_numbers(GTK_RECENT_ACTION(recentaction), TRUE);
-	g_signal_connect(GTK_RECENT_CHOOSER(recentaction), "item-activated", G_CALLBACK(recent_cb), NULL);
-	gtk_action_group_add_action (action_group, recentaction);
-	
-	gtk_action_group_add_toggle_actions (action_group, view_toggles, G_N_ELEMENTS (view_toggles), NULL);
-	gtk_action_group_add_toggle_actions (action_group, opt_toggles, G_N_ELEMENTS (opt_toggles), NULL);
-  	gtk_action_group_add_radio_actions (action_group, pick_radios, G_N_ELEMENTS (pick_radios), m_s_pident, G_CALLBACK(radio_cb), NULL);
-	gtk_action_group_add_radio_actions (action_group, rot_radios, G_N_ELEMENTS (rot_radios), m_s_rmol, G_CALLBACK(radio_cb), NULL);
+    GError *error;
+    GtkAction *recentaction = NULL;
+    GtkRecentFilter *filter = NULL;
+    int i;
 
-	ui_manager = gtk_ui_manager_new ();
-	gtk_ui_manager_insert_action_group (ui_manager, action_group, 0);
-	
-	accel_group = gtk_ui_manager_get_accel_group (ui_manager);
-	gtk_window_add_accel_group (GTK_WINDOW (mainwin), accel_group);
-	
-	error = NULL;
-	if (!gtk_ui_manager_add_ui_from_string (ui_manager, actionmenu_str, -1, &error)) {
-    	g_message ("building menus failed: s", error->message);
-    	g_error_free (error);
-    	exit (EXIT_FAILURE);
-  	}
-	
-	EnableRotBondMenu(False);
-		
-	ADDSIGNAL("/MainMenu/FileMenu/Close", m_f_close);
-	ADDSIGNAL("/MainMenu/DispMenu/Wireframe", m_d_wireframe);
-	ADDSIGNAL("/MainMenu/DispMenu/Backbone", m_d_backbone);
-	ADDSIGNAL("/MainMenu/DispMenu/Sticks", m_d_sticks);
-	ADDSIGNAL("/MainMenu/DispMenu/Spheres", m_d_spheres);
-	ADDSIGNAL("/MainMenu/DispMenu/Ballstick", m_d_ballstick);
-	ADDSIGNAL("/MainMenu/DispMenu/Ribbons", m_d_ribbons);
-	ADDSIGNAL("/MainMenu/DispMenu/Strands", m_d_strands);
-	ADDSIGNAL("/MainMenu/DispMenu/Cartoons", m_d_cartoons);
-	ADDSIGNAL("/MainMenu/DispMenu/MolSurf", m_d_molsurf);
-	ADDSIGNAL("/MainMenu/ColMenu/Monochrome", m_c_monochrome);
-	ADDSIGNAL("/MainMenu/ColMenu/CPK", m_c_cpk);
-	ADDSIGNAL("/MainMenu/ColMenu/Shapely", m_c_shapely);
-	ADDSIGNAL("/MainMenu/ColMenu/Group", m_c_group);
-	ADDSIGNAL("/MainMenu/ColMenu/Chain", m_c_chain);
-	ADDSIGNAL("/MainMenu/ColMenu/Temperature", m_c_temperature);
-	ADDSIGNAL("/MainMenu/ColMenu/Structure", m_c_structure);
-	ADDSIGNAL("/MainMenu/ColMenu/User", m_c_user);
-	ADDSIGNAL("/MainMenu/ColMenu/Model", m_c_model);
-	ADDSIGNAL("/MainMenu/ColMenu/Alt", m_c_alt);
-	ADDSIGNAL("/MainMenu/OptMenu/Slab", m_o_slab);
-	ADDSIGNAL("/MainMenu/OptMenu/Hydrogens", m_o_hydrogens);
-	ADDSIGNAL("/MainMenu/OptMenu/Heteros", m_o_heteros);
-	ADDSIGNAL("/MainMenu/OptMenu/Specular", m_o_specular);
-	ADDSIGNAL("/MainMenu/OptMenu/Shadows", m_o_shadows);
-	ADDSIGNAL("/MainMenu/OptMenu/Stereo", m_o_stereo);
-	ADDSIGNAL("/MainMenu/OptMenu/Labels", m_o_labels);
-	ADDSIGNAL("/MainMenu/HelpMenu/Manual", m_h_manual);
-	ADDSIGNAL("/MainMenu/HelpMenu/Register", m_h_register);
-	ADDSIGNAL("/MainMenu/HelpMenu/Donate", m_h_donate);
+    action_group = gtk_action_group_new("MenuActions");
+    gtk_action_group_add_actions(action_group, menuentries,
+                                  G_N_ELEMENTS(menuentries), NULL);
 
-	g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Command"), "activate", G_CALLBACK(view_cb), NULL);
-	g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Scrolls"), "activate", G_CALLBACK(view_cb), NULL);
-	g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Menus"), "activate", G_CALLBACK(view_cb), NULL);
-	g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Fullscreen"), "activate", G_CALLBACK(view_cb), NULL);
+    recentaction = gtk_recent_action_new("Recent", "Open _Recent",
+                                         "Open a recently opened file", NULL);
+    filter = gtk_recent_filter_new();
+    gtk_recent_filter_add_application(filter, "RasMol");
+    gtk_recent_chooser_set_filter(GTK_RECENT_CHOOSER(recentaction), filter);
+    gtk_recent_chooser_set_local_only(GTK_RECENT_CHOOSER(recentaction), TRUE);
+    gtk_recent_chooser_set_sort_type(GTK_RECENT_CHOOSER(recentaction),
+                                     GTK_RECENT_SORT_MRU);
+    gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER(recentaction), 30);
+    g_signal_connect(GTK_RECENT_CHOOSER(recentaction), "item-activated",
+                     G_CALLBACK(recent_cb), NULL);
+    gtk_action_group_add_action(action_group, recentaction);
 
- 	/* merge id for filemenu additions */
-	merge_id = gtk_ui_manager_new_merge_id(ui_manager);
-	ofiles_group = gtk_action_group_new("OFileActions");
-	gtk_ui_manager_insert_action_group(ui_manager, ofiles_group, 1);
+    gtk_action_group_add_toggle_actions(action_group, view_toggles,
+                                        G_N_ELEMENTS(view_toggles), NULL);
+    gtk_action_group_add_toggle_actions(action_group, opt_toggles,
+                                        G_N_ELEMENTS(opt_toggles), NULL);
+    gtk_action_group_add_radio_actions(action_group, pick_radios,
+                                       G_N_ELEMENTS(pick_radios), m_s_pident,
+                                       G_CALLBACK(radio_cb), NULL);
+    gtk_action_group_add_radio_actions(action_group, rot_radios,
+                                       G_N_ELEMENTS(rot_radios), m_s_rmol,
+                                       G_CALLBACK(radio_cb), NULL);
 
-	menubar = gtk_ui_manager_get_widget (ui_manager, "/MainMenu");
-	
-	return menubar;
+    ui_manager = gtk_ui_manager_new();
+    gtk_ui_manager_insert_action_group(ui_manager, action_group, 0);
+
+    accel_group = gtk_ui_manager_get_accel_group(ui_manager);
+    gtk_window_add_accel_group(GTK_WINDOW(mainwin), accel_group);
+
+    error = NULL;
+    if(!gtk_ui_manager_add_ui_from_string(ui_manager, actionmenu_str,
+                                          -1, &error)) {
+        g_message("building menus failed: s", error->message);
+        g_error_free(error);
+        exit(EXIT_FAILURE);
+    }
+
+    EnableRotBondMenu(False);
+
+    ADDSIGNAL("/MainMenu/FileMenu/Close", m_f_close);
+    ADDSIGNAL("/MainMenu/DispMenu/Wireframe", m_d_wireframe);
+    ADDSIGNAL("/MainMenu/DispMenu/Backbone", m_d_backbone);
+    ADDSIGNAL("/MainMenu/DispMenu/Sticks", m_d_sticks);
+    ADDSIGNAL("/MainMenu/DispMenu/Spheres", m_d_spheres);
+    ADDSIGNAL("/MainMenu/DispMenu/Ballstick", m_d_ballstick);
+    ADDSIGNAL("/MainMenu/DispMenu/Ribbons", m_d_ribbons);
+    ADDSIGNAL("/MainMenu/DispMenu/Strands", m_d_strands);
+    ADDSIGNAL("/MainMenu/DispMenu/Cartoons", m_d_cartoons);
+    ADDSIGNAL("/MainMenu/DispMenu/MolSurf", m_d_molsurf);
+    ADDSIGNAL("/MainMenu/ColMenu/Monochrome", m_c_monochrome);
+    ADDSIGNAL("/MainMenu/ColMenu/CPK", m_c_cpk);
+    ADDSIGNAL("/MainMenu/ColMenu/Shapely", m_c_shapely);
+    ADDSIGNAL("/MainMenu/ColMenu/Group", m_c_group);
+    ADDSIGNAL("/MainMenu/ColMenu/Chain", m_c_chain);
+    ADDSIGNAL("/MainMenu/ColMenu/Temperature", m_c_temperature);
+    ADDSIGNAL("/MainMenu/ColMenu/Structure", m_c_structure);
+    ADDSIGNAL("/MainMenu/ColMenu/User", m_c_user);
+    ADDSIGNAL("/MainMenu/ColMenu/Model", m_c_model);
+    ADDSIGNAL("/MainMenu/ColMenu/Alt", m_c_alt);
+    ADDSIGNAL("/MainMenu/OptMenu/Slab", m_o_slab);
+    ADDSIGNAL("/MainMenu/OptMenu/Hydrogens", m_o_hydrogens);
+    ADDSIGNAL("/MainMenu/OptMenu/Heteros", m_o_heteros);
+    ADDSIGNAL("/MainMenu/OptMenu/Specular", m_o_specular);
+    ADDSIGNAL("/MainMenu/OptMenu/Shadows", m_o_shadows);
+    ADDSIGNAL("/MainMenu/OptMenu/Stereo", m_o_stereo);
+    ADDSIGNAL("/MainMenu/OptMenu/Labels", m_o_labels);
+    ADDSIGNAL("/MainMenu/HelpMenu/Manual", m_h_manual);
+    ADDSIGNAL("/MainMenu/HelpMenu/Register", m_h_register);
+    ADDSIGNAL("/MainMenu/HelpMenu/Donate", m_h_donate);
+
+    g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Command"), "activate", G_CALLBACK(view_cb), NULL);
+    g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Scrolls"), "activate", G_CALLBACK(view_cb), NULL);
+    g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Menus"), "activate", G_CALLBACK(view_cb), NULL);
+    g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Fullscreen"), "activate", G_CALLBACK(view_cb), NULL);
+
+    /* merge id for filemenu additions */
+    merge_id = gtk_ui_manager_new_merge_id(ui_manager);
+    ofiles_group = gtk_action_group_new("OFileActions");
+    gtk_ui_manager_insert_action_group(ui_manager, ofiles_group, 1);
+
+    menubar = gtk_ui_manager_get_widget(ui_manager, "/MainMenu");
+
+    return menubar;
 }
+
 
 static void do_popup_menu (GtkWidget *widget, GdkEventButton *event)
 {
