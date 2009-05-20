@@ -550,11 +550,16 @@ void SwitchMolecule ( int index)
 }
 
 
-void SelectMolecule( int index)
+void SelectMolecule(int index)
 {
+#ifdef GTKWIN
+    set_gtk_open_file(index);
+#endif
     SwitchMolecule(index);
     PickCount = 0;
-    if (Interactive) ReviseTitle();
+    if (Interactive) {
+        ReviseTitle();
+    }
 }
 
 void ReRadius( void )

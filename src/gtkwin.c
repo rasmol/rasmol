@@ -1046,55 +1046,85 @@ void EnableRotBondMenu(int rot_enable)
 	}
 }
 
+void set_gtk_open_file(int index)
+{
+    GList *alist;
+    GtkRadioAction *radact;
+
+    alist = gtk_action_group_list_actions(ofiles_group);
+    if(alist && alist->data) {
+        radact = (GtkRadioAction *) alist->data;
+        g_signal_handlers_block_by_func(radact, radio_cb, NULL);
+        gtk_radio_action_set_current_value(radact, m_ofiles + index);
+        g_signal_handlers_unblock_by_func(radact, radio_cb, NULL);
+    }
+    g_list_free(alist);
+}
+
+
 void UpdateGtkMoleculeList(void) 
 {
-	int i;
-	char itemname[4];
-	char itlabel[2*MAX_MOLNAME+1];
-	GList *alist;
-	GSList *group = NULL;
-	GtkRadioAction *rad;	
-	GError *err = NULL;
-	GRegex *re = NULL;
+    int i;
+    char itemname[4];
+    char itlabel[2*MAX_MOLNAME+1];
+    GList *alist, *ahead;
+    GSList *group = NULL;
+    GtkRadioAction *rad;
+    GError *err = NULL;
+    GRegex *re = NULL;
 
-	gtk_ui_manager_remove_ui(ui_manager, merge_id);
-	merge_id = gtk_ui_manager_new_merge_id(ui_manager);
-	alist = gtk_action_group_list_actions (ofiles_group);
-	while(alist) {
-		gtk_action_group_remove_action(ofiles_group, (GtkAction *) alist->data);	
-		alist = alist->next;
-	}
-	itlabel[2*MAX_MOLNAME] = '\0';
-	re = g_regex_new("[_]", 0, 0, &err);
-	for(i = 0; i < NumMolecules; i++) {
-		gchar *rep;
-		// GTK menu labels use the underscore for accelerator, replace w. __
-		rep = g_regex_replace_literal(re, MolNStr[i], -1, 0, "__", 0, &err);
-		strncpy((itlabel+1), rep, 2*MAX_MOLNAME);
-		g_free(rep);
-		itlabel[0] = '_';
-		snprintf(itemname, 3, "%d", i);
-		rad = gtk_radio_action_new(itemname, itlabel, NULL, NULL, (m_ofiles + i));
-		gtk_radio_action_set_group (rad, group);
-		group = gtk_radio_action_get_group(rad);	
-		if (i == MoleculeIndex)
-			gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (rad), TRUE);
-		gtk_action_group_add_action(ofiles_group, (GtkAction *) rad);
-		g_object_unref(rad);
-	}
-        g_regex_unref(re);
-	alist = gtk_action_group_list_actions (ofiles_group);
-	if(alist) {
-		g_signal_connect(alist->data, "changed", G_CALLBACK (radio_cb), NULL);
-	}
-	for(i = 0; i < NumMolecules; i++) {
-		snprintf(itemname, 3, "%d", i); 
-		gtk_ui_manager_add_ui(ui_manager, merge_id, "/MainMenu/FileMenu/OFiles", itemname, itemname, GTK_UI_MANAGER_MENUITEM, FALSE);
-		gtk_ui_manager_add_ui(ui_manager, merge_id, "/popup/OFiles", itemname, itemname, GTK_UI_MANAGER_MENUITEM, FALSE);
-	}
-	
-	gtk_ui_manager_ensure_update (ui_manager);
+    gtk_ui_manager_remove_ui(ui_manager, merge_id);
+    merge_id = gtk_ui_manager_new_merge_id(ui_manager);
+
+    alist = gtk_action_group_list_actions (ofiles_group);
+    ahead = alist;
+    while(alist) {
+        gtk_action_group_remove_action(ofiles_group,
+                                       (GtkAction *) alist->data);
+        alist = alist->next;
+    }
+    g_list_free(ahead);
+
+    itlabel[2*MAX_MOLNAME] = '\0';
+    re = g_regex_new("[_]", 0, 0, &err);
+    for(i = 0; i < NumMolecules; i++) {
+        gchar *rep;
+        // GTK menu labels use the underscore for accelerator, replace w. __
+        rep = g_regex_replace_literal(re, MolNStr[i], -1, 0, "__", 0, &err);
+        strncpy((itlabel+1), rep, 2*MAX_MOLNAME);
+        g_free(rep);
+        itlabel[0] = '_';
+        snprintf(itemname, 3, "%d", i);
+        rad = gtk_radio_action_new(itemname, itlabel, NULL, NULL,
+                                   (m_ofiles + i));
+        gtk_radio_action_set_group (rad, group);
+        group = gtk_radio_action_get_group(rad);
+        if (i == MoleculeIndex)
+            gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (rad), TRUE);
+        gtk_action_group_add_action(ofiles_group, (GtkAction *) rad);
+        g_object_unref(rad);
+    }
+    g_regex_unref(re);
+
+    alist = gtk_action_group_list_actions(ofiles_group);
+    if(alist) {
+        g_signal_connect(alist->data, "changed", G_CALLBACK (radio_cb), NULL);
+    }
+    g_list_free(alist);
+
+    for(i = 0; i < NumMolecules; i++) {
+        snprintf(itemname, 3, "%d", i);
+        gtk_ui_manager_add_ui(ui_manager, merge_id,
+                              "/MainMenu/FileMenu/OFiles", itemname,
+                              itemname, GTK_UI_MANAGER_MENUITEM, FALSE);
+        gtk_ui_manager_add_ui(ui_manager, merge_id, "/popup/OFiles",
+                              itemname, itemname,
+                              GTK_UI_MANAGER_MENUITEM, FALSE);
+    }
+
+    gtk_ui_manager_ensure_update (ui_manager);
 }
+
 
 GtkWidget *build_gtkmenu(void)
 {
