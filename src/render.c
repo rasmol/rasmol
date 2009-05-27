@@ -385,7 +385,7 @@ static void ClearMemory(  char __huge *ptr, long count )
     }
     if( count )
         _fmemset(ptr,0,(size_t)count);
-#endif
+#endif /* TURBOC */
 #else  /* Windows NT  */
     memset(ptr,0,(size_t)count);
 #endif /* Windows NT */
@@ -397,7 +397,7 @@ void ClearBuffers( void )
     register Pixel __huge *ptr;
 #if !defined EIGHTBIT
     register Pixel __huge *end;
-    register Long fill;
+    register Pixel fill;
 #endif
 
     if( !FBClear )
@@ -407,11 +407,12 @@ void ClearBuffers( void )
         ClearMemory((char __huge*)ptr,(Long)XRange*YRange*sizeof(Pixel));
 #else /*THIRTYTWOBIT*/
         fill = Lut[BackCol];
-        end = (Long*)(ptr+(Long)XRange*YRange);
-        do { *ptr++ = fill; 
-           } while( ptr<end );
+        end = ptr + (Long)XRange*YRange;
+        do {
+            *ptr++ = fill;
+        } while( ptr<end );
 #endif
-	    GlobalUnlock(FBufHandle);
+        GlobalUnlock(FBufHandle);
     }
 
     if( !DBClear )
@@ -421,25 +422,21 @@ void ClearBuffers( void )
 	    GlobalUnlock(DBufHandle);
     }
 }
-#else
-#if defined(VMS) || defined(__sgi)        /* memset */
+#else /* ! MSWIN */
 void ClearBuffers( void )
 {
 #ifndef EIGHTBIT
-    register Long *ptr;
-    register Long *end;
-    register Long fill;
+    register Pixel *ptr;
+    register Pixel *end;
+    register Pixel fill;
 
     if( !FBClear )
     {   FBClear = True;
 	fill = Lut[BackCol];
-#ifdef SIXTEENBIT
-        fill |= fill<16;
-#endif
-	ptr = (Long*)FBuffer;
-	end = (Long*)(FBuffer+(Long)XRange*YRange);
-	do { *ptr++ = fill; *ptr++ = fill;
-	     *ptr++ = fill; *ptr++ = fill;
+	ptr = FBuffer;
+	end = FBuffer+(Long)XRange*YRange;
+	do {
+            *ptr++ = fill;
 	} while( ptr<end );
     }
 #else
@@ -455,47 +452,6 @@ void ClearBuffers( void )
         memset(DBuffer,0,(Long)XRange*YRange*sizeof(short));
     }
 }
-
-#else /* !memset */
-void ClearBuffers( void )
-{
-    register Long *ptr;
-    register Long *end;
-    register Long fill;
-
-    if( !FBClear )
-    {   FBClear = True;
-	fill = Lut[BackCol];
-#ifdef EIGHTBIT
-	fill |= fill<<8;
-	fill |= fill<<16;
-#endif
-#ifdef SIXTEENBIT
-        fill |= fill<<16;
-#endif
-#ifndef _LONGLONG
-	if (sizeof(Long) > 4 ){
-          /* Silly conditional to avoid compiler warnings */
-	  fill |= fill<<(sizeof(Long) >4?32:0);
-	}
-#endif
-	ptr = (Long*)FBuffer;
-	end = (Long*)(FBuffer+(Long)XRange*YRange);
-	do { *ptr++ = fill; *ptr++ = fill;
-	     *ptr++ = fill; *ptr++ = fill;
-	} while( ptr<end );
-    }
-
-    if( !DBClear )
-    {   DBClear = True;
-	ptr = (Long*)DBuffer;
-	end = (Long*)(DBuffer+(Long)XRange*YRange);
-	do { *ptr++ = 0; *ptr++ = 0;
-	     *ptr++ = 0; *ptr++ = 0;
-	} while( ptr<end );
-    }
-}
-#endif /* !memset    */
 #endif /* UNIX & VMS */
 
 
