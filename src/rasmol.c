@@ -2107,9 +2107,9 @@ static void InitDefaultValues( void )
 
 static void DisplayUsage(int retval)
 {
-    WriteString("usage: rasmol [-nodisplay] [-script scriptfile] ");
-    WriteString("[[-format] file]\n    formats: -cif -pdb -nmrpdb ");
-    WriteString("-mopac -mdl -mol2 -xyz -alchemy -charmm\n\n");
+    fputs("usage: rasmol [-nodisplay] [-script scriptfile] ", OutFp);
+    fputs("[[-format] file]\n    formats: -cif -pdb -nmrpdb ", OutFp);
+    fputs("-mopac -mdl -mol2 -xyz -alchemy -charmm\n\n", OutFp);
     exit(retval);
 }
 
