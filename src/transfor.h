@@ -396,6 +396,7 @@ void ColourDotsAttrib( int, int, int );
 void ColourDotsPotential( void );
 void ColourPointAttrib( int, int, int, int );
 void ColourPointPotential( int );
+void ColourPointAtom( int );
 void MonoColourAttrib( int, int, int );
 void ScaleColourAttrib( int );
 void CPKColourAttrib( void );

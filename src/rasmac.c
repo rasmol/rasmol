@@ -1670,6 +1670,7 @@ static void HandleMenu( long hand )
                         {   case(1):  /* Undo */
                                       for( i=0; i<10; i++ )
                                           DialValue[i] = 0.0;
+                                      CQRMSet(DialQRot,0.,0.,0.,0.);
                                       ReDrawFlag |= RFDials;
                                       ResetTransform();
                                       UpdateScrollBars();

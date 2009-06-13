@@ -87,6 +87,7 @@
 #define MMInsight  0x01
 #define MMQuanta   0x02
 #define MMSybyl    0x03
+#define MMRasOld   0x04
 
 
 #ifdef CMNDLINE

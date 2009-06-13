@@ -320,6 +320,9 @@ struct {
     
     { DialValue,          sizeof (DialValue),      0 },
 
+    { &DialQRot,          sizeof (DialQRot),       0 },
+
+
     /* molecule.h */
     { &Info,              sizeof (Info),           0 },
     { &MainGroupCount,    sizeof (MainGroupCount), 0 },
@@ -364,6 +367,7 @@ struct {
     { &NullBonds,         sizeof (NullBonds),      0 },
     { &MarkAtoms,         sizeof (MarkAtoms),      0 },
     { &HBondChainsFlag,   sizeof (HBondChainsFlag), 0 },
+    { &AtomTree,          sizeof (AtomTree),       0 },
 
     /* render.h */
     { &VoxelsClean,       sizeof (VoxelsClean),    0 },

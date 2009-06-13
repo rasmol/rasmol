@@ -71,16 +71,16 @@
  ***************************************************************************/
 /* command.c
  */
- 
+
 /* With post-2.7.2.1-release mod,
-   Update for inline script loading in UCB multiple
-   molecule environment.  HJB, 18 April 2001  */
+ Update for inline script loading in UCB multiple
+ molecule environment.  HJB, 18 April 2001  */
 /* With post-2.7.2.1-release mod,
-   Disable STRICT checking in ExecuteLoadCommand
-   To fix load inline for Windows.  HJB 19 April 2001 */
+ Disable STRICT checking in ExecuteLoadCommand
+ To fix load inline for Windows.  HJB 19 April 2001 */
 /* With post-2.7.2.1-release mod,
-   Correct logic for inline load of new molecule
-   from data file treated as a script.  HJB 29 June 2001 */
+ Correct logic for inline load of new molecule
+ from data file treated as a script.  HJB 29 June 2001 */
 
 #include "rasmol.h"
 
@@ -658,11 +658,11 @@ static int FetchFileOne( int format, int info, char *name )
 
         if( done == 0x9d )
         {   /* Should #include <signal.h> and trap "" SIGPIPE */
-            sprintf(buffer,"trap \"\" 13; uncompress -c '%s' 2> /dev/null\n",
+            sprintf(buffer,"trap \"\" 13; uncompress -c %s 2> /dev/null\n",
                                                               DataFileName);
         } else if( done == 0x8b )
         {   /* Should #include <signal.h> and trap "" SIGPIPE */
-            sprintf(buffer,"trap \"\" 13; gzip -cdq '%s' 2> /dev/null\n",
+            sprintf(buffer,"trap \"\" 13; gzip -cdq %s 2> /dev/null\n",
                                                           DataFileName);
         } else /* bad magic number! */
         {   InvalidateCmndLine();
@@ -2199,9 +2199,33 @@ static void ExecuteSetCommand( void )
 
         case(MouseTok):
             FetchToken();
-            if( !CurToken || (CurToken==RasMolTok) )
-            {   if( Interactive )
+            if( !CurToken || (CurToken==RasMolTok) || (CurToken==NewTok) || (CurToken==OldTok) )
+            {   if( Interactive ) {
+                  if (CurToken == RasMolTok) {
+                    FetchToken();
+                    if (!CurToken || CurToken==NewTok) {
+                        SetMouseMode( MMRasMol );
+                    } else if (CurToken==OldTok) {
+                        SetMouseMode( MMRasOld );
+                    } else CommandError(MsgStrs[ErrBadOpt]);
+                    break;
+                  } 
+                  if (CurToken == NewTok) {
+                    FetchToken();
+                    if (!CurToken || CurToken==RasMolTok) {
+                        SetMouseMode( MMRasMol );
+                    } else CommandError(MsgStrs[ErrBadOpt]);
+                    break;
+                  } 
+                  if (CurToken == OldTok) {
+            FetchToken();
+                    if (!CurToken || CurToken==RasMolTok) {
+                        SetMouseMode( MMRasOld );
+                    } else CommandError(MsgStrs[ErrBadOpt]);
+                    break;
+                  } 
                     SetMouseMode( MMRasMol );
+                }
             } else if( CurToken==InsightTok )
             {   if( Interactive )
                     SetMouseMode( MMInsight );
@@ -2778,12 +2802,19 @@ static void OldExecuteColourCommand( void )
             if( CurToken==PotentialTok )
             {   ReDrawFlag |= RFColour;
                 MapFlag |= MapColourPot;
+                MapFlag &= ~MapColourAtom;
+                ApplyMapColour();
+            } else if( CurToken==AtomTok )
+            {   ReDrawFlag |= RFColour;
+                MapFlag |= MapColourAtom;
+                MapFlag &= ~MapColourPot;
                 ApplyMapColour();
            } else if( ParseColour() )
             {   ReDrawFlag |= RFColour;
                 MapRGBCol[0] = RVal;
                 MapRGBCol[1] = GVal;
                 MapRGBCol[2] = BVal;
+                MapFlag &= ~(MapColourPot|MapColourAtom);
                 ApplyMapColour();
             } else if( CurToken )
             {      CommandError(MsgStrs[ErrColour]);
@@ -2991,12 +3022,19 @@ static void ExecuteColourCommand( void )
             if( CurToken==PotentialTok )
             {   ReDrawFlag |= RFColour;
                 MapFlag |= MapColourPot;
+                MapFlag &= ~MapColourAtom;
+                ApplyMapColour();
+            } else if( CurToken==AtomTok )
+            {   ReDrawFlag |= RFColour;
+                MapFlag |= MapColourAtom;
+                MapFlag &= ~MapColourPot;
                 ApplyMapColour();
            } else if( ParseColour() )
             {   ReDrawFlag |= RFColour;
                 MapRGBCol[0] = RVal;
                 MapRGBCol[1] = GVal;
                 MapRGBCol[2] = BVal;
+                MapFlag &= ~(MapColourPot|MapColourAtom);
                 ApplyMapColour();
             } else if( CurToken )
             {      CommandError(MsgStrs[ErrColour]);
@@ -3555,6 +3593,8 @@ void ZapDatabase( void )
 
     for( i=0; i<10; i++ )
         DialValue[i] = 0.0;
+    CQRMSet(DialQRot,0.,0.,0.,0.);
+
     SelectCount = 0;
 
     DestroyDatabase();
@@ -3913,6 +3953,50 @@ static void ApplyMapSelection( void ) {
   return;
 }
 
+static void ApplyMapAtomSelection(int clear) {
+    int i, j;
+    MapInfo *mapinfo;
+    void FAR * objClosest;
+    MapPointVec __far *MapPointsPtr;
+    double coord[3];
+
+    if (clear==True)
+    {	for( QChain=Database->clist; QChain; QChain=QChain->cnext )
+          for( QGroup=QChain->glist; QGroup; QGroup=QGroup->gnext )
+            for( QAtom=QGroup->alist; QAtom; QAtom=QAtom->anext )
+                QAtom->flag &= ~SelectFlag;
+}
+
+    if (!AtomTree) {
+        if (CreateAtomTree()) {
+            RasMolFatalExit(MsgStrs[StrMalloc]);
+        }
+    }
+
+    if (MapInfoPtr)  {
+        for (j=0; j < MapInfoPtr->size; j++) {
+            vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
+            if (mapinfo->flag&MapSelectFlag) {
+                MapPointsPtr = mapinfo->MapPointsPtr;
+                if (MapPointsPtr)
+                for (i=0; i<MapPointsPtr->size; i++) {
+                    if (!(MapPointsPtr->array[i]).flag&SelectFlag) continue;
+                    coord[0] = (double)(MapPointsPtr->array[i]).xpos;
+                    coord[1] = (double)(MapPointsPtr->array[i]).ypos;
+                    coord[2] = (double)(MapPointsPtr->array[i]).zpos;
+                    
+                    if (!CNearTreeNearestNeighbor(AtomTree,(double)(1500+ProbeRadius),NULL,&objClosest,coord)) {
+                        (*((RAtom __far * *)objClosest))->flag |= SelectFlag;
+                    }
+                 }
+           
+            }
+        }
+    }
+    return;
+ 
+	
+}
 
 void ApplyMapColour( void ) {
   int i, j;
@@ -3926,6 +4010,7 @@ void ApplyMapColour( void ) {
         mapinfo->flag |= (MapFlag&MapColourPot);
         for (i=0;i<3;i++) mapinfo->MapRGBCol[i]=MapRGBCol[i];
         if (mapinfo->flag&MapColourPot) ColourPointPotential(j);
+                else if(mapinfo->flag&MapColourAtom) ColourPointAtom(j);
         else ColourPointAttrib(mapinfo->MapRGBCol[0],mapinfo->MapRGBCol[1],mapinfo->MapRGBCol[2],j);
       }
     }
@@ -3959,6 +4044,7 @@ static void ApplyMapFlag( void ) {
           mapinfo->MapSpacing, mapinfo->MapPointsPtr,mapinfo->MapBondsPtr,mapinfo->MapTanglePtr,
           mapinfo->MapMaskPtr, mapinfo->MapRGBCol );
         if (mapinfo->flag&MapColourPot) ColourPointPotential(j);
+                        if (mapinfo->flag&MapColourAtom) ColourPointAtom(j);
         }
         }
       }
@@ -4482,11 +4568,21 @@ int ExecuteCommand( void )
       {  CommandError(MsgStrs[ErrSyntax]);
          return False;      	
       }
+        if (CreateAtomTree()){
+            CommandError(MsgStrs[StrMalloc]);
+            return False;
+        }
       FetchToken();
       if( CurToken == ')' )  {
          FetchToken();
          xret=ExecuteCommandOne(&restore);
-         if ( restore ) LoadAtomSelection();
+            if ( restore ) {
+                LoadAtomSelection();
+                if (CreateAtomTree()){
+                    CommandError(MsgStrs[StrMalloc]);
+                    return False;
+                }                
+            }
       	 return xret;
       }else 
       {  CommandError(MsgStrs[ErrSyntax]);
@@ -4709,6 +4805,9 @@ int ExecuteCommandOne( int * restore )
                                   } else CommandError(MsgStrs[ErrSyntax]);
                                   DeAllocateExpr(QueryExpr);
                               }
+            }
+            if (CreateAtomTree()) {
+                CommandError(MsgStrs[StrMalloc]);
                           }
                           break;
 
@@ -4736,6 +4835,9 @@ int ExecuteCommandOne( int * restore )
                                   DeAllocateExpr(QueryExpr);
                               }
                           } 
+            if (CreateAtomTree()) {
+                CommandError(MsgStrs[StrMalloc]);
+            }
                           break;
 
 
@@ -5161,12 +5263,17 @@ int ExecuteCommandOne( int * restore )
                                 if( CurToken==PotentialTok )
                                 {   ReDrawFlag |= RFColour;
                                     MapFlag |= MapColourPot;
+                            MapFlag &= ~MapColourAtom;
+                        } else if( CurToken==AtomTok )
+                        {   ReDrawFlag |= RFColour;
+                            MapFlag |= MapColourAtom;
+                            MapFlag &= ~MapColourPot;
                                 } else if( ParseColour() )
                                 {   ReDrawFlag |= RFColour;
                                     MapRGBCol[0] = RVal;
                                     MapRGBCol[1] = GVal;
                                     MapRGBCol[2] = BVal;
-                                    MapFlag &= ~MapColourPot;
+                            MapFlag &= ~(MapColourPot|MapColourAtom);
                                 } else if( CurToken )
                                 {      CommandError(MsgStrs[ErrColour]);
                                 } else CommandError(MsgStrs[ErrNoCol]);
@@ -5187,6 +5294,10 @@ int ExecuteCommandOne( int * restore )
                                 FetchToken();
                                 if (!CurToken) {
                                   ApplyMapSelection();
+                        } else if (CurToken == AtomTok){
+                        	ApplyMapAtomSelection(False);
+                        	SelectZone(SelectFlag);
+                        	ReDrawFlag |= RFRefresh;
                                 }
                                 else CommandError(MsgStrs[ErrSyntax]);
                                 break;
@@ -5196,6 +5307,10 @@ int ExecuteCommandOne( int * restore )
                                 if (!CurToken) {
                                   ApplyMapSelection();
                                   ApplyMapRestriction();
+                        } else if (CurToken == AtomTok){
+                        	ApplyMapAtomSelection(True);
+                        	RestrictZone(SelectFlag);
+                        	ReDrawFlag |= RFRefresh;
                                 }
                                 else CommandError(MsgStrs[ErrSyntax]);
                                 break;

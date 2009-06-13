@@ -388,13 +388,14 @@
 #define NextTok        536
 #define NoneTok        537
 #define NotTok         538
+#define OldTok         539
 #define OnTok          TrueTok
 #define OffTok         FalseTok
-#define OrTok          539
-#define TrueTok        540
-#define UntilTok       541
-#define WithinTok      542
-#define XorTok         543
+#define OrTok          540
+#define TrueTok        541
+#define UntilTok       542
+#define WithinTok      543
+#define XorTok         544
 
 /* Colour Tokens */
 /* Warning! Tokens are related to colour values */

@@ -257,6 +257,7 @@ typedef struct {
 #define MapNoSelectFlag 0x004    /* Set when no map selector was 
                                     given                           */
 #define MapColourPot    0x010    /* Set for colour by potential     */
+#define MapColourAtom   0x020    /* Set for colour by nearest atom  */
 #define MapPointFlag    0x100    /* Represent map as points         */
 #define MapMeshFlag     0x200    /* Represent map as mesh           */
 #define MapMeshDashFlag 0x210    /* Represent map as dashed mesh    */

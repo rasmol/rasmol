@@ -145,9 +145,13 @@ GUIDEF = -DX11WIN
 #
 CBFLIB_VERSION = 0.8.0
 CBFLIB_TARBALL = CBFlib_$(CBFLIB_VERSION).tar.gz
-CBFLIB_TARBALLDIR = ../
+CBFLIB_TARBALLDIR = ../../
 CBFLIB_TARBALL_URL = http://www.bernstein-plus-sons.com/software/$(CBFLIB_TARBALL)
 CBFLIBDIR = $(CBFLIB_TARBALLDIR)/CBFlib_$(CBFLIB_VERSION)
+
+CQRLIBDIR = $(HOME)
+CVECTORDIR = $(HOME)
+NEARTREEDIR = $(HOME)
 
 # RasMol's on-line help direcory
 #   e.g. /usr/local/lib/rasmol/rasmol.hlp
@@ -155,7 +159,10 @@ RASMOLDIR = $(USRLIBDIR)/rasmol/
 
 
 DEFINES = $(GTKCFLAGS) $(GUIDEF) -DRASMOLDIR=\"$(RASMOLDIR)\" $(DEPTHDEF) $(LOCALEDEF) \
-          -D_USE_RASMOL_H_ $(GUIOPTION) -I$(CBFLIBDIR)/include
+          -D_USE_RASMOL_H_ $(GUIOPTION) -I$(CBFLIBDIR)/include \
+          -I$(CQRLIBDIR)/include \
+          -I$(CVECTORDIR)/include \
+          -I$(NEARTREEDIR)/include
 
 SRCS = rasmol.c rasmol.h molecule.c molecule.h abstree.c abstree.h \
        cmndline.c cmndline.h command.c command.h tokens.h transfor.c \
@@ -178,7 +185,10 @@ OBJS = rasmol.o molecule.o abstree.o cmndline.o command.o transfor.o \
 # LDLIBS = -lm -lXi -lXextSam $(XLIB)
 
 LDLIBS = -lm -lXi $(XLIB) $(EXTRA_LIBRARIES) $(XFORMSLIB) $(GTKLIBS) \
-			-L$(CBFLIBDIR)/lib -lcbf
+			$(CBFLIBDIR)/lib/libcbf.a \
+            $(CVECTORDIR)/lib/libCVector.a \
+            $(NEARTREEDIR)/lib/libCNearTree.a \
+            $(CQRLIBDIR)/lib/libCQRlib.a
 
 
 
@@ -212,7 +222,7 @@ CCOPTIONS = -Ae +DD64 +DSmckinley -D_LONGLONG
 
 #ifdef MACOSX_FINK
 #ifdef XFORMSLIB
-XFORMSLIB = -lXpm -L/sw/lib -lforms
+XFORMSLIB = -lXpm /sw/lib/libforms.a
 GUIOPTION = -DXFORMSLIB -I/sw/include
 #endif
 #endif

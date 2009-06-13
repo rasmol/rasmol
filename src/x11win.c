@@ -2663,6 +2663,8 @@ int OpenDisplay( void )
 
     for( i=0; i<11; i++ )
          DialValue[i] = 0.0;
+         
+    CQRMSet(DialQRot,0.,0.,0.,0.);
 
     RLut[0]=0;   GLut[0]=0;   BLut[0]=0;    ULut[0]=True;
     RLut[1]=100; GLut[1]=100; BLut[1]=100;  ULut[1]=True;

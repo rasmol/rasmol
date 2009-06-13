@@ -207,6 +207,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <CNearTree.h>
+#include <cqrlib.h>
 
 #define TRANSFORM
 #include "molecule.h"
@@ -2368,6 +2370,47 @@ void ColourPointPotential( int mapno )
 
 }
 
+void ColourPointAtom( int mapno )
+{
+    register int i,shade;
+    void FAR * objClosest;
+    
+    MapPointVec __far *MapPointsPtr;
+    MapInfo mapinfo;
+    double coord[3];
+    
+    if (!AtomTree) {
+        if (CreateAtomTree()) {
+            RasMolFatalExit(MsgStrs[StrMalloc]);
+        }
+    }
+    
+	UseDotColPot = True;
+    
+    if (MapInfoPtr)
+        if (mapno >= 0 && mapno < MapInfoPtr->size) {
+            vector_get_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,mapno );
+            MapPointsPtr = mapinfo.MapPointsPtr;
+            
+            if (MapPointsPtr)
+                for (i=0; i<MapPointsPtr->size; i++) {
+                    if (!(MapPointsPtr->array[i]).flag&SelectFlag) continue;
+                    coord[0] = (double)(MapPointsPtr->array[i]).xpos;
+                    coord[1] = (double)(MapPointsPtr->array[i]).ypos;
+                    coord[2] = (double)(MapPointsPtr->array[i]).zpos;
+                    
+                    if (!CNearTreeNearestNeighbor(AtomTree,(double)(1500+ProbeRadius),NULL,&objClosest,coord)) {
+                        shade = Colour2Shade((MapPointsPtr->array[i]).col);
+                        Shade[shade].refcount--;
+                        (MapPointsPtr->array[i]).col = (*((RAtom __far * *)objClosest))->col;
+                        shade = Colour2Shade((MapPointsPtr->array[i]).col);
+                        Shade[shade].refcount++;
+                    }
+                 }
+        }
+}
+
+
 
 static void ResetColourAttrib( void )
 {
@@ -3502,27 +3545,27 @@ void PrepareTransform( void )
           
       	if (DialValueOffset[DialTX]>tlimit) { 
       	   DialValueBalance[DialTX] = DialValueOffset[DialTX] - tlimit;
-      	   DialValueOffset[DialTX]=tlimit; NextReDrawFlag = ReDrawFlag;
+      	   DialValueOffset[DialTX]=tlimit; NextReDrawFlag |= RFTransX;
       	}
       	if (DialValueOffset[DialTX]<-tlimit) { 
       	   DialValueBalance[DialTX] = DialValueOffset[DialTX] + tlimit;
-      	   DialValueOffset[DialTX]=-tlimit;  NextReDrawFlag = ReDrawFlag;
+      	   DialValueOffset[DialTX]=-tlimit;  NextReDrawFlag |= RFTransX;
       	}
       	if (DialValueOffset[DialTY]>tlimit) { 
       	   DialValueBalance[DialTY] = DialValueOffset[DialTY] - tlimit;
-      	   DialValueOffset[DialTY]=tlimit; NextReDrawFlag = ReDrawFlag;
+      	   DialValueOffset[DialTY]=tlimit; NextReDrawFlag |= RFTransY;
       	}
       	if (DialValueOffset[DialTY]<-tlimit) {
       	   DialValueBalance[DialTY] = DialValueOffset[DialTY] + tlimit;
-      	   DialValueOffset[DialTY]=-tlimit;  NextReDrawFlag = ReDrawFlag;
+      	   DialValueOffset[DialTY]=-tlimit;  NextReDrawFlag |= RFTransY;
       	}
       	if (DialValueOffset[DialTZ]>tlimit) { 
       	   DialValueBalance[DialTZ] = DialValueOffset[DialTZ] - tlimit;
-      	   DialValueOffset[DialTZ]=tlimit; NextReDrawFlag = ReDrawFlag;
+      	   DialValueOffset[DialTZ]=tlimit; NextReDrawFlag |= RFTransZ;
       	}
       	if (DialValueOffset[DialTZ]<-tlimit) { 
       	   DialValueBalance[DialTZ] = DialValueOffset[DialTZ] + tlimit;
-      	   DialValueOffset[DialTZ]=-tlimit;  NextReDrawFlag = ReDrawFlag;
+      	   DialValueOffset[DialTZ]=-tlimit; NextReDrawFlag |= RFTransZ;
       	}
       } 
          
@@ -3547,44 +3590,137 @@ void PrepareTransform( void )
     LOffset[2] = 10000 + (int)rint(Zoom*LastTZ*ZRange);
         
 
-    if ( ( DialValueOffset[DialRX] != LastRX ) || 
-         ( DialValueOffset[DialRY] != LastRY ) ||
-        ( DialValueOffset[DialRZ] != LastRZ ) ) {
-        
+    if ( ( DialValueOffset[DialRX] != 0 ) || 
+         ( DialValueOffset[DialRY] != 0 ) ||
+         ( DialValueOffset[DialRZ] != 0 ) ||
+         ( DialQRot.w != 0. ) ||
+         ( DialQRot.x != 0. ) ||
+         ( DialQRot.y != 0. ) ||
+         ( DialQRot.z != 0. )
+        ) {
+                 
+        /* *** redo the balance *** */
         if (record_on[0] && record_aps > 0. && record_fps > 0. && !RecordPause) 
         {
             Real slimit;
-            slimit = 39.788*record_aps/record_fps/WorldRadius;
+            Real rangle;
+            Real newcos, newsin, oldsin;
+            Real balcos, balsin;
+            CQRQuaternion quat;
+            CQRQuaternion balquat;
+            CQRQuaternion trot;
+            DialValueOffset[DialRX] *= PI;
+            DialValueOffset[DialRY] *= PI;
+            DialValueOffset[DialRZ] *= PI;
+            if (( DialQRot.w != 0. ) ||
+              ( DialQRot.x != 0. ) ||
+              ( DialQRot.y != 0. ) ||
+              ( DialQRot.z != 0. )) {
+              CQRAngles2Quaternion (&trot, DialValueOffset[DialRX],
+                                      DialValueOffset[DialRY],
+                                      DialValueOffset[DialRZ]);
+              CQRMMultiply(quat,DialQRot,trot);  
+            } else {    
+              CQRAngles2Quaternion (&quat, DialValueOffset[DialRX],
+                  DialValueOffset[DialRY],
+                  DialValueOffset[DialRZ]);
+            }
+            rangle = acos(quat.w);
+            oldsin = sin(rangle);
+            slimit = 62.5*record_aps/record_fps/WorldRadius;
+            newcos = cos(slimit);
+            newsin = sin(slimit);
+            balcos = cos(rangle-slimit);
+            balsin = sin(rangle-slimit);
+            if (rangle > slimit && oldsin != 0.) {
+              newcos = cos(slimit);
+              newsin = sin(slimit);
+              balcos = cos(rangle-slimit);
+              balsin = sin(rangle-slimit);
+              balquat.w = balcos;
+              balquat.x = quat.x*balsin/oldsin;
+              balquat.y = quat.y*balsin/oldsin;
+              balquat.z = quat.z*balsin/oldsin;
+              quat.w = newcos;
+              quat.x = quat.x*newsin/oldsin;
+              quat.y = quat.y*newsin/oldsin;
+              quat.z = quat.z*newsin/oldsin;
+              CQRQuaternion2Angles (&DialValueOffset[DialRX],
+                  &DialValueOffset[DialRY],
+                  &DialValueOffset[DialRZ],&quat);
+              DialValueBalance[DialRX] = DialValueOffset[DialRX];
+              DialValueBalance[DialRY] = DialValueOffset[DialRY];
+              DialValueBalance[DialRZ] = DialValueOffset[DialRZ];              
+              CQRQuaternion2Angles (&DialValueBalance[DialRX],
+                  &DialValueBalance[DialRY],
+                  &DialValueBalance[DialRZ],&balquat);
+              DialValueBalance[DialRX] /= PI;
+              DialValueBalance[DialRY] /= PI;
+              DialValueBalance[DialRZ] /= PI;
+            } else if  (rangle < -slimit && oldsin != 0.) {
+              newcos = cos(-slimit);
+              newsin = sin(-slimit);
+              balcos = cos(rangle+slimit);
+              balsin = sin(rangle+slimit);
+              balquat.w = balcos;
+              balquat.x = quat.x*balsin/oldsin;
+              balquat.y = quat.y*balsin/oldsin;
+              balquat.z = quat.z*balsin/oldsin;
+              quat.w = newcos;
+              quat.x = quat.x*newsin/oldsin;
+              quat.y = quat.y*newsin/oldsin;
+              quat.z = quat.z*newsin/oldsin;
+              CQRQuaternion2Angles (&DialValueOffset[DialRX],
+                  &DialValueOffset[DialRY],
+                  &DialValueOffset[DialRZ],&quat);
+              DialValueBalance[DialRX] = DialValueOffset[DialRX];
+              DialValueBalance[DialRY] = DialValueOffset[DialRY];
+              DialValueBalance[DialRZ] = DialValueOffset[DialRZ];              
+              CQRQuaternion2Angles (&DialValueBalance[DialRX],
+                  &DialValueBalance[DialRY],
+                  &DialValueBalance[DialRZ],&balquat);
+              DialValueBalance[DialRX] /= PI;
+              DialValueBalance[DialRY] /= PI;
+              DialValueBalance[DialRZ] /= PI;
+            }
+            DialValueOffset[DialRX] /= PI;
+            DialValueOffset[DialRY] /= PI;
+            DialValueOffset[DialRZ] /= PI;
             if (DialValueOffset[DialRX] > 1. ) DialValueOffset[DialRX] -=2.;
             if (DialValueOffset[DialRX] < -1. ) DialValueOffset[DialRX] +=2.;
             if (DialValueOffset[DialRY] > 1. ) DialValueOffset[DialRY] -=2.;
             if (DialValueOffset[DialRY] < -1. ) DialValueOffset[DialRY] +=2.;
             if (DialValueOffset[DialRZ] > 1. ) DialValueOffset[DialRZ] -=2.;
             if (DialValueOffset[DialRZ] < -1. ) DialValueOffset[DialRZ] +=2.;
-            if (DialValueOffset[DialRX]>slimit) { 
-                DialValueBalance[DialRX] = DialValueOffset[DialRX] - slimit;
-                DialValueOffset[DialRX]=slimit; NextReDrawFlag = ReDrawFlag;
-            }
-            if (DialValueOffset[DialRX]<-slimit) { 
-                DialValueBalance[DialRX] = DialValueOffset[DialRX] + slimit;
-                DialValueOffset[DialRX]=-slimit;  NextReDrawFlag = ReDrawFlag;
-            }
-            if (DialValueOffset[DialRY]>slimit) { 
-                DialValueBalance[DialRY] = DialValueOffset[DialRY] - slimit;
-                DialValueOffset[DialRY]=slimit; NextReDrawFlag = ReDrawFlag;
-            }
-            if (DialValueOffset[DialRY]<-slimit) {
-                DialValueBalance[DialRY] = DialValueOffset[DialRY] + slimit;
-                DialValueOffset[DialRY]=-slimit;  NextReDrawFlag = ReDrawFlag;
-            }
-            if (DialValueOffset[DialRZ]>slimit) { 
-                DialValueBalance[DialRZ] = DialValueOffset[DialRZ] - slimit;
-                DialValueOffset[DialRZ]=slimit; NextReDrawFlag = ReDrawFlag;
-            }
-            if (DialValueOffset[DialRZ]<-slimit) { 
-                DialValueBalance[DialRZ] = DialValueOffset[DialRZ] + slimit;
-                DialValueOffset[DialRZ]=-slimit;  NextReDrawFlag = ReDrawFlag;
-            }
+            CQRMSet(DialQRot,0.,0.,0.,0.);
+        } else {
+            CQRQuaternion quat;
+            CQRQuaternion trot;
+            DialValueOffset[DialRX] *= PI;
+            DialValueOffset[DialRY] *= PI;
+            DialValueOffset[DialRZ] *= PI;
+            if (( DialQRot.w != 0. ) ||
+                ( DialQRot.x != 0. ) ||
+                ( DialQRot.y != 0. ) ||
+                ( DialQRot.z != 0. )) {
+                CQRAngles2Quaternion (&trot, DialValueOffset[DialRX],
+                                      DialValueOffset[DialRY],
+                                      DialValueOffset[DialRZ]);
+                CQRMMultiply(quat,DialQRot,trot);  
+                CQRQuaternion2Angles (&DialValueOffset[DialRX],
+                                      &DialValueOffset[DialRY],
+                                      &DialValueOffset[DialRZ],&quat);
+            } 
+            DialValueOffset[DialRX] /= PI;
+            DialValueOffset[DialRY] /= PI;
+            DialValueOffset[DialRZ] /= PI;
+            if (DialValueOffset[DialRX] > 1. ) DialValueOffset[DialRX] -=2.;
+            if (DialValueOffset[DialRX] < -1. ) DialValueOffset[DialRX] +=2.;
+            if (DialValueOffset[DialRY] > 1. ) DialValueOffset[DialRY] -=2.;
+            if (DialValueOffset[DialRY] < -1. ) DialValueOffset[DialRY] +=2.;
+            if (DialValueOffset[DialRZ] > 1. ) DialValueOffset[DialRZ] -=2.;
+            if (DialValueOffset[DialRZ] < -1. ) DialValueOffset[DialRZ] +=2.;
+            CQRMSet(DialQRot,0.,0.,0.,0.);
         } 
       	
         RV2RMat(DialValueOffset[DialRX], DialValueOffset[DialRY], DialValueOffset[DialRZ],
@@ -3631,8 +3767,11 @@ void PrepareTransform( void )
         DialValue[DialRX] = LastRX+DialValueBalance[DialRX];
         DialValue[DialRY] = LastRY+DialValueBalance[DialRY];
         DialValue[DialRZ] = LastRZ+DialValueBalance[DialRZ];
+        if (DialValueBalance[DialRX]) NextReDrawFlag |= RFRotateX;
+        if (DialValueBalance[DialRX]) NextReDrawFlag |= RFRotateY;
+        if (DialValueBalance[DialRX]) NextReDrawFlag |= RFRotateZ;
         
-        for (ii=DialRX; ii <=DialRY; ii++) {
+        for (ii=DialRX; ii <=DialRZ; ii++) {
             if (DialValue[ii] > 1.) DialValue[ii] -=2.;
             if (DialValue[ii] < -1.) DialValue[ii] +=2.;
         }

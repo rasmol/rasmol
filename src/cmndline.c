@@ -627,9 +627,10 @@ void SetMouseMode( int mode )
     
     switch( mode )
     {   case(MMRasMol):  MouseBinding = MouseRasMol;  MouseMode = MMRasMol;    break;
+        case(MMRasOld):  MouseBinding = MouseRasMol;  MouseMode = MMRasOld;    break;
         case(MMInsight): MouseBinding = MouseInsight; MouseMode = MMInsight;   break;
-        case(MMQuanta):  MouseBinding = MouseQuanta;  MouseMode = MMQuanta; break;
-        case(MMSybyl):   MouseBinding = MouseSybyl;   MouseMode = MMSybyl;  break;
+        case(MMQuanta):  MouseBinding = MouseQuanta;  MouseMode = MMQuanta;    break;
+        case(MMSybyl):   MouseBinding = MouseSybyl;   MouseMode = MMSybyl;     break;
     }
 
     /* Should also test for BindingActive(MMSft|MMCtl)! */
@@ -637,15 +638,86 @@ void SetMouseMode( int mode )
     SetMouseUpdateStatus(stat);            
 }
 
+/*
+   PerformMouseFunc
+     func:  MM_ROTX -- a change in the Y-direction for the purpose
+                       of rotating around the X-axis
+            MM_ROTY -- a change in the X-direction for the purpose
+                       of rotating aount the Y-axis
+ 
+     The mouse rasmol old interpretation is based on breaking
+     the screen into zones, by eigths of the width and height.
+     In the outer eighth in each direction, the rotations
+     are actualy around the Z-axis.  In the middle 2-eights
+     the rotations ar entirely around the X-axis for
+     Y displacements, and entirely around the Y-axis for
+     X dosplacements.  Between these two zones the two rotation
+     modes are mixed
+   
+ 
+ 
+       (0,0)                                        (XRange,0)
+         ------------------------------------------------
+        |     |     |     |     |     |     |     |     |
+        |  Z  |  Z  |  Z  |  Z  |  Z  |  Z  |  Z  |  Z  |
+        |     |     |     |     |     |     |     |     |
+         ------------------------------------------------
+        |     |     |     |     |     |     |     |     |
+        |  Z  |     |     |     |     |     |     |  Z  |
+        |     |     |     |     |     |     |     |     |
+         ------------------------------------------------
+        |     |     |     |     |     |     |     |     |
+        |  Z  |     |     |     |     |     |     |  Z  |
+        |     |     |     |     |     |     |     |     |
+         ------------------------------------------------
+        |     |     |     |     |     |     |     |     |
+        |  Z  |     |     |  XY | XY  |     |     |  Z  |
+        |     |     |     |     |     |     |     |     |
+         ------------------------------------------------
+        |     |     |     |     |     |     |     |     |
+        |  Z  |     |     |  XY | XY  |     |     |  Z  |
+        |     |     |     |     |     |     |     |     |
+         ------------------------------------------------
+        |     |     |     |     |     |     |     |     |
+        |  Z  |     |     |     |     |     |     |     |
+        |     |     |     |     |     |     |     |     |
+         ------------------------------------------------
+        |     |     |     |     |     |     |     |     |
+        |  Z  |     |     |     |     |     |     |     |
+        |     |     |     |     |     |     |     |     |
+         ------------------------------------------------
+        |     |     |     |     |     |     |     |     |
+        |  Z  |  Z  |  Z  |  Z  |  Z  |  Z  |  Z  |  Z  |
+        |     |     |     |     |     |     |     |     |
+         ------------------------------------------------
+    (0,YRange)                                         (Xrange,YRange)
+ 
+ This provides a approximation to track-ball behavior, where
+ twisting of the trackball creates a Z-rotation.  In this case,
+ the appropriate DialValues are incremented by the indicated
+ motion, to eventually be used against as base set of Euler
+ angles [LastRX, LastRY, LastRZ]
+ 
+ In the new mode, the screen is treated as a continuous trackball,
+ using any changes in [DialVaue[DialRX],DialValue[DialRY]] to infer
+ a rotation around an axis at right angles to the displacement.
+ The accumulated rotation is held in DialQRot.   The rotation is applied 
+ in transfor.c.
+ 
+ */
 
 static void PerformMouseFunc( int func, int delta, int max )
 {   Real xcomp, ycomp, zcomp;
+    Real dvalue, nvalue;
     int  dist;
+    CQRQuaternion lrot,trot;
+    CQRQuaternion q3;
     
     switch( func )
-    {   case(MM_ROTX):  if ( (RotMode == RotBond) && BondSelected) {
-                          WrapDial( DialBRot, (Real)(2*delta)/max );
-                        } else {
+    {   case(MM_ROTX):  dvalue = ((Real)(2*delta))/((Real)(max));
+                        if ( (RotMode == RotBond) && BondSelected) {
+                          WrapDial( DialBRot, dvalue );
+                        } else if (MouseMode==MMRasOld) {
                           dist = PointX-XRange/2;
                           if (dist < -XRange/8) {
                             dist += XRange/8;
@@ -657,18 +729,57 @@ static void PerformMouseFunc( int func, int delta, int max )
                             dist *=2;
                             if (dist > XRange/2) dist = XRange/2;
                           }
-                          xcomp = (Real)(delta*(XRange/2-AbsFun(dist)))/((Real)(XRange/2));
-                          zcomp = (Real)(delta*dist)/((Real)(XRange/2));
-                          WrapDial( DialRX, 2*xcomp/(Real)max );
-                          WrapDial( DialRZ, 2*zcomp/(Real)max );
-                         /* WrapDial( DialRX, (Real)(2*delta)/max ); */
+                          xcomp = dvalue*(Real)((XRange/2-AbsFun(dist)))/((Real)(XRange/2));
+                          zcomp = dvalue*(Real)(dist)/((Real)(XRange/2));
+                          WrapDial( DialRX, xcomp );
+                          WrapDial( DialRZ, zcomp);
+                          ReDrawFlag |= RFRotateX|RFRotateZ;
+                        } else if (MouseMode==MMRasMol) {
+                            xcomp = ((Real)(2*PointX-XRange))/((Real)(XRange));
+                            ycomp = ((Real)(2*PointY-YRange))/((Real)(YRange));
+                            zcomp = xcomp*xcomp+ycomp*ycomp;
+                            if (zcomp > 1.) {
+                                zcomp = 0.;
+                            } else {
+                                zcomp = sqrt(1.-zcomp);
+                            }
+                            CQRMSet(q3,0.,zcomp,0,xcomp)
+                            CQRMNormsq(nvalue,q3);
+                            if (DialQRot.w==0. && DialQRot.x==0. && DialQRot.y==0 &&DialQRot.z==0) {
+                              if (nvalue==0.) {
+                                  CQRMSet(DialQRot,cos(PI*dvalue/2.),0.,0.,sin(PI*dvalue/2.));
+                              } else {
+                                  nvalue = sqrt(nvalue);
+                                  CQRMSet(DialQRot,cos(PI*dvalue/2.),
+                                          sin(PI*dvalue/2.)*q3.x/nvalue,
+                                          sin(PI*dvalue/2.)*q3.y/nvalue,
+                                          sin(PI*dvalue/2.)*q3.z/nvalue);
+                              }
+                            } else {
+                                if (nvalue==0.) {
+                                    CQRMSet(lrot,cos(PI*dvalue),0.,0.,sin(PI*dvalue));
+                                } else {
+                                    nvalue = sqrt(nvalue);
+                                    CQRMSet(lrot,cos(PI*dvalue/2.),
+                                            sin(PI*dvalue/2.)*q3.x/nvalue,
+                                            sin(PI*dvalue/2.)*q3.y/nvalue,
+                                            sin(PI*dvalue/2.)*q3.z/nvalue);
+                                }
+                                CQRMMultiply(trot,lrot,DialQRot);
+                         	    CQRMCopy(DialQRot,trot);
+                            }
+                            ReDrawFlag |= RFRotateX|RFRotateY|RFRotateZ;
+                        } else {
+                          WrapDial( DialRX, (Real)(2*delta)/max );
+                          ReDrawFlag |= RFRotateX;
                         }
-                        ReDrawFlag |= RFRotateX|RFRotateZ;
                         break;
                         
-        case(MM_ROTY):  if ( (RotMode == RotBond) && BondSelected) {
-                          WrapDial( DialBRot, (Real)(2*delta)/max );
-                        } else {
+                        case(MM_ROTY):
+                          dvalue = ((Real)(2*delta))/((Real)(max));
+                          if ( (RotMode == RotBond) && BondSelected) {
+                          WrapDial( DialBRot, dvalue );
+                        } else if (MouseMode==MMRasOld) {
                           dist = PointY-YRange/2;
                           if (dist < -YRange/8) {
                             dist += YRange/8;
@@ -680,17 +791,54 @@ static void PerformMouseFunc( int func, int delta, int max )
                             dist *=2;
                             if (dist > YRange/2) dist = YRange/2;
                           }
-                          ycomp = (Real)(delta*(YRange/2-AbsFun(dist)))/((Real)(YRange/2));
+                          ycomp = dvalue*(Real)((YRange/2-AbsFun(dist)))/((Real)(YRange/2));
 #ifdef INVERT
-                          zcomp = (Real)(delta*dist)/((Real)(YRange/2));
+                          zcomp = dvalue*(Real)(dist)/((Real)(YRange/2));
 #else
-                          zcomp = (Real)(-delta*dist)/((Real)(YRange/2));
+                          zcomp = dvalue*(Real)(-dist)/((Real)(YRange/2));
 #endif
-                          WrapDial( DialRY, 2*ycomp/(Real)max );
-                          WrapDial( DialRZ, 2*zcomp/(Real)max );
-                        /* WrapDial( DialRY, (Real)(2*delta)/max ); */
+                          WrapDial( DialRY, ycomp );
+                          WrapDial( DialRZ, zcomp );
+                          ReDrawFlag |= RFRotateY|RFRotateZ;
+                        } else if (MouseMode==MMRasMol) {
+                            xcomp = ((Real)(2*PointX-XRange))/((Real)(XRange));
+                            ycomp = ((Real)(2*PointY-YRange))/((Real)(YRange));
+                            zcomp = xcomp*xcomp+ycomp*ycomp;
+                            if (zcomp > 1.) {
+                                zcomp = 0.;
+                            } else {
+                                zcomp = sqrt(1.-zcomp);
+                            }
+                            CQRMSet(q3,0.,0.,zcomp,-ycomp);
+                            CQRMNormsq(nvalue,q3);
+                            if (DialQRot.w==0. && DialQRot.x==0. && DialQRot.y==0 &&DialQRot.z==0) {
+                                if (nvalue==0.) {
+                                    CQRMSet(DialQRot,cos(PI*dvalue),0.,0.,sin(PI*dvalue/2.));
+                                } else {
+                                    nvalue = sqrt(nvalue);
+                                    CQRMSet(DialQRot,cos(PI*dvalue/2.),
+                                            sin(PI*dvalue/2.)*q3.x/nvalue,
+                                            sin(PI*dvalue/2.)*q3.y/nvalue,
+                                            sin(PI*dvalue/2.)*q3.z/nvalue);
+                                }
+                            } else {
+                                if (nvalue==0.) {
+                                    CQRMSet(lrot,cos(PI*dvalue/2.),0.,0.,sin(PI*dvalue/2.));
+                                } else {
+                                    nvalue = sqrt(nvalue);
+                                    CQRMSet(lrot,cos(PI*dvalue/2.),
+                                            sin(PI*dvalue/2.)*q3.x/nvalue,
+                                            sin(PI*dvalue/2.)*q3.y/nvalue,
+                                            sin(PI*dvalue/2.)*q3.z/nvalue);
+                                }
+                                CQRMMultiply(trot,lrot,DialQRot);
+                         	    CQRMCopy(DialQRot,trot);
+                            }
+                            ReDrawFlag |= RFRotateX|RFRotateY|RFRotateZ;
+                        }else {
+                          WrapDial( DialRY, (Real)(2*delta)/max );
+                          ReDrawFlag |= RFRotateY;
                         }
-                        ReDrawFlag |= RFRotateY|RFRotateZ;
                         break;
                         
         case(MM_ROTZ):  WrapDial( DialRZ, (Real)(2*delta)/max );

@@ -640,6 +640,8 @@ int OpenDisplay( HANDLE instance, int mode )
 
     for( i=0; i<10; i++ )
          DialValue[i] = 0.0;
+         
+    CQRMSet(DialQRot,0.,0.,0.,0.);
 
     ULut[0] = True;
     RLut[0] = GLut[0] = BLut[0] = 0;

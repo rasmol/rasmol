@@ -445,7 +445,7 @@ void FreeAlloc(void __far * );
 /* used to describe an defined part of the selected molecule */
 typedef enum{NO, ATM, CRD, GRP, CHN} Selection;
 
-
+#include <CNearTree.h>
 #ifdef MOLECULE
 /* Avoid SGI Compiler Warnings! */
 char Residue[MAXRES][4] = {
@@ -574,6 +574,9 @@ HBond __far *FreeHBond;
 Bond __far *FreeBond;
 Bond __far *NewBond;
 
+CNearTreeHandle AtomTree;
+
+
 #else
 extern char Residue[MAXRES][4];
 extern char ElemDesc[MAXELEM][12];
@@ -621,6 +624,8 @@ extern HBond __far *FreeHBond;
 extern Bond __far *FreeBond;
 extern Bond __far *NewBond;
 
+extern CNearTreeHandle AtomTree;
+
 #ifndef APPLEMAC
 #define RegisterAlloc(x)
 #endif
@@ -647,6 +652,7 @@ void CreateBond( Long, Long, int );
 void CreateBondOrder( Long, Long );
 void CreateNewBond( Long, Long );
 void CreateMoleculeBonds( int, int, int );
+int CreateAtomTree( void );
 void CreateSurfaceBonds( void );
 RAtom __far *FindCysSulphur( Group __far *group );
 void FindDisulphideBridges( void );

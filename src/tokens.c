@@ -1291,6 +1291,7 @@ int LookUpKeyword( char *ptr )
 
       /*
         OFF                  FalseTok
+             OLD                  OldTok
         ON                   TrueTok
         OR                   OrTok
         ORANGE               OrangeTok
@@ -1302,6 +1303,12 @@ int LookUpKeyword( char *ptr )
                 case('F'):
                     if( (*ptr=='F') && !ptr[1] ) {
                         return( FalseTok );
+                    }
+                    break;
+
+                case('L'):
+                    if( (*ptr=='D') && !ptr[1] ) {
+                        return( OldTok );
                     }
                     break;
 

@@ -167,11 +167,12 @@ typedef struct _DLGItem {
 
 #endif
 
-
+#include <cqrlib.h>
 
 
 #ifdef GRAPHICS
 double DialValue[11];
+CQRQuaternion DialQRot;
 int XRange, WRange;
 int YRange, HRange;
 int ZRange;
@@ -299,6 +300,7 @@ DLGItem AboutDLG[AboutDLGCount] = {
 
 #else /* GRAPHICS */
 extern double DialValue[11];
+extern CQRQuaternion DialQRot;
 extern int XRange, WRange;
 extern int YRange, HRange;
 extern int ZRange;
