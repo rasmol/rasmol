@@ -130,8 +130,8 @@ BEGIN
     CTEXT "RasWin Molecular Graphics"       -1, 80,  5, 100, 8
     CTEXT "http://www.rasmol.org/"          -1, 80,  14, 100, 8
     CTEXT "Copyright (C) R.Sayle 1992-1999" -1, 80,  25, 100, 8
-    CTEXT "Windows Version 2.7.4.2"         -1, 80,  34, 100, 8
-    CTEXT "Copyright (C) H. Bernstein 1998-2008" -1, 80,  43, 100, 8
+    CTEXT "Windows Version 2.7.5"           -1, 80,  34, 100, 8
+    CTEXT "Copyright (C) H. Bernstein 1998-2009" -1, 80,  43, 100, 8
     CTEXT "yaya@bernstein-plus-sons.com"    -1, 60,  52, 140, 8
     CTEXT "" IDD_HARDWARE,                      40,  70, 180, 8
     CTEXT "No Warranty, Open Source, GPL, Donations Appreciated", IDD_WARRANTY, 0, 79, 260, 8
@@ -149,7 +149,7 @@ FONT 8,"Tahoma,Arial,Helv,sans"
 BEGIN
     ICON "RasWinIcon" -1, 2, 2, 0, 0, SS_ICON
     CTEXT "RasWin Molecular Graphics"   -1, 25,  5, 175, 8
-    CTEXT "Windows Ver 2.7.4.2"         -1, 25, 14, 175, 8
+    CTEXT "Windows Ver 2.7.5"           -1, 25, 14, 175, 8
     DEFPUSHBUTTON "OK" IDOK, 81, 96, 32, 14, WS_GROUP
 
     LTEXT "" IDD_INFOTEXT1, 0,  32, 260, 8, SS_LEFTNOWORDWRAP

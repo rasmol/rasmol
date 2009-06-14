@@ -720,7 +720,7 @@ data 'RSML' (0, "Owner resource") {
 	$"7220 5361 796C 652C 204F 6374 6F62 6572"            /* r Sayle, October */
 	$"2031 3939 332C 342C 352C 2032 2E37 206D"            /*  1993,4,5, 2.7 m */
 	$"6F64 732C 2048 4A42 2C20 362F 3939 2D30"            /* ods, HJB, 6/99-0 */
-	$"362C 2079 6179 6140 6265 726E 7374 6569"            /* 6, yaya@bernstei */
+	$"392C 2079 6179 6140 6265 726E 7374 6569"            /* 9, yaya@bernstei */
 	$"6E2D 706C 7573 2D73 6F6E 732E 636F 6D2E"            /* n-plus-sons.com. */
 };
 
@@ -1061,7 +1061,7 @@ resource 'CURS' (160) {
 data 'WIND' (150) {
 	$"0032 004B 0132 014B 0004 0000 0100 0000"            /* .2.K.2.K........ */
 	$"0000 1052 6173 4D6F 6C20 2076 322E 372E"            /* ...RasMol  v2.7. */
-	$"332E 31"                                            /* 3.1 */
+	$"3520 20"                                            /* 5   */
 };
 
 data 'WIND' (151) {
@@ -1091,9 +1091,9 @@ resource 'vers' (1) {
 	alpha,
 	0x1,
 	0,
-	"v2.7.3.1",
-	"RasMol v2 © R. Sayle1992-1999,\n2.7.3.1 ©"
-	" H. J. Bernstein 1998-2006"
+	"v2.7.5  ",
+	"RasMol v2 © R. Sayle1992-1999,\n2.7.5   ©"
+	" H. J. Bernstein 1998-2009"
 };
 
 resource 'vers' (2) {
@@ -1102,8 +1102,8 @@ resource 'vers' (2) {
 	alpha,
 	0x0,
 	0,
-	"v2.7.3.1",
-	"Molecular Graphics Program\nVersion 2.7.3"
+	"v2.7.5  ",
+	"Molecular Graphics Program\nVersion 2.7.5"
 	".1"
 };
 
@@ -1921,13 +1921,13 @@ resource 'DITL' (170, purgeable) {
 		{50, 125, 65, 296},
 		StaticText {
 			disabled,
-			"Macintosh Version 2.7.3.1"
+			"Macintosh Version 2.7.5  "
 		},
 		/* [13] */
 		{66, 83, 81, 383},
 		StaticText {
 			disabled,
-			"Copyright © H. J. Bernstein 1998-2006"
+			"Copyright © H. J. Bernstein 1998-2009"
 		},
 		/* [14] */
 		{82, 108, 97, 408},
@@ -2007,13 +2007,13 @@ resource 'DITL' (177, purgeable) {
 		{50, 125, 65, 296},
 		StaticText {
 			disabled,
-			"Macintosh Version 2.7.3.1"
+			"Macintosh Version 2.7.5  "
 		},
 		/* [11] */
 		{66, 83, 81, 383},
 		StaticText {
 			disabled,
-			"Copyright © H. J. Bernstein 1998-2006"
+			"Copyright © H. J. Bernstein 1998-2009"
 		},
 		/* [12] */
 		{82, 108, 97, 408},
