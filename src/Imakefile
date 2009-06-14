@@ -146,17 +146,45 @@ GUIDEF = -DX11WIN
 #endif
 #endif
 
+# External Packages Directory
+#
+EXTPKGDIR = ../external_packages
+
 # Definitions for CBFLIB
 #
 CBFLIB_VERSION = 0.8.0
 CBFLIB_TARBALL = CBFlib_$(CBFLIB_VERSION).tar.gz
-CBFLIB_TARBALLDIR = ../../
-CBFLIB_TARBALL_URL = http://www.bernstein-plus-sons.com/software/$(CBFLIB_TARBALL)
+CBFLIB_TARBALLDIR = $(EXTPKGDIR)
+CBFLIB_TARBALL_URL = http://downloads.sf.net/cbflib/$(CBFLIB_TARBALL)
 CBFLIBDIR = $(CBFLIB_TARBALLDIR)/CBFlib_$(CBFLIB_VERSION)
 
-CQRLIBDIR = $(HOME)
-CVECTORDIR = $(HOME)
-NEARTREEDIR = $(HOME)
+# Definitions for CQRLIB
+#
+CQRLIB_VERSION = 1.0.1
+CQRLIB_TARBALL = CQRlib-$(CQRLIB_VERSION).tar.gz
+CQRLIB_TARBALLDIR = $(EXTPKGDIR)
+CQRLIB_TARBALL_URL = http://downloads.sf.net/openrasmol/$(CQRLIB_TARBALL)
+CQRLIBDIR = $(CQRLIB_TARBALLDIR)/CQRlib-$(CQRLIB_VERSION)
+#
+
+# Definitions for CVector
+#
+CVECTOR_VERSION = 1.0.2
+CVECTOR_TARBALL = CVector-$(CVECTOR_VERSION).tar.gz
+CVECTOR_TARBALLDIR = $(EXTPKGDIR)
+CVECTOR_TARBALL_URL = http://downloads.sf.net/cvector/$(CVECTOR_TARBALL)
+CVECTORDIR = $(CVECTOR_TARBALLDIR)/CVector-$(CVECTOR_VERSION)
+#
+
+# Definitions for NEARTREE
+#
+NEARTREE_VERSION = 2.0.0
+NEARTREE_TARBALL = NearTree-$(NEARTREE_VERSION).tar.gz
+NEARTREE_TARBALLDIR = $(EXTPKGDIR)
+NEARTREE_TARBALL_URL = http://downloads.sf.net/neartree/$(NEARTREE_TARBALL)
+NEARTREEDIR = $(NEARTREE_TARBALLDIR)/NearTree-$(NEARTREE_VERSION)
+#
+
 
 # RasMol's on-line help direcory
 #   e.g. /usr/local/lib/rasmol/rasmol.hlp
@@ -165,9 +193,9 @@ RASMOLDIR = $(USRLIBDIR)/rasmol/
 
 DEFINES = $(GTKCFLAGS) $(GUIDEF) -DRASMOLDIR=\"$(RASMOLDIR)\" $(DEPTHDEF) $(LOCALEDEF) \
           -D_USE_RASMOL_H_ $(GUIOPTION) -I$(CBFLIBDIR)/include \
-          -I$(CQRLIBDIR)/include \
-          -I$(CVECTORDIR)/include \
-          -I$(NEARTREEDIR)/include
+          -I$(CQRLIBDIR) \
+          -I$(CVECTORDIR) \
+          -I$(NEARTREEDIR)
 
 SRCS = rasmol.c rasmol.h molecule.c molecule.h abstree.c abstree.h \
        cmndline.c cmndline.h command.c command.h tokens.h transfor.c \
@@ -176,7 +204,11 @@ SRCS = rasmol.c rasmol.h molecule.c molecule.h abstree.c abstree.h \
        infile.h repres.c repres.h tokens.c cif_fract.c cif_fract.h cif.c \
        cif.h cif_ctonum.c cif_ctonum.h cif_stx.c \
        multiple.h multiple.c vector.h vector.c \
-       wbrotate.c wbrotate.c langsel.h langsel_unix.c maps.h maps.c $(GUISRC)
+       wbrotate.c wbrotate.c langsel.h langsel_unix.c maps.h maps.c $(GUISRC) \
+       $(CQRLIBDIR)/cqrlib.c \
+       $(CVECTORDIR)/CVector.c \
+       $(NEARTREEDIR)/CNearTree.c
+
 
 OBJS = rasmol.o molecule.o abstree.o cmndline.o command.o transfor.o \
        render.o repres.o  pixutils.o outfile.o script.o \
@@ -191,11 +223,9 @@ OBJS = rasmol.o molecule.o abstree.o cmndline.o command.o transfor.o \
 
 LDLIBS = -lm -lXi $(XLIB) $(EXTRA_LIBRARIES) $(XFORMSLIB) $(GTKLIBS) \
 			$(CBFLIBDIR)/lib/libcbf.a \
-            $(CVECTORDIR)/lib/libCVector.a \
-            $(NEARTREEDIR)/lib/libCNearTree.a \
-            $(CQRLIBDIR)/lib/libCQRlib.a
-
-
+			$(CQRLIBDIR)/cqrlib.o \
+			$(CVECTORDIR)/CVector.o \
+			$(NEARTREEDIR)/CNearTree.o
 
 #
 # Architecture Specific Rules
@@ -247,16 +277,49 @@ rasmol.man::	../doc/rasmol.1
 ../doc/rasmol.1:	../doc/rasmol.1.gz
 		gunzip  <../doc/rasmol.1.gz > ../doc/rasmol.1
 		
+
+$(EXTPKGDIR):
+		mkdir -p -v $(EXTPKGDIR)
+
 $(CBFLIBDIR):
 		(cd $(CBFLIB_TARBALLDIR);\
 		  wget $(CBFLIB_TARBALL_URL);\
+		  touch $(CBFLIB_TARBALL);\
 		  gunzip < $(CBFLIB_TARBALL) | tar xvf -)
 		  
 $(CBFLIBDIR)/lib/libcbf.a: $(CBFLIBDIR)
 		(cd $(CBFLIBDIR); make lib/libcbf.a)
+
+$(CQRLIBDIR):
+		(cd $(CQRLIB_TARBALLDIR);\
+		  wget $(CQRLIB_TARBALL_URL);\
+		  touch $(CQRLIB_TARBALL);\
+		  gunzip < $(CQRLIB_TARBALL) | tar xvf -)
+		  
+$(CQRLIBDIR)/cqrlib.c: $(CQRLIBDIR)
+
+$(CVECTORDIR):
+		(cd $(CVECTOR_TARBALLDIR);\
+		  wget $(CVECTOR_TARBALL_URL);\
+		  touch $(CVECTOR_TARBALL);\
+		  gunzip < $(CVECTOR_TARBALL) | tar xvf -)
+		  
+$(CVECTORDIR)/CVector.c: $(CVECTORDIR)
+
+$(NEARTREEDIR):
+		(cd $(NEARTREE_TARBALLDIR);\
+		  wget $(NEARTREE_TARBALL_URL);\
+	          touch $(NEARTREE_TARBALL);\
+		  gunzip < $(NEARTREE_TARBALL) | tar xvf -)
+		  
+$(NEARTREEDIR)/CNearTree.c: $(NEARTREEDIR)
 		  
 
-$(OBJS):  $(CBFLIBDIR)/lib/libcbf.a
+$(OBJS):  $(EXTPKGDIR) $(CBFLIBDIR)/lib/libcbf.a \
+			$(CQRLIBDIR)/cqrlib.o \
+			$(CVECTORDIR)/CVector.o \
+			$(NEARTREEDIR)/CNearTree.o
+
 
 gtkwin.c: gtkui.h
 

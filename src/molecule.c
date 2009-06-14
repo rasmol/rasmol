@@ -335,7 +335,8 @@ void SetFileInfo( char*, OSType, OSType, short );
 #define DirChar  '/'
 #endif
 #endif
-#else define DirChar ':'
+#else
+#define DirChar ':'
 #endif
 
 #define basename(fname) \

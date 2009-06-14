@@ -90,7 +90,7 @@
 #
 
 
-VERSION=${RASMOL_VERSION-"RasMol_2_7_4"};
+VERSION=${RASMOL_VERSION-"RasMol_2_7_5"};
 
 prefix= ;
 system="no" ;
