@@ -127,6 +127,7 @@ do
       echo ""
       echo "optional variables:"
       echo "   RASMOLPATH          path to rasmol directory"
+      echo "   RASMOL_BROWSER      name of browser to use"
       echo "   RASMOL_LANTIN1FDIR  path to X11 ISO 8859-1 font directory"
       echo "   RASMOL_CP1251FDIR   path to X11 ISO CP 1251 font directory"
       echo "   RASMOL_CHINESEFDIR  path to X11 Intlfonts-1.2.1/Chinese directory"

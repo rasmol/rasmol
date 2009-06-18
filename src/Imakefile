@@ -140,7 +140,7 @@ GUIOBJ = x11win.o
 GUIDEF = -DX11WIN
 # using xform library to show GUI dialog
 # Use the first form for Mac OS X, the second for Linux x86
-#ifdef XFORMSLIB
+#ifdef USE_XFORMSLIB
 # XFORMSLIB = -lXpm -L/sw/lib -lforms
 # GUIOPTION = -DXFORMSLIB -I/sw/include
  XFORMSLIB = -lXpm -L/usr/local/lib -lforms -Wl,-rpath,/usr/local/lib
@@ -312,7 +312,7 @@ CCOPTIONS = -Ae +DD64 +DSmckinley -D_LONGLONG
 #endif
 
 #ifdef MACOSX_FINK
-#ifdef XFORMSLIB
+#ifdef USE_XFORMSLIB
 XFORMSLIB = -lXpm /sw/lib/libforms.a
 GUIOPTION = -DXFORMSLIB -I/sw/include
 #endif

@@ -3959,25 +3959,58 @@ static void ApplyMapSelection( void ) {
   return;
 }
 
-static void ApplyMapAtomSelection(int clear) {
+/* 
+  ApplyMapAtomSelection
+ 
+     Searchs for atoms within the specified SearchRadius of the points of
+     the currently selected maps.  If clear is set, all selections are
+     cleared prior to the search.  If current is not set, all atoms are
+     selected prior to the search.
+ 
+ */
+
+static void ApplyMapAtomSelection(int dontadd, int searchwithin, int SearchRadius) {
     int i, j;
     MapInfo *mapinfo;
     void FAR * objClosest;
     MapPointVec __far *MapPointsPtr;
     double coord[3];
 
-    if (clear==True)
-    {	for( QChain=Database->clist; QChain; QChain=QChain->cnext )
+    /*  First we need to set up the selection flags for CreateAtomTree
+     
+        If we are adding to the selection (dontadd is false)
+        we need to save the current selection using SaveFlag
+        and restore those selections at the end.
+          
+        If we are not searching within (searchwithin is false)
+        we need to set all selection flags
+     
+     */
+    
+    for( QChain=Database->clist; QChain; QChain=QChain->cnext )
           for( QGroup=QChain->glist; QGroup; QGroup=QGroup->gnext )
-            for( QAtom=QGroup->alist; QAtom; QAtom=QAtom->anext )
-                QAtom->flag &= ~SelectFlag;
+            for( QAtom=QGroup->alist; QAtom; QAtom=QAtom->anext ) {
+                QAtom->flag &= ~SaveFlag;
+                if (!dontadd && ((QAtom->flag)&SelectFlag)) QAtom->flag |= SaveFlag;
+                if (searchwithin==False)  QAtom->flag |= SelectFlag;
 }
 
-    if (!AtomTree) {
+    if (!AtomTree || dontadd==True || searchwithin==False) {
         if (CreateAtomTree()) {
             RasMolFatalExit(MsgStrs[StrMalloc]);
         }
     }
+
+    /* Now, if dont add is true, we need to clear all selection flags */
+
+    if (dontadd) {
+        for( QChain=Database->clist; QChain; QChain=QChain->cnext )
+            for( QGroup=QChain->glist; QGroup; QGroup=QGroup->gnext )
+                for( QAtom=QGroup->alist; QAtom; QAtom=QAtom->anext ) {
+                    QAtom->flag &= ~SelectFlag;
+                }
+    }
+    
 
     if (MapInfoPtr)  {
         for (j=0; j < MapInfoPtr->size; j++) {
@@ -3991,7 +4024,7 @@ static void ApplyMapAtomSelection(int clear) {
                     coord[1] = (double)(MapPointsPtr->array[i]).ypos;
                     coord[2] = (double)(MapPointsPtr->array[i]).zpos;
                     
-                    if (!CNearTreeNearestNeighbor(AtomTree,(double)(1500+ProbeRadius),NULL,&objClosest,coord)) {
+                    if (!CNearTreeNearestNeighbor(AtomTree,(double)(SearchRadius),NULL,&objClosest,coord)) {
                         (*((RAtom __far * *)objClosest))->flag |= SelectFlag;
                     }
                  }
@@ -3999,6 +4032,22 @@ static void ApplyMapAtomSelection(int clear) {
             }
         }
     }
+    
+    if (dontadd==False) {
+        for( QChain=Database->clist; QChain; QChain=QChain->cnext )
+            for( QGroup=QChain->glist; QGroup; QGroup=QGroup->gnext )
+                for( QAtom=QGroup->alist; QAtom; QAtom=QAtom->anext ) {
+                    if ((QAtom->flag)&SaveFlag) {
+                        QAtom->flag |= SelectFlag;
+                        QAtom->flag &= ~SaveFlag;
+                    }
+                }
+        if (CreateAtomTree()) {
+            RasMolFatalExit(MsgStrs[StrMalloc]);
+        }
+    }
+    
+    
     return;
  
 	
@@ -5296,12 +5345,59 @@ int ExecuteCommandOne( int * restore )
                                 else CommandError(MsgStrs[ErrSyntax]);
                                 break;
 
+                    /*  map {<mapselection>} select
+                        map {<mapselection>} select atom {SearchRadius} {+|add} {-|within}
+                        map {<mapselection>} restrict atom {SearchRadius} {+|add} {-|within}
+                     
+                        The default SearchRadius is 6 Angstroms + probe radius
+                        The default is to discard all current selections first
+                           use '+' or 'add' to add to the current selections instead
+                        The default is to search through all atoms
+                           use '-' or 'within' to search through only currently selected atoms
+                        It is an error to use both add and within
+                     */
                               case(SelectTok):
                                 FetchToken();
                                 if (!CurToken) {
                                   ApplyMapSelection();
                         } else if (CurToken == AtomTok){
-                        	ApplyMapAtomSelection(False);
+                            int dontadd, searchwithin, SearchRadius;
+                            SearchRadius = 1500+ProbeRadius;
+                            dontadd = True;
+                            searchwithin = False;
+                            while (FetchToken()) {
+                                if( CurToken==NumberTok ) {
+                                    if( *TokenPtr=='.' ) {
+                                        TokenPtr++;
+                                        FetchFloat(TokenValue,250);
+                                    }
+                                    if( TokenValue>7500 ) {
+                                        CommandError(MsgStrs[ErrBigNum]);
+                                        break;
+                                    } else SearchRadius = (int)TokenValue;
+                                    continue;
+                                } else if( CurToken=='.' ) {
+                                    FetchFloat(0,250);
+                                    if( TokenValue>7500 ){
+                                        CommandError(MsgStrs[ErrBigNum]);
+                                        break;
+                                    } else SearchRadius = (int)TokenValue;
+                                    continue;
+                                } else if( CurToken == '+' || CurToken == AddTok ) {
+                                    dontadd = False;
+                                    continue;
+                                } else if( CurToken == '-' || CurToken == WithinTok) {
+                                    searchwithin = True;
+                                    continue;
+                                } else  {
+                                    CommandError(MsgStrs[ErrSyntax]);
+                                    break;
+                                }
+                            }
+                            if (CurToken) {
+                                break;
+                            }
+                            ApplyMapAtomSelection(dontadd,searchwithin,SearchRadius);
                         	SelectZone(SelectFlag);
                         	ReDrawFlag |= RFRefresh;
                                 }
@@ -5314,7 +5410,43 @@ int ExecuteCommandOne( int * restore )
                                   ApplyMapSelection();
                                   ApplyMapRestriction();
                         } else if (CurToken == AtomTok){
-                        	ApplyMapAtomSelection(True);
+                            int dontadd, searchwithin, SearchRadius;
+                            SearchRadius = 1500+ProbeRadius;
+                            dontadd = True;
+                            searchwithin = False;
+                            while (FetchToken()) {
+                                if( CurToken==NumberTok ) {
+                                    if( *TokenPtr=='.' ) {
+                                        TokenPtr++;
+                                        FetchFloat(TokenValue,250);
+                                    }
+                                    if( TokenValue>7500 ) {
+                                        CommandError(MsgStrs[ErrBigNum]);
+                                        break;
+                                    } else SearchRadius = (int)TokenValue;
+                                    continue;
+                                } else if( CurToken=='.' ) {
+                                    FetchFloat(0,250);
+                                    if( TokenValue>7500 ){
+                                        CommandError(MsgStrs[ErrBigNum]);
+                                        break;
+                                    } else SearchRadius = (int)TokenValue;
+                                    continue;
+                                } else if( CurToken == '+' || CurToken == AddTok) {
+                                    dontadd = False;
+                                    continue;
+                                } else if( CurToken == '-' || CurToken == WithinTok) {
+                                    searchwithin = True;
+                                    continue;
+                                } else  {
+                                    CommandError(MsgStrs[ErrSyntax]);
+                                    break;
+                                }
+                            }
+                            if (CurToken) {
+                                break;
+                            }
+                            ApplyMapAtomSelection(dontadd,searchwithin,SearchRadius);
                         	RestrictZone(SelectFlag);
                         	ReDrawFlag |= RFRefresh;
                                 }

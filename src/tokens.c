@@ -202,6 +202,7 @@ int LookUpKeyword( char *ptr )
       /*
         ACIDIC               AcidTok
         ACYCLIC              AcyclicTok 
+             ADD                  AddTok
         ALCHEMY              AlchemyTok
         ALIPHATIC            AliphaticTok
         ALL                  AllTok 
@@ -238,6 +239,11 @@ int LookUpKeyword( char *ptr )
                         return( AcyclicTok );
                     }
                     break;
+                    
+                case('D'):
+                    if (!strcmp(ptr,"D") ) {
+                        return( AddTok );
+                    }
 
                 case('L'):
                     if( !strcmp(ptr,"CHEMY") ) {
