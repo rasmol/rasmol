@@ -4192,6 +4192,175 @@ static void ApplyMapRestriction( void ) {
   return;
 }
 
+/* 
+ ApplyMapAtomShow
+ 
+ Searchs for atoms within the specified SearchRadius of the points of
+ the currently selected maps.  Show the statistics of the distances
+ from the map points to the molecular surface of those atoms
+ 
+ */
+
+static void ApplyMapAtomShow(int SearchRadius) {
+    int i, j;
+    MapInfo *mapinfo;
+    void FAR * objClosest;
+    MapPointVec __far *MapPointsPtr;
+    double coord[3], acoord[3], bcoord[3], arad, brad, crad;
+    Long C[3];
+    Long Un[3];
+    CVectorHandle atomsclosest;
+    double vdwdistmin, vdwdistmax, vdwdistmean;
+    double lrdistmin, lrdistmax, lrdistmean;    
+    double dtemp, ctemp, btemp;
+    int icrad, vdwpcount, lrpcount;
+    char buffer[133];
+    
+    CVectorCreate(&atomsclosest,sizeof(void FAR *),2);
+    
+    vdwpcount = 0;
+    vdwdistmean = 0.;
+    vdwdistmin = 1.e9;
+    vdwdistmax = -1.e9;
+    
+    lrpcount = 0;
+    lrdistmean = 0.;
+    lrdistmin = 1.e9;
+    lrdistmax = -1.e9;
+    
+    
+    
+    if (CreateAtomTree()) {
+        RasMolFatalExit(MsgStrs[StrMalloc]);
+    }
+    
+    if (MapInfoPtr)  {
+        for (j=0; j < MapInfoPtr->size; j++) {
+            vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
+            if (mapinfo->flag&MapSelectFlag) {
+                MapPointsPtr = mapinfo->MapPointsPtr;
+                if (MapPointsPtr)
+                    for (i=0; i<MapPointsPtr->size; i++) {
+                        if (!(MapPointsPtr->array[i]).flag&SelectFlag) continue;
+                        coord[0] = (double)(MapPointsPtr->array[i]).xpos;
+                        coord[1] = (double)(MapPointsPtr->array[i]).ypos;
+                        coord[2] = (double)(MapPointsPtr->array[i]).zpos;
+                        
+                        if (!CNearTreeNearestNeighbor(AtomTree,(double)(SearchRadius),NULL,&objClosest,coord)) {
+                            acoord[0] =  (double)(*((RAtom __far * *)objClosest))->xorg;
+                            acoord[1] =  (double)(*((RAtom __far * *)objClosest))->yorg;
+                            acoord[2] =  (double)(*((RAtom __far * *)objClosest))->zorg;
+                            arad = (double)ElemVDWRadius((*((RAtom __far * *)objClosest))->elemno);
+                            dtemp = sqrt((coord[0]-acoord[0])*(coord[0]-acoord[0]) +
+                                         (coord[1]-acoord[1])*(coord[1]-acoord[1]) +
+                                         (coord[2]-acoord[2])*(coord[2]-acoord[2]))-arad;
+                            vdwpcount++;
+                            if (vdwpcount == 1) {
+                                vdwdistmin = vdwdistmax = dtemp;
+                            } else {
+                                if (dtemp < vdwdistmin) vdwdistmin = dtemp;
+                                if (dtemp > vdwdistmax) vdwdistmax = dtemp;
+                                vdwdistmean += dtemp;
+                            }
+                        }                            
+
+                        
+                        if (!CNearTreeFindKNearest(AtomTree,2,(double)(SearchRadius),NULL,atomsclosest,coord,1)) {
+                            switch (CVectorSize(atomsclosest)) {
+                                case 0: break;
+                                case 1: 
+                                    objClosest = CVectorElementAt(atomsclosest,0);
+                                    acoord[0] =  (double)(**((RAtom __far * * *)objClosest))->xorg;
+                                    acoord[1] =  (double)(**((RAtom __far * * *)objClosest))->yorg;
+                                    acoord[2] =  (double)(**((RAtom __far * * *)objClosest))->zorg;
+                                    arad = (double)ElemVDWRadius((**((RAtom __far * * * )objClosest))->elemno);
+                                    dtemp = sqrt((coord[0]-acoord[0])*(coord[0]-acoord[0]) +
+                                                 (coord[1]-acoord[1])*(coord[1]-acoord[1]) +
+                                                 (coord[2]-acoord[2])*(coord[2]-acoord[2]))-arad;
+                                    lrpcount++;
+                                    if (lrpcount == 1) {
+                                        lrdistmin = lrdistmax = dtemp;
+                                    } else {
+                                        if (dtemp < lrdistmin) lrdistmin = dtemp;
+                                        if (dtemp > lrdistmax) lrdistmax = dtemp;
+                                        lrdistmean += dtemp;
+                                    }
+                                    break;
+                                case 2: 
+                                    objClosest = CVectorElementAt(atomsclosest,0);
+                                    acoord[0] =  (double)(**((RAtom __far * * *)objClosest))->xorg;
+                                    acoord[1] =  (double)(**((RAtom __far * * *)objClosest))->yorg;
+                                    acoord[2] =  (double)(**((RAtom __far * * *)objClosest))->zorg;
+                                    arad = (double)ElemVDWRadius((**((RAtom __far * * *)objClosest))->elemno);
+                                    dtemp = sqrt((coord[0]-acoord[0])*(coord[0]-acoord[0]) +
+                                                 (coord[1]-acoord[1])*(coord[1]-acoord[1]) +
+                                                 (coord[2]-acoord[2])*(coord[2]-acoord[2]))-arad;
+                                    if (PreTestSurface(**((RAtom __far * * *)objClosest), 
+                                                       **((RAtom __far * * *)(CVectorElementAt(atomsclosest,1))),
+                                                       C,&icrad,Un) == 0 ) {
+                                        bcoord[0] = (double)C[0];
+                                        bcoord[1] = (double)C[1];
+                                        bcoord[2] = (double)C[2];
+                                        crad = (double)icrad;
+                                        ctemp = sqrt((coord[0]-bcoord[0])*(coord[0]-bcoord[0]) +
+                                                     (coord[1]-bcoord[1])*(coord[1]-bcoord[1]) +
+                                                     (coord[2]-bcoord[2])*(coord[2]-bcoord[2]))-crad;
+                                        if (fabs(ctemp) < fabs(dtemp)) dtemp = ctemp;
+                                    }
+                                    objClosest = CVectorElementAt(atomsclosest,1);
+                                    bcoord[0] =  (double)(**((RAtom __far * * *)objClosest))->xorg;
+                                    bcoord[1] =  (double)(**((RAtom __far * * *)objClosest))->yorg;
+                                    bcoord[2] =  (double)(**((RAtom __far * * *)objClosest))->zorg;
+                                    brad = (double)ElemVDWRadius((**((RAtom __far * * *)objClosest))->elemno);
+                                    btemp = sqrt((coord[0]-bcoord[0])*(coord[0]-bcoord[0]) +
+                                                 (coord[1]-bcoord[1])*(coord[1]-bcoord[1]) +
+                                                 (coord[2]-bcoord[2])*(coord[2]-bcoord[2]))-brad;
+                                    if (fabs(btemp) < fabs(dtemp)) dtemp = btemp;
+                                    lrpcount++;
+                                    if (lrpcount == 1) {
+                                        lrdistmin = lrdistmax = dtemp;
+                                    } else {
+                                        if (dtemp < lrdistmin) lrdistmin = dtemp;
+                                        if (dtemp > lrdistmax) lrdistmax = dtemp;
+                                        lrdistmean += dtemp;
+                                    }
+                                    break;                                    
+                                    
+                            }
+                        
+                        } 
+                    }
+                         
+                
+            }
+        }
+    }
+    
+    if (vdwpcount > 0) {
+        vdwdistmean /= (250.*(double)vdwpcount);
+        vdwdistmin /= 250.;
+        vdwdistmax /= 250.;
+        sprintf(buffer,"        distance to selected van der Waals surface: mean %#g, min %#g, max %#g\n",
+                vdwdistmean, vdwdistmin, vdwdistmax );
+        WriteString(buffer);
+    }
+ 
+    if (lrpcount > 0) {
+        lrdistmean /= (250.*(double)lrpcount);
+        lrdistmin /= 250.;
+        lrdistmax /= 250.;
+        sprintf(buffer,"        distance to selected Lee-Richards  surface: mean %#g, min %#g, max %#g\n",
+                lrdistmean, lrdistmin, lrdistmax );
+        WriteString(buffer);
+    }
+    
+    CVectorFree(&atomsclosest);
+    return;
+    
+	
+}
+
+
 void ApplyMapShow( void ) {
   int j;
   MapInfo *mapinfo;
@@ -4240,6 +4409,7 @@ void ApplyMapShow( void ) {
             mapinfo->MapPtr->mapdatamin,
             mapinfo->MapPtr->mapdatamax );
           WriteString(buffer);
+                    ApplyMapAtomShow( 1250 );
         } else {
           WriteString("map: NONE\n");
         }

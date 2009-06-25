@@ -657,6 +657,8 @@ Bond __far *ProcessBond( RAtom __far*, RAtom __far*, int );
 void CreateBond( Long, Long, int );
 void CreateBondOrder( Long, Long );
 void CreateNewBond( Long, Long );
+int PreTestSurface(  RAtom __far *,  RAtom __far *, 
+                   Long [3],  int *, Long [3] );
 void CreateMoleculeBonds( int, int, int );
 int CreateAtomTree( void );
 void CreateSurfaceBonds( void );

@@ -1657,7 +1657,7 @@ void CreateNewBond (Long src, Long dst )
  */
 
 
-static int PreTestSurface(  RAtom __far *sptr,  RAtom __far *dptr, 
+int PreTestSurface(  RAtom __far *sptr,  RAtom __far *dptr, 
       Long C[3],  int *crad, Long Un[3] )
 {
     register Long dx, dy, dz;
