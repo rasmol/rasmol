@@ -2379,7 +2379,7 @@ void ColourPointPotential( int mapno )
 void ColourPointAtom( int mapno )
 {
     register int i,shade;
-    void FAR * objClosest;
+    void CNEARTREE_FAR * objClosest;
     
     MapPointVec __far *MapPointsPtr;
     MapInfo mapinfo;

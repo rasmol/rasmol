@@ -117,6 +117,13 @@
 
 #define USE_CBFLIB
 
+#ifndef CNEARTREE_FAR
+#define CNEARTREE_FAR 
+#endif
+
+#ifndef VECTOR_FAR
+#define VECTOR_FAR 
+#endif
 
 /*========================*/
 /*  Default User Options! */

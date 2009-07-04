@@ -2115,7 +2115,7 @@ int CreateAtomTree( void ) {
                     coord[0] =  (double)(aptr->xorg + aptr->fxorg);
                     coord[1] =  (double)(aptr->yorg + aptr->fyorg);
                     coord[2] =  (double)(aptr->zorg + aptr->fzorg);
-                    if (CNearTreeInsert(AtomTree,coord,(void FAR *)aptr)) {
+                    if (CNearTreeInsert(AtomTree,coord,(void CNEARTREE_FAR *)aptr)) {
                         RasMolFatalExit(MsgStrs[StrMalloc]);
                     }
                 }
@@ -2165,10 +2165,10 @@ void CreateSurfaceBonds( void ) {
 			}
 		}
  	
-	if (CVectorCreate(&objInRing,sizeof(void FAR *),1)) {
+	if (CVectorCreate(&objInRing,sizeof(void CVECTOR_FAR *),1)) {
 	  RasMolFatalExit(MsgStrs[StrMalloc]);
 	}
-	if (CVectorCreate(&xobjInRing,sizeof(void FAR *),1)) {
+	if (CVectorCreate(&xobjInRing,sizeof(void CVECTOR_FAR *),1)) {
 	  RasMolFatalExit(MsgStrs[StrMalloc]);
 	}
 	

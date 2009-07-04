@@ -3972,7 +3972,7 @@ static void ApplyMapSelection( void ) {
 static void ApplyMapAtomSelection(int dontadd, int searchwithin, int SearchRadius) {
     int i, j;
     MapInfo *mapinfo;
-    void FAR * objClosest;
+    void CNEARTREE_FAR * objClosest;
     MapPointVec __far *MapPointsPtr;
     double coord[3];
 
@@ -4059,8 +4059,8 @@ void ApplyMapColour( void ) {
     for (j=0; j < MapInfoPtr->size; j++) {
       vector_get_elementptr((GenericVec __far *)MapInfoPtr,(void __far * __far *)&mapinfo,j );
       if (mapinfo->flag&MapSelectFlag) {
-        mapinfo->flag &= ~MapColourPot;
-        mapinfo->flag |= (MapFlag&MapColourPot);
+                mapinfo->flag &= ~(MapColourPot|MapColourAtom);
+                mapinfo->flag |= (MapFlag&(MapColourPot|MapColourAtom));
         for (i=0;i<3;i++) mapinfo->MapRGBCol[i]=MapRGBCol[i];
         if (mapinfo->flag&MapColourPot) ColourPointPotential(j);
                 else if(mapinfo->flag&MapColourAtom) ColourPointAtom(j);
@@ -4070,6 +4070,7 @@ void ApplyMapColour( void ) {
   }
   return;
 }
+
 
 
 static void ApplyMapFlag( void ) {
@@ -4416,7 +4417,7 @@ double surfdist(double x[3], double a[3], double b[3],
 static void ApplyMapAtomShow(int SearchRadius) {
     int i, j;
     MapInfo *mapinfo;
-    void FAR * objClosest;
+    void CNEARTREE_FAR * objClosest;
     MapPointVec __far *MapPointsPtr;
     double coord[3], acoord[3], bcoord[3], arad, brad;
     CVectorHandle atomsclosest;
@@ -4426,7 +4427,7 @@ static void ApplyMapAtomShow(int SearchRadius) {
     int vdwpcount, vdwptotal, lrpcount, lrptotal;
     char buffer[133];
     
-    CVectorCreate(&atomsclosest,sizeof(void FAR *),2);
+    CVectorCreate(&atomsclosest,sizeof(void CVECTOR_FAR *),2);
     
     vdwpcount = vdwptotal = 0;
     
@@ -4564,7 +4565,7 @@ static void ApplyMapAtomShow(int SearchRadius) {
         }
     }
     
-    sprintf(buffer,"        points in mesh, points used in distances:\n          total %d, used %d, with %g of surface\n",
+    sprintf(buffer,"        points in mesh, points used in distances:\n          total %d, used %d, within %g of surface\n",
             vdwptotal, vdwpcount, ((double)(SearchRadius-((ProbeRadius < 10)?350:ProbeRadius)))/250.);
     WriteString(buffer);
     if (vdwpcount > 0) {
@@ -4699,23 +4700,13 @@ int ApplyMapMask(int mapno ) {
       	
           if (MapSpread < 0.) MapSpread = 2.*(double)MapSpacing/750.;
   
-          if (flag&MapSurfFlag) {
-            if(generate_map(&mapmaskptr,MapSpacing/2, 
-              MapSpacing/2, MapSpacing/2, 0L, 0L, 0L,
-              (Long)(250.*(1.+MapSpread)+MapSpacing), 
-              (MapSpread > 0.)?(1./MapSpread):0., (flag&MapScaleFlag)?1:0 )){
-                CommandError(MsgStrs[StrMalloc]);
-           	    return 1;
-            }
-          } else{
             if(generate_map(&mapmaskptr,MapSpacing,
               MapSpacing, MapSpacing, 0L, 0L, 0L,
               (Long)(250.*(1.+MapSpread)+MapSpacing),
-              (MapSpread > 0.)?(1./MapSpread):0., (flag&MapScaleFlag)?1:0 ) ) {
+                                    (MapSpread > 0.)?(1./MapSpread):0., (flag&MapScaleFlag)?1:0 )){
                 CommandError(MsgStrs[StrMalloc]);
            	    return 1;
             }
-          }
 
           vector_create((GenericVec __far **)&mapmaskgensel,sizeof(MapAtmSel),10);
           WriteMapAtoms(mapmaskgensel);
@@ -4823,6 +4814,9 @@ static int ExecuteGenerateCommand( int mapflags ) {
   MapInfo *omapinfo;
   MapStruct __far *mapmaskptr;
   MapAtmSelVec __far *mapmaskgensel;
+    Long MapSpaceAdjust;
+    int mapallocfailed;
+    char buffer[60];
 
   ApplyMapSelection();
   if (MapSpacing <= 0) MapSpacing = 250L;
@@ -4831,7 +4825,7 @@ static int ExecuteGenerateCommand( int mapflags ) {
   
   mapinfo.MapLevel = MapLevel;
   mapinfo.MapSpacing = MapSpacing;
-    if (mapinfo.MapSpacing < 0.1) mapinfo.MapSpacing = 0.1;
+    if (mapinfo.MapSpacing < 25) mapinfo.MapSpacing = 25;
   if (MapSpread < 0.) MapSpread = 2.*((double)(MapSpacing))/750.;
   mapinfo.MapSpread = MapSpread;
   mapinfo.flag = SelectFlag|mapflags;
@@ -4916,16 +4910,30 @@ static int ExecuteGenerateCommand( int mapflags ) {
      mapinfo.MapMaskGenSel = mapmaskgensel;
   }
 
-  if (mapinfo.flag&MapSurfFlag) {
-    generate_map(&mapinfo.MapPtr,mapinfo.MapSpacing/2, mapinfo.MapSpacing/2, mapinfo.MapSpacing/2, 0L, 0L, 0L,
+    MapSpaceAdjust = 1.;
+    
+
+    do {
+        mapallocfailed=
+        generate_map(&mapinfo.MapPtr,mapinfo.MapSpacing*MapSpaceAdjust, mapinfo.MapSpacing*MapSpaceAdjust, mapinfo.MapSpacing*MapSpaceAdjust, 0L, 0L, 0L,
                  (Long)(250.*(1.+mapinfo.MapSpread)+mapinfo.MapSpacing), (mapinfo.MapSpread>0.)?1./mapinfo.MapSpread:0.,
       (mapinfo.flag&MapScaleFlag)?1:0 );
-  } else{
-    generate_map(&mapinfo.MapPtr,mapinfo.MapSpacing, mapinfo.MapSpacing, mapinfo.MapSpacing, 0L, 0L, 0L,
-                 (Long)(250.*(1.+mapinfo.MapSpread)+mapinfo.MapSpacing), (mapinfo.MapSpread>0.)?1./mapinfo.MapSpread:0.,
-      (mapinfo.flag&MapScaleFlag)?1:0);
+        if (!mapallocfailed || MapSpaceAdjust >= 8) break;
+        MapSpaceAdjust *= 2;
+        sprintf(buffer," Trying coarser map spacing %g\n",((double)(mapinfo.MapSpacing*MapSpaceAdjust))/250.);
+        WriteString(buffer);
+    } while (True);
+    
+    if (mapallocfailed) {
+        CommandError(MsgStrs[StrMalloc]);
+        if (mapinfo.MapMaskGenSel) vector_free((GenericVec __far * __far *)&(mapinfo.MapMaskGenSel));
+        if (mapinfo.MapMaskPtr) {
+            _ffree((void __far *)(mapinfo.MapMaskPtr)->mapdata);
+            _ffree((void __far *)mapinfo.MapMaskPtr);
+        }
   }
   
+    mapinfo.MapSpacing *= MapSpaceAdjust;
   vector_create((GenericVec __far **)&mapinfo.MapGenSel,sizeof(MapAtmSel),10);
   WriteMapAtoms(mapinfo.MapGenSel);
 

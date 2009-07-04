@@ -2527,7 +2527,7 @@ if( OValid(offset1) && XValid(C[xsub]+dx) &&                   \
 }                                                              \
 inten = LightDot(-dx+C[xsub]-A[xsub],                          \
                  -dy+C[ysub]-A[ysub],                          \
-                 -dz+C[zsub]-A[zsub]);                          \
+                 -dz+C[zsub]-A[zsub]);                         \
 if ( inten > 0 ) {                                             \
     inten = (int)((inten*colconst(rada))>>ColBits);            \
 } else {                                                       \

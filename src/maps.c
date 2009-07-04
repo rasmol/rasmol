@@ -1849,10 +1849,12 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
       
       if (map_structure_id && map_structure_id[0]) {
           map = _fmalloc(sizeof(MapStruct));
+          if (!map) RasMolFatalExit(MsgStrs[StrMalloc]);
       }
  
       if (mask_structure_id && mask_structure_id[0]) {
           mask = _fmalloc(sizeof(MapStruct));
+          if (!mask) RasMolFatalExit(MsgStrs[StrMalloc]);
       }
      
       if (cbf_find_category(cbf,"array_structure")) continue;
@@ -2862,7 +2864,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
         if(!mask) {
           CommandError(MsgStrs[StrMalloc]);
           if (map) { _ffree(map->mapdata); _ffree(map);}
-          return 1;    
+          return -1;    
         }
         mask->mapdata = _fmalloc(MapMaskPtr->elsize*
          (MapMaskPtr->xhigh-MapMaskPtr->xlow+1)*
@@ -2872,7 +2874,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
          _ffree(mask);
          CommandError(MsgStrs[StrMalloc]);
          if (map) { _ffree(map->mapdata); _ffree(map);}
-         return 1;
+         return -1;
        }
        mask->elsize=MapMaskPtr->elsize;
        mask->eltype=MapMaskPtr->eltype;
@@ -2949,6 +2951,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
       mapinfo.MapMaskPtr, mapinfo.MapRGBCol ))
 
       mapinfo.MapFile = (char __far *)_fmalloc(strlen(DataFileName)+1);
+      if (!mapinfo.MapFile) RasMolFatalExit(MsgStrs[StrMalloc]);
       strcpy(mapinfo.MapFile,DataFileName);
 
       if (mapno < 0)
@@ -3781,6 +3784,21 @@ int generate_map(MapStruct **map,
       (*map)->yhigh = (long)rint((double)(yselhigh-xorig)/(double)(yint));
       (*map)->zlow = (long)rint((double)(zsellow-yorig)/(double)(zint));
       (*map)->zhigh = (long)rint((double)(zselhigh-zorig)/(double)(zint));
+    
+      /*  I know this check seems extreme, but this actually
+          happens */
+    
+      if (
+          ((double)((*map)->xhigh-(*map)->xlow+1))*
+          ((double)((*map)->yhigh-(*map)->ylow+1))*
+          ((double)((*map)->zhigh-(*map)->zlow+1)) > ((double)LONG_MAX)/((double)sizeof(double)) - 1) {
+          
+          _ffree(*map);
+          *map = NULL;
+          CommandError(MsgStrs[StrMalloc]);
+          return -1;
+          
+      }
       
       (*map)->mapdata = _fmalloc(sizeof(double)*
       ((*map)->xhigh-(*map)->xlow+1)*
@@ -3791,7 +3809,7 @@ int generate_map(MapStruct **map,
           _ffree(*map);
         *map = NULL;
         CommandError(MsgStrs[StrMalloc]);
-        return 1;
+        return -1;
       }
       
       for (xel=(*map)->xlow; xel<=(*map)->xhigh; xel++ )
