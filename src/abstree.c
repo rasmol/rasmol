@@ -285,7 +285,7 @@ Expr *AllocateNode( void )
 
     if( !FreeExpr )
     {   ptr = (Expr*)_fmalloc( ExprPool*sizeof(Expr) );
-        if( !ptr ) FatalExprError("Memory allocation failed");
+        if( !ptr ) FatalExprError(MsgStrs[StrMalloc]);
 		RegisterAlloc( ptr );
         for( i=1; i<ExprPool; i++ )
         {   ptr->rgt.ptr = FreeExpr;
@@ -842,7 +842,7 @@ int DefineSetExpr( char *ident, Expr *expr )
         ptr->defn = (void __far*)0;
         ptr->lft = (void __far*)0;
         ptr->rgt = (void __far*)0;
-    } else free(ident);
+    } else _ffree(ident);
 
     if( expr )
     {   set = BuildAtomSet(expr);
@@ -1302,7 +1302,7 @@ static void DeleteSymEntry( SymEntry __far *ptr )
 
     if( ptr->defn )
         DeleteAtomSet( ptr->defn );
-    free( ptr->ident );
+    _ffree( ptr->ident );
 
     ptr->rgt = FreeEntry;
     FreeEntry = ptr;

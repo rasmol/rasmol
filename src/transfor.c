@@ -3527,12 +3527,12 @@ void PrepareTransform( void )
     	DialValueOffset[ii] = DialValue[ii];
     	DialValueBalance[ii] = 0;
     }
-    DialValueOffset[DialTX] -= LastTX;
-    DialValueOffset[DialTY] -= LastTY;
-    DialValueOffset[DialTZ] -= LastTZ;
-    DialValueOffset[DialRX] -= LastRX;
-    DialValueOffset[DialRY] -= LastRY;
-    DialValueOffset[DialRZ] -= LastRZ;
+    DialValueOffset[DialTX] -= LastDialValue[DialTX];
+    DialValueOffset[DialTY] -= LastDialValue[DialTY];
+    DialValueOffset[DialTZ] -= LastDialValue[DialTZ];
+    DialValueOffset[DialRX] -= LastDialValue[DialRX];
+    DialValueOffset[DialRY] -= LastDialValue[DialRY];
+    DialValueOffset[DialRZ] -= LastDialValue[DialRZ];
 
     if( ReDrawFlag )
     {         
@@ -3581,19 +3581,19 @@ void PrepareTransform( void )
 
       RMatVec(VecOut,WIRotX,WIRotY,WIRotZ,VecIn);
       
-      LastTX += VecOut[0]/XRange;
-      LastTY += VecOut[1]/YRange;
-      LastTZ += VecOut[2]/ZRange;
+      LastDialValue[DialTX] += VecOut[0]/XRange;
+      LastDialValue[DialTY] += VecOut[1]/YRange;
+      LastDialValue[DialTZ] += VecOut[2]/ZRange;
       
-      DialValue[DialTX] = LastTX+DialValueBalance[DialTX]/XRange;
-      DialValue[DialTY] = LastTY+DialValueBalance[DialTY]/YRange;
-      DialValue[DialTZ] = LastTZ+DialValueBalance[DialTZ]/ZRange;
+      DialValue[DialTX] = LastDialValue[DialTX]+DialValueBalance[DialTX]/XRange;
+      DialValue[DialTY] = LastDialValue[DialTY]+DialValueBalance[DialTY]/YRange;
+      DialValue[DialTZ] = LastDialValue[DialTZ]+DialValueBalance[DialTZ]/ZRange;
      
     } 
 
-    LOffset[0] = WRange + (int)rint(Zoom*LastTX*XRange);
-    LOffset[1] = HRange + (int)rint(Zoom*LastTY*YRange);
-    LOffset[2] = 10000 + (int)rint(Zoom*LastTZ*ZRange);
+    LOffset[0] = WRange + (int)rint(Zoom*LastDialValue[DialTX]*XRange);
+    LOffset[1] = HRange + (int)rint(Zoom*LastDialValue[DialTY]*YRange);
+    LOffset[2] = 10000 + (int)rint(Zoom*LastDialValue[DialTZ]*ZRange);
         
 
     if ( ( DialValueOffset[DialRX] != 0 ) || 
@@ -3765,14 +3765,14 @@ void PrepareTransform( void )
         LRotZ[1] = NRotZ[0]*RMat[0][1]+NRotZ[1]*RMat[1][1]+NRotZ[2]*RMat[2][1];
         LRotZ[2] = NRotZ[0]*RMat[0][2]+NRotZ[1]*RMat[1][2]+NRotZ[2]*RMat[2][2];
         
-        RMat2RV(&LastRX, 
-                &LastRY, 
-                &LastRZ, 
+        RMat2RV(&LastDialValue[DialRX], 
+                &LastDialValue[DialRY], 
+                &LastDialValue[DialRZ], 
                 LRotX, LRotY, LRotZ);
         
-        DialValue[DialRX] = LastRX+DialValueBalance[DialRX];
-        DialValue[DialRY] = LastRY+DialValueBalance[DialRY];
-        DialValue[DialRZ] = LastRZ+DialValueBalance[DialRZ];
+        DialValue[DialRX] = LastDialValue[DialRX]+DialValueBalance[DialRX];
+        DialValue[DialRY] = LastDialValue[DialRY]+DialValueBalance[DialRY];
+        DialValue[DialRZ] = LastDialValue[DialRZ]+DialValueBalance[DialRZ];
         if (DialValueBalance[DialRX]) NextReDrawFlag |= RFRotateX;
         if (DialValueBalance[DialRX]) NextReDrawFlag |= RFRotateY;
         if (DialValueBalance[DialRX]) NextReDrawFlag |= RFRotateZ;
@@ -3782,7 +3782,7 @@ void PrepareTransform( void )
             if (DialValue[ii] < -1.) DialValue[ii] +=2.;
         }
         
-        RV2RMat(LastRX, LastRY, LastRZ,
+        RV2RMat(LastDialValue[DialRX], LastDialValue[DialRY], LastDialValue[DialRZ],
                 LRotX, LRotY, LRotZ);
     }
     }
@@ -4049,12 +4049,12 @@ void ResetTransform( void )
     LRotY[0] = 0.0;  LRotY[1] = 1.0;  LRotY[2] = 0.0;
     LRotZ[0] = 0.0;  LRotZ[1] = 0.0;  LRotZ[2] = 1.0;
     
-    LastRX = LastRY = LastRZ = 0.0;
-    LastTX = LastTY = LastTZ = 0.0;
+    LastDialValue[DialRX] = LastDialValue[DialRY] = LastDialValue[DialRZ] = 0.0;
+    LastDialValue[DialTX] = LastDialValue[DialTY] = LastDialValue[DialTZ] = 0.0;
     
-    WRotValue[0] = 0;
-    WRotValue[1] = 0;
-    WRotValue[2] = 0;
+    WorldDialValue[DialRX] = 0;
+    WorldDialValue[DialRY] = 0;
+    WorldDialValue[DialRZ] = 0;
 
     WLRotX[0] = 1.0;  WLRotX[1] = 0.0;  WLRotX[2] = 0.0;
     WLRotY[0] = 0.0;  WLRotY[1] = 1.0;  WLRotY[2] = 0.0;
@@ -4064,9 +4064,9 @@ void ResetTransform( void )
     WIRotY[0] = 0.0;  WIRotY[1] = 1.0;  WIRotY[2] = 0.0;
     WIRotZ[0] = 0.0;  WIRotZ[1] = 0.0;  WIRotZ[2] = 1.0;
 
-    WLastRX = WLastRY = WLastRZ = 0;
-    WTransX = WTransY = WTransZ = 0;
-    WLastTX = WLastTY = WLastTZ = 0;
+    LastWorldDialValue[DialRX] = LastWorldDialValue[DialRY] = LastWorldDialValue[DialRZ] = 0;
+    WorldDialValue[DialTX] = WorldDialValue[DialTY] = WorldDialValue[DialTZ] = 0;
+    LastWorldDialValue[DialTX] = LastWorldDialValue[DialTY] = LastWorldDialValue[DialTZ] = 0;
     
        /* Remove all bonds from the list of selected bonds */
 

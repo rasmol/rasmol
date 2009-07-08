@@ -313,7 +313,6 @@ static char *frindex(char *s, char c)
  **********************************************************************/
   
 /* transfor.c */
-extern Real LastRX, LastRY, LastRZ;
 extern Real Zoom;
 
 struct {
@@ -403,12 +402,12 @@ struct {
     { &SelectCount,       sizeof (SelectCount),    0 },
      
     /* transfor.h */
-    { &LastRX,            sizeof (LastRX),         0 },
-    { &LastRY,            sizeof (LastRY),         0 },
-    { &LastRZ,            sizeof (LastRZ),         0 },
-    { &LastTX,            sizeof (LastTX),         0 },
-    { &LastTY,            sizeof (LastTY),         0 },
-    { &LastTZ,            sizeof (LastTZ),         0 },
+    { &LastDialValue[DialRX],            sizeof (LastDialValue[DialRX]),         0 },
+    { &LastDialValue[DialRY],            sizeof (LastDialValue[DialRY]),         0 },
+    { &LastDialValue[DialRZ],            sizeof (LastDialValue[DialRZ]),         0 },
+    { &LastDialValue[DialTX],            sizeof (LastDialValue[DialTX]),         0 },
+    { &LastDialValue[DialTY],            sizeof (LastDialValue[DialTY]),         0 },
+    { &LastDialValue[DialTZ],            sizeof (LastDialValue[DialTZ]),         0 },
     { &CenX,              sizeof (CenX),           0 },
     { &CenY,              sizeof (CenY),           0 },
     { &CenZ,              sizeof (CenZ),           0 },
@@ -457,14 +456,6 @@ struct {
     { &BDstAtom, sizeof (BDstAtom), 0 },
     { &BondSelected, sizeof (BondSelected), 0 },
     { &BondsSelected, sizeof (BondsSelected), 0 },
-     
-#ifdef MOVIE_DONE
-    /* script.c movie stuff */
-    { NewDialValue   ,    sizeof (NewDialValue), 0 },
-    { &firstCmd, sizeof (firstCmd), 0 },
-    { LastDialValue  ,    sizeof (LastDialValue), 0 },
-#endif
-     
     { NULL, 0, 0}
     };
 

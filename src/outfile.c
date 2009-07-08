@@ -3371,7 +3371,7 @@ R3DRib __far *Add_ribdata( Real in_x1, Real in_y1, Real in_z1, Real in_x2, Real 
     Real vect2_x, vect2_y, vect2_z; 
 
     R3DRib __far *xtemp;
-    xtemp = (R3DRib __far *)malloc(sizeof(R3DRib));
+    xtemp = (R3DRib __far *)_fmalloc(sizeof(R3DRib));
 
     R3DcoordC((Real)(in_x1),(Real)(in_y1),(Real)(in_z1),xtemp->x1,xtemp->y1,xtemp->z1);
     R3DcoordC((Real)(in_x2),(Real)(in_y2),(Real)(in_z2),xtemp->x2,xtemp->y2,xtemp->z2);

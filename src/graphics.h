@@ -121,6 +121,7 @@
 #define RFDials    0x00FF
 #define RFMagnify  0x0108
 #define RFInitial  0x19FF
+#define RFAppear   0x07FF
 
 
 #define DialRX      0
@@ -134,6 +135,10 @@
 #define DialBClip   8
 #define DialBRot    9
 #define DialGRot   10
+
+#define XScrlDial  DialRY /*1*/
+#define YScrlDial  DialRX /*0*/
+
 
 #define REP_WIREFRAME 1
 #define REP_BACKBONE  2
@@ -178,6 +183,9 @@ typedef struct _DLGItem {
 
 #ifdef GRAPHICS
 double DialValue[11];
+double WorldDialValue[11];
+double LastDialValue[11];
+double LastWorldDialValue[11];
 CQRQuaternion DialQRot;
 int XRange, WRange;
 int YRange, HRange;
@@ -306,6 +314,9 @@ DLGItem AboutDLG[AboutDLGCount] = {
 
 #else /* GRAPHICS */
 extern double DialValue[11];
+extern double WorldDialValue[11];
+extern double LastDialValue[11];
+extern double LastWorldDialValue[11];
 extern CQRQuaternion DialQRot;
 extern int XRange, WRange;
 extern int YRange, HRange;

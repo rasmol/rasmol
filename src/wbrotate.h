@@ -192,9 +192,6 @@ int RemoveBond(  Long , Long );
 void ResetBondsSel( void );
 
 #ifdef WBROTATE
-Real WLastRX, WLastRY, WLastRZ;
-Real WTransX, WTransY, WTransZ;
-Real WLastTX, WLastTY, WLastTZ;
 Real WLastRS;
 BondRot *BondSelected;
 BondRot *BondsSelected;
@@ -204,14 +201,10 @@ Real BAxis[3];
 Real BRotValue, BLastRot;
 Real GenRotAxis[3];
 Real GenRotValue, GenRotLast;
-Real WRotValue[3];
 Real WRotStereo;
 Real WLRotX[3],WLRotY[3],WLRotZ[3];
 Real WIRotX[3],WIRotY[3],WIRotZ[3];
 #else
-extern Real WLastRX, WLastRY, WLastRZ;
-extern Real WTransX, WTransY, WTransZ;
-extern Real WLastTX, WLastTY, WLastTZ;
 extern Real WLastRS;
 extern BondRot *BondSelected;
 extern BondRot *BondsSelected;
@@ -224,7 +217,6 @@ extern Real BAxis[3];
 extern Real BRotValue, BLastRot;
 extern Real GenRotAxis[3];
 extern Real GenRotValue, GenRotLast;
-extern Real WRotValue[3];
 extern Real WLRotX[3],WLRotY[3],WLRotZ[3];
 extern Real WIRotX[3],WIRotY[3],WIRotZ[3];
 #endif

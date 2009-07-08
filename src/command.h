@@ -160,6 +160,10 @@
 
  */
 
+#ifndef COMMAND_H
+#define COMMAND_H
+
+
 /* Format values are related to Tokens */
 #define Tok2Format(x) ((x)-PDBTok+1)
 #define Format2Tok(x) ((x)+PDBTok-1)
@@ -193,7 +197,23 @@
 #define IPC_Exit    2
 #define IPC_Quit    3
 
+#define SymbolPool  256
+
+
+/* structs needed for defer and execute */
+
+typedef struct _Symbol{
+  struct _Symbol __far * Symbol_Next;
+  const char __far *   string;
+  const char __far *   definition;
+  size_t         definition_size;
+  size_t         definition_capacity;
+} Symbol;
+
+
 #ifdef COMMAND
+Symbol __far *Defer_Symbols[256];
+Symbol __far *FreeSymbol;
 int DataFileFormat;
 char DataFileName[1024];
 char RecordTemplate[1024];
@@ -215,6 +235,8 @@ int UseOldColorCode   = 0;
 int NoToggle          = 0;
 
 #else
+extern Symbol __far  *DeferSymbols[256];
+extern Symbol __far  *FreeSymbol;
 extern int DataFileFormat;
 extern char DataFileName[1024];
 extern char RecordTemplate[1024];
@@ -254,3 +276,5 @@ void InterruptPauseCommand( void );
 void ApplyMapColour( void );
 void ApplyMapShow( void );
 void WriteMovieFrame( void );
+
+#endif

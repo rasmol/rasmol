@@ -717,25 +717,25 @@ void WorldRotate( void )
     int i;
     
 
-    if (ReDrawFlag || WRotValue[0] != WLastRX || 
-      WRotValue[1] != WLastRY ||
-      WRotValue[2] != WLastRZ ||
+    if (ReDrawFlag || WorldDialValue[DialRX] != LastWorldDialValue[DialRX] || 
+      WorldDialValue[DialRY] != LastWorldDialValue[DialRY] ||
+      WorldDialValue[DialRZ] != LastWorldDialValue[DialRZ] ||
       WRotStereo != WLastRS   ||
-      WTransX != WLastTX ||
-      WTransY != WLastTY ||
-      WTransZ != WLastTZ ) {
+      WorldDialValue[DialTX] != LastWorldDialValue[DialTX] ||
+      WorldDialValue[DialTY] != LastWorldDialValue[DialTY] ||
+      WorldDialValue[DialTZ] != LastWorldDialValue[DialTZ] ) {
 
-      if ( ( WRotValue[0] != WLastRX ) || 
-        ( WRotValue[1] != WLastRY ) ||
-        ( WRotValue[2] != WLastRZ ) ||
+      if ( ( WorldDialValue[DialRX] != LastWorldDialValue[DialRX] ) || 
+        ( WorldDialValue[DialRY] != LastWorldDialValue[DialRY] ) ||
+        ( WorldDialValue[DialRZ] != LastWorldDialValue[DialRZ] ) ||
         ( WRotStereo != WLastRS  ) ) {
         
-        RV2RMat(WRotValue[0]-WLastRX, 
-          WRotValue[1]-WLastRY, 
-          WRotValue[2]-WLastRZ,
+        RV2RMat(WorldDialValue[DialRX]-LastWorldDialValue[DialRX], 
+          WorldDialValue[DialRY]-LastWorldDialValue[DialRY], 
+          WorldDialValue[DialRZ]-LastWorldDialValue[DialRZ],
           NRotX, NRotY, NRotZ);
 
-        RV2RMat(WLastRX, WLastRY, WLastRZ,
+        RV2RMat(LastWorldDialValue[DialRX], LastWorldDialValue[DialRY], LastWorldDialValue[DialRZ],
           RMat[0], RMat[1], RMat[2]);
 
         WLRotX[0] = NRotX[0]*RMat[0][0]+NRotX[1]*RMat[1][0]+NRotX[2]*RMat[2][0];
@@ -750,9 +750,9 @@ void WorldRotate( void )
         WLRotZ[1] = NRotZ[0]*RMat[0][1]+NRotZ[1]*RMat[1][1]+NRotZ[2]*RMat[2][1];
         WLRotZ[2] = NRotZ[0]*RMat[0][2]+NRotZ[1]*RMat[1][2]+NRotZ[2]*RMat[2][2];
       
-        RMat2RV(&(WRotValue[0]), 
-          &(WRotValue[1]), 
-          &(WRotValue[2]), 
+        RMat2RV(&(WorldDialValue[DialRX]), 
+          &(WorldDialValue[DialRY]), 
+          &(WorldDialValue[DialRZ]), 
           WLRotX, WLRotY, WLRotZ);
 
         if (WRotStereo != 0.) {
@@ -780,9 +780,9 @@ void WorldRotate( void )
           
         RMatInv( WLRotX, WLRotY, WLRotZ, WIRotX, WIRotY, WIRotZ);
 
-        WLastRX = WRotValue[0];
-        WLastRY = WRotValue[1];
-        WLastRZ = WRotValue[2];
+        LastWorldDialValue[DialRX] = WorldDialValue[DialRX];
+        LastWorldDialValue[DialRY] = WorldDialValue[DialRY];
+        LastWorldDialValue[DialRZ] = WorldDialValue[DialRZ];
  
       }
     
@@ -813,9 +813,9 @@ void WorldRotate( void )
 	  RotY[i] = B[1][i]/Scale;
 	  RotZ[i] = B[2][i]/Scale;
     }
-    XOffset = B[0][3]+WRange+WTransX*Zoom*XRange;
-    YOffset = B[1][3]+HRange+WTransY*Zoom*YRange;
-    ZOffset = B[2][3]+10000+WTransZ*Zoom*ZRange;
+    XOffset = B[0][3]+WRange+WorldDialValue[DialTX]*Zoom*XRange;
+    YOffset = B[1][3]+HRange+WorldDialValue[DialTY]*Zoom*YRange;
+    ZOffset = B[2][3]+10000+WorldDialValue[DialTZ]*Zoom*ZRange;
     
     
     if (UseStereo) {
@@ -823,12 +823,12 @@ void WorldRotate( void )
     }
     
     
-    WLastRX = WRotValue[0];
-    WLastRY = WRotValue[1];
-    WLastRZ = WRotValue[2];
-    WLastTX = WTransX;
-    WLastTY = WTransY;
-    WLastTZ = WTransZ;
+    LastWorldDialValue[DialRX] = WorldDialValue[DialRX];
+    LastWorldDialValue[DialRY] = WorldDialValue[DialRY];
+    LastWorldDialValue[DialRZ] = WorldDialValue[DialRZ];
+    LastWorldDialValue[DialTX] = WorldDialValue[DialTX];
+    LastWorldDialValue[DialTY] = WorldDialValue[DialTY];
+    LastWorldDialValue[DialTZ] = WorldDialValue[DialTZ];
     WLastRS = WRotStereo;
     
     /* Make transfor.c recalculate everything */
@@ -841,11 +841,11 @@ void WorldRotate( void )
 void InitialiseWBRotate( void )
 {
     BondsSelected = BondSelected = (BondRot __far *)NULL;
-    WRotValue[0] = 0;
-    WRotValue[1] = 0;
-    WRotValue[2] = 0;
-    WLastRX = WLastRY = WLastRZ = 0;
-    WTransX = WTransY = WTransZ = 0;
-    WLastTX = WLastTY = WLastTZ = 0;
+    WorldDialValue[DialRX] = 0;
+    WorldDialValue[DialRY] = 0;
+    WorldDialValue[DialRZ] = 0;
+    LastWorldDialValue[DialRX] = LastWorldDialValue[DialRY] = LastWorldDialValue[DialRZ] = 0;
+    WorldDialValue[DialTX] = WorldDialValue[DialTY] = WorldDialValue[DialTZ] = 0;
+    LastWorldDialValue[DialTX] = LastWorldDialValue[DialTY] = LastWorldDialValue[DialTZ] = 0;
 }
 

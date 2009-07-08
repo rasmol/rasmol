@@ -1799,7 +1799,7 @@ void RefreshScreen( void )
 	      WriteMovieFrame();
 	      record_frame[0]++;
 	      record_frame[1] = 0;
-	  } else if (record_on[1] && !RecordPause) {
+	  } else if ((ReDrawFlagSave & RFAppear) && record_on[1] && !RecordPause) {
 	      WriteMovieFrame();
 	      record_frame[0]++;
 	      record_frame[1]++;
@@ -2069,7 +2069,7 @@ void SetHScroll(int pos)
     if ( (RotMode == RotBond) && BondSelected)
 	BondSelected->BRotValue = temp;
     else if ( RotMode == RotAll )
-	WRotValue[1] = temp;
+	WorldDialValue[1] = temp;
     else
 	DialValue[1] = temp;
     ReDrawFlag |= RFRotateY;
@@ -2080,9 +2080,9 @@ void SetVScroll(int pos)
     float temp = 1.0-(pos/50.0);
 
     if ( RotMode == RotAll )
-	WRotValue[0] = temp;
+	WorldDialValue[DialRX] = temp;
     else
-	DialValue[0] = temp;
+	DialValue[DialRX] = temp;
     ReDrawFlag |= RFRotateX;
 }
 

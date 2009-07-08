@@ -443,11 +443,11 @@ void AdviseUpdate( int item )
 void RefreshScreen( void )
 {
     int ReDrawFlagSave;
-
     if( !UseSlabPlane )
     {   ReDrawFlag &= ~RFTransZ|RFSlab;
     } else ReDrawFlag &= ~RFTransZ;
 
+    ReDrawFlagSave = ReDrawFlag;
     if( ReDrawFlag )
     {   if( ReDrawFlag & RFReSize )
             ReSizeScreen();
@@ -461,11 +461,11 @@ void RefreshScreen( void )
                 ApplyTransform();
             DrawFrame();
         }
-        if ((ReDrawFlagSave & RFApply) && record_on[0] ) {
+        if ((ReDrawFlagSave & RFApply) && record_on[0] && !RecordPause ) {
 	      WriteMovieFrame();
 	      record_frame[0]++;
 	      record_frame[1] = 0;
-	    } else if (record_on[1]) {
+	    } else if ((ReDrawFlagSave & RFAppear) && record_on[1] && !RecordPause) {
 	      WriteMovieFrame();
 	      record_frame[0]++;
 	      record_frame[1]++;

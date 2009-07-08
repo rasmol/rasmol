@@ -519,8 +519,6 @@ int SharedMemFlag;
 #define SharedMemOption False
 #endif
 
-#define XScrlDial  1 /*1*/
-#define YScrlDial  0 /*0*/
 #define XScrlSkip  8
 #define YScrlSkip  8
 
@@ -1386,7 +1384,7 @@ void UpdateScrollBars( void )
 
 
     if ( RotMode == RotAll ) {
-      temp = (WRotValue[YScrlDial]+1.0)*(YRange-48); 
+      temp = (WorldDialValue[YScrlDial]+1.0)*(YRange-48); 
     } else {
       temp = (DialValue[YScrlDial]+1.0)*(YRange-48); 
     } 
@@ -1403,7 +1401,7 @@ void UpdateScrollBars( void )
       temp = ((BondSelected->BRotValue)+1.0)*(XRange-48);
     } else {
       if ( RotMode == RotAll ) {
-        temp = (WRotValue[XScrlDial]+1.0)*(XRange-48);
+        temp = (WorldDialValue[XScrlDial]+1.0)*(XRange-48);
       } else {
         temp = (DialValue[XScrlDial]+1.0)*(XRange-48);
       }
@@ -1569,7 +1567,7 @@ static void HandleDialEvent( XDeviceMotionEvent *ptr )
                 ReDrawFlag |= RFRotBond;
               } else {
                 if ( RotMode == RotAll ) {
-                  temp += WRotValue[num];
+                  temp += WorldDialValue[num];
                   ReDrawFlag |= (1<<num);
                 } else {
                   temp += DialValue[num];
@@ -1594,7 +1592,7 @@ static void HandleDialEvent( XDeviceMotionEvent *ptr )
                 ReDrawFlag |= RFRotBond;
               } else {
                 if ( RotMode == RotAll ) {
-                  WRotValue[num] = temp;
+                  WorldDialValue[num] = temp;
                 } else {
                   DialValue[num] = temp;
                 }
@@ -2874,9 +2872,9 @@ int CreateImage( void )
 #endif
 
     if( !Interactive )
-    {   if( FBuffer ) free(FBuffer);
+    {   if( FBuffer ) _ffree(FBuffer);
         size = (long)XRange*YRange*sizeof(Pixel);
-        FBuffer = (Pixel*)malloc( size+32 );
+        FBuffer = (Pixel*)_fmalloc( size+32 );
 	return((FBuffer!=(Pixel*)NULL)?True : False);
     }
 
@@ -2885,7 +2883,7 @@ int CreateImage( void )
     if( image ) 
     {   /* Monochrome Mode Frame Buffer! */
         if( FBuffer && (FBuffer!=(Pixel*)image->data) )
-            free(FBuffer);
+            _ffree(FBuffer);
 #ifdef MITSHM
         if( SharedMemFlag )
         {   XShmDetach( dpy, &xshminfo );
@@ -2900,7 +2898,7 @@ int CreateImage( void )
     if( Monochrome )
     {   /* Monochrome Mode Frame Buffer! */
         size = (long)XRange*YRange*sizeof(Pixel);
-        FBuffer = (Pixel*)malloc( size+32 );
+        FBuffer = (Pixel*)_fmalloc( size+32 );
 	if( FBuffer == (Pixel*)NULL) return False;
 
         /* Bit per Pixel ScanLines! */
@@ -2953,7 +2951,7 @@ int CreateImage( void )
 #endif
 
     /* Allocate Frame Buffer! */
-    ptr = (Pixel*)malloc( size );
+    ptr = (Pixel*)_fmalloc( size );
     if( ptr == (Pixel*)NULL) return False;
 
     if( !Monochrome ) FBuffer = ptr;
@@ -3289,7 +3287,7 @@ static void DoneEvents( void )
 
         temp = ((Real)(NewScrlY-16))/(YRange-48);
         if( RotMode == RotAll ) {
-          WRotValue[YScrlDial] = 2.0*temp - 1.0;
+          WorldDialValue[YScrlDial] = 2.0*temp - 1.0;
         } else {
           DialValue[YScrlDial] = 2.0*temp - 1.0;
         }
@@ -3326,7 +3324,7 @@ static void DoneEvents( void )
           ReDrawFlag |= RFRotBond;
         } else {
           if( RotMode == RotAll ) {
-            WRotValue[XScrlDial] = 2.0*temp - 1.0;
+            WorldDialValue[XScrlDial] = 2.0*temp - 1.0;
             ReDrawFlag |= (1<<XScrlDial);
           } else {
             DialValue[XScrlDial] = 2.0*temp - 1.0;

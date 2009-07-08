@@ -778,7 +778,7 @@ void UpdateScrollBars( void )
     if (( RotMode == RotBond ) && BondSelected)
       x = BondSelected->BRotValue;
     else if ( RotMode == RotAll )
-      x = WRotValue[DialRY];
+      x = WorldDialValue[DialRY];
     else
       x = DialValue[DialRY];
     
@@ -790,7 +790,7 @@ void UpdateScrollBars( void )
 #endif
     
     if ( RotMode == RotAll )
-	y = WRotValue[DialRX];
+	y = WorldDialValue[DialRX];
     else
 	y = DialValue[DialRX];
     

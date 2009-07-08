@@ -107,8 +107,6 @@
 #include "gtkui.h"
 #include "eggfileformatchooser.h"
 
-#define XScrlDial  1 /*1*/
-#define YScrlDial  0 /*0*/
 
 #define RASGTK_MINWIDTH  300
 #define RASGTK_MINHEIGHT 300
@@ -1291,7 +1289,7 @@ void UpdateScrollBars( void )
     gdouble new, old;
 
     if ( RotMode == RotAll ) {
-		new = WRotValue[YScrlDial]; 
+		new = WorldDialValue[YScrlDial]; 
     } else {
 		new = DialValue[YScrlDial];
     }
@@ -1308,7 +1306,7 @@ void UpdateScrollBars( void )
 		new = BondSelected->BRotValue;
     } else {
 		if ( RotMode == RotAll ) {
-	    	new = WRotValue[XScrlDial];
+	    	new = WorldDialValue[XScrlDial];
 		} else {
 	    	new = DialValue[XScrlDial];
 		}
@@ -1405,7 +1403,7 @@ gboolean configure_cb(GtkWidget *widget, GdkEventConfigure *event, gpointer user
 
 void vscroll_cb(GtkRange *range, gpointer user_data)
 {
-    WRotValue[YScrlDial] = gtk_range_get_value(range);
+    WorldDialValue[YScrlDial] = gtk_range_get_value(range);
     ReDrawFlag |= (1<<YScrlDial);
     RefreshScreen();
     ReDrawFlag = NextReDrawFlag;
@@ -1420,7 +1418,7 @@ void hscroll_cb(GtkRange *range, gpointer user_data)
           BondSelected->BRotValue =  val;
           ReDrawFlag |= RFRotBond;
 	} else {
-    	WRotValue[XScrlDial] = val;
+    	WorldDialValue[XScrlDial] = val;
     	ReDrawFlag |= (1<<XScrlDial);
 	}
     RefreshScreen();
@@ -1687,9 +1685,9 @@ int CreateImage( void )
     register Pixel *ptr;
   
 	if( FBuffer ) 
-		free(FBuffer);
+		_ffree(FBuffer);
 	size = (long)XRange*YRange*sizeof(Pixel);
-	FBuffer = (Pixel*)malloc( size+32 );
+	FBuffer = (Pixel*)_fmalloc( size+32 );
 	
 	return((FBuffer!=(Pixel*)NULL)?True : False);
 }

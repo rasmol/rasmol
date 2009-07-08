@@ -920,7 +920,7 @@ void RefreshScreen( void )
 	      WriteMovieFrame();
 	      record_frame[0]++;
 	      record_frame[1] = 0;
-	    } else if (record_on[1] && !RecordPause) {
+	    } else if ((ReDrawFlagSave & RFAppear) && record_on[1] && !RecordPause) {
 	      WriteMovieFrame();
 	      record_frame[0]++;
 	      record_frame[1]++;
@@ -2208,7 +2208,7 @@ void SetHScroll(int pos)
 	  BondSelected->BRotValue = temp;
     } else {
       if ( RotMode == RotAll ) {
-	    WRotValue[DialRY] = temp;
+	    WorldDialValue[DialRY] = temp;
       } else {
 	    DialValue[DialRY] = temp;
 	  }
@@ -2221,7 +2221,7 @@ void SetVScroll(int pos)
     float temp = (pos/50.0)-1.0;
 
     if ( RotMode == RotAll ) {
-	  WRotValue[DialRX] = temp;
+	  WorldDialValue[DialRX] = temp;
     } else {
 	  DialValue[DialRX] = temp;
 	}

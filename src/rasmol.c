@@ -1089,7 +1089,7 @@ static void CreateNewFolder(void * name)
 
 	parent = (char *)fl_get_directory();
 	len = strlen(parent) + MAX_PATH_LEN;
-	dir = malloc(len);
+	dir = _fmalloc(len);
 	if (dir == NULL) {
 		fl_show_alert("ERROR:", "NO memory", "", 0);
 		return;
@@ -1101,7 +1101,7 @@ static void CreateNewFolder(void * name)
 
 	if (mkdir(dir, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH))
 		fl_show_alert("Cannot create", dir, "", 0);
-	free(dir);
+	_ffree(dir);
 	fl_refresh_fselector();
 }
 #endif
@@ -1857,7 +1857,7 @@ void RefreshScreen( void )
 	      WriteMovieFrame();
 	      record_frame[0]++;
 	      record_frame[1] = 0;
-	  } else if (record_on[1] && !RecordPause) {
+	  } else if ((ReDrawFlagSave & RFAppear) && record_on[1] && !RecordPause) {
 	      WriteMovieFrame();
 	      record_frame[0]++;
 	      record_frame[1]++;

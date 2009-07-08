@@ -2483,8 +2483,8 @@ void InitialiseRenderer( void )
 #if defined RASTOPWIN
 void UpdateRender(int Level)
 {	if( Level==1 )
-	{	if(YBucket) free(YBucket);
-		if(IBuffer) free(IBuffer);
+	{	if(YBucket) _ffree(YBucket);
+		if(IBuffer) _ffree(IBuffer);
 		return;
 	} else if( Level==2 )
 	{	FreeItem = (Item __far*)0;

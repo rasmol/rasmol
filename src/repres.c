@@ -345,7 +345,7 @@ static void ResetLabels( void )
     {   ptr = LabelList;
         LabelList = ptr->next;
         ptr->next = FreeLabel;
-        free(ptr->label);
+        _ffree(ptr->label);
         FreeLabel = ptr;
     }
 }
@@ -362,7 +362,7 @@ void DeleteLabel( Label *label )
  
         *ptr = label->next;
         label->next = FreeLabel;
-        free(label->label);
+        _ffree(label->label);
         FreeLabel = label;
     } else label->refcount--;
 }
@@ -403,10 +403,10 @@ Label *CreateLabel( char *text, int len )
  
     if( FreeLabel )
     {   ptr = FreeLabel;  FreeLabel = ptr->next;
-    } else if( !(ptr=(Label*)malloc(sizeof(Label))) )
+    } else if( !(ptr=(Label*)_fmalloc(sizeof(Label))) )
         FatalRepresError("label");
  
-    ptr->label = (char*)malloc(len+1);
+    ptr->label = (char*)_fmalloc(len+1);
     if( !ptr->label ) FatalRepresError("label");
     strcpy(ptr->label,text);
  
@@ -692,7 +692,7 @@ void AddMonitors2( RAtom __far *src, RAtom __far *dst,
     /* Create a new monitor! */
     if( FreeMonit )
     {   ptr = FreeMonit;  FreeMonit = ptr->next;
-    } else if( !(ptr=(Monitor*)malloc(sizeof(Monitor))) )
+    } else if( !(ptr=(Monitor*)_fmalloc(sizeof(Monitor))) )
         FatalRepresError("monitor");
  
     ptr->dist = dist;

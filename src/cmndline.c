@@ -702,7 +702,7 @@ void SetMouseMode( int mode )
  twisting of the trackball creates a Z-rotation.  In this case,
  the appropriate DialValues are incremented by the indicated
  motion, to eventually be used against as base set of Euler
- angles [LastRX, LastRY, LastRZ]
+ angles [LastDialValue[DialRX], LastDialValue[DialRY], LastDialValue[DialRZ]]
  
  In the new mode, the screen is treated as a continuous trackball,
  using any changes in [DialVaue[DialRX],DialValue[DialRY]] to infer
@@ -884,12 +884,12 @@ static void ReDial( double SaveValue[10] )
 	  if ( (RotMode == RotBond) && BondSelected) {
 	    BondSelected->BRotValue = DialValue[DialBRot];
 	  } else if ( RotMode == RotAll ) {
-	    WRotValue[DialRX] = DialValue[DialRX];
-	    WRotValue[DialRY] = DialValue[DialRY];
-	    WRotValue[DialRZ] = DialValue[DialRZ];
-	    WTransX = DialValue[DialTX];
-	    WTransY = DialValue[DialTY];
-	    WTransZ = DialValue[DialTZ];
+	    WorldDialValue[DialRX] = DialValue[DialRX];
+	    WorldDialValue[DialRY] = DialValue[DialRY];
+	    WorldDialValue[DialRZ] = DialValue[DialRZ];
+	    WorldDialValue[DialTX] = DialValue[DialTX];
+	    WorldDialValue[DialTY] = DialValue[DialTY];
+	    WorldDialValue[DialTZ] = DialValue[DialTZ];
 
 	  }
 	  for (index = 0; index < 7; index++) {
@@ -914,12 +914,12 @@ void ProcessMouseMove( int x, int y, int stat )
       if (( RotMode == RotBond ) && BondSelected)
           DialValue[DialBRot] = BondSelected->BRotValue;
       else if ( RotMode == RotAll ) {
-          DialValue[DialRX] = WRotValue[DialRX];
-          DialValue[DialRY] = WRotValue[DialRY];
-          DialValue[DialRZ] = WRotValue[DialRZ];
-	      DialValue[DialTX] = WTransX;
-	      DialValue[DialTY] = WTransY;
-	      DialValue[DialTZ] = WTransZ;
+          DialValue[DialRX] = WorldDialValue[DialRX];
+          DialValue[DialRY] = WorldDialValue[DialRY];
+          DialValue[DialRZ] = WorldDialValue[DialRZ];
+	      DialValue[DialTX] = WorldDialValue[DialTX];
+	      DialValue[DialTY] = WorldDialValue[DialTY];
+	      DialValue[DialTZ] = WorldDialValue[DialTZ];
       }
     }
     

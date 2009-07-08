@@ -1021,7 +1021,7 @@ yyerrlab:   /* here on detecting error */
                x < (sizeof(yytname) / sizeof(char *)); x++)
             if (yycheck[x + yyn] == x)
               size += strlen(yytname[x]) + 15, count++;
-          msg = (char *) malloc(size + 15);
+          msg = (char *) _fmalloc(size + 15);
           if (msg != 0)
             {
               strcpy(msg, "parse error");
@@ -1040,7 +1040,7 @@ yyerrlab:   /* here on detecting error */
                       }
                 }
               yyerror(msg);
-              free(msg);
+              _ffree(msg);
             }
           else
             yyerror ("parse error; also virtual memory exceeded");
