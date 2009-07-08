@@ -239,6 +239,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <CVector.h>
+#ifndef CVECTOR_FAR
+#define CVECTOR_FAR
+#endif
 #include <CNearTree.h>
 
 #define MOLECULE

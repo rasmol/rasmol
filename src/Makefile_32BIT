@@ -2,7 +2,7 @@
 # $Xorg: imake.c,v 1.6 2001/02/09 02:03:15 xorgcvs Exp $
 
 # ----------------------------------------------------------------------
-# Makefile generated from "Imake.tmpl" and </tmp/IIf.FJbD1r>
+# Makefile generated from "Imake.tmpl" and </tmp/IIf.KG0uuz>
 # $Xorg: Imake.tmpl,v 1.4 2000/08/17 19:41:46 cpqbld Exp $
 # $XdotOrg: util/cf/Imake.tmpl,v 1.17 2006/04/15 15:55:25 herrb Exp $
 #
@@ -1239,9 +1239,9 @@ GUIDEF = -DX11WIN
 # using xform library to show GUI dialog
 # Use the first form for Mac OS X, the second for Linux x86
 
-# xx = -lXpm -L/sw/lib -lforms
+# XFORMSLIB = -lXpm -L/sw/lib -lforms
 # GUIOPTION = -DXFORMSLIB -I/sw/include
- xx = -lXpm -L/usr/local/lib -lforms -Wl,-rpath,/usr/local/lib
+ XFORMSLIB = -lXpm -L/usr/local/lib -lforms -Wl,-rpath,/usr/local/lib
  GUIOPTION = -DXFORMSLIB
 
 # External Packages Directory
@@ -1283,13 +1283,15 @@ CVECTOR_OBJDEP =
 # Definitions for NEARTREE
 #
 
-ifeq ($(strip $(NEARTREE_DIR)),)
-NEARTREE_DIR = $(PKGDIR)
-endif
-NEARTREE_INCLUDE_DIR = $(NEARTREE_DIR)/include
-NEARTREE_LDLIB = -L$(NEARTREE_DIR)/lib -lCNearTree
-NEARTREE_SRC =
-NEARTREE_OBJDEP =
+NEARTREE_VERSION = 2.1.3
+NEARTREE_TARBALL = NearTree-$(NEARTREE_VERSION).tar.gz
+NEARTREE_TARBALLDIR = $(EXTPKGDIR)
+NEARTREE_TARBALL_URL = http://downloads.sf.net/neartree/$(NEARTREE_TARBALL)
+NEARTREE_DIR = $(NEARTREE_TARBALLDIR)/NearTree-$(NEARTREE_VERSION)
+NEARTREE_INCLUDE_DIR = $(NEARTREE_DIR)
+NEARTREE_LDLIB = $(NEARTREE_DIR)/CNearTree.o
+NEARTREE_SRC = $(NEARTREE_DIR)/CNearTree.c
+NEARTREE_OBJDEP = $(NEARTREE_DIR)/CNearTree.o
 
 # RasMol's on-line help direcory
 #   e.g. /usr/local/lib/rasmol/rasmol.hlp
@@ -1307,7 +1309,7 @@ OBJS = rasmol.o molecule.o abstree.o cmndline.o command.o transfor.o        rend
 # Additional RS6000 AIX MITSHM Library
 # LDLIBS = -lm -lXi -lXextSam $(XLIB)
 
-LDLIBS = -lm -lXi $(XLIB) $(EXTRA_LIBRARIES) $(xx) $(GTKLIBS) 			$(CBFLIB_LDLIB) 			$(CQRLIB_LDLIB) 			$(CVECTOR_LDLIB) 			$(NEARTREE_LDLIB)
+LDLIBS = -lm -lXi $(XLIB) $(EXTRA_LIBRARIES) $(XFORMSLIB) $(GTKLIBS) 			$(CBFLIB_LDLIB) 			$(CQRLIB_LDLIB) 			$(CVECTOR_LDLIB) 			$(NEARTREE_LDLIB)
 
 #
 # Architecture Specific Rules
@@ -1399,6 +1401,11 @@ rasmol.man::	../doc/rasmol.1
 
 $(EXTPKGDIR):
 		mkdir -p -v $(EXTPKGDIR)
+
+$(NEARTREE_DIR):
+		(cd $(NEARTREE_TARBALLDIR);		  wget $(NEARTREE_TARBALL_URL);	          touch $(NEARTREE_TARBALL);		  gunzip < $(NEARTREE_TARBALL) | tar xvf -)
+
+$(NEARTREE_DIR)/CNearTree.c: $(NEARTREE_DIR)
 
 $(OBJS):  $(EXTPKGDIR) $(CBFLIB_OBJDEP) 			$(CQRLIB_OBJDEP) 			$(CVECTOR_OBJDEP) 			$(NEARTREE_OBJDEP)
 

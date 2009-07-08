@@ -143,6 +143,10 @@
 #include "maps.h"
 
 #include <math.h>
+#include <CVector.h>
+#ifndef CVECTOR_FAR
+#define CVECTOR_FAR
+#endif
 
 
 #if defined(__sun) && !defined(_XOPEN_SOURCE)
@@ -1175,6 +1179,7 @@ void ExecuteExecuteCommand( void ) {
                     RasMolExit();
                 } else /* ExitTok */
                     break;
+		}
             } else CommandError(MsgStrs[StrSLong]);
         } while( ch );
         Interactive = save_Interactive;

@@ -278,3 +278,4 @@ void ApplyMapShow( void );
 void WriteMovieFrame( void );
 
 #endif
+
