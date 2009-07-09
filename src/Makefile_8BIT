@@ -2,7 +2,7 @@
 # $Xorg: imake.c,v 1.6 2001/02/09 02:03:15 xorgcvs Exp $
 
 # ----------------------------------------------------------------------
-# Makefile generated from "Imake.tmpl" and </tmp/IIf.GPywJQ>
+# Makefile generated from "Imake.tmpl" and </tmp/IIf.kpkWel>
 # $Xorg: Imake.tmpl,v 1.4 2000/08/17 19:41:46 cpqbld Exp $
 # $XdotOrg: util/cf/Imake.tmpl,v 1.17 2006/04/15 15:55:25 herrb Exp $
 #
@@ -1236,49 +1236,64 @@ PKGDIR = $(HOME)
 GUISRC = x11win.c
 GUIOBJ = x11win.o
 GUIDEF = -DX11WIN
-# using xform library to show GUI dialog
-# Use the first form for Mac OS X, the second for Linux x86
-
-# XFORMSLIB = -lXpm -L/sw/lib -lforms
-# GUIOPTION = -DXFORMSLIB -I/sw/include
- XFORMSLIB = -lXpm -L/usr/local/lib -lforms -Wl,-rpath,/usr/local/lib
- GUIOPTION = -DXFORMSLIB
 
 # External Packages Directory
 #
 EXTPKGDIR = ../external_packages
 
+# Definitions for XFORMSLIB
+#
+XFORMSLIB_LDLIB =
+XFORMSLIB_OBJDEP =
+
+GUIOPTION = -DXFORMSLIB
+
+XFORMSLIB_VERSION = 1.0.91
+XFORMSLIB_TARBALL = xforms-$(XFORMSLIB_VERSION).tar.gz
+XFORMSLIB_TARBALLDIR = $(EXTPKGDIR)
+XFORMSLIB_TARBALL_URL = http://download.savannah.gnu.org/releases-noredirect/xforms/$(XFORMSLIB_TARBALL)
+XFORMSLIB_DIR = $(XFORMSLIB_TARBALLDIR)/xforms-$(XFORMSLIB_VERSION)
+XFORMSLIB_INCLUDE_DIR = $(XFORMSLIB_DIR)/lib/include
+XFORMSLIB_LDLIB = $(XFORMSLIB_DIR)/lib/.libs/libforms.a
+XFORMSLIB_OBJDEP = $(XFORMSLIB_DIR)/lib/.libs/libforms.a
+
 # Definitions for CBFLIB
 #
 
-ifeq ($(strip $(CBFLIB_DIR)),)
-CBFLIB_DIR = $(PKGDIR)
-endif
-CBFLIB_INCLUDE_DIR = $(CBFLIB_DIR)/include/cbflib
-CBFLIB_LDLIB = -L$(CBFLIB_DIR)/lib -lcbf
-CBFLIB_OBJDEP =
+CBFLIB_VERSION = 0.8.1
+CBFLIB_TARBALL = CBFlib-$(CBFLIB_VERSION).tar.gz
+CBFLIB_TARBALLDIR = $(EXTPKGDIR)
+CBFLIB_TARBALL_URL = http://downloads.sf.net/cbflib/$(CBFLIB_TARBALL)
+CBFLIB_DIR = $(CBFLIB_TARBALLDIR)/CBFlib-$(CBFLIB_VERSION)
+CBFLIB_INCLUDE_DIR = $(CBFLIB_DIR)/include
+CBFLIB_LDLIB = $(CBFLIB_DIR)/lib/libcbf.a
+CBFLIB_OBJDEP = $(CBFLIB_DIR)/lib/libcbf.a
 
 # Definitions for CQRLIB
 #
 
-ifeq ($(strip $(CQRLIB_DIR)),)
-CQRLIB_DIR = $(PKGDIR)
-endif
-CQRLIB_INCLUDE_DIR = $(CQRLIB_DIR)/include
-CQRLIB_LDLIB = -L$(CQRLIB_DIR)/lib -lCQRlib
-CQRLIB_SRC =
-CQRLIB_OBJDEP =
+CQRLIB_VERSION = 1.0.3
+CQRLIB_TARBALL = CQRlib-$(CQRLIB_VERSION).tar.gz
+CQRLIB_TARBALLDIR = $(EXTPKGDIR)
+CQRLIB_TARBALL_URL = http://downloads.sf.net/cqrlib/$(CQRLIB_TARBALL)
+CQRLIB_DIR = $(CQRLIB_TARBALLDIR)/CQRlib-$(CQRLIB_VERSION)
+CQRLIB_INCLUDE_DIR = $(CQRLIB_DIR)
+CQRLIB_LDLIB = $(CQRLIB_DIR)/cqrlib.o
+CQRLIB_SRC = $(CQRLIB_DIR)/cqrlib.c
+CQRLIB_OBJDEP = $(CQRLIB_DIR)/cqrlib.o
 
 # Definitions for CVector
 #
 
-ifeq ($(strip $(CVECTOR_DIR)),)
-CVECTOR_DIR = $(PKGDIR)
-endif
-CVECTOR_INCLUDE_DIR = $(CVECTOR_DIR)/include
-CVECTOR_LDLIB = -L$(CVECTOR_DIR)/lib -lCVector
-CVECTOR_SRC =
-CVECTOR_OBJDEP =
+CVECTOR_VERSION = 1.0.3
+CVECTOR_TARBALL = CVector-$(CVECTOR_VERSION).tar.gz
+CVECTOR_TARBALLDIR = $(EXTPKGDIR)
+CVECTOR_TARBALL_URL = http://downloads.sf.net/cvector/$(CVECTOR_TARBALL)
+CVECTOR_DIR = $(CVECTOR_TARBALLDIR)/CVector-$(CVECTOR_VERSION)
+CVECTOR_INCLUDE_DIR = $(CVECTOR_DIR)
+CVECTOR_LDLIB = $(CVECTOR_DIR)/CVector.o
+CVECTOR_SRC = $(CVECTOR_DIR)/CVector.c
+CVECTOR_OBJDEP = $(CVECTOR_DIR)/CVector.o
 
 # Definitions for NEARTREE
 #
@@ -1297,7 +1312,7 @@ NEARTREE_OBJDEP = $(NEARTREE_DIR)/CNearTree.o
 #   e.g. /usr/local/lib/rasmol/rasmol.hlp
 RASMOLDIR = $(USRLIBDIR)/rasmol/
 
-DEFINES = $(GTKCFLAGS) $(GUIDEF) -DRASMOLDIR=\"$(RASMOLDIR)\" $(DEPTHDEF) $(LOCALEDEF)           -D_USE_RASMOL_H_ $(GUIOPTION) -I$(CBFLIB_INCLUDE_DIR)           -I$(CQRLIB_INCLUDE_DIR)           -I$(CVECTOR_INCLUDE_DIR)           -I$(NEARTREE_INCLUDE_DIR)
+DEFINES = $(GTKCFLAGS) $(GUIDEF) -DRASMOLDIR=\"$(RASMOLDIR)\" $(DEPTHDEF) $(LOCALEDEF) 	-D_USE_RASMOL_H_ $(GUIOPTION) -I$(CBFLIB_INCLUDE_DIR) 	-I$(CQRLIB_INCLUDE_DIR) 	-I$(CVECTOR_INCLUDE_DIR) 	-I$(NEARTREE_INCLUDE_DIR)   	-I$(XFORMSLIB_INCLUDE_DIR)
 
 SRCS = rasmol.c rasmol.h molecule.c molecule.h abstree.c abstree.h        cmndline.c cmndline.h command.c command.h tokens.h transfor.c        transfor.h render.c render.h graphics.h pixutils.c        pixutils.h font.h outfile.c outfile.h script.c script.h infile.c        infile.h repres.c repres.h tokens.c cif_fract.c cif_fract.h cif.c        cif.h cif_ctonum.c cif_ctonum.h cif_stx.c        multiple.h multiple.c vector.h vector.c        wbrotate.c wbrotate.c langsel.h langsel_unix.c maps.h maps.c $(GUISRC)        $(CQRLIB_SRC) $(CVECTOR_SRC) $(NEARTREE_SRC)
 
@@ -1309,7 +1324,7 @@ OBJS = rasmol.o molecule.o abstree.o cmndline.o command.o transfor.o        rend
 # Additional RS6000 AIX MITSHM Library
 # LDLIBS = -lm -lXi -lXextSam $(XLIB)
 
-LDLIBS = -lm -lXi $(XLIB) $(EXTRA_LIBRARIES) $(XFORMSLIB) $(GTKLIBS) 			$(CBFLIB_LDLIB) 			$(CQRLIB_LDLIB) 			$(CVECTOR_LDLIB) 			$(NEARTREE_LDLIB)
+LDLIBS = -lm -lXi $(XLIB) $(EXTRA_LIBRARIES) $(XFORMSLIB) $(GTKLIBS) 			$(CBFLIB_LDLIB) 			$(CQRLIB_LDLIB) 			$(CVECTOR_LDLIB) 			$(NEARTREE_LDLIB) $(XFORMSLIB_LDLIB)
 
 #
 # Architecture Specific Rules
@@ -1402,12 +1417,35 @@ rasmol.man::	../doc/rasmol.1
 $(EXTPKGDIR):
 		mkdir -p -v $(EXTPKGDIR)
 
+$(XFORMSLIB_DIR):
+		(cd $(XFORMSLIB_TARBALLDIR);		  wget $(XFORMSLIB_TARBALL_URL);		  touch $(XFORMSLIB_TARBALL);		  gunzip < $(XFORMSLIB_TARBALL) | tar xvf -)
+
+$(XFORMSLIB_DIR)/lib/.libs/libforms.a: $(XFORMSLIB_DIR)
+		(cd $(XFORMSLIB_DIR); ./configure --enable-static)
+		(cd $(XFORMSLIB_DIR)/lib; make all)
+
+$(CBFLIB_DIR):
+		(cd $(CBFLIB_TARBALLDIR);		  wget $(CBFLIB_TARBALL_URL);		  touch $(CBFLIB_TARBALL);		  gunzip < $(CBFLIB_TARBALL) | tar xvf -)
+
+$(CBFLIB_DIR)/lib/libcbf.a: $(CBFLIB_DIR)
+		(cd $(CBFLIB_DIR); make lib/libcbf.a)
+
+$(CQRLIB_DIR):
+		(cd $(CQRLIB_TARBALLDIR);		  wget $(CQRLIB_TARBALL_URL);		  touch $(CQRLIB_TARBALL);		  gunzip < $(CQRLIB_TARBALL) | tar xvf -)
+
+$(CQRLIB_DIR)/cqrlib.c: $(CQRLIB_DIR)
+
+$(CVECTOR_DIR):
+		(cd $(CVECTOR_TARBALLDIR);		  wget $(CVECTOR_TARBALL_URL);		  touch $(CVECTOR_TARBALL);		  gunzip < $(CVECTOR_TARBALL) | tar xvf -)
+
+$(CVECTOR_DIR)/CVector.c: $(CVECTOR_DIR)
+
 $(NEARTREE_DIR):
 		(cd $(NEARTREE_TARBALLDIR);		  wget $(NEARTREE_TARBALL_URL);	          touch $(NEARTREE_TARBALL);		  gunzip < $(NEARTREE_TARBALL) | tar xvf -)
 
 $(NEARTREE_DIR)/CNearTree.c: $(NEARTREE_DIR)
 
-$(OBJS):  $(EXTPKGDIR) $(CBFLIB_OBJDEP) 			$(CQRLIB_OBJDEP) 			$(CVECTOR_OBJDEP) 			$(NEARTREE_OBJDEP)
+$(OBJS):  $(EXTPKGDIR) $(CBFLIB_OBJDEP) 			$(CQRLIB_OBJDEP) 			$(CVECTOR_OBJDEP) 			$(NEARTREE_OBJDEP) 			$(XFORMSLIB_OBJDEP)
 
 gtkwin.c: gtkui.h
 

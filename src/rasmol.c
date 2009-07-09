@@ -2318,12 +2318,14 @@ static void ProcessOptions( int argc, char *argv[] )
 static void InitialiseFSDialogs(void)
 {
     FD_FSELECTOR *fs;
+    int dummycount=1;
+    char * dummyargv="rasmol";
 
     if ( ! Interactive )
 	return;
 
 /*  fl_initialize(&argc, argv, VersionStr, 0, 0);  */
-    fl_init();
+    fl_initialize(&dummycount,&dummyargv,dummyargv,0,0);
 
     /* Open File Dialog */
     fl_use_fselector(XFORMS_OPENDIALOG);
