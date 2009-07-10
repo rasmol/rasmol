@@ -1147,6 +1147,13 @@ void ExecuteExecuteCommand( void ) {
     register size_t len;
     int stat;
     int save_Interactive;
+    int save_molecule, save_num_molecules;
+    int im;
+    double * dialsave_old;
+    double * dialsave_new;
+    int RDF;
+    
+    
     FetchToken();
     if( !CurToken ){
         CommandError(MsgStrs[ErrSyntax]);
@@ -1155,6 +1162,20 @@ void ExecuteExecuteCommand( void ) {
     if (!Find_Symbol_Definition(TokenIdent,&definition)) 
     {   
         save_Interactive = Interactive;
+        
+        dialsave_old = (double *)_fmalloc(sizeof(double)*11*NumMolecules);
+        if (!dialsave_old) {
+    	  RasMolFatalExit(MsgStrs[StrMalloc]);
+        }
+        save_molecule = MoleculeIndex;
+        save_num_molecules = NumMolecules;
+        
+        for (im=0; im<NumMolecules; im++) {
+          SwitchMolecule(im);
+          memmove((char *)(dialsave_old+im*11),(char *)DialValue,11*sizeof(double));
+        }
+        SwitchMolecule(save_molecule);
+        
         Interactive=False;      /* Supress all screen activity while
                                    executing the commands first time around */
         do {
@@ -1182,7 +1203,41 @@ void ExecuteExecuteCommand( void ) {
 		}
             } else CommandError(MsgStrs[StrSLong]);
         } while( ch );
+        
+        dialsave_new = (double *)_fmalloc(sizeof(double)*11*NumMolecules);
+        if (!dialsave_new) {
+          _ffree(dialsave_old);
+    	  RasMolFatalExit(MsgStrs[StrMalloc]);
+        }
+        save_molecule = MoleculeIndex;
+
+        for (im=0; im<NumMolecules; im++) {
+          SwitchMolecule(im);
+          memmove((char *)(dialsave_new+im*11),(char *)DialValue,11*sizeof(double));
+          if (im<save_num_molecules) 
+          {
+          	memmove((char *)DialValue,(char *)(dialsave_old+im*11),11*sizeof(double));
+          }
+        }
+        
+        SwitchMolecule(save_molecule);
+        
+        RDF = ReDrawFlag;
+
+        RefreshScreen();
+        
+        ReDrawFlag |= RDF;
+        
         Interactive = save_Interactive;
+        
+        for (im=0; im<NumMolecules; im++) {
+          SwitchMolecule(im);
+          memmove((char *)DialValue,(char *)(dialsave_new+im*11),11*sizeof(double));
+        }
+
+        SwitchMolecule(save_molecule);
+        
+        
     }
     return;
 }
