@@ -1048,7 +1048,7 @@ static int Free_Symbol(const char __far * string) {
       symbol->definition_size=0;
       symbol->definition_capacity=0;
       if (prevsymbol) {
-        prevsymbol = symbol->Symbol_Next;
+        prevsymbol->Symbol_Next = symbol->Symbol_Next;
       } else {
       	Defer_Symbols[clead] = symbol->Symbol_Next;
       }
@@ -1133,9 +1133,13 @@ void ShowDeferCommand( void ) {
       CommandError(MsgStrs[ErrSyntax]);
       return;
    }
-   if (!Find_Symbol_Definition(TokenIdent,&definition)) 
-   {
-   	WriteString(definition);
+   if (!Find_Symbol_Definition(TokenIdent,&definition)) {
+   	WriteString((char *)definition);
+   } else {
+   	WriteString("'");
+   	WriteString(TokenIdent);
+   	WriteString(MsgStrs[StrNotFnd]);
+   	return;
    }
     WriteString("\n=================\n");
   return;
@@ -1240,6 +1244,89 @@ void ExecuteExecuteCommand( void ) {
         
     }
     return;
+}
+
+/* Convert a Play/Record file name template
+   The first string of s...s (case insensitive) is changed to %.nd where
+   n is the number of s's.  An s in the template can be protected
+   from this conversion with a backslash.  Each % is converted to %%.
+   
+   *** Warning:  if the length of param is K, then the size of the
+   template must be at least max(1+2*K,3+K)
+   
+   The result is a conversion string for sprintf */
+
+static int ConvPRTemplate(char * template, const char * param, size_t limit) {
+  char c;
+  int swid;
+  int cwid;
+  int ii;
+  int escape;
+  char * torig;
+  
+  torig = template;
+  escape = 0;
+  while ((c=*param++)) {
+    if (!escape && c=='\\') {
+      escape++;
+      continue;
+    }
+    if (escape || (c != 's' && c != 'S') ){
+      *template++ = c;
+      if ( template-torig >= limit ) return -1;
+      if (c=='%') *template++ = c;
+      if ( template-torig >= limit ) return -1;
+      escape = 0;
+      continue;
+    }
+    break;
+  }
+  if (c) {
+  	swid = 1;
+    while ((c=*param++)) {
+      if (c != 's' && c != 'S') break;
+      swid++;    	
+    }
+    *template++='%';
+    if ( template-torig >= limit ) return -1;
+    *template++='.';
+    if ( template-torig >= limit ) return -1;
+
+    cwid = 1;
+    do {
+      *template = (swid%10)+'0';
+      swid /= 10;
+      if (swid) {
+        if ( template+cwid-torig >= limit ) return -1;
+        for (ii=0; ii<cwid; ii++) {
+          template[cwid-ii]=template[cwid-ii-1];
+        }
+        cwid++;
+      }
+    	
+    } while (swid);
+  	template += cwid;
+  	*template++ = 'd';
+  	if ( template-torig >= limit ) return -1;
+
+  }
+  escape=0;
+  if (c) {
+    param--;
+    while ((c=*param++)) {
+      if (!escape && c=='\\') {
+        escape++;
+        continue;
+      }
+      escape = 0;
+      *template++ = c;
+      if ( template-torig >= limit ) return -1;
+      if (c=='%') *template++ = c;
+      if ( template-torig >= limit ) return -1;
+    }
+  }
+  *template++ = '\0';
+  return 0;
 }
 
 
@@ -7210,8 +7297,10 @@ int ExecuteCommandOne( int * restore )
                         ProcessFileName(TokenStart);
                         CurToken=0;
                     }
-                    strcpy(RecordTemplate,DataFileName);
-                    param = DataFileName;
+                    if (ConvPRTemplate(RecordTemplate,DataFileName,1024)) {
+                      CommandError(MsgStrs[StrCLong]);
+                      break;
+                    }
                     RecordOption = option;
                     RecordSubOption = suboption;
                     RecordPause = 0;
