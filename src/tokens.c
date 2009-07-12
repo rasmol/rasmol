@@ -964,7 +964,7 @@ int LookUpKeyword( char *ptr )
       /*
         IDENT                IdentifyTok
         IDENTIFY             IdentifyTok
-		IMAGE				 ImageTok
+             IMAGE				  ImageTok
 		IN                   InTok
         INFO                 InfoTok
         INFORMATION          InfoTok
@@ -1134,7 +1134,7 @@ int LookUpKeyword( char *ptr )
         MOL2                 Mol2Tok
         MOLECULE             MoleculeTok
         MOLSCRIPT            MolScriptTok
-        MOLSURF	             MolSurfTok
+             MOLSURF              MolSurfTok
         MONITOR              MonitorTok
         MONITORS             MonitorTok
         MONO                 MonoTok

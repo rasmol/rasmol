@@ -288,7 +288,7 @@ Real Zoom;
 
 double record_fps, play_fps, record_aps, record_dwell;
 int record_on[2];
-size_t record_frame[2];
+size_t record_frame[2], play_frame[2];
 
 
 
@@ -346,7 +346,7 @@ extern Real Zoom;
 
 extern double record_fps, play_fps, record_aps, record_dwell;
 extern int record_on[2];
-extern size_t record_frame[2];
+extern size_t record_frame[2], play_frame[2];
 
 #endif
 

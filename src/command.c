@@ -268,6 +268,7 @@ int ExecuteIPCCommand( char __huge* );
 static int PrefixString( char __far*, char __far* );
 static char __far * xfgets( char __far*, int, FILE __far *);
 static int FetchToken( void );
+void WriteImageFile( char *, int, int );
 
 void CommandError( char *error )
 {
@@ -1245,9 +1246,322 @@ void ExecuteExecuteCommand( void ) {
     }
     return;
 }
+        
+        
+/*===========================*/
+/*  Movie Support Utilities  */
+/*===========================*/
+
+
+
+void ShowRecordCommand( void ) {
+	int millisec;
+	char param[1024];
+	millisec = RecordFrom + 1000.*((double)record_frame[0])/record_fps;
+	if (RecordPause 
+	    || RecordTemplate[0] == '\0'
+	    || (millisec > RecordMaxMS && RecordMaxMS > 1.) 
+	    || (RecordUntil >= RecordFrom 
+            && millisec > RecordUntil + 1000.*((double)record_frame[0])/record_fps)) {
+        WriteString("record off\n");
+    } else {
+        sprintf(param,"record from %g until %g\n",RecordFrom/1000., RecordUntil/1000.);
+        WriteString(param);
+        if (record_fps > 0.) {
+        	sprintf(param,"set record.fps %g\n",record_fps);
+            WriteString(param);
+        }
+        if (record_aps > 0.) {
+        	sprintf(param,"set record.aps %g\n",record_aps);
+            WriteString(param);
+        }
+        if (record_dwell > 0.) {
+        	sprintf(param,"set record.dwell %g\n",record_dwell);
+            WriteString(param);
+        }
+        if (record_on[0]) WriteString("record motion on\n");
+        else WriteString("record motion off\n");
+        if (record_on[1]) WriteString("record appearance on\n");
+        else WriteString("record apperance off\n");
+        if (RecordMaxMS == 1.) {
+            sprintf(param,RecordTemplate);
+        } else{
+            sprintf(param,RecordTemplate,millisec<0?0:millisec);
+        }
+        WriteString("record on ");
+        switch(RecordOption) {
+                
+            case (0):
+#ifdef EIGHTBIT
+                WriteString("GIF "); break;
+#else
+                WriteString("PPM "); break;
+#endif
+            case(NMRPDBTok):
+            case(PDBTok):
+                WriteString("PDB "); break;
+            case(MDLTok):
+                WriteString("MDL "); break;
+            case(XYZTok):
+                WriteString("XYZ "); break;
+            case(CIFTok):
+                WriteString("CIF "); break;
+            case(AlchemyTok):
+                WriteString("ALCHEMY "); break;
+            case(GIFTok):
+                WriteString("GIF "); break;
+            case(BMPTok):
+                WriteString("BMP "); break;
+            case(PPMTok):
+                WriteString("PPM "); break;
+            case(SUNTok):
+                WriteString("SUN "); break;
+            case(SUNRLETok):
+                WriteString("SUNRLE "); break;
+            case(PICTTok):
+                WriteString("PICT "); break;
+            case(IRISTok):
+                WriteString("IRIS "); break;
+            case(EPSFTok):
+                WriteString("EPSF "); break;
+            case(MonoPSTok):
+                WriteString("MONOPS "); break;
+            case(VectPSTok):
+                WriteString("VECTPS "); break;
+            case(Raster3DTok):
+                WriteString("R3D "); break;
+                
+            case(RasMolTok):
+            case(ScriptTok):
+                WriteString("SCRIPT "); break;
+            case(KinemageTok):
+                WriteString("KINEMAGE "); break;
+            case(MolScriptTok):
+                WriteString("MOLSCRIPT "); break;
+            case(POVRayTok):
+                WriteString("POVRAY "); break;
+            case(POVRay3Tok):
+                WriteString("POVRAY3 "); break;
+            case(PhiPsiTok):
+                WriteString("PHIPSI "); break;
+            case(RamachanTok):
+                WriteString("RAMACHAN "); break;
+            case(RamPrintTok):
+                WriteString("RPP "); break;
+            case(VRMLTok):
+                WriteString("VRML ");
+                if (RecordSubOption == MirrorTok) WriteString("MIRROR ");
+                if (RecordSubOption == RotateTok) WriteString("ROTATE ");
+                break;
+            	
+        }
+        WriteString(param);
+        WriteString("\n");
+    }
+	return;
+}
+
+void ShowPlayCommand( void ) {
+	int millisec;
+	char param[1024];
+	millisec = PlayFrom + 1000.*((double)play_frame[0])/play_fps;
+	if (PlayPause 
+	    || PlayTemplate[0] == '\0'
+	    || (millisec > PlayMaxMS && PlayMaxMS > 1.) 
+	    || (PlayUntil >= PlayFrom 
+            && millisec > PlayUntil + 1000.*((double)play_frame[0])/play_fps)) {
+        WriteString("play off\n");
+    } else {
+        sprintf(param,"play from %g until %g\n",PlayFrom/1000., PlayUntil/1000.);
+        WriteString(param);
+        if (play_fps > 0.) {
+        	sprintf(param,"set play.fps %g\n",record_fps);
+            WriteString(param);
+        }
+        if (PlayMaxMS == 1.) {
+            sprintf(param,PlayTemplate);
+        } else{
+            sprintf(param,PlayTemplate,millisec<0?0:millisec);
+        }
+        WriteString("play on ");
+        switch(PlayOption) {
+                
+            case (0):
+#ifdef EIGHTBIT
+                WriteString("GIF "); break;
+#else
+                WriteString("PPM "); break;
+#endif
+            case(NMRPDBTok):
+            case(PDBTok):
+                WriteString("PDB "); break;
+            case(MDLTok):
+                WriteString("MDL "); break;
+            case(XYZTok):
+                WriteString("XYZ "); break;
+            case(CIFTok):
+                WriteString("CIF "); break;
+            case(AlchemyTok):
+                WriteString("ALCHEMY "); break;
+            case(GIFTok):
+                WriteString("GIF "); break;
+            case(BMPTok):
+                WriteString("BMP "); break;
+            case(PPMTok):
+                WriteString("PPM "); break;
+            case(SUNTok):
+                WriteString("SUN "); break;
+            case(SUNRLETok):
+                WriteString("SUNRLE "); break;
+            case(PICTTok):
+                WriteString("PICT "); break;
+            case(IRISTok):
+                WriteString("IRIS "); break;
+            case(EPSFTok):
+                WriteString("EPSF "); break;
+            case(MonoPSTok):
+                WriteString("MONOPS "); break;
+            case(VectPSTok):
+                WriteString("VECTPS "); break;
+            case(Raster3DTok):
+                WriteString("R3D "); break;
+                
+            case(RasMolTok):
+            case(ScriptTok):
+                WriteString("SCRIPT "); break;
+            case(KinemageTok):
+                WriteString("KINEMAGE "); break;
+            case(MolScriptTok):
+                WriteString("MOLSCRIPT "); break;
+            case(POVRayTok):
+                WriteString("POVRAY "); break;
+            case(POVRay3Tok):
+                WriteString("POVRAY3 "); break;
+            case(PhiPsiTok):
+                WriteString("PHIPSI "); break;
+            case(RamachanTok):
+                WriteString("RAMACHAN "); break;
+            case(RamPrintTok):
+                WriteString("RPP "); break;
+            case(VRMLTok):
+                WriteString("VRML ");
+                if (PlaySubOption == MirrorTok) WriteString("MIRROR ");
+                if (PlaySubOption == RotateTok) WriteString("ROTATE ");
+                break;
+            	
+        }
+        WriteString(param);
+        WriteString("\n");
+    }
+	return;
+}
+
+void WriteMovieFrame( void ) {
+	int millisec;
+	char param[1024];
+	millisec = RecordFrom + 1000.*((double)record_frame[0])/record_fps;
+	if (RecordTemplate[0] == '\0'
+	    || (millisec > RecordMaxMS && RecordMaxMS > 1.) 
+	    || (RecordUntil >= RecordFrom 
+        && millisec > RecordUntil)) {
+        RecordPause = True;
+    } else {
+        if (RecordMaxMS == 1.) {
+          sprintf(param,RecordTemplate);
+        } else{
+          sprintf(param,RecordTemplate,millisec);
+        }
+        if (!IsMoleculeToken(RecordOption)) {
+            WriteImageFile( param, RecordOption, RecordSubOption );
+        } else switch(RecordOption) {
+            case(NMRPDBTok):
+            case(PDBTok):  SavePDBMolecule(param); break;
+            case(MDLTok):  SaveMDLMolecule(param); break;
+            case(XYZTok):  SaveXYZMolecule(param); break;
+            case(CIFTok):  SaveCIFMolecule(param); break;
+            case(AlchemyTok): SaveAlchemyMolecule(param);
+                break;
+        }
+    }
+    return;
+}
+
+static int PlayMovieFrame( void ) {
+  	int millisec;
+  	int checkfile;
+	char param[1024];
+    FILE * moviefp;
+	millisec = PlayFrom + 1000.*((double)play_frame[0])/play_fps;
+	if (PlayTemplate[0] == '\0'
+	    || (millisec > PlayMaxMS && PlayMaxMS > 1.) 
+	    || (PlayUntil >= PlayFrom 
+            && millisec > PlayUntil)) {
+        PlayPause = True;
+        return 1;
+    } else {
+        checkfile = False;
+        for (play_frame[1] = 0;play_frame[1]<=millisec; play_frame[1]++) 
+        {
+            if (RecordMaxMS == 1.) {
+                sprintf(param,PlayTemplate);
+            } else{
+                sprintf(param,PlayTemplate,millisec-play_frame[1]);
+            }
+            ProcessFileName(param);
+            moviefp = fopen(DataFileName,"rb");
+            if (moviefp) {
+                if (PlayOption == ScriptTok) {
+                    LoadScriptFile(moviefp,DataFileName);
+                    return 0;
+                }
+                ZapDatabase();
+                SwitchMolecule(NumMolecules);
+                if (!ProcessFile(Tok2Format(PlayOption),False,moviefp)) return -1;
+                if (Database) {
+                    NumMolecules++;
+                    DrawMoleculeList();
+                    DefaultRepresentation();
+                }
+                return 0;
+            }
+        }
+        return -1;
+    }
+}
+
+static void PlayMovie( void ) {
+    int interactive_save;
+    int SaveMolecule = MoleculeIndex;
+    int status;
+    if ((!IsMoleculeToken(PlayOption) && PlayOption != ScriptTok)
+        || NumMolecules >= MAX_MOLECULES ){
+        CommandError(MsgStrs[ErrBadLoad]);
+        return;
+    }
+    if (FileDepth == -1) ShowPlayCommand();
+    interactive_save = Interactive;
+    if (IsMoleculeToken(PlayOption)) {
+        SwitchMolecule(NumMolecules);
+    }
+    while (!PlayPause && PlayTemplate[0]) {
+        Interactive = False;
+        status = PlayMovieFrame();
+        Interactive = interactive_save;
+        ReDrawFlag |= RFRefresh;
+        RefreshScreen();
+        if (status) break;
+        play_frame[0]++;
+    }
+    if (IsMoleculeToken(PlayOption)) {
+        SwitchMolecule(SaveMolecule);
+    }
+    
+    return;
+}
+
 
 /* Convert a Play/Record file name template
-   The first string of s...s (case insensitive) is changed to %.nd where
+   The first string of s...s (case insensitive s's or digits) is changed to %.nd where
    n is the number of s's.  An s in the template can be protected
    from this conversion with a backslash.  Each % is converted to %%.
    
@@ -1256,7 +1570,7 @@ void ExecuteExecuteCommand( void ) {
    
    The result is a conversion string for sprintf */
 
-static int ConvPRTemplate(char * template, const char * param, size_t limit) {
+static int ConvPRTemplate(char * template, const char * param, size_t limit, double *numfiles) {
   char c;
   int swid;
   int cwid;
@@ -1266,12 +1580,13 @@ static int ConvPRTemplate(char * template, const char * param, size_t limit) {
   
   torig = template;
   escape = 0;
+  *numfiles = 1.;
   while ((c=*param++)) {
     if (!escape && c=='\\') {
       escape++;
       continue;
     }
-    if (escape || (c != 's' && c != 'S') ){
+    if (escape || (c != 's' && c != 'S' && !(isdigit(c)))){
       *template++ = c;
       if ( template-torig >= limit ) return -1;
       if (c=='%') *template++ = c;
@@ -1283,9 +1598,11 @@ static int ConvPRTemplate(char * template, const char * param, size_t limit) {
   }
   if (c) {
   	swid = 1;
+    *numfiles = 10.;
     while ((c=*param++)) {
-      if (c != 's' && c != 'S') break;
+      if (c != 's' && c != 'S' && !(isdigit(c))) break;
       swid++;    	
+      *numfiles *= 10.;
     }
     *template++='%';
     if ( template-torig >= limit ) return -1;
@@ -3740,6 +4057,14 @@ static void ExecuteShowCommand( void )
             DescribeMolecule();
             break;
             
+    	case(PlayTok):
+    	    ShowPlayCommand();
+            break;
+            
+    	case(RecordTok):
+    		ShowRecordCommand();
+            break;
+            
     	case(MapTok):
             ApplyMapShow();
             break;
@@ -4094,7 +4419,7 @@ void ZapDatabase( void )
 }
 
 
-static void WriteImageFile( char *name, int type, int subtype )
+void WriteImageFile( char *name, int type, int subtype )
 {
     if( !type )
 #ifdef EIGHTBIT
@@ -7221,6 +7546,101 @@ int ExecuteCommandOne( int * restore )
             } else CommandError(MsgStrs[ErrNoCol]);
             break;
  
+        case(PlayTok):
+        {
+            int newPlayFrom, newPlayUntil;
+            
+            newPlayFrom = PlayFrom;
+            newPlayUntil = PlayUntil;
+            if (PlayTemplate[0]==0){
+                newPlayFrom = 0;
+                newPlayUntil = -1;
+            }
+            FetchToken();
+            do {
+                if (CurToken == FromTok) {
+                    FetchToken();
+                    if( (CurToken==NumberTok) || (CurToken=='.') ) {   
+                        if( CurToken==NumberTok ) {
+                            if( *TokenPtr=='.' ) {   
+                                TokenPtr++;
+                                FetchFloat(TokenValue,1000);
+                            } else TokenValue *= 1000;
+                        } else FetchFloat(0,1000);
+                        newPlayFrom = (double)TokenValue;
+                        PlayFrom = newPlayFrom;
+                    } else {
+                        CommandError(MsgStrs[ErrSyntax]);
+                        break;
+                    }
+                } else if (CurToken == UntilTok) {
+                    FetchToken();
+                    if( (CurToken==NumberTok) || (CurToken=='.') ) {   
+                        if( CurToken==NumberTok ) {
+                            if( *TokenPtr=='.' ) {   
+                                TokenPtr++;
+                                FetchFloat(TokenValue,1000);
+                            } else TokenValue *= 1000;
+                        } else FetchFloat(0,1000);
+                        newPlayUntil = (double)TokenValue;
+                        PlayUntil = newPlayUntil;
+                    } else {
+                        CommandError(MsgStrs[ErrSyntax]);
+                        break;
+                    }
+                } else if (CurToken == OnTok){
+                    FetchToken();
+                    option = CurToken;
+                    suboption = 0;
+                    if( (option==RasMolTok) || (option==ScriptTok)
+                       || (IsMoleculeToken(option))
+                       || (IsImageToken(option)) )
+                    {   if( !*TokenPtr || *TokenPtr==' ' )
+                        suboption = FetchToken();
+                        if (suboption == MirrorTok || suboption == RotateTok) 
+                        {  if (!*TokenPtr || *TokenPtr==' ')
+                            FetchToken();
+                        }
+                        else suboption = 0;
+                    } else option = 0;
+                    
+                    if( !CurToken )
+                    {   CommandError(MsgStrs[ErrFilNam]);
+                        break;
+                    } else if( CurToken==StringTok )
+                    {      ProcessFileName(TokenIdent);
+                    } else {
+                        ProcessFileName(TokenStart);
+                        CurToken=0;
+                    }
+                    if (ConvPRTemplate(PlayTemplate,DataFileName,1024,&PlayMaxMS)) {
+                        CommandError(MsgStrs[StrCLong]);
+                        break;
+                    }
+                    PlayOption = option;
+                    PlaySubOption = suboption;
+                    PlayPause = 0;
+                    if (play_fps <= 0.) play_fps = 24.;
+                    play_frame[0] = play_frame[1] = 0;
+                    PlayFrom = newPlayFrom;
+                    PlayUntil = newPlayUntil;
+                    if (PlayUntil == 0) PlayUntil = PlayMaxMS-1.;
+                    if (PlayUntil > PlayMaxMS-1. && PlayMaxMS > 1.) PlayUntil = PlayMaxMS-1.;
+                } else if (CurToken == OffTok ) {
+                    PlayPause = 1;
+                    FetchToken();
+                    if (!CurToken) break;
+                    PlayTemplate[0] = 0;
+                } else {
+                    CommandError(MsgStrs[ErrSyntax]);
+                    break;
+                }
+                if (CurToken) FetchToken();
+            } while (CurToken != 0);
+            if (!PlayPause && PlayTemplate[0] != '\0') PlayMovie();
+            break;
+        }
+            
         case(RecordTok):
         {
             int newRecordFrom, newRecordUntil;
@@ -7297,15 +7717,19 @@ int ExecuteCommandOne( int * restore )
                         ProcessFileName(TokenStart);
                         CurToken=0;
                     }
-                    if (ConvPRTemplate(RecordTemplate,DataFileName,1024)) {
+                    if (ConvPRTemplate(RecordTemplate,DataFileName,1024,&RecordMaxMS)) {
                       CommandError(MsgStrs[StrCLong]);
                       break;
                     }
                     RecordOption = option;
                     RecordSubOption = suboption;
                     RecordPause = 0;
+                    record_frame[0] = record_frame[1] = 0;
+                    if (record_fps <= 0.) record_fps = 24.;
                     RecordFrom = newRecordFrom;
                     RecordUntil = newRecordUntil;
+                    if (RecordUntil == 0) RecordUntil = RecordMaxMS-1.;
+                    if (RecordUntil > RecordMaxMS-1. && RecordMaxMS > 1.) RecordUntil = RecordMaxMS-1.;
                 } else if (CurToken == OffTok ) {
                     RecordPause = 1;
                     FetchToken();
@@ -7478,30 +7902,6 @@ int ExecuteCommandOne( int * restore )
     return False;
 }
 
-void WriteMovieFrame( void ) {
-	int millisec;
-	char param[1024];
-	millisec = RecordFrom + 1000.*((double)record_frame[0])/record_fps;
-	if (RecordUntil >= RecordFrom 
-        && millisec > RecordUntil + 1000.*((double)record_frame[0])/record_fps) {
-        RecordPause = True;
-    } else {
-        sprintf(param,RecordTemplate,millisec);
-        if (!IsMoleculeToken(RecordOption)) {
-            WriteImageFile( param, RecordOption, RecordSubOption );
-        } else switch(RecordOption) {
-            case(NMRPDBTok):
-            case(PDBTok):  SavePDBMolecule(param); break;
-            case(MDLTok):  SaveMDLMolecule(param); break;
-            case(XYZTok):  SaveXYZMolecule(param); break;
-            case(CIFTok):  SaveCIFMolecule(param); break;
-            case(AlchemyTok): SaveAlchemyMolecule(param);
-                break;
-        }
-    }
-	return;
-}
-
 
 int ExecuteIPCCommand( char __huge *ptr )
 {
@@ -7608,5 +8008,24 @@ void InitialiseCommand( void )
     
     SeqFormat = False;
     IsPaused = False;
+    
+    /* Movie and animation intialization */
+    
+    play_fps = record_fps = 24.;  /* default to 24 fps */;
+    record_aps = 10.;             /* default to 10 Angstroms per second */
+    record_on[0] = record_on[1] = False; 
+    /* default, not recording motion or appearance */
+    record_frame[0] = record_frame[1] = 0;
+    /* start the overall and dwell frame counts at 0 */ 
+    play_frame[0] = play_frame[1] = 0;
+    
+    record_dwell = 0.5;           /* dwell half second per command (12 frames)   */
+    RecordTemplate[0] = 0;        /* no initial recording */
+    PlayTemplate[0] = 0;          /* no initial playback  */
+    RecordCurrent = RecordFrom = RecordUntil 
+    = PlayCurrent = PlayFrom = PlayUntil = RecordMaxMS = PlayMaxMS = 0.;
+    RecordPause = True;
+    PlayPause = False;
+    
 }
 

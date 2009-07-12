@@ -3292,20 +3292,6 @@ void InitialTransform( void )
       MaxZoom -= 1.0;
     }
     
-    /* Movie and animation intialization */
-    
-    play_fps = record_fps = 24.;  /* default to 24 fps */;
-    record_aps = 10.;             /* default to 10 Angstroms per second */
-    record_on[0] = record_on[1] = False; 
-                                  /* default, not recording motion or appearance */
-    record_frame[0] = record_frame[1] = 0;
-                                  /* start the overall and dwell frame counts at 0 */ 
-    record_dwell = 0.5;           /* dwell half second per command (12 frames)   */
-    RecordTemplate[0] = 0;        /* no initial recording */
-    PlayTemplate[0] = 0;          /* no initial playback  */
-    RecordCurrent = RecordFrom = RecordUntil 
-    = PlayCurrent = PlayFrom = PlayUntil = 0.;
-    RecordPause = True;
 }
 
 
