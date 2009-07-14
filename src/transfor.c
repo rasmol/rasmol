@@ -3561,9 +3561,9 @@ void PrepareTransform( void )
       	}
       } 
          
-      VecIn[0] = DialValueOffset[DialTX];
-      VecIn[1] = DialValueOffset[DialTY];
-      VecIn[2] = DialValueOffset[DialTZ];
+      VecIn[0] = DialValueOffset[DialTX]*XRange;
+      VecIn[1] = DialValueOffset[DialTY]*YRange;
+      VecIn[2] = DialValueOffset[DialTZ]*ZRange;
 
       RMatVec(VecOut,WIRotX,WIRotY,WIRotZ,VecIn);
       
