@@ -216,6 +216,7 @@
 
  */
 
+#define _GNU_SOURCE
 #include "rasmol.h"
 
 #ifdef IBMPC
