@@ -406,7 +406,7 @@ else
   if [ "$RASMOL_CHINESEFDIR" ]; then
     rm -r -f $RASMOLPATH/Chinese.X ;
     cp -r -p $RASMOL_CHINESEFDIR $RASMOLPATH/Chinese.X ;
-    echo Installed Latin1 fonts in $RASMOLPATH/jmk
+    echo Installed Chinese fonts in $RASMOLPATH/Chinese.X
     if [ "$compilefonts" = "yes" ] ; then
       savecurdir=`pwd`;
       cd $RASMOLPATH/Chinese.X;
@@ -429,7 +429,7 @@ fi
 if ( (xlsfonts -fn "*-r-*-14-*-jisx0208.1983-0" | grep "jisx0208.1983") > /dev/null  2>&1 );
 then
   echo Japanese \(jisx0208.1983\) fonts available
-elif [ -d $RASMOLPATH/Japanese ] ; then
+elif [ -d $RASMOLPATH/Japanese.X ] ; then
   echo Japanese fonts in $RASMOLPATH/Japanese.X
 else
   for japanesefdir in \
@@ -459,7 +459,7 @@ else
   if [ "$RASMOL_JAPANESEFDIR" ]; then
     rm -r -f $RASMOLPATH/Japanese.X ;
     cp -r -p $RASMOL_JAPANESEFDIR $RASMOLPATH/Japanese.X ;
-    echo Installed Latin1 fonts in $RASMOLPATH/jmk
+    echo Installed Japanese fonts in $RASMOLPATH/Japanese.X
     if [ "$compilefonts" = "yes" ] ; then
       savecurdir=`pwd`;
       cd $RASMOLPATH/Japanese.X;
