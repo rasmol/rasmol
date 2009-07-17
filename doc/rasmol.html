@@ -1,7 +1,7 @@
 <!doctype html public "-//IETF//DTD HTML 2.0//EN">
 <HTML>
 <HEAD>
-<title>RasMol V2.7.4 Manual</title>
+<title>RasMol V2.7.5 Manual</title>
 </HEAD>
 <BODY BACKGROUND="http://www.rasmol.org/software/rasmol/html_graphics/rasmolwallpaper.jpg">
 <font face="Helvetica,Arial,Times" size=3>
@@ -33,7 +33,7 @@ ALT="[RasMol]"></A>
 
 <font color="#0808A0">
 <H1 ALIGN=CENTER>Manual<BR>
-RasMol 2.7.4.2</H1>
+RasMol 2.7.5</H1>
 <center>
 <table celpadding=0>
 <tr>
@@ -54,12 +54,12 @@ Latest Manual </a><br />&nbsp;<br />
 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <td valign=top bgcolor="#FFFFA0"><font face="Helvetica,Arial,Times" size=2>
 <ul>
-<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2_Windows_Installer.exe>RasMol
-2.7.4.2 Windows Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;<br />
-<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2.tar.gz>RasMol
-2.7.4.2 Source Tarball</a><br />&nbsp;<br />
-<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2_Manual.html>RasMol
-2.7.4.2 Manual</a><br />&nbsp;<br />
+<li><a href=http://www.rasmol.org/software/RasMol_2.7.5_Windows_Installer.exe>RasMol
+2.7.5 Windows Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;<br />
+<li><a href=http://www.rasmol.org/software/RasMol_2.7.5.tar.gz>RasMol
+2.7.5 Source Tarball</a><br />&nbsp;<br />
+<li><a href=http://www.rasmol.org/software/RasMol_2.7.5_Manual.html>RasMol
+2.7.5 Manual</a><br />&nbsp;<br />
 <li><a href=http://www.rasmol.org/donate.shtml>Donate to Support RasMol </a><br />
 <li><a href=http://www.rasmol.org/register.shtml>Register your RasMol</a><br />
 </ul>
@@ -68,7 +68,7 @@ Latest Manual </a><br />&nbsp;<br />
 </center>
 <H3 ALIGN=CENTER>
 Molecular Graphics Visualisation Tool<BR>
-19 November 2007 (rev. 17 March 2008)<br />
+13 June 2009 (rev. 17 July 2009)<br />
 </H3>
 </font><font color="#000000">
 <CENTER>
@@ -97,23 +97,31 @@ RasMol 2.7.2.1.1 January 2004<br>RasMol 2.7.3 February 2005<BR>
 RasMol 2.7.3.1 Apr 06<br>RasMol 2.7.4 November 2007<br>
 RasMol 2.7.4.1 January 2008<br>
 RasMol 2.7.4.2 March 2008<br>
-<td valign="top">&#169 Herbert J. Bernstein 1998-2008
+RasMol 2.7.5 June 2009
+RasMol 2.7.5.1 July 2009
+<td valign="top">&#169 Herbert J. Bernstein 1998-2009
 </table>
 </CENTER>
 <P>
- RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,
- and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
- grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
- Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department
- of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,
- N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol
- 2.7.4 supported in part by grant 1R15GM078077-01 from the National
- Institute of General Medical Sciences (NIGMS). The content is solely
- the responsibility of the authors and does not necessarily represent
- the official views of the funding organizations.
+RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev
+and L. Andrews (via the neartree package).  Work on RasMol 2.7.5
+supported in part by grant 1R15GM078077-01 from the National Institute
+of General Medical Sciences (NIGMS), U.S. National Institutes of Health
+and by grant ER63601-1021466-0009501 from the Office of Biological &amp;
+Environmental Research (BER), Office of Science, U. S. Department of
+Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,
+N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol
+2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and
+grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates
+changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work
+on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281
+and EF-0312612 from the U.S. National Science Foundation and grant
+DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility
+of the authors and does not necessarily represent the official views of
+the funding organizations.
 <P>
- The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
- Teemu Ikonen.
+The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
+Teemu Ikonen.
 <P>
 <CENTER>
 and Incorporating Translations by
@@ -152,7 +160,7 @@ Bernstein + Sons, P.O. Box 177, Bellport, NY, USA<BR>
 yaya&#64;bernstein-plus-sons&#46;com
 </noscript>
 <BR>
-Copyright &#169; Herbert J. Bernstein 1998-2008<BR>
+Copyright &#169; Herbert J. Bernstein 1998-2009<BR>
 </CENTER>
 <P>
 The original RasMol manual was created by Roger Sayle.  In July 1996,
@@ -171,7 +179,7 @@ version 2.7.1.1, April 2001 for RasMol version 2.7.2.1 and
 February 2005 for RasMol version 2.7.3 and November 2007,
 January 2008 and March 2008 for RasMol version 2.7.4.
 <p>
-<CENTER>Documentation Last Updated 12 November 2007<br>
+<CENTER>Documentation Last Updated 17 July 2009<br>
 Edited by Herbert J. Bernstein and Frances C. Bernstein
 </CENTER>
 
@@ -207,7 +215,9 @@ THIS IS A PRELIMINARY RELEASE INVOLVING EXTENSIVE MODIFICATIONS<BR>
 <HR>
 <H2 ALIGN=CENTER>IMPORTANT</H2>
 <P>
-This version is based directly on RasMol version 2.7.4,
+This version is based directly on RasMol version 2.7.4.2,
+on RasMol version 2.7.4.1,
+on RasMol version 2.7.4,
 on RasMol version 2.7.3.1,
 on RasMol vesion 2.7.3, on RasMol version 2.7.2.1.1,
 on RasMol version 2.7.2, on RasMol version 2.7.1, on RasMol
@@ -254,55 +264,59 @@ license terms (GPL or RASLIC).
 <td><a href="#connect">Connect</a>
 <td><a href="#spacefill">CPK</a>
 <td><a href="#cpknew">CPKnew</a>
+<td><a href="#defer">Defer</a>
 <td><a href="#define">Define</a>
 <td><a href="#depth">Depth</a>
-<td><a href="#dots">Dots</a>
-<tr><td><a href="#echo">Echo</a>
+<tr><td><a href="#dots">Dots</a>
+<td><a href="#echo">Echo</a>
 <td><a href="#english">English</a>
+<td><a href="#execute">Execute</a>
 <td><a href="#quit">Exit</a>
 <td><a href="#french">French</a>
 <td><a href="#hbonds">HBonds</a>
 <td><a href="#help">Help</a>
-<td><a href="#italian">Italian</a>
+<tr><td><a href="#italian">Italian</a>
 <td><a href="#japanese">Japanese</a>
-<tr><td><a href="#label">Label</a>
+<td><a href="#label">Label</a>
 <td><a href="#load">Load</a>
 <td><a href="#map">Map</a>
 <td><a href="#molecule">Molecule</a>
 <td><a href="#monitor">Monitor</a>
 <td><a href="#notoggle">NoToggle</a>
-<td><a href="#pause">Pause</a>
+<tr><td><a href="#pause">Pause</a>
+<td><a href="#play">Play</a>
 <td><a href="#print">Print</a>
-<tr><td><a href="#quit">Quit</a>
+<td><a href="#quit">Quit</a>
+<td><a href="#record">Record</a>
 <td><a href="#refresh">Refresh</a>
 <td><a href="#renumber">Renumber</a>
 <td><a href="#reset">Reset</a>
-<td><a href="#restrict">Restrict</a>
+<tr><td><a href="#restrict">Restrict</a>
 <td><a href="#ribbons">Ribbons</a>
 <td><a href="#rotate">Rotate</a>
 <td><a href="#save">Save</a>
-<tr><td><a href="#script">Script</a>
+<td><a href="#script">Script</a>
 <td><a href="#select">Select</a>
 <td><a href="#set">Set</a>
 <td><a href="#show">Show</a>
-<td><a href="#slab">Slab</a>
+<tr><td><a href="#slab">Slab</a>
 <td><a href="#script">Source</a>
 <td><a href="#spacefill">Spacefill</a>
 <td><a href="#spanish">Spanish</a>
-<tr><td><a href="#ssbonds">SSBonds</a>
+<td><a href="#ssbonds">SSBonds</a>
 <td><a href="#star">Star</a>
 <td><a href="#stereo">Stereo</a>
 <td><a href="#strands">Strands</a>
-<td><a href="#structure">Structure</a>
+<tr><td><a href="#structure">Structure</a>
 <td><a href="#surface">Surface</a>
 <td><a href="#trace">Trace</a>
 <td><a href="#translate">Translate</a>
-<tr><td><a href="#unbond">UnBond</a>
+<td><a href="#unbond">UnBond</a>
 <td><a href="#wireframe">Wireframe</a>
 <td><a href="#write">Write</a>
 <td><a href="#zap">Zap</a>
-<td><a href="#zoom">Zoom</a>
-<td colspan=1>
+<tr><td><a href="#zoom">Zoom</a>
+<td colspan=7>
 </table>
 </center>
 <li><a href="#chsetopt">Internal Parameters</a>
@@ -328,21 +342,23 @@ license terms (GPL or RASLIC).
 <TD><a href="#setmonitor">Monitor</a>
 <TD><a href="#setmouse">Mouse</a>
 <TD><a href="#setpicking">Picking</a>
+<TD><a href="#setplay">Play...</a>
 <TD><a href="#setradius">Radius</a>
-<TD><a href="#setshadepower">ShadePower</a>
+<TD><a href="#setrecord">Record...</a>
+<TR><TD><a href="#setshadepower">ShadePower</a>
 <TD><a href="#setshadow">Shadow</a>
-<TR><TD><a href="#setslabmode">SlabMode</a>
+<TD><a href="#setslabmode">SlabMode</a>
 <TD><a href="#setsolvent">Solvent</a>
 <TD><a href="#setspecular">Specular</a>
 <TD><a href="#setspecpower">SpecPower</a>
 <TD><a href="#setstereo">Stereo</a>
 <TD><a href="#setssbonds">SSBonds</a>
-<TD><a href="#setstrands">Strands</a>
+<TR><TD><a href="#setstrands">Strands</a>
 <TD><a href="#settransparent">Transparent</a>
-<TR><TD><a href="#setunitcell">UnitCell</a>
+<TD><a href="#setunitcell">UnitCell</a>
 <TD><a href="#setvectps">VectPS</a>
 <TD><a href="#setwrite">Write</a>
-<TD CELLSPAN=5>
+<TD CELLSPAN=3>
 </table></center>
 <li><a href="#chexprs">Atom Expressions</a>
 <li><a href="#predefinedsets">Predefined Sets</a>
@@ -357,8 +373,9 @@ license terms (GPL or RASLIC).
 <BR>Versions 2.5-ucb and 2.6-ucb Mods Copyright &#169;
 UC Regents/ModularCHEM Consortium 1995, 1996
 <BR>RasTop 1.3 Copyright &#169; Philippe Valadon 2000
-<BR>Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1, 2.7.4.2 Mods
-Copyright &#169; Herbert J. Bernstein 1998-2008
+<BR>Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1,
+2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1, 2.7.4.2, 2.7.5, 2.7.5.1 Mods
+Copyright &#169; Herbert J. Bernstein 1998-2009
 <BR><address><a href="mailto:rasmol@rasmol.org">rasmol@rasmol.org</a></address>
 <p>
 All rights reserved. Use of copyright notice does not imply publication or
@@ -411,14 +428,15 @@ or an earlier version, type the RasMol command
 <p><hr>
 <a name="chcopying"><h2>Copying</h2></a>
 <p>
-This version is based directly on RasMol version 2.7.4.
+This version is based directly on RasMol version 2.7.4.2,
+on RasMol verion 2.7.4.2, on RasMol version 2.7.4,
 on RasMol version 2.7.3.1, on RasMol version 2.7.3,
 on RasMol version 2.7.2.1.1, Rasmol version 2.7.2, RasMol
 version 2.7.1.1 and RasTop version 1.3 and indirectly on
 the RasMol 2.5-ucb and 2.6-ucb versions and version
 2.6_CIF.2, RasMol 2.6x1 and RasMol_2.6.4.
 <p>
-RasMol 2.7.4.2 may be distributed under the terms of the GNU
+RasMol 2.7.5 may be distributed under the terms of the GNU
 General Public License (the GPL), see
 <p>
           http://www.gnu.org/licenses/gpl.txt
@@ -426,7 +444,7 @@ General Public License (the GPL), see
 or the file GPL or type the command
 '<a href="#GPL"><tt><b>help GPL</b></tt></a>'
 <p>
-or RasMol 2.7.4.2 may be distributed under the RASMOL license.
+or RasMol 2.7.5 may be distributed under the RASMOL license.
 See the file NOTICE
 or type the command
 '<a href="#RASLIC"><tt><b>help RASLIC</b></tt></a>'
@@ -1649,54 +1667,59 @@ The commands/keywords currently recognised by RasMol are given below.
 <td><a href="#connect">Connect</a>
 <td><a href="#spacefill">CPK</a>
 <td><a href="#cpknew">CPKnew</a>
+<td><a href="#defer">Defer</a>
 <td><a href="#define">Define</a>
 <td><a href="#depth">Depth</a>
-<td><a href="#dots">Dots</a>
-<tr><td><a href="#echo">Echo</a>
+<tr><td><a href="#dots">Dots</a>
+<td><a href="#echo">Echo</a>
 <td><a href="#english">English</a>
+<td><a href="#execute">Execute</a>
 <td><a href="#quit">Exit</a>
 <td><a href="#french">French</a>
 <td><a href="#hbonds">HBonds</a>
 <td><a href="#help">Help</a>
-<td><a href="#italian">Italian</a>
-<td><a href="#Japanese">Japanese</a>
-<tr><td><a href="#label">Label</a>
+<tr><td><a href="#italian">Italian</a>
+<td><a href="#japanese">Japanese</a>
+<td><a href="#label">Label</a>
 <td><a href="#load">Load</a>
 <td><a href="#map">Map</a>
 <td><a href="#molecule">Molecule</a>
 <td><a href="#monitor">Monitor</a>
 <td><a href="#notoggle">NoToggle</a>
-<td><a href="#pause">Pause</a>
+<tr><td><a href="#pause">Pause</a>
+<td><a href="#play">Play</a>
 <td><a href="#print">Print</a>
-<tr><td><a href="#quit">Quit</a>
+<td><a href="#quit">Quit</a>
+<td><a href="#record">Record</a>
 <td><a href="#refresh">Refresh</a>
 <td><a href="#renumber">Renumber</a>
 <td><a href="#reset">Reset</a>
-<td><a href="#restrict">Restrict</a>
+<tr><td><a href="#restrict">Restrict</a>
 <td><a href="#ribbons">Ribbons</a>
 <td><a href="#rotate">Rotate</a>
 <td><a href="#save">Save</a>
-<tr><td><a href="#script">Script</a>
+<td><a href="#script">Script</a>
 <td><a href="#select">Select</a>
 <td><a href="#set">Set</a>
 <td><a href="#show">Show</a>
-<td><a href="#slab">Slab</a>
+<tr><td><a href="#slab">Slab</a>
 <td><a href="#script">Source</a>
 <td><a href="#spacefill">Spacefill</a>
 <td><a href="#spanish">Spanish</a>
-<tr><td><a href="#ssbonds">SSBonds</a>
+<td><a href="#ssbonds">SSBonds</a>
 <td><a href="#star">Star</a>
 <td><a href="#stereo">Stereo</a>
 <td><a href="#strands">Strands</a>
-<td><a href="#structure">Structure</a>
+<tr><td><a href="#structure">Structure</a>
 <td><a href="#surface">Surface</a>
 <td><a href="#trace">Trace</a>
 <td><a href="#translate">Translate</a>
-<tr><td><a href="#unbond">UnBond</a>
+<td><a href="#unbond">UnBond</a>
 <td><a href="#wireframe">Wireframe</a>
 <td><a href="#write">Write</a>
 <td><a href="#zap">Zap</a>
-<td><a href="#zoom">Zoom</a>
+<tr><td><a href="#zoom">Zoom</a>
+<td colspan=7>
 </table>
 </center><hr>
 <a name="backbone"><h3>Backbone</h3></a><p>
@@ -1936,7 +1959,8 @@ Allowed objects are
 '<a href="#ribbons"><tt><b>ribbons</b></tt></a>',
 '<a href="#label"><tt><b>labels</b></tt></a>',
 '<a href="#dots"><tt><b>dots</b></tt></a>',
-'<a href="#hbonds"><tt><b>hbonds</b></tt></a>'
+'<a href="#hbonds"><tt><b>hbonds</b></tt></a>',
+'<a href="#map"><tt><b>map</b></tt></a>',
 and
 '<a href="#ssbonds"><tt><b>ssbonds</b></tt></a>'.
 If no object is specified, the default keyword
@@ -1967,6 +1991,7 @@ and dot surfaces can also be coloured by
 '<a href="#potentialcolours"><tt><b>electrostatic potential</b></tt></a>'.
 For more information type
 '<a href="#chcolours"><tt><b>help colour &lt;colour&gt;</b></tt></a>'.
+Map objects may be coloured by specific color of by nearest atom.
 <p><hr>
 <a name="colourmode"><h3>ColourMode</h3></a><p>
 <pre>
@@ -2006,6 +2031,25 @@ faster implementation. This is the method used to determine bonding,
 if necessary, when a molecule is first read in using the
 '<a href="#load"><tt><b>load</b></tt></a>'
 command.
+<p><hr>
+<a name="defer"><h3>Defer</h3></a><p>
+<pre>
+Syntax:  defer &lt;name&gt; &lt;command to defer&gt;
+</pre><p>
+The RasMol
+'<tt><b>defer</b></tt>'
+command adds the command given to the macro with given name,
+if no name is given, the command is added to the macro with a
+blank name. The command
+'<tt><b>zap</b></tt>'
+is a special case. In that case the macro is erased. If no name is
+given the command must begin with a selection, e.g.
+&quot;<tt><b>defer (selection).spacefill</b></tt>&quot;
+<p>
+The defered command accumulated under the given name can be executed
+using the
+'<a href="#execute"><tt><b>execute</b></tt></a>'
+command
 <p><hr>
 <a name="define"><h3>Define</h3></a><p>
 <pre>
@@ -2102,6 +2146,29 @@ and
 may be used to select Bulgarian, Chinese, English, French,
 Italian, Japanese, Russian and Spanish menus and messages if the
 appropriate fonts have been installed.
+<p><hr>
+<a name="execute"><h3>Execute</h3></a><p>
+<pre>
+Syntax:  execute &lt;name&gt;
+</pre><p>
+The RasMol
+'<tt><b>execute</b></tt>'
+command:
+<p>
+1.  saves the old poise of the molecule (translation,
+rotation and zoom)
+<p>
+2. executes the specified macro suppressing both screen
+updates and recording
+<p>
+3. animates motion of the newly rendered molecule linearly
+<p>
+'<a href="#defer"><tt><b>defer</b></tt></a>'
+command.
+<p>
+The animation of the motion depends on the prior settings of the
+'<a href="#record"><tt><b>record</b></tt></a>'
+command.
 <p><hr>
 <a name="french"><h3>French</h3></a><p>
 <pre>
@@ -2348,6 +2415,8 @@ as available memory permits.  Maps may be read from
 files or generated from Gaussian density distributions
 around atoms.
 <p>
+'<a href="#mapcolour"><tt><b>map colour</b></tt></a>',
+to colour a map according to a given colour scheme,
 '<a href="#mapgenerate"><tt><b>map generate</b></tt></a>',
 to generate a map from selected atoms based on pseudo-Gaussians,
 '<a href="#maplevel"><tt><b>map level</b></tt></a>',
@@ -2386,11 +2455,25 @@ commands is modified by the
 command which limits the portion of the display space
 that can be considered for display of maps.
 <p><hr>
+<a name="mapcolour"><h3>Map colour</h3></a><p>
+<pre>
+Syntax:  map {&lt;map_selector&gt;} colour &lt;colour_scheme&gt;
+
+</pre><p>
+The RasMol
+'<tt><b>map colour</b></tt>'
+command colours the selected maps according to the specified
+colour scheme.  The colour scheme may be a colour name or
+and RBG triple in brackets, or the keyword
+'<tt><b>atom</b></tt>'
+to cause the map points to be coloured by the color of the
+nearest atom.
+<p><hr>
 <a name="mapgenerate"><h3>Map generate</h3></a><p>
 <pre>
-Syntax:  map {&lt;map_selector&gt;} generate dots
-         map {&lt;map_selector&gt;} generate mesh
-         map {&lt;map_selector&gt;} generate surface
+Syntax:  map {&lt;map_selector&gt;} generate {LRsurf} dots
+         map {&lt;map_selector&gt;} generate {LRsurf} mesh
+         map {&lt;map_selector&gt;} generate {LRsurf} surface
 
 </pre><p>
 The RasMol
@@ -2402,7 +2485,8 @@ The height of each Gaussian is determined by the setting of the
 command.
 In the default of map scale true, each Gaussian has a height proportional
 element type of the atom.
-If map scale false has been executed, each Gaussian is scaled so that
+If the optional 'LRSurf' parameter is given or if map scale false
+has been executed, each Gaussian is scaled so that
 the Gaussian contour level 1 is at the van der Waals radius.
 In either case a standard deviation determined by the
 most recently specified spread or resolution is used.  If a non-zero spread has been
@@ -2565,7 +2649,7 @@ most recently specified spread or resolution is used.
 <p><hr>
 <a name="mapselect"><h3>Map select</h3></a><p>
 <pre>
-Syntax:  map {&lt;map_selector&gt;} select
+Syntax:  map {&lt;map_selector&gt;} select {atom {within} {add} {search_radius}}
 
 </pre><p>
 The RasMol
@@ -2575,6 +2659,20 @@ subsequent map commands.  This is similar to the
 '<a href="#maprestrict"><tt><b>map restrict</b></tt></a>'
 command, but does not disable the display of the
 maps that were not selected.
+<p>
+If the optional
+'<tt><b>atom</b></tt>'
+parameter is given, the command selects the atoms with centres closest to the
+map points.  The radius of the search may be specified by the parameter
+'<tt><b>search_radius</b></tt>'.
+The default is to look for atoms within 4 &Aring;ngstroms plus the probe radius.
+If the optional
+'<tt><b>within</b></tt>'
+parameter is given, the new selection is taken from within the currently
+selected atoms.  If the options
+'<tt><b>add</b></tt>'
+parameter is given, the new selection is added to the currently selected atoms.
+The default is to search within all atoms.
 <p><hr>
 <a name="mapshow"><h3>Map show</h3></a><p>
 <pre>
@@ -2748,6 +2846,30 @@ The command
 disables picking, which avoids the display of spurious messages
 whilst a script is suspended at a pause.
 <p><hr>
+<a name="play"><h3>Play</h3></a><p>
+<pre>
+Syntax:  play {from <time>} {until <time>} {{on|off|eject} {<type>} <medium>}
+</pre><p>
+The RasMol
+'<tt><b>play</b></tt>'
+command specifies the recording medium from which to play back a movie.
+The playback frame start time is given in seconds to millisecond precision.
+Since we are working on computers, the medium is specified as a set of files,
+each marked with the playback frame start time in milliseconds as part of the
+name. The place in the name at which to look for the playback frame start
+time in milliseconds is marked by the characters &quot;ssssss&quot; with an
+appropriate number of digits.  RasMol accepts either upper or lower case
+s's or decimal digits to mark the place for the time.  The play off and play
+eject commands effectively remove the specified medium from use. If no medium
+is specified, play off suspends playing and play on resumes playing.
+Normally play starts immediately and runs to the end of the medium. However,
+if play off and/or or some combination of play from and play until is entered
+before
+&quot;<tt><b>play type medium</b></tt>&quot;,
+those settings will be used.
+<p>
+As of release 2.7.5, RasMol support play from scripts and data files.
+<p><hr>
 <a name="print"><h3>Print</h3></a><p>
 <pre>
 Syntax:  print
@@ -2782,6 +2904,50 @@ are synonymous, except within nested scripts.  In that case,
 terminates only the current level, while
 '<tt><b>quit</b></tt>'
 terminates all nested levels of scripts.
+<p><hr>
+<a name="record"><h3>Record</h3></a><p>
+<pre>
+Syntax:  record {from <time>} {until <time>} {{on|off} {<type>} <medium>}
+         record {mouse|motion|appearance} {on|off}
+</pre><p>
+The RasMol
+'<tt><b>record</b></tt>'
+command specifies the recording medium to hold the movie. Since we are
+working on computers, the medium is specified as a template for a set of
+files, each marked with the playback frame start time in milliseconds
+(rather than as seconds to avoid embedding a decimal point) as part of
+the name. The place in the name to be replaced with the playback frame
+start time in milliseconds is marked by the characters &quot;ssssss&quot; with
+an appropriate number of digits. RasMol accepts either upper or lower case
+s's or decimal digits to mark the place for the time.  The record off
+commands remove the specified medium from use. If no medium is specified,
+record off suspends recording and record on resumes recording with the
+next available time on the same medium. The screen is the default medium
+and is, by default, on. Writing to disk must be explicitly specified so
+that the disk does not get filled up unintentionally. The type of a
+recording medium may be an image type such as gif, pict or png to record
+the actual screen images or script to record the RasMol commands used to
+generate the frames.
+<p>
+Normally recording starts at playback frame start time 0 seconds.
+A non-zero starting time in seconds can be specified with the
+&quot;<tt><b>record from</b></tt>&quot;
+command as in
+&quot;<tt><b>record from 25</b></tt>&quot;
+or
+&quot;<tt><b>record from 37.25</b></tt>&quot;
+to help in organizing scenes of movies to be assembled later in an
+appropriate order.
+The
+&quot;<tt><b>record until</b></tt>&quot;
+command allows an upper limit to be set on recording time in seconds.
+The default is to have no limit. Issuing the commands
+<p>
+'<tt><b>record from 600</b></tt>'
+<p>
+'<tt><b>record until 1800</b></tt>'
+<p>
+would result in a 20 minute movie segment intended to start 10
 <p><hr>
 <a name="refresh"><h3>Refresh</h3></a><p>
 <pre>
@@ -3051,21 +3217,23 @@ valid parameter names is given below.
 <TD><a href="#setmonitor">Monitor</a>
 <TD><a href="#setmouse">Mouse</a>
 <TD><a href="#setpicking">Picking</a>
+<TD><a href="#setplay">Play...</a>
 <TD><a href="#setradius">Radius</a>
-<TD><a href="#setshadepower">ShadePower</a>
+<TD><a href="#setrecord">Record...</a>
+<TR><TD><a href="#setshadepower">ShadePower</a>
 <TD><a href="#setshadow">Shadow</a>
-<TR><TD><a href="#setslabmode">SlabMode</a>
+<TD><a href="#setslabmode">SlabMode</a>
 <TD><a href="#setsolvent">Solvent</a>
 <TD><a href="#setspecular">Specular</a>
 <TD><a href="#setspecpower">SpecPower</a>
 <TD><a href="#setstereo">Stereo</a>
 <TD><a href="#setssbonds">SSBonds</a>
-<TD><a href="#setstrands">Strands</a>
+<TR><TD><a href="#setstrands">Strands</a>
 <TD><a href="#settransparent">Transparent</a>
-<TR><TD><a href="#setunitcell">UnitCell</a>
+<TD><a href="#setunitcell">UnitCell</a>
 <TD><a href="#setvectps">VectPS</a>
 <TD><a href="#setwrite">Write</a>
-<TD CELLSPAN=5>
+<TD CELLSPAN=3>
 </table></center>
 <p><hr>
 <a name="show"><h3>Show</h3></a><p>
@@ -3652,21 +3820,23 @@ A complete list of internal parameter names is given below.
 <TD><a href="#setmonitor">Monitor</a>
 <TD><a href="#setmouse">Mouse</a>
 <TD><a href="#setpicking">Picking</a>
+<TD><a href="#setplay">Play...</a>
 <TD><a href="#setradius">Radius</a>
-<TD><a href="#setshadepower">ShadePower</a>
+<TD><a href="#setrecord">Record...</a>
+<TR><TD><a href="#setshadepower">ShadePower</a>
 <TD><a href="#setshadow">Shadow</a>
-<TR><TD><a href="#setslabmode">SlabMode</a>
+<TD><a href="#setslabmode">SlabMode</a>
 <TD><a href="#setsolvent">Solvent</a>
 <TD><a href="#setspecular">Specular</a>
 <TD><a href="#setspecpower">SpecPower</a>
 <TD><a href="#setstereo">Stereo</a>
 <TD><a href="#setssbonds">SSBonds</a>
-<TD><a href="#setstrands">Strands</a>
+<TR><TD><a href="#setstrands">Strands</a>
 <TD><a href="#settransparent">Transparent</a>
-<TR><TD><a href="#setunitcell">UnitCell</a>
+<TD><a href="#setunitcell">UnitCell</a>
 <TD><a href="#setvectps">VectPS</a>
 <TD><a href="#setwrite">Write</a>
-<TD CELLSPAN=5>
+<TD CELLSPAN=3>
 </table></center>
 <p><hr>
 <a name="setambient"><h3>Set Ambient</h3></a><p>
@@ -4213,6 +4383,19 @@ When the
 command is given, picking any atom will cause selection
 of all atoms which agree in chain identifier with the picked atom.
 <p><hr>
+<a name="setplay"><h3>Set Play</h3></a><p>
+<pre>
+Syntax:  set play.fps {&lt;value&gt;}
+</pre><p>
+The RasMol
+'<tt><b>set play.fps</b></tt>'
+command gives the number of frames per second for playback by the
+'<a href="#play"><tt><b>play</b></tt></a>'
+command (default 24 frames per second).
+<p>
+In the current release of RasMol, the play timing is not controlled
+by this parameter.
+<p><hr>
 <a name="setradius"><h3>Set Radius</h3></a><p>
 <pre>
 Syntax:  set radius {&lt;value&gt;}
@@ -4251,6 +4434,28 @@ and changing
 resets
 '<tt><b>radius</b></tt>'
 to its new default value.
+<p><hr>
+<a name="setrecord"><h3>Set Record</h3></a><p>
+<pre>
+Syntax:  set record.aps {&lt;value&gt;}
+         set record.fps {&lt;value&gt;}
+Syntax:  set record.dwell {&lt;value&gt;}
+</pre><p>
+The RasMol
+'<tt><b>set record.aps</b></tt>'
+gives the maximum on-screen velocity in &Aring;ngstroms per second in animating
+translations, rotations and zooms (default 10 A/second).
+<p>
+The RasMol
+'<tt><b>set record.aps</b></tt>'
+command gives number of frames per second for recording by the
+'<a href="#record"><tt><b>record</b></tt></a>'
+command (default 24 frames per second).
+<p>
+The RasMol
+'<tt><b>set record.dwell</b></tt>'
+command sets the time in seconds to dwell on a change in appearance
+(default .5 sec).
 <p><hr>
 <a name="setshadepower"><h3>Set ShadePower</h3></a><p>
 <pre>
@@ -7058,7 +7263,7 @@ Sciences, Vol. 31, 326-333, 1991.
 <br />
 </CENTER>
 <HR>
-Updated 18 March 2008.<BR>
+Updated 17 April 2009.<BR>
 Herbert J. Bernstein<BR>
 Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA<BR>
 <script language="javascript" type="text/javascript">

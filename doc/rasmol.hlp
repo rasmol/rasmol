@@ -1,4 +1,4 @@
-RasMol 2.7.4 is a molecular graphics program intended for the visualisation 
+RasMol 2.7.5 is a molecular graphics program intended for the visualisation 
 of proteins, nucleic acids and small molecules, based on Roger Sayles' 
 RasMol_2.6. The program is aimed at display, teaching and generation of 
 publication quality images. RasMol runs on Microsoft Windows, Apple 
@@ -22,8 +22,9 @@ Versions 2.5-ucb and 2.6-ucb Mods Copyright (C)
 UC Regents/ModularCHEM Consortium 1995, 1996
 RasTop 1.3 Copyright (C) Philippe Valadon 2000
 Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1,
-2.7.2.1.1, 2.7.3, 2.7.4, 2.7.4.1, 2.7.4.2 Mods
-Copyright (C) Herbert J. Bernstein 1998-2008
+2.7.2.1.1, 2.7.3, 2.7.4, 2.7.4.1, 2.7.4.2
+2.7.5, 2.7.5.1 Mods
+Copyright (C) Herbert J. Bernstein 1998-2009
 rasmol@bernstein-plus-sons.com
 
 
@@ -61,9 +62,9 @@ version, type the RasMol command 'help oldnotice'.
 
 ?copyright
 Copyright
-                               RasMol 2.7.4.2
+                               RasMol 2.7.5
                      Molecular Graphics Visualisation Tool
-                    19 November 2007 (rev. 17 March 2008)
+                       13 June 2009 (rev. 17 July 2009)
 
                       Based on RasMol 2.6 by Roger Sayle
        Biomolecular Structures Group,Glaxo Wellcome Research & Development
@@ -92,20 +93,28 @@ Copyright
                     RasMol 2.7.4     Nov 07
                     RasMol 2.7.4.1   Jan 08
                     RasMol 2.7.4.2   Mar 08
+                    RasMol 2.7.5     Jun 09
+                    RasMol 2.7.5.1   Jul 09
 
- RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,
- and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
- grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
- Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department
- of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,
- N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol
- 2.7.4 supported in part by grant 1R15GM078077-01 from the National
- Institute of General Medical Sciences (NGMS). The content is solely
- the responsibility of the authors and does not necessarily represent
- the official views of the funding organizations.
+ RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev
+ and L. Andrews (via the neartree package).  Work on RasMol 2.7.5
+ supported in part by grant 1R15GM078077-01 from the National Institute
+ of General Medical Sciences (NIGMS), U.S. National Institutes of Health
+ and by grant ER63601-1021466-0009501 from the Office of Biological &
+ Environmental Research (BER), Office of Science, U. S. Department of
+ Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,
+ N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol
+ 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and
+ grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates
+ changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work
+ on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281
+ and EF-0312612 from the U.S. National Science Foundation and grant
+ DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility
+ of the authors and does not necessarily represent the official views of
+ the funding organizations.
 
-  The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
-  Teemu Ikonen.
+ The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
+ Teemu Ikonen.
 
                      and Incorporating Translations by
 
@@ -130,24 +139,24 @@ Copyright
                               This Release by
    Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA
                         yaya@bernstein-plus-sons.com
-                Copyright (C) Herbert J. Bernstein 1998-2008
+                Copyright (C) Herbert J. Bernstein 1998-2009
 ?copying
 
 
-This version is based directly on RasMol version 2.7.4. on RasMol version 
-2.7.3.1, on RasMol version 2.7.3, on RasMol version 2.7.2.1.1, Rasmol 
-version 2.7.2, RasMol version 2.7.1.1 and RasTop version 1.3 and indirectly 
-on the RasMol 2.5-ucb and 2.6-ucb versions and version 2.6_CIF.2, RasMol 
-2.6x1 and RasMol_2.6.4. 
+This version is based directly on RasMol version 2.7.4.2, on RasMol verion 
+2.7.4.2, on RasMol version 2.7.4, on RasMol version 2.7.3.1, on RasMol 
+version 2.7.3, on RasMol version 2.7.2.1.1, Rasmol version 2.7.2, RasMol 
+version 2.7.1.1 and RasTop version 1.3 and indirectly on the RasMol 2.5-ucb 
+and 2.6-ucb versions and version 2.6_CIF.2, RasMol 2.6x1 and RasMol_2.6.4. 
 
-RasMol 2.7.4.2 may be distributed under the terms of the GNU General Public 
+RasMol 2.7.5 may be distributed under the terms of the GNU General Public 
 License (the GPL), see 
 
  http://www.gnu.org/licenses/gpl.txt 
 
 or the file GPL or type the command 'help GPL' 
 
-or RasMol 2.7.4.2 may be distributed under the RASMOL license. See the file 
+or RasMol 2.7.5 may be distributed under the RASMOL license. See the file 
 NOTICE or type the command 'help RASLIC' 
 
 ?gpl
@@ -756,8 +765,9 @@ Version 2.5-ucb, 2.6-ucb Mods
   Copyright (C) UC Regents/ModularCHEM Consortium 1995, 1996
 RasTop 1.3 Copyright (C) Philippe Valadon 2000
 Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1,
-        2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1, 2.7.4.2 Mods
-  Copyright (C) Herbert J. Bernstein 1998-2008
+        2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1, 2.7.4.2,
+        2.7.5, 2.7.5.1 Mods
+  Copyright (C) Herbert J. Bernstein 1998-2009
   (yaya@bernstein-plus-sons.com)
 
 
@@ -945,16 +955,17 @@ and Blue (RGB) components enclosed in square brackets. Typing the command
 recognised by RasMol. 
 
 Allowed objects are 'atoms', 'bonds', 'backbone', 'ribbons', 'labels', 
-'dots', 'hbonds' and 'ssbonds'. If no object is specified, the default 
-keyword 'atom' is assumed. Some colour schemes are defined for certain 
-object types. The colour scheme 'none' can be applied to all objects except 
-atoms and dots, stating that the selected objects have no colour of their 
-own, but use the colour of their associated atoms (i.e. the atoms they 
+'dots', 'hbonds', 'map', and 'ssbonds'. If no object is specified, the 
+default keyword 'atom' is assumed. Some colour schemes are defined for 
+certain object types. The colour scheme 'none' can be applied to all objects 
+except atoms and dots, stating that the selected objects have no colour of 
+their own, but use the colour of their associated atoms (i.e. the atoms they 
 connect). 'Atom' objects can also be coloured by 'alt', 'amino', 'chain', 
 'charge', 'cpk', 'group', 'model', 'shapely', 'structure', 'temperature' or 
 'user'. Hydrogen bonds can also be coloured by 'type' and dot surfaces can 
 also be coloured by 'electrostatic potential'. For more information type 
-'help colour <colour>'. 
+'help colour <colour>'. Map objects may be coloured by specific color of by 
+nearest atom. 
 
 ?colourmode
 ?colourmode
@@ -985,6 +996,19 @@ algorithm to use based on the number of atoms in the input file. Greater
 than 255 atoms causes RasMol to use the faster implementation. This is the 
 method used to determine bonding, if necessary, when a molecule is first 
 read in using the 'load' command. 
+
+?defer
+Defer
+Syntax:  defer <name> <command to defer>
+
+The RasMol 'defer' command adds the command given to the macro with given 
+name, if no name is given, the command is added to the macro with a blank 
+name. The command 'zap' is a special case. In that case the macro is erased. 
+If no name is given the command must begin with a selection, e.g. 'defer 
+(selection).spacefill' 
+
+The defered command accumulated under the given name can be executed using 
+the 'execute' command 
 
 ?define
 Define
@@ -1055,6 +1079,24 @@ installed. The commands 'Bulgarian', 'Chinese', 'English', 'French',
 'Italian', 'Russian' and 'Spanish' may be used to select Bulgarian, Chinese, 
 English, French, Italian, Japanese, Russian and Spanish menus and messages 
 if the appropriate fonts have been installed. 
+
+?execute
+Execute
+Syntax:  execute <name>
+
+The RasMol 'execute' command: 
+
+1. saves the old poise of the molecule (translation, rotation and zoom) 
+
+2. executes the specified macro suppressing both screen updates and 
+recording 
+
+3. animates motion of the newly rendered molecule linearly 
+
+'defer' command. 
+
+The animation of the motion depends on the prior settings of the 'record' 
+command. 
 
 ?french
 French
@@ -1182,9 +1224,13 @@ format), 'alchemy' (Tripos' Alchemy file format), 'mol2' (Tripos' Sybyl Mol2
 file format), 'charmm' (CHARMm file format), 'xyz' (MSC's XMol XYZ file 
 format), 'mopac' (J. P. Stewart's MOPAC file format) or 'cif' (IUCr CIF or 
 mmCIF file format). If no file format is specified, 'PDB', 'CIF', or 'mmCIF' 
-is assumed by default. Up to 5 molecules may be loaded at a time. To delete 
-a molecule prior to loading another use the RasMol 'zap' command. To select 
-a molecule for manipulation use the RasMol 'molecule <n>' command. 
+is assumed by default. Up to 20 molecules may be loaded at a time. If 
+CHEM_COMP ligand models are included in an mmCIF file, they will be loaded 
+as NMR models, first giving the all the NMR models for model coordinates if 
+specified and then giving all the NMR models for ideal model coordinates. 
+
+To delete a molecule prior to loading another use the RasMol 'zap' command. 
+To select a molecule for manipulation use the RasMol 'molecule <n>' command. 
 
 The 'load' command selects all the atoms in the molecule, centres it on the 
 screen and renders it as a CPK coloured wireframe model. If the molecule 
@@ -1209,40 +1255,63 @@ may not work on machines with limited memory. Each molecule may have as many
 maps as available memory permits. Maps may be read from files or generated 
 from Gaussian density distributions around atoms. 
 
-'map generate', to generate a map from selected atoms, 'map level', to set 
-the contouring level for selected maps, 'map load', to load a map from a 
-file, 'map mask' to designate a mask for the selected maps, 'map 
-resolution', to set the resolution for contouring selected maps, 'map 
-restrict', to select one or more maps and to disable all others, 'map save', 
-to save map information to a file, 'map select', to select one or more maps, 
-'map show', to display information about one or more maps or about the 
-parameters to be used in generating or loading the next map, 'map spacing', 
-to set the spacing betwen contour lines of selected maps, 'map spread', to 
-set the variance of the Gaussians for map generation as a fraction of the 
-atomic radius, and 'map zap' to delete previously generated or loaded maps. 
+'map colour', to colour a map according to a given colour scheme, 'map 
+generate', to generate a map from selected atoms based on pseudo-Gaussians, 
+'map level', to set the contouring level for selected maps, 'map load', to 
+load a map from a file, 'map mask' to designate a mask for the selected 
+maps, 'map resolution', to set the resolution for contouring selected maps, 
+'map restrict', to select one or more maps and to disable all others, 'map 
+save', to save map information to a file, 'map scale', 'control the scaling 
+of pseudo-Gaussians when generating maps', 'map select', to select one or 
+more maps, 'map show', to display information about one or more maps or 
+about the parameters to be used in generating or loading the next map, 'map 
+spacing', to set the spacing betwen contour lines of selected maps, 'map 
+spread', to set the variance of the Gaussians for map generation as a 
+fraction of the atomic radius, and 'map zap' to delete previously generated 
+or loaded maps. 
 
 The effect of 'map generate' and 'map load' commands is modified by the 'map 
 mask' command which limits the portion of the display space that can be 
 considered for display of maps. 
 
+?mapcolour
+?map colour
+Map colour
+Syntax:  map {<map_selector>} colour <colour_scheme>
+
+The RasMol 'map colour' command colours the selected maps according to the 
+specified colour scheme. The colour scheme may be a colour name or and RBG 
+triple in brackets, or the keyword 'atom' to cause the map points to be 
+coloured by the color of the nearest atom. 
+
 ?mapgenerate
 ?map generate
 Map generate
-Syntax:  map {<map_selector>} generate dots
-         map {<map_selector>} generate mesh
-         map {<map_selector>} generate surface
+Syntax:  map {<map_selector>} generate {LRsurf} dots
+         map {<map_selector>} generate {LRsurf} mesh
+         map {<map_selector>} generate {LRsurf} surface
 
 The RasMol 'map generate' command generates a map from whatever atoms are 
 currently selected, by summing electron densities approximated by Gaussian 
-distributions. Each Gaussian has a height proportional to the atomic number 
-of the element type of the atom and a standard deviation determined by the 
-most recently specified spread or resolution. If a spread has been given the 
-radius of the atom is multiplied by the spread to find the standard 
+distributions. The height of each Gaussian is determined by the setting of 
+the ' map scale' command. In the default of map scale true, each Gaussian 
+has a height proportional element type of the atom. If the optional 'LRSurf' 
+parameter is given or if map scale false has been executed, each Gaussian is 
+scaled so that the Gaussian contour level 1 is at the van der Waals radius. 
+In either case a standard deviation determined by the most recently 
+specified spread or resolution is used. If a non-zero spread has been given 
+the radius of the atom is multiplied by the spread to find the standard 
 deviation. The default is 2/3rds. If a resolution has been given, the spread 
-is inferred as 2/3rds of the resolution. For example, if the resolution is 
-given as 1., and the atom in question is a Carbon with a van der Waals 
-radius of 468 RasMol units (1.87 Angstroms), the inferred spead is .6667, 
-and the standard deviation of the Gaussian is taken as 1.25 Angstroms. 
+is inferred as 2/3rds of the resolution. 
+
+For example, if the resolution is given as 1., and the atom in question is a 
+Carbon with a van der Waals radius of 468 RasMol units (1.87 Angstroms), the 
+inferred spead is .6667, and the standard deviation of the Gaussian is taken 
+as 1.25 Angstroms. 
+
+If the spread has been set to zero, the spread for each atom is determined 
+from the van der Waals radius and the probe atom radius to simulate the 
+effect of a Lee-Richards surface. 
 
 If no specific map was given by the map selector, the new map is given the 
 next available map number. 
@@ -1351,14 +1420,34 @@ If no specific map was given by the map selector, the currently selected
 maps and their masks are written to the file, one map and mask pair per data 
 block. 
 
+?mapscale
+?map scale
+Map scale
+Syntax:  map {<map_selector>} scale <boolean>
+
+The RasMol 'map scale' command selects the scaling of pseudo-Gaussians in 
+the 'map generate' commands. In the default of map scale true, each Gaussian 
+has a height proportional element type of the atom. If map scale false has 
+been executed, each Gaussian is scaled so that the Gaussian contour level 1 
+is at the van der Waals radius. In either case a standard deviation 
+determined by the most recently specified spread or resolution is used. 
+
 ?mapselect
 ?map select
 Map select
-Syntax:  map {<map_selector>} select
+Syntax:  map {<map_selector>} select {atom {within} {add} {<search_radius>}}
 
 The RasMol 'map select' command selects particular maps to make them active 
 for subsequent map commands. This is similar to the 'map restrict' command, 
 but does not disable the display of the maps that were not selected. 
+
+If the optional 'atom' parameter is given, the command selects the atoms 
+with centres closest to the map points. The radius of the search may be 
+specified by the parameter 'search_radius'. The default is to look for atoms 
+within 4 Angstroms plus the probe radius. If the optional 'within' parameter 
+is given, the new selection is taken from within the currently selected 
+atoms. If the options 'add' parameter is given, the new selection is added 
+to the currently selected atoms. The default is to search within all atoms. 
 
 ?mapshow
 ?map show
@@ -1387,8 +1476,12 @@ Syntax:  map {<map_selector>} spread <number>
 
 The RasMol 'map spread' command specifies the reciprocal of the number of 
 standard deviations per radius to be used in generating maps as sums of 
-Gaussians centered on atomic positions. The default spead is one two thirds 
+Gaussians centered on atomic positions. The default spread is one two thirds 
 (i.e. each radius covers 1.5 standard deviations). 
+
+If the spread has been set to zero, the spread for each atom is determined 
+from the van der Waals radius and the probe atom radius to simulate the 
+effect of a Lee-Richards surface. 
 
 ?mapzap
 ?map zap
@@ -1468,6 +1561,27 @@ key is pressed, control returns to the script file at the line following the
 translated, scaled, slabbed and picked as usual, but all menu commands are 
 disabled. 
 
+?play
+Play
+Syntax:  play {from <time>} {until <time>} {{on|off|eject} {<type>} <medium>}
+
+The RasMol 'play' command specifies the recording medium from which to play 
+back a movie. The playback frame start time is given in seconds to 
+millisecond precision. Since we are working on computers, the medium is 
+specified as a set of files, each marked with the playback frame start time 
+in milliseconds as part of the name. The place in the name at which to look 
+for the playback frame start time in milliseconds is marked by the 
+characters "ssssss" with an appropriate number of digits. RasMol accepts 
+either upper or lower case s's or decimal digits to mark the place for the 
+time. The play off and play eject commands effectively remove the specified 
+medium from use. If no medium is specified, play off suspends playing and 
+play on resumes playing. Normally play starts immediately and runs to the 
+end of the medium. However, if play off and/or or some combination of play 
+from and play until is entered before 'play type medium', those settings 
+will be used. 
+
+As of release 2.7.5, RasMol support play from scripts and data files. 
+
 ?print
 Print
 Syntax:  print
@@ -1493,6 +1607,40 @@ Exit from the RasMol program. The RasMol commands 'exit' and 'quit' are
 synonymous, except within nested scripts. In that case, 'exit' terminates 
 only the current level, while 'quit' terminates all nested levels of 
 scripts. 
+
+?record
+Record
+Syntax:  record {from <time>} {until <time>} {{on|off} {<type>} <medium>}
+         record {mouse|motion|appearance} {on|off}
+
+The RasMol 'record' command specifies the recording medium to hold the 
+movie. Since we are working on computers, the medium is specified as a 
+template for a set of files, each marked with the playback frame start time 
+in milliseconds (rather than as seconds to avoid embedding a decimal point) 
+as part of the name. The place in the name to be replaced with the playback 
+frame start time in milliseconds is marked by the characters "ssssss" with 
+an appropriate number of digits. RasMol accepts either upper or lower case 
+s's or decimal digits to mark the place for the time. The record off 
+commands remove the specified medium from use. If no medium is specified, 
+record off suspends recording and record on resumes recording with the next 
+available time on the same medium. The screen is the default medium and is, 
+by default, on. Writing to disk must be explicitly specified so that the 
+disk does not get filled up unintentionally. The type of a recording medium 
+may be an image type such as gif, pict or png to record the actual screen 
+images or script to record the RasMol commands used to generate the frames. 
+
+Normally recording starts at playback frame start time 0 seconds. A non-zero 
+starting time in seconds can be specified with the 'record from' command as 
+in 'record from 25' or 'record from 37.25' to help in organizing scenes of 
+movies to be assembled later in an appropriate order. The 'record until' 
+command allows an upper limit to be set on recording time in seconds. The 
+default is to have no limit. Issuing the commands 
+
+'record from 600' 
+
+'record until 1800' 
+
+would result in a 20 minute movie segment intended to start 10 
 
 ?refresh
 Refresh
@@ -2038,7 +2186,7 @@ A complete list of internal parameter names is given below. Type "help set
     cisangle        display         fontsize        fontstroke
     hbond           hetero          hourglass       hydrogen
     kinemage        menus           monitor         mouse
-    picking         radius          shadow          slabmode
+    record.dwell    record.fps      shadow          slabmode
     solvent         specular        specpower       stereo
     ssbonds         strands         transparent     unitcell
     vectps          write
@@ -2417,6 +2565,17 @@ atom, even if in different chains. When the 'set picking chain' command is
 given, picking any atom will cause selection of all atoms which agree in 
 chain identifier with the picked atom. 
 
+?setplay
+?set play
+Set Play
+Syntax:  set play.fps {<value>}
+
+The RasMol 'set play.fps' command gives the number of frames per second for 
+playback by the 'play' command (default 24 frames per second). 
+
+In the current release of RasMol, the play timing is not controlled by this 
+parameter. 
+
 ?radius
 ?set radius
 Set Radius
@@ -2432,6 +2591,24 @@ parameter determines the 'probe sphere' (solvent) radius. The parameter may
 be given as an integer in rasmol units or containing a decimal point in 
 Angstroms. The default value of this parameter is determined by the value of 
 'solvent' and changing 'solvent' resets 'radius' to its new default value. 
+
+?setrecord
+?set record
+Set Record
+Syntax:  set record.aps {<value>}
+         set record.fps {<value>}
+         set record.dwell {<value>}
+
+The RasMol 'set record.aps' gives the maximum on-screen velocity in 
+Angstroms per second in animating 
+translations, rotations and zooms (default 10 A/second).
+
+
+The RasMol 'set record.aps' command gives number of frames per second for 
+recording by the 'record' command (default 24 frames per second). 
+
+The RasMol 'set record.dwell' command sets the time in seconds to dwell on a 
+change in appearance (default .5 sec). 
 
 ?shadepower
 ?set shadepower

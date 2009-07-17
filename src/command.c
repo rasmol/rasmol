@@ -1031,36 +1031,36 @@ static int Append_Symbol_Definition(const char __far * string, const char __far 
 }
 
 static int Free_Symbol(const char __far * string) {
-
-  int clead;
-  Symbol __far * symbol;
-  Symbol __far * prevsymbol;
-  
-  clead = string[0];
-  clead &= 0xFF;
-  symbol = Defer_Symbols[clead];
-  prevsymbol = NULL;
-  while (symbol) {
-    if (!strcasecmp(string,symbol->string)) {
-      _ffree((void *)(symbol->definition));
-      _ffree((void *)(symbol->string));
-      symbol->string = NULL;
-      symbol->definition = NULL;
-      symbol->definition_size=0;
-      symbol->definition_capacity=0;
-      if (prevsymbol) {
-        prevsymbol->Symbol_Next = symbol->Symbol_Next;
-      } else {
-      	Defer_Symbols[clead] = symbol->Symbol_Next;
-      }
-      symbol->Symbol_Next = FreeSymbol;
-      FreeSymbol = symbol;
-      return 0;
+    
+    int clead;
+    Symbol __far * symbol;
+    Symbol __far * prevsymbol;
+    
+    clead = string[0];
+    clead &= 0xFF;
+    symbol = Defer_Symbols[clead];
+    prevsymbol = NULL;
+    while (symbol) {
+        if (!strcasecmp(string,symbol->string)) {
+            _ffree((void *)(symbol->definition));
+            _ffree((void *)(symbol->string));
+            symbol->string = NULL;
+            symbol->definition = NULL;
+            symbol->definition_size=0;
+            symbol->definition_capacity=0;
+            if (prevsymbol) {
+                prevsymbol->Symbol_Next = symbol->Symbol_Next;
+            } else {
+                Defer_Symbols[clead] = symbol->Symbol_Next;
+            }
+            symbol->Symbol_Next = FreeSymbol;
+            FreeSymbol = symbol;
+            return 0;
+        }
+        prevsymbol = symbol;
+        symbol = symbol->Symbol_Next;
     }
-    prevsymbol = symbol;
-    symbol = symbol->Symbol_Next;
-  }
-  return 1;
+    return 1;
 }
 
 static int Find_Symbol_Definition(const char __far * string, const char __far * __far * definition) {
@@ -1128,22 +1128,22 @@ void ExecuteDeferCommand( void ) {
 
 
 void ShowDeferCommand( void ) {
-   const char * definition;
-   FetchToken();
-      if( !CurToken ){
-      CommandError(MsgStrs[ErrSyntax]);
-      return;
-   }
-   if (!Find_Symbol_Definition(TokenIdent,&definition)) {
-   	WriteString((char *)definition);
-   } else {
-   	WriteString("'");
-   	WriteString(TokenIdent);
-   	WriteString(MsgStrs[StrNotFnd]);
-   	return;
-   }
+    const char * definition;
+    FetchToken();
+    if( !CurToken ){
+        CommandError(MsgStrs[ErrSyntax]);
+        return;
+    }
+    if (!Find_Symbol_Definition(TokenIdent,&definition)) {
+        WriteString((char *)definition);
+    } else {
+        WriteString("'");
+        WriteString(TokenIdent);
+        WriteString(MsgStrs[StrNotFnd]);
+        return;
+    }
     WriteString("\n=================\n");
-  return;
+    return;
 }
 
 void ExecuteExecuteCommand( void ) {
@@ -1170,14 +1170,14 @@ void ExecuteExecuteCommand( void ) {
         
         dialsave_old = (double *)_fmalloc(sizeof(double)*11*NumMolecules);
         if (!dialsave_old) {
-    	  RasMolFatalExit(MsgStrs[StrMalloc]);
+            RasMolFatalExit(MsgStrs[StrMalloc]);
         }
         save_molecule = MoleculeIndex;
         save_num_molecules = NumMolecules;
         
         for (im=0; im<NumMolecules; im++) {
-          SwitchMolecule(im);
-          memmove((char *)(dialsave_old+im*11),(char *)DialValue,11*sizeof(double));
+            SwitchMolecule(im);
+            memmove((char *)(dialsave_old+im*11),(char *)DialValue,11*sizeof(double));
         }
         SwitchMolecule(save_molecule);
         
@@ -1205,24 +1205,24 @@ void ExecuteExecuteCommand( void ) {
                     RasMolExit();
                 } else /* ExitTok */
                     break;
-		}
+                }
             } else CommandError(MsgStrs[StrSLong]);
         } while( ch );
         
         dialsave_new = (double *)_fmalloc(sizeof(double)*11*NumMolecules);
         if (!dialsave_new) {
-          _ffree(dialsave_old);
-    	  RasMolFatalExit(MsgStrs[StrMalloc]);
+            _ffree(dialsave_old);
+            RasMolFatalExit(MsgStrs[StrMalloc]);
         }
         save_molecule = MoleculeIndex;
-
+        
         for (im=0; im<NumMolecules; im++) {
-          SwitchMolecule(im);
-          memmove((char *)(dialsave_new+im*11),(char *)DialValue,11*sizeof(double));
-          if (im<save_num_molecules) 
-          {
-          	memmove((char *)DialValue,(char *)(dialsave_old+im*11),11*sizeof(double));
-          }
+            SwitchMolecule(im);
+            memmove((char *)(dialsave_new+im*11),(char *)DialValue,11*sizeof(double));
+            if (im<save_num_molecules) 
+            {
+                memmove((char *)DialValue,(char *)(dialsave_old+im*11),11*sizeof(double));
+            }
         }
         
         SwitchMolecule(save_molecule);
@@ -1236,10 +1236,10 @@ void ExecuteExecuteCommand( void ) {
         Interactive = save_Interactive;
         
         for (im=0; im<NumMolecules; im++) {
-          SwitchMolecule(im);
-          memmove((char *)DialValue,(char *)(dialsave_new+im*11),11*sizeof(double));
+            SwitchMolecule(im);
+            memmove((char *)DialValue,(char *)(dialsave_new+im*11),11*sizeof(double));
         }
-
+        
         SwitchMolecule(save_molecule);
         
         

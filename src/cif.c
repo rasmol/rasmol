@@ -350,9 +350,9 @@ extern "C" {
         
         freopen(NULL,"rb",file);
         cbf_failnez(cbf_read_widefile(handle,file, MSG_DIGEST));
-	
-  return 0;
-}
+        
+        return 0;
+    }
 
 
 
