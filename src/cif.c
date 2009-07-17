@@ -287,6 +287,10 @@ extern "C" {
 #include <unistd.h>
 #define C2CBUFSIZ 4096
 
+#if defined(IBMPC) || defined(VMS) || defined(APPLEMAC)
+#define NOMKSTEMP
+#endif
+    
     int cif_read_file (cbf_handle handle, FILE *stream) {
         char *ciftmp=NULL;
         int nbytes;
@@ -299,17 +303,12 @@ extern "C" {
         ciftmp = (char *)_fmalloc(strlen("/tmp/rsml275XXXXXX")+1);
         strcpy(ciftmp, "/tmp/rsml275XXXXXX");
 #ifdef NOMKSTEMP
-        if ((ciftmp = mktemp(ciftmp)) == NULL || (file = fopen(ciftmp,"wb+")) == NULL )
-        {   strcpy(ciftmp, "rsml275XXXXXX");
-            if ((ciftmp = mktemp(ciftmp)) == NULL || (file = fopen(ciftmp,"wb+")) == NULL) {
-                sprintf(buffer,"Can't create temporary file name %s.\n", ciftmp);
-                WriteString(buffer);
+        if ((file = tmpfile()) == NULL )
+        {       WriteString("Can't create temporary file \n");
                 sprintf(buffer,"%s\n",strerror(errno));
                 WriteString(buffer);
                 RasMolExit();
             }
-        }
-        unlink(ciftmp);
         _ffree(ciftmp);
 #else
         if ((ciftmpfd = mkstemp(ciftmp)) == -1 || (file = fdopen(ciftmpfd, "wb+")) == NULL) {
@@ -348,7 +347,7 @@ extern "C" {
             }
         }
         
-        freopen(NULL,"rb",file);
+        rewind(file);
         cbf_failnez(cbf_read_widefile(handle,file, MSG_DIGEST));
         
         return 0;

@@ -966,8 +966,8 @@ static int Append_Symbol_Definition(const char __far * string, const char __far 
     Symbol __far * symbol;
     Symbol __far * prevsymbol;
     
-    il = bylines?1:0;
     size_t xsize;
+    il = bylines?1:0;
     clead = string[0];
     clead &= 0xFF;
     symbol = Defer_Symbols[clead];
