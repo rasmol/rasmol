@@ -288,7 +288,7 @@ typedef struct _MenuItem {
         } MenuItem;
 
 
-static MenuItem FilMenu[11] = {
+static MenuItem FilMenu[21] = {
     { &MsgStrs[StrMOpen]   /* "Open..."   */,   0x11,  &MsgAuxl[StrMOpen],
         &MsgLens[StrMOpen],     NULL, 0     },
     { &MsgStrs[StrMSaveAs] /*" Save As..."*/,   0x11,  &MsgAuxl[StrMSaveAs],
@@ -310,7 +310,27 @@ static MenuItem FilMenu[11] = {
     { &(MolNStr[3]),                            0x01,  0, 
         &MolNLen[3],            &MoleculeIndex, 3 },  
     { &(MolNStr[4]),                            0x01,  0, 
-        &MolNLen[4],            &MoleculeIndex, 4 } };
+        &MolNLen[4],            &MoleculeIndex, 4 },
+    { &(MolNStr[5]),                            0x01,  0, 
+        &MolNLen[5],            &MoleculeIndex, 5 },  
+    { &(MolNStr[6]),                            0x01,  0, 
+        &MolNLen[6],            &MoleculeIndex, 6 },  
+    { &(MolNStr[7]),                            0x01,  0, 
+        &MolNLen[7],            &MoleculeIndex, 7 },  
+    { &(MolNStr[8]),                            0x01,  0, 
+        &MolNLen[8],            &MoleculeIndex, 8 },  
+    { &(MolNStr[9]),                            0x01,  0, 
+        &MolNLen[9],            &MoleculeIndex, 9 },
+    { &(MolNStr[10]),                            0x01,  0, 
+        &MolNLen[10],            &MoleculeIndex, 10 },  
+    { &(MolNStr[11]),                            0x01,  0, 
+        &MolNLen[11],            &MoleculeIndex, 11 },  
+    { &(MolNStr[12]),                            0x01,  0, 
+        &MolNLen[12],            &MoleculeIndex, 12 },  
+    { &(MolNStr[13]),                            0x01,  0, 
+        &MolNLen[13],            &MoleculeIndex, 13 },  
+    { &(MolNStr[14]),                            0x01,  0, 
+        &MolNLen[14],            &MoleculeIndex, 14 }};
 
 static MenuItem DisMenu[9] = {
     { &MsgStrs[StrMWirefr] /* "Wireframe"    */,     0x11,  &MsgAuxl[StrMWirefr],

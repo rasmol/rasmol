@@ -282,11 +282,74 @@ extern "C" {
 #include "cif.h"
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <unistd.h>
+#define C2CBUFSIZ 4096
 
-int cif_read_file (cbf_handle handle, FILE *stream) 
-{
-  cbf_failnez(cbf_read_buffered_file(handle,stream,
-	MSG_DIGEST|PARSE_WIDE,Recycle,Recycle?strlen(Recycle):0))
+    int cif_read_file (cbf_handle handle, FILE *stream) {
+        char *ciftmp=NULL;
+        int nbytes;
+        FILE *file;
+#ifndef NOMKSTEMP
+        int ciftmpfd;
+#endif
+        char buffer [4096];
+        
+        ciftmp = (char *)_fmalloc(strlen("/tmp/rsml275XXXXXX")+1);
+        strcpy(ciftmp, "/tmp/rsml275XXXXXX");
+#ifdef NOMKSTEMP
+        if ((ciftmp = mktemp(ciftmp)) == NULL || (file = fopen(ciftmp,"wb+")) == NULL )
+        {   strcpy(ciftmp, "rsml275XXXXXX");
+            if ((ciftmp = mktemp(ciftmp)) == NULL || (file = fopen(ciftmp,"wb+")) == NULL) {
+                sprintf(buffer,"Can't create temporary file name %s.\n", ciftmp);
+                WriteString(buffer);
+                sprintf(buffer,"%s\n",strerror(errno));
+                WriteString(buffer);
+                RasMolExit();
+            }
+        }
+        unlink(ciftmp);
+        _ffree(ciftmp);
+#else
+        if ((ciftmpfd = mkstemp(ciftmp)) == -1 || (file = fdopen(ciftmpfd, "wb+")) == NULL) {
+            strcpy(ciftmp, "rsml275XXXXXX");
+            if ((ciftmpfd = mkstemp(ciftmp)) == -1 || (file = fdopen(ciftmpfd, "wb+")) == NULL) {        
+                sprintf(buffer,"\n rasmol: Can't create temporary file %s.\n", ciftmp);
+                WriteString(buffer);
+                sprintf(buffer,"%s\n",strerror(errno));
+                WriteString(buffer);
+                RasMolExit();
+            }
+        }
+        unlink(ciftmp);
+        _ffree(ciftmp);
+#endif
+        if (Recycle) {
+            nbytes = strlen(Recycle);
+            if(nbytes != fwrite(Recycle, 1, nbytes, file)) {
+                sprintf(buffer,"Failed to write %s.\n", ciftmp);
+                WriteString(buffer);
+                RasMolExit();
+            }
+            nbytes=1;
+            if(nbytes != fwrite("\n", 1, nbytes, file)) {
+                sprintf(buffer,"Failed to write %s.\n", ciftmp);
+                WriteString(buffer);
+                RasMolExit();
+            }
+        }
+        if (stream)
+        while ((nbytes = fread(buffer, 1, C2CBUFSIZ, stream))) {
+            if(nbytes != fwrite(buffer, 1, nbytes, file)) {
+                sprintf(buffer,"Failed to write %s.\n", ciftmp);
+                WriteString(buffer);
+                RasMolExit();
+            }
+        }
+        
+        freopen(NULL,"rb",file);
+        cbf_failnez(cbf_read_widefile(handle,file, MSG_DIGEST));
 	
   return 0;
 }
