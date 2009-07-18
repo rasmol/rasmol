@@ -1,10 +1,9 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                            19 November 2007                             *
- *                          (rev. 21 March 2008)                           *
+ *                              13 June 2009                               *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -31,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -914,7 +920,7 @@ void RefreshScreen( void )
 	      WriteMovieFrame();
 	      record_frame[0]++;
 	      record_frame[1] = 0;
-	    } else if (record_on[1] && !RecordPause) {
+	    } else if ((ReDrawFlagSave & RFAppear) && record_on[1] && !RecordPause) {
 	      WriteMovieFrame();
 	      record_frame[0]++;
 	      record_frame[1]++;
@@ -1670,6 +1676,7 @@ static void HandleMenu( long hand )
                         {   case(1):  /* Undo */
                                       for( i=0; i<10; i++ )
                                           DialValue[i] = 0.0;
+                                      CQRMSet(DialQRot,0.,0.,0.,0.);
                                       ReDrawFlag |= RFDials;
                                       ResetTransform();
                                       UpdateScrollBars();
@@ -2201,7 +2208,7 @@ void SetHScroll(int pos)
 	  BondSelected->BRotValue = temp;
     } else {
       if ( RotMode == RotAll ) {
-	    WRotValue[DialRY] = temp;
+	    WorldDialValue[DialRY] = temp;
       } else {
 	    DialValue[DialRY] = temp;
 	  }
@@ -2214,7 +2221,7 @@ void SetVScroll(int pos)
     float temp = (pos/50.0)-1.0;
 
     if ( RotMode == RotAll ) {
-	  WRotValue[DialRX] = temp;
+	  WorldDialValue[DialRX] = temp;
     } else {
 	  DialValue[DialRX] = temp;
 	}

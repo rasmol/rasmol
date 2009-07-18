@@ -1,10 +1,9 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                            19 November 2007                             *
- *                          (rev. 21 March 2008)                           *
+ *                              13 June 2009                               *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -31,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -282,7 +288,7 @@ typedef struct _MenuItem {
         } MenuItem;
 
 
-static MenuItem FilMenu[11] = {
+static MenuItem FilMenu[21] = {
     { &MsgStrs[StrMOpen]   /* "Open..."   */,   0x11,  &MsgAuxl[StrMOpen],
         &MsgLens[StrMOpen],     NULL, 0     },
     { &MsgStrs[StrMSaveAs] /*" Save As..."*/,   0x11,  &MsgAuxl[StrMSaveAs],
@@ -304,7 +310,27 @@ static MenuItem FilMenu[11] = {
     { &(MolNStr[3]),                            0x01,  0, 
         &MolNLen[3],            &MoleculeIndex, 3 },  
     { &(MolNStr[4]),                            0x01,  0, 
-        &MolNLen[4],            &MoleculeIndex, 4 } };
+        &MolNLen[4],            &MoleculeIndex, 4 },
+    { &(MolNStr[5]),                            0x01,  0, 
+        &MolNLen[5],            &MoleculeIndex, 5 },  
+    { &(MolNStr[6]),                            0x01,  0, 
+        &MolNLen[6],            &MoleculeIndex, 6 },  
+    { &(MolNStr[7]),                            0x01,  0, 
+        &MolNLen[7],            &MoleculeIndex, 7 },  
+    { &(MolNStr[8]),                            0x01,  0, 
+        &MolNLen[8],            &MoleculeIndex, 8 },  
+    { &(MolNStr[9]),                            0x01,  0, 
+        &MolNLen[9],            &MoleculeIndex, 9 },
+    { &(MolNStr[10]),                            0x01,  0, 
+        &MolNLen[10],            &MoleculeIndex, 10 },  
+    { &(MolNStr[11]),                            0x01,  0, 
+        &MolNLen[11],            &MoleculeIndex, 11 },  
+    { &(MolNStr[12]),                            0x01,  0, 
+        &MolNLen[12],            &MoleculeIndex, 12 },  
+    { &(MolNStr[13]),                            0x01,  0, 
+        &MolNLen[13],            &MoleculeIndex, 13 },  
+    { &(MolNStr[14]),                            0x01,  0, 
+        &MolNLen[14],            &MoleculeIndex, 14 }};
 
 static MenuItem DisMenu[9] = {
     { &MsgStrs[StrMWirefr] /* "Wireframe"    */,     0x11,  &MsgAuxl[StrMWirefr],
@@ -513,8 +539,6 @@ int SharedMemFlag;
 #define SharedMemOption False
 #endif
 
-#define XScrlDial  1 /*1*/
-#define YScrlDial  0 /*0*/
 #define XScrlSkip  8
 #define YScrlSkip  8
 
@@ -1380,7 +1404,7 @@ void UpdateScrollBars( void )
 
 
     if ( RotMode == RotAll ) {
-      temp = (WRotValue[YScrlDial]+1.0)*(YRange-48); 
+      temp = (WorldDialValue[YScrlDial]+1.0)*(YRange-48); 
     } else {
       temp = (DialValue[YScrlDial]+1.0)*(YRange-48); 
     } 
@@ -1397,7 +1421,7 @@ void UpdateScrollBars( void )
       temp = ((BondSelected->BRotValue)+1.0)*(XRange-48);
     } else {
       if ( RotMode == RotAll ) {
-        temp = (WRotValue[XScrlDial]+1.0)*(XRange-48);
+        temp = (WorldDialValue[XScrlDial]+1.0)*(XRange-48);
       } else {
         temp = (DialValue[XScrlDial]+1.0)*(XRange-48);
       }
@@ -1563,7 +1587,7 @@ static void HandleDialEvent( XDeviceMotionEvent *ptr )
                 ReDrawFlag |= RFRotBond;
               } else {
                 if ( RotMode == RotAll ) {
-                  temp += WRotValue[num];
+                  temp += WorldDialValue[num];
                   ReDrawFlag |= (1<<num);
                 } else {
                   temp += DialValue[num];
@@ -1588,7 +1612,7 @@ static void HandleDialEvent( XDeviceMotionEvent *ptr )
                 ReDrawFlag |= RFRotBond;
               } else {
                 if ( RotMode == RotAll ) {
-                  WRotValue[num] = temp;
+                  WorldDialValue[num] = temp;
                 } else {
                   DialValue[num] = temp;
                 }
@@ -2663,6 +2687,8 @@ int OpenDisplay( void )
 
     for( i=0; i<11; i++ )
          DialValue[i] = 0.0;
+         
+    CQRMSet(DialQRot,0.,0.,0.,0.);
 
     RLut[0]=0;   GLut[0]=0;   BLut[0]=0;    ULut[0]=True;
     RLut[1]=100; GLut[1]=100; BLut[1]=100;  ULut[1]=True;
@@ -2866,9 +2892,9 @@ int CreateImage( void )
 #endif
 
     if( !Interactive )
-    {   if( FBuffer ) free(FBuffer);
+    {   if( FBuffer ) _ffree(FBuffer);
         size = (long)XRange*YRange*sizeof(Pixel);
-        FBuffer = (Pixel*)malloc( size+32 );
+        FBuffer = (Pixel*)_fmalloc( size+32 );
 	return((FBuffer!=(Pixel*)NULL)?True : False);
     }
 
@@ -2877,7 +2903,7 @@ int CreateImage( void )
     if( image ) 
     {   /* Monochrome Mode Frame Buffer! */
         if( FBuffer && (FBuffer!=(Pixel*)image->data) )
-            free(FBuffer);
+            _ffree(FBuffer);
 #ifdef MITSHM
         if( SharedMemFlag )
         {   XShmDetach( dpy, &xshminfo );
@@ -2892,7 +2918,7 @@ int CreateImage( void )
     if( Monochrome )
     {   /* Monochrome Mode Frame Buffer! */
         size = (long)XRange*YRange*sizeof(Pixel);
-        FBuffer = (Pixel*)malloc( size+32 );
+        FBuffer = (Pixel*)_fmalloc( size+32 );
 	if( FBuffer == (Pixel*)NULL) return False;
 
         /* Bit per Pixel ScanLines! */
@@ -2945,7 +2971,7 @@ int CreateImage( void )
 #endif
 
     /* Allocate Frame Buffer! */
-    ptr = (Pixel*)malloc( size );
+    ptr = (Pixel*)_fmalloc( size );
     if( ptr == (Pixel*)NULL) return False;
 
     if( !Monochrome ) FBuffer = ptr;
@@ -3281,7 +3307,7 @@ static void DoneEvents( void )
 
         temp = ((Real)(NewScrlY-16))/(YRange-48);
         if( RotMode == RotAll ) {
-          WRotValue[YScrlDial] = 2.0*temp - 1.0;
+          WorldDialValue[YScrlDial] = 2.0*temp - 1.0;
         } else {
           DialValue[YScrlDial] = 2.0*temp - 1.0;
         }
@@ -3318,7 +3344,7 @@ static void DoneEvents( void )
           ReDrawFlag |= RFRotBond;
         } else {
           if( RotMode == RotAll ) {
-            WRotValue[XScrlDial] = 2.0*temp - 1.0;
+            WorldDialValue[XScrlDial] = 2.0*temp - 1.0;
             ReDrawFlag |= (1<<XScrlDial);
           } else {
             DialValue[XScrlDial] = 2.0*temp - 1.0;

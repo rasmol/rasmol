@@ -1,10 +1,9 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                            19 November 2007                             *
- *                          (rev. 21 March 2008)                           *
+ *                              13 June 2009                               *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -31,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -188,79 +194,80 @@
 #define StringTok      259
 
 /* Command Tokens */
-#define AdviseTok      260
-#define AnimateTok     261
-#define APSTok         262
-#define BackboneTok    263
-#define CartoonTok     264
-#define CentreTok      265
-#define ClipboardTok   266
-#define ColourTok      267
-#define ColourModeTok  268
-#define ConnectTok     269
-#define DashTok        270
+#define AddTok         260
+#define AdviseTok      261
+#define AnimateTok     262
+#define APSTok         263
+#define BackboneTok    264
+#define CartoonTok     265
+#define CentreTok      266
+#define ClipboardTok   267
+#define ColourTok      268
+#define ColourModeTok  269
+#define ConnectTok     270
+#define DashTok        271
 
-#define DeferTok       271
-#define DefineTok      272
-#define DelayTok       273
-#define DepthTok       274
-#define DisplayTok     275
-#define DwellTok       276
-#define EchoTok        277
-#define EjectTok       278
-#define ExitTok        279
-#define ExecuteTok     280
+#define DeferTok       281
+#define DefineTok      282
+#define DelayTok       283
+#define DepthTok       284
+#define DisplayTok     285
+#define DwellTok       286
+#define EchoTok        287
+#define EjectTok       288
+#define ExitTok        289
+#define ExecuteTok     290
 
-#define FPSTok         281
-#define GenerateTok    282
-#define HelpTok        283
-#define LabelTok       284
-#define LoadTok        285
-#define LoopTok        286
-#define MapTok         287
-#define MaskTok        288
-#define MoleculeTok    289
-#define MolSurfTok     290 
+#define FPSTok         291
+#define GenerateTok    292
+#define HelpTok        293
+#define LabelTok       294
+#define LoadTok        295
+#define LoopTok        296
+#define MapTok         297
+#define MaskTok        298
+#define MoleculeTok    299
+#define MolSurfTok     300 
 
-#define MonitorTok     291
-#define MoveTok        292
-#define MoveToTok      293
-#define NoToggleTok    294
-#define PlayTok        295
-#define PrintTok       296
-#define QuitTok        297
-#define RecordTok      298
-#define RefreshTok     299
-#define RenumTok       300
+#define MonitorTok     301
+#define MoveTok        302
+#define MoveToTok      303
+#define NoToggleTok    304
+#define PlayTok        305
+#define PrintTok       306
+#define QuitTok        307
+#define RecordTok      308
+#define RefreshTok     309
+#define RenumTok       310
 
-#define ResetTok       301
-#define ResizeTok      302
-#define RestoreTok     303
-#define RestrictTok    304
-#define RotateTok      305
-#define SaveTok        306
-#define ScriptTok      307
-#define SelectTok      308
-#define SetTok         309
-#define ShowTok        310
+#define ResetTok       311
+#define ResizeTok      312
+#define RestoreTok     313
+#define RestrictTok    314
+#define RotateTok      315
+#define SaveTok        316
+#define ScriptTok      317
+#define SelectTok      318
+#define SetTok         319
+#define ShowTok        320
 
-#define SlabTok        311
-#define SourceTok      312
-#define SpacefillTok   313
-#define StarTok        314
-#define StructureTok   315
-#define SurfaceTok     316
-#define SymmetryTok    317
-#define TitleTok       318
-#define TraceTok       319
-#define TranslateTok   320
+#define SlabTok        321
+#define SourceTok      322
+#define SpacefillTok   323
+#define StarTok        324
+#define StructureTok   325
+#define SurfaceTok     326
+#define SymmetryTok    327
+#define TitleTok       328
+#define TraceTok       329
+#define TranslateTok   330
 
-#define ViewTok        321
-#define WaitTok        322
-#define WireframeTok   323
-#define WriteTok       324
-#define ZapTok         325
-#define ZoomTok        326
+#define ViewTok        331
+#define WaitTok        332
+#define WireframeTok   333
+#define WriteTok       334
+#define ZapTok         335
+#define ZoomTok        336
 
 /* Predicate Tokens */
 #define IsPredTok(x)   (((x)>=AlphaTok) && ((x)<=SmallTok))
@@ -388,13 +395,14 @@
 #define NextTok        536
 #define NoneTok        537
 #define NotTok         538
+#define OldTok         539
 #define OnTok          TrueTok
 #define OffTok         FalseTok
-#define OrTok          539
-#define TrueTok        540
-#define UntilTok       541
-#define WithinTok      542
-#define XorTok         543
+#define OrTok          540
+#define TrueTok        541
+#define UntilTok       542
+#define WithinTok      543
+#define XorTok         544
 
 /* Colour Tokens */
 /* Warning! Tokens are related to colour values */

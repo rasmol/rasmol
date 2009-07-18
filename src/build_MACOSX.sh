@@ -52,7 +52,7 @@ rm Imakefile
 echo "#define OLDX_LOCALE xx" > Imakefile
 echo "#define PIXELDEPTH 8" >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
-echo "#define XFORMSLIB xx"|cat - Imakefile_save >> Imakefile
+echo "#define USE_XFORMSLIB xx"|cat - Imakefile_save >> Imakefile
 xmkmf
 mv Makefile Makefile_8BIT
 if [ "$1"  != "-nobuild" ]; then
@@ -64,7 +64,7 @@ rm Imakefile
 echo "#define OLDX_LOCALE xx" > Imakefile
 echo "#define PIXELDEPTH 16" >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
-echo "#define XFORMSLIB xx"|cat - Imakefile_save >> Imakefile
+echo "#define USE_XFORMSLIB xx"|cat - Imakefile_save >> Imakefile
 xmkmf
 mv Makefile Makefile_16BIT
 if [ "$1" != "-nobuild" ]; then
@@ -76,7 +76,7 @@ rm Imakefile
 echo "#define OLDX_LOCALE xx" > Imakefile
 echo "#define PIXELDEPTH 32" >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
-echo "#define XFORMSLIB xx"|cat - Imakefile_save >> Imakefile
+echo "#define USE_XFORMSLIB xx"|cat - Imakefile_save >> Imakefile
 if [ $VAL -gt 4 ]; then
   mv rasmol.h rasmol_amd64_save.h
 echo "#define _LONGLONG"|cat - rasmol_amd64_save.h > rasmol.h

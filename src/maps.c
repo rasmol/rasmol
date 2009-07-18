@@ -1,5 +1,5 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
@@ -30,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -1842,10 +1849,12 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
       
       if (map_structure_id && map_structure_id[0]) {
           map = _fmalloc(sizeof(MapStruct));
+          if (!map) RasMolFatalExit(MsgStrs[StrMalloc]);
       }
  
       if (mask_structure_id && mask_structure_id[0]) {
           mask = _fmalloc(sizeof(MapStruct));
+          if (!mask) RasMolFatalExit(MsgStrs[StrMalloc]);
       }
      
       if (cbf_find_category(cbf,"array_structure")) continue;
@@ -2855,7 +2864,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
         if(!mask) {
           CommandError(MsgStrs[StrMalloc]);
           if (map) { _ffree(map->mapdata); _ffree(map);}
-          return 1;    
+          return -1;    
         }
         mask->mapdata = _fmalloc(MapMaskPtr->elsize*
          (MapMaskPtr->xhigh-MapMaskPtr->xlow+1)*
@@ -2865,7 +2874,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
          _ffree(mask);
          CommandError(MsgStrs[StrMalloc]);
          if (map) { _ffree(map->mapdata); _ffree(map);}
-         return 1;
+         return -1;
        }
        mask->elsize=MapMaskPtr->elsize;
        mask->eltype=MapMaskPtr->eltype;
@@ -2942,6 +2951,7 @@ int LoadCBFMapFile( FILE *fp, int info, int mapno ) {
       mapinfo.MapMaskPtr, mapinfo.MapRGBCol ))
 
       mapinfo.MapFile = (char __far *)_fmalloc(strlen(DataFileName)+1);
+      if (!mapinfo.MapFile) RasMolFatalExit(MsgStrs[StrMalloc]);
       strcpy(mapinfo.MapFile,DataFileName);
 
       if (mapno < 0)
@@ -3774,6 +3784,21 @@ int generate_map(MapStruct **map,
       (*map)->yhigh = (long)rint((double)(yselhigh-xorig)/(double)(yint));
       (*map)->zlow = (long)rint((double)(zsellow-yorig)/(double)(zint));
       (*map)->zhigh = (long)rint((double)(zselhigh-zorig)/(double)(zint));
+    
+      /*  I know this check seems extreme, but this actually
+          happens */
+    
+      if (
+          ((double)((*map)->xhigh-(*map)->xlow+1))*
+          ((double)((*map)->yhigh-(*map)->ylow+1))*
+          ((double)((*map)->zhigh-(*map)->zlow+1)) > ((double)LONG_MAX)/((double)sizeof(double)) - 1) {
+          
+          _ffree(*map);
+          *map = NULL;
+          CommandError(MsgStrs[StrMalloc]);
+          return -1;
+          
+      }
       
       (*map)->mapdata = _fmalloc(sizeof(double)*
       ((*map)->xhigh-(*map)->xlow+1)*
@@ -3784,7 +3809,7 @@ int generate_map(MapStruct **map,
           _ffree(*map);
         *map = NULL;
         CommandError(MsgStrs[StrMalloc]);
-        return 1;
+        return -1;
       }
       
       for (xel=(*map)->xlow; xel<=(*map)->xhigh; xel++ )

@@ -1,9 +1,9 @@
-%% RasMol V2.7.4.2 Manual
-%%                              RasMol 2.7.4.2
+%% RasMol V2.7.5 Manual
+%%                               RasMol 2.7.5
 %%
 %%                                  RasMol
 %%                  Molecular Graphics Visualisation Tool
-%%                  19 November 2007 (rev. 17 March 2008)
+%%                      13 June 2009 (rev. 17 July 2009)
 %%
 %%                    Based on RasMol 2.6 by Roger Sayle
 %%  Biomolecular Structures Group, Glaxo Wellcome Research & Development,
@@ -30,20 +30,28 @@
 %%                    RasMol 2.7.4   Nov 07
 %%                    RasMol 2.7.4.1 Jan 08
 %%                    RasMol 2.7.4.2 Mar 08
+%%                    RasMol 2.7.5   Jun 09
+%%                    RasMol 2.7.5.1 Jul 09
 %%
-%%  RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,
-%%  and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
-%%  grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
-%%  Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department
-%%  of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,
-%%  N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol
-%%  2.7.4 supported in part by grant 1R15GM078077-01 from the National
-%%  Institute of General Medical Sciences (NIGMS). The content is solely
-%%  the responsibility of the authors and does not necessarily represent
-%%  the official views of the funding organizations.
+%% RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev
+%% and L. Andrews (via the neartree package).  Work on RasMol 2.7.5
+%% supported in part by grant 1R15GM078077-01 from the National Institute
+%% of General Medical Sciences (NIGMS), U.S. National Institutes of Health
+%% and by grant ER63601-1021466-0009501 from the Office of Biological &
+%% Environmental Research (BER), Office of Science, U. S. Department of
+%% Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,
+%% N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol
+%% 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and
+%% grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates
+%% changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work
+%% on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281
+%% and EF-0312612 from the U.S. National Science Foundation and grant
+%% DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility
+%% of the authors and does not necessarily represent the official views of
+%% the funding organizations.
 %% 
-%%  The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
-%%  Teemu Ikonen.
+%% The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
+%% Teemu Ikonen.
 %%
 %%                     and Incorporating Translations by
 %%   Author                               Item                     Language
@@ -62,7 +70,7 @@
 %%                              This Release by
 %%   Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA
 %%                        yaya@bernstein-plus-sons.com
-%%                Copyright (C) Herbert J. Bernstein 1998-2008
+%%                Copyright (C) Herbert J. Bernstein 1998-2009
 %%
 %% The original RasMol manual was created by Roger Sayle.  In July 1996,
 %% Dr. Margaret Wong of the Chemistry Department, Swinburne University
@@ -80,7 +88,7 @@
 %% and November 2007, January 2008 and March 2008 for RasMol version 2.7.4.
 %% 
 %%
-%%                 Documentation Last Updated 22 March 2008
+%%                Documentation Last Updated 17 July 2009
 %%          Edited by Herbert J. Bernstein and Frances C. Bernstein
 %%
 %% Please read the file NOTICE for important notices which apply to this
@@ -90,7 +98,7 @@
 %% Initial screen for help file
 %%
 
-PTRasMol 2.7.4 is a molecular graphics program intended for the visualisation
+PTRasMol 2.7.5 is a molecular graphics program intended for the visualisation
 PTof proteins, nucleic acids and small molecules, based on Roger Sayles'
 PTRasMol_2.6. The program is aimed at display, teaching and generation of
 PTpublication quality images. RasMol runs on Microsoft Windows, Apple
@@ -114,10 +122,10 @@ PP
 %% ASCII Text Headers
 %%
 
-TR                       R a s M o l   v 2 . 7 . 4 . 1
+TR                         R a s M o l   v 2 . 7 . 5
 TR                       =============================
 TR                    Molecular Graphics Visualisation Tool
-TR                    19 November 2007 (rev. 17 March 2008)
+TR                      13 June 2009 (rev. 17 July 2009)
 TR
 TR                    Based on RasMol 2.6 by Roger Sayle
 TR  Biomolecular Structures Group, Glaxo Wellcome Research & Development,
@@ -144,20 +152,28 @@ TR                    RasMol 2.7.3.1 Apr 06
 TR                    RasMol 2.7.4   Nov 07
 TR                    RasMol 2.7.4.1 Jan 08
 TR                    RasMol 2.7.4.2 Mar 08
+TR                    RasMol 2.7.5   Jun 09
+TR                    RasMol 2.7.5.1 Jul 09
 TR
-TR  RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,
-TR  and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
-TR  grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
-TR  Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department
-TR  of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,
-TR  N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol
-TR  2.7.4 supported in part by grant 1R15GM078077-01 from the National
-TR  Institute of General Medical Sciences (NIGMS). The content is solely
-TR  the responsibility of the authors and does not necessarily represent
-TR  the official views of the funding organizations.
-TR
-TR  The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
-TR  Teemu Ikonen.
+TR RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev
+TR and L. Andrews (via the neartree package).  Work on RasMol 2.7.5
+TR supported in part by grant 1R15GM078077-01 from the National Institute
+TR of General Medical Sciences (NIGMS), U.S. National Institutes of Health
+TR and by grant ER63601-1021466-0009501 from the Office of Biological &
+TR Environmental Research (BER), Office of Science, U. S. Department of
+TR Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,
+TR N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol
+TR 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and
+TR grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates
+TR changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work
+TR on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281
+TR and EF-0312612 from the U.S. National Science Foundation and grant
+TR DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility
+TR of the authors and does not necessarily represent the official views of
+TR the funding organizations.
+TR 
+TR The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
+TR Teemu Ikonen.
 TR
 TR                     and Incorporating Translations by
 TR   Author                               Item                     Language
@@ -176,7 +192,7 @@ TR
 TR                              This Release by
 TR   Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA
 TR                        yaya@bernstein-plus-sons.com
-TR                Copyright (C) Herbert J. Bernstein 1998-2008
+TR                Copyright (C) Herbert J. Bernstein 1998-2009
 TR
 TR The original RasMol manual was created by Roger Sayle.  In July 1996,
 TR Dr. Margaret Wong of the Chemistry Department, Swinburne University
@@ -194,7 +210,7 @@ TR for RasMol version 2.7.2.1, February 2005 for RasMol version 2.7.3
 TR and November 2007, January 2008 and March 2008 for RasMol version 2.7.4.
 TR 
 TR
-TR                 Documentation Last Updated 22 March 2008
+TR                 Documentation Last Updated 17 July 2009
 TR          Edited by Herbert J. Bernstein and Frances C. Bernstein
 TR
 TR Please read the file NOTICE for important notices which apply to this
@@ -203,9 +219,9 @@ TR package and for license terms (GPL or RASLIC).
 %% UNIX man(1) Headers
 %%
 MR.PU
-MR.TH RASMOL 1 "March 2008"
+MR.TH RASMOL 1 "July 2009"
 MR.SH NAME
-MRrasmol \- Molecular Graphics Visualisation Tool v2.7.4.2
+MRrasmol \- Molecular Graphics Visualisation Tool v2.7.5
 
 %%
 %% VMS Help Headers
@@ -223,10 +239,10 @@ RR\f2\fmodern Courier New;
 RR}\deff0\fs20
 
 RR#{\footnote rasmol}
-RR${\footnote RasMol V2.7.4.2}
+RR${\footnote RasMol V2.7.5}
 RR+{\footnote doc}
 
-RR{\fs8 \par }{\fs28\b RasMol V2.7.4.2}{\fs8 \line }
+RR{\fs8 \par }{\fs28\b RasMol V2.7.5}{\fs8 \line }
 RR{\fs24\b Molecular Graphics Visualisation Tool}\line\pard
 RP
 %%
@@ -286,18 +302,27 @@ RR{\fs16 \tab RasMol 2.7.3     \tab Feb 05 }\line
 RR{\fs16 \tab RasMol 2.7.3.1   \tab Apr 06 }\line
 RR{\fs16 \tab RasMol 2.7.4     \tab Nov 07 }\line
 RR{\fs16 \tab RasMol 2.7.4.1   \tab Jan 08 }\line
-RR{\fs16 \tab RasMol 2.7.4.2   \tab Mar 08 }
+RR{\fs16 \tab RasMol 2.7.4.2   \tab Mar 08 }\line
+RR{\fs16 \tab RasMol 2.7.5     \tab Jun 09 }\line
+RR{\fs16 \tab RasMol 2.7.5.1   \tab Jul 09 }
+
 RR{\fs8 \par\par }
-RR{\fs16 RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,}\line
-RR{\fs16 and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by}\line
-RR{\fs16 grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National}\line
-RR{\fs16 Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department}\line
-RR{\fs16 of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,}\line
-RR{\fs16 N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol}\line
-RR{\fs16 2.7.4 supported in part by grant 1R15GM078077-01 from the National}\line
-RR{\fs16 Institute of General Medical Sciences (NIGMS). The content is solely}\line
-RR{\fs16 the responsibility of the authors and does not necessarily represent}\line
-RR{\fs16 the official views of the funding organizations.}\line
+RR{\fs16 RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev}\line
+RR{\fs16 and L. Andrews (via the neartree package).  Work on RasMol 2.7.5}\line
+RR{\fs16 supported in part by grant 1R15GM078077-01 from the National Institute}\line
+RR{\fs16 of General Medical Sciences (NIGMS), U.S. National Institutes of Health}\line
+RR{\fs16 and by grant ER63601-1021466-0009501 from the Office of Biological &}\line
+RR{\fs16 Environmental Research (BER), Office of Science, U. S. Department of}\line
+RR{\fs16 Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,}\line
+RR{\fs16 N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol}\line
+RR{\fs16 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and}\line
+RR{\fs16 grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates}\line
+RR{\fs16 changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work}\line
+RR{\fs16 on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281}\line
+RR{\fs16 and EF-0312612 from the U.S. National Science Foundation and grant}\line
+RR{\fs16 DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility}\line
+RR{\fs16 of the authors and does not necessarily represent the official views of}\line
+RR{\fs16 the funding organizations.}\line
 RR{\fs8 \par\par }
 RR{\fs16 The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by}\line
 RR{\fs16 Teemu Ikonen.}\line
@@ -336,7 +361,7 @@ RTFebruary 2005 for RasMol version 2.7.3 and November 2007,
 RTJanuary 2008 and March 2008 for RasMol version 2.7.4.
 RR}
 RP
-RR{\fs16 Documentation Last Updated 18 March 2008}\line
+RR{\fs16 Documentation Last Updated 17 July 2009}\line
 RR{\fs16 Edited by Herbert J. Bernstein and Frances C. Bernstein}
 RP
 RR{\fs16 Please read the file NOTICE for important notices which apply to this}\line
@@ -351,7 +376,7 @@ RP
 HR<!doctype html public "-//IETF//DTD HTML 2.0//EN">
 HR<HTML>
 HR<HEAD>
-HR<title>RasMol V2.7.4 Manual</title>
+HR<title>RasMol V2.7.5 Manual</title>
 HR</HEAD>
 HR<BODY BACKGROUND="http://www.rasmol.org/software/rasmol/html_graphics/rasmolwallpaper.jpg">
 HR<font face="Helvetica,Arial,Times" size=3>
@@ -383,7 +408,7 @@ HR
 HR
 HR<font color="#0808A0">
 HR<H1 ALIGN=CENTER>Manual<BR>
-HRRasMol 2.7.4.2</H1>
+HRRasMol 2.7.5</H1>
 HR<center>
 HR<table celpadding=0>
 HR<tr>
@@ -404,12 +429,12 @@ HR<td><IMG  SRC="http://www.rasmol.org/software/rasmol/html_graphics/rasmollogo.
 HR<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 HR<td valign=top bgcolor="#FFFFA0"><font face="Helvetica,Arial,Times" size=2>
 HR<ul>
-HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2_Windows_Installer.exe>RasMol
-HR2.7.4.2 Windows Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;<br />
-HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2.tar.gz>RasMol
-HR2.7.4.2 Source Tarball</a><br />&nbsp;<br />
-HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.4.2_Manual.html>RasMol
-HR2.7.4.2 Manual</a><br />&nbsp;<br />
+HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.5_Windows_Installer.exe>RasMol
+HR2.7.5 Windows Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;<br />
+HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.5.tar.gz>RasMol
+HR2.7.5 Source Tarball</a><br />&nbsp;<br />
+HR<li><a href=http://www.rasmol.org/software/RasMol_2.7.5_Manual.html>RasMol
+HR2.7.5 Manual</a><br />&nbsp;<br />
 HR<li><a href=http://www.rasmol.org/donate.shtml>Donate to Support RasMol </a><br />
 HR<li><a href=http://www.rasmol.org/register.shtml>Register your RasMol</a><br />
 HR</ul>
@@ -418,7 +443,7 @@ HR</table>
 HR</center>
 HR<H3 ALIGN=CENTER>
 HRMolecular Graphics Visualisation Tool<BR>
-HR19 November 2007 (rev. 17 March 2008)<br />
+HR13 June 2009 (rev. 17 July 2009)<br />
 HR</H3>
 HR</font><font color="#000000">
 HR<CENTER>
@@ -447,23 +472,31 @@ HRRasMol 2.7.2.1.1 January 2004<br>RasMol 2.7.3 February 2005<BR>
 HRRasMol 2.7.3.1 Apr 06<br>RasMol 2.7.4 November 2007<br>
 HRRasMol 2.7.4.1 January 2008<br>
 HRRasMol 2.7.4.2 March 2008<br>
-HR<td valign="top">&#169 Herbert J. Bernstein 1998-2008
+HRRasMol 2.7.5 June 2009
+HRRasMol 2.7.5.1 July 2009
+HR<td valign="top">&#169 Herbert J. Bernstein 1998-2009
 HR</table>
 HR</CENTER>
 HR<P>
-HR RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,
-HR and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
-HR grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
-HR Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department
-HR of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,
-HR N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol 
-HR 2.7.4 supported in part by grant 1R15GM078077-01 from the National 
-HR Institute of General Medical Sciences (NIGMS). The content is solely 
-HR the responsibility of the authors and does not necessarily represent 
-HR the official views of the funding organizations.
+HRRasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev
+HRand L. Andrews (via the neartree package).  Work on RasMol 2.7.5
+HRsupported in part by grant 1R15GM078077-01 from the National Institute
+HRof General Medical Sciences (NIGMS), U.S. National Institutes of Health
+HRand by grant ER63601-1021466-0009501 from the Office of Biological &amp;
+HREnvironmental Research (BER), Office of Science, U. S. Department of
+HREnergy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,
+HRN. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol
+HR2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and
+HRgrant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates
+HRchanges by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work
+HRon RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281
+HRand EF-0312612 from the U.S. National Science Foundation and grant
+HRDE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility
+HRof the authors and does not necessarily represent the official views of
+HRthe funding organizations.
 HR<P>
-HR The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
-HR Teemu Ikonen.
+HRThe code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
+HRTeemu Ikonen.
 HR<P>
 HR<CENTER>
 HRand Incorporating Translations by
@@ -504,7 +537,7 @@ HR<noscript>
 HRyaya&#64;bernstein-plus-sons&#46;com
 HR</noscript>
 HR<BR>
-HRCopyright &#169; Herbert J. Bernstein 1998-2008<BR>
+HRCopyright &#169; Herbert J. Bernstein 1998-2009<BR>
 HR</CENTER>
 HR<P>
 HRThe original RasMol manual was created by Roger Sayle.  In July 1996,
@@ -524,7 +557,7 @@ HRFebruary 2005 for RasMol version 2.7.3 and November 2007,
 HRJanuary 2008 and March 2008 for RasMol version 2.7.4.
 
 HP
-HR<CENTER>Documentation Last Updated 12 November 2007<br>
+HR<CENTER>Documentation Last Updated 17 July 2009<br>
 HREdited by Herbert J. Bernstein and Frances C. Bernstein
 HR</CENTER>
 HR
@@ -561,7 +594,9 @@ HR<HR>
 
 HR<H2 ALIGN=CENTER>IMPORTANT</H2>
 HR<P>
-HRThis version is based directly on RasMol version 2.7.4,
+HRThis version is based directly on RasMol version 2.7.4.2,
+HRon RasMol version 2.7.4.1,
+HRon RasMol version 2.7.4,
 HRon RasMol version 2.7.3.1,
 HRon RasMol vesion 2.7.3, on RasMol version 2.7.2.1.1, 
 HRon RasMol version 2.7.2, on RasMol version 2.7.1, on RasMol 
@@ -615,66 +650,72 @@ HR<td><a href="#colourmode">ColourMode</a>
 HR<td><a href="#connect">Connect</a>
 HR<td><a href="#spacefill">CPK</a>
 HR<td><a href="#cpknew">CPKnew</a>
+HR<td><a href="#defer">Defer</a>
 HR<td><a href="#define">Define</a>
 HR<td><a href="#depth">Depth</a>
-HR<td><a href="#dots">Dots</a>
 
-HR<tr><td><a href="#echo">Echo</a>
+HR<tr><td><a href="#dots">Dots</a>
+HR<td><a href="#echo">Echo</a>
 HR<td><a href="#english">English</a>
+HR<td><a href="#execute">Execute</a>
 HR<td><a href="#quit">Exit</a>
 HR<td><a href="#french">French</a>
 HR<td><a href="#hbonds">HBonds</a>
 HR<td><a href="#help">Help</a>
-HR<td><a href="#italian">Italian</a>
-HR<td><a href="#japanese">Japanese</a>
 
-HR<tr><td><a href="#label">Label</a>
+HR<tr><td><a href="#italian">Italian</a>
+HR<td><a href="#japanese">Japanese</a>
+HR<td><a href="#label">Label</a>
 HR<td><a href="#load">Load</a>
 HR<td><a href="#map">Map</a>
 HR<td><a href="#molecule">Molecule</a>
 HR<td><a href="#monitor">Monitor</a>
 HR<td><a href="#notoggle">NoToggle</a>
-HR<td><a href="#pause">Pause</a>
-HR<td><a href="#print">Print</a>
 
-HR<tr><td><a href="#quit">Quit</a>
+HR<tr><td><a href="#pause">Pause</a>
+HR<td><a href="#play">Play</a>
+HR<td><a href="#print">Print</a>
+HR<td><a href="#quit">Quit</a>
+HR<td><a href="#record">Record</a>
 HR<td><a href="#refresh">Refresh</a>
 HR<td><a href="#renumber">Renumber</a>
 HR<td><a href="#reset">Reset</a>
-HR<td><a href="#restrict">Restrict</a>
+
+HR<tr><td><a href="#restrict">Restrict</a>
 HR<td><a href="#ribbons">Ribbons</a>
 HR<td><a href="#rotate">Rotate</a>
 HR<td><a href="#save">Save</a>
-
-HR<tr><td><a href="#script">Script</a>
+HR<td><a href="#script">Script</a>
 HR<td><a href="#select">Select</a>
 HR<td><a href="#set">Set</a>
 HR<td><a href="#show">Show</a>
-HR<td><a href="#slab">Slab</a>
+
+HR<tr><td><a href="#slab">Slab</a>
 HR<td><a href="#script">Source</a>
 HR<td><a href="#spacefill">Spacefill</a>
 HR<td><a href="#spanish">Spanish</a>
-
-HR<tr><td><a href="#ssbonds">SSBonds</a>
+HR<td><a href="#ssbonds">SSBonds</a>
 HR<td><a href="#star">Star</a>
 HR<td><a href="#stereo">Stereo</a>
 HR<td><a href="#strands">Strands</a>
-HR<td><a href="#structure">Structure</a>
+
+HR<tr><td><a href="#structure">Structure</a>
 HR<td><a href="#surface">Surface</a>
 HR<td><a href="#trace">Trace</a>
 HR<td><a href="#translate">Translate</a>
-
-HR<tr><td><a href="#unbond">UnBond</a>
+HR<td><a href="#unbond">UnBond</a>
 HR<td><a href="#wireframe">Wireframe</a>     
 HR<td><a href="#write">Write</a>
 HR<td><a href="#zap">Zap</a>
-HR<td><a href="#zoom">Zoom</a>
-HR<td colspan=1>
+
+HR<tr><td><a href="#zoom">Zoom</a>
+HR<td colspan=7>
 HR</table>
 
 HR</center>
 HR<li><a href="#chsetopt">Internal Parameters</a>
 HR<center><table BORDER CELLPADDING=2>
+
 HR<TR><TD><a href="#setambient">Ambient</a>
 HR<TD><a href="#setaxes">Axes</a>
 HR<TD><a href="#setbackground">Background</a>
@@ -683,6 +724,7 @@ HR<TD><a href="#setbondmode">BondMode</a>
 HR<TD><a href="#setbonds">Bonds</a>
 HR<TD><a href="#setboundbox">BoundBox</a>
 HR<TD><a href="#setcartoon">Cartoon</a>
+
 HR<TR><TD><a href="#setcisangle">CisAngle</A>
 HR<TD><a href="#setdisplay">Display</a>
 HR<TD><a href="#setfontsize">FontSize</a>
@@ -691,26 +733,31 @@ HR<TD><a href="#sethbonds">HBonds</a>
 HR<TD><a href="#sethetero">Hetero</a>
 HR<TD><a href="#sethourglass">HourGlass</a>
 HR<TD><a href="#sethydrogen">Hydrogen</a>
+
 HR<TR><TD><a href="#setkinemage">Kinemage</a>
 HR<TD><a href="#setmenus">Menus</a>
 HR<TD><a href="#setmonitor">Monitor</a>
 HR<TD><a href="#setmouse">Mouse</a>
 HR<TD><a href="#setpicking">Picking</a>
+HR<TD><a href="#setplay">Play...</a>
 HR<TD><a href="#setradius">Radius</a>
-HR<TD><a href="#setshadepower">ShadePower</a>
+HR<TD><a href="#setrecord">Record...</a>
+
+HR<TR><TD><a href="#setshadepower">ShadePower</a>
 HR<TD><a href="#setshadow">Shadow</a>
-HR<TR><TD><a href="#setslabmode">SlabMode</a>
+HR<TD><a href="#setslabmode">SlabMode</a>
 HR<TD><a href="#setsolvent">Solvent</a>
 HR<TD><a href="#setspecular">Specular</a>
 HR<TD><a href="#setspecpower">SpecPower</a>
 HR<TD><a href="#setstereo">Stereo</a>
 HR<TD><a href="#setssbonds">SSBonds</a>
-HR<TD><a href="#setstrands">Strands</a>
+
+HR<TR><TD><a href="#setstrands">Strands</a>
 HR<TD><a href="#settransparent">Transparent</a>
-HR<TR><TD><a href="#setunitcell">UnitCell</a>
+HR<TD><a href="#setunitcell">UnitCell</a>
 HR<TD><a href="#setvectps">VectPS</a>
 HR<TD><a href="#setwrite">Write</a>
-HR<TD CELLSPAN=5>
+HR<TD CELLSPAN=3>
 HR</table></center>
 
 HR<li><a href="#chexprs">Atom Expressions</a>
@@ -732,24 +779,27 @@ NRVersions 2.5-ucb and 2.6-ucb Mods Copyright (C)
 NRUC Regents/ModularCHEM Consortium 1995, 1996
 NRRasTop 1.3 Copyright (C) Philippe Valadon 2000
 NRVersion 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 
-NR2.7.2.1.1, 2.7.3, 2.7.4, 2.7.4.1, 2.7.4.2 Mods 
-NRCopyright (C) Herbert J. Bernstein 1998-2008
+NR2.7.2.1.1, 2.7.3, 2.7.4, 2.7.4.1, 2.7.4.2
+NR2.7.5, 2.7.5.1 Mods 
+NRCopyright (C) Herbert J. Bernstein 1998-2009
 NRrasmol@bernstein-plus-sons.com
 RTRasMol Copyright \'a9 Roger Sayle 1992-1999\par
 RTVersion 2.6x1 Mods Copyright \'a9 Arne Mueller 1998\par
 RTVersions 2.5-ucb and 2.6-ucb Mods Copyright \'a9\par
 RTUC Regents/ModularCHEM Consortium 1995, 1996\par
 RTRasTop 1.3 Copyright \'a9 Philippe Valadon 2000\par
-RTVersion 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1, 2.7.4.2  Mods\par
-RTCopyright \'a9 Herbert J. Bernstein 1998-2008\par
+RTVersion 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1\par
+RT2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1, 2.7.4.2, 2.7.5, 2.7.5.1  Mods\par
+RTCopyright \'a9 Herbert J. Bernstein 1998-2009\par
 RTrasmol@bernstein-plus-sons.com\par
 HR<P><BR>RasMol Copyright &#169; Roger Sayle 1992-1999
 HR<BR>Version 2.6x1 Mods Copyright &#169; Arne Mueller 1998
 HR<BR>Versions 2.5-ucb and 2.6-ucb Mods Copyright &#169;
 HRUC Regents/ModularCHEM Consortium 1995, 1996
 HR<BR>RasTop 1.3 Copyright &#169; Philippe Valadon 2000
-HR<BR>Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1, 2.7.4.2 Mods
-HRCopyright &#169; Herbert J. Bernstein 1998-2008
+HR<BR>Version 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 
+HR2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1, 2.7.4.2, 2.7.5, 2.7.5.1 Mods
+HRCopyright &#169; Herbert J. Bernstein 1998-2009
 HR<BR><address><a href="mailto:rasmol@rasmol.org">rasmol@rasmol.org</a></address>
 AP
 
@@ -890,9 +940,9 @@ AChelp oldnotice.
 AB
 
 NSCopyright
-NR                               RasMol 2.7.4.2
+NR                               RasMol 2.7.5
 NR                     Molecular Graphics Visualisation Tool
-NR                    19 November 2007 (rev. 17 March 2008)
+NR                       13 June 2009 (rev. 17 July 2009)
 NR
 NR                      Based on RasMol 2.6 by Roger Sayle
 NR       Biomolecular Structures Group,Glaxo Wellcome Research & Development
@@ -921,20 +971,28 @@ NR                    RasMol 2.7.3.1   Apr 06
 NR                    RasMol 2.7.4     Nov 07
 NR                    RasMol 2.7.4.1   Jan 08
 NR                    RasMol 2.7.4.2   Mar 08
+NR                    RasMol 2.7.5     Jun 09
+NR                    RasMol 2.7.5.1   Jul 09
 NR
-NR RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,
-NR and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by
-NR grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National
-NR Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department
-NR of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,
-NR N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol 
-NR 2.7.4 supported in part by grant 1R15GM078077-01 from the National 
-NR Institute of General Medical Sciences (NGMS). The content is solely 
-NR the responsibility of the authors and does not necessarily represent 
-NR the official views of the funding organizations.
+NR RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev
+NR and L. Andrews (via the neartree package).  Work on RasMol 2.7.5
+NR supported in part by grant 1R15GM078077-01 from the National Institute
+NR of General Medical Sciences (NIGMS), U.S. National Institutes of Health
+NR and by grant ER63601-1021466-0009501 from the Office of Biological &
+NR Environmental Research (BER), Office of Science, U. S. Department of
+NR Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,
+NR N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol
+NR 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and
+NR grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates
+NR changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work
+NR on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281
+NR and EF-0312612 from the U.S. National Science Foundation and grant
+NR DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility
+NR of the authors and does not necessarily represent the official views of
+NR the funding organizations.
 NR
-NR  The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
-NR  Teemu Ikonen.
+NR The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by
+NR Teemu Ikonen.
 NR
 NR                     and Incorporating Translations by
 NR                     
@@ -959,7 +1017,7 @@ NR
 NR                              This Release by
 NR   Herbert J. Bernstein, Bernstein + Sons, P.O. Box 177, Bellport, NY, USA
 NR                        yaya@bernstein-plus-sons.com
-NR                Copyright (C) Herbert J. Bernstein 1998-2008
+NR                Copyright (C) Herbert J. Bernstein 1998-2009
 
 RB
 
@@ -977,14 +1035,15 @@ MR.SH COPYING
 HR<a name="chcopying"><h2>Copying</h2></a>
 XR2 Copying
 AP
-ATThis version is based directly on RasMol version 2.7.4.
+ATThis version is based directly on RasMol version 2.7.4.2,
+ATon RasMol verion 2.7.4.2, on RasMol version 2.7.4,
 ATon RasMol version 2.7.3.1, on RasMol version 2.7.3, 
 ATon RasMol version 2.7.2.1.1, Rasmol version 2.7.2, RasMol 
 ATversion 2.7.1.1 and RasTop version 1.3 and indirectly on 
 ATthe RasMol 2.5-ucb and 2.6-ucb versions and version 
 AT2.6_CIF.2, RasMol 2.6x1 and RasMol_2.6.4.
 AP
-ATRasMol 2.7.4.2 may be distributed under the terms of the GNU
+ATRasMol 2.7.5 may be distributed under the terms of the GNU
 ATGeneral Public License (the GPL), see
 AP 
 AT          http://www.gnu.org/licenses/gpl.txt
@@ -992,7 +1051,7 @@ AP
 ATor the file GPL or type the command
 AXGPL help GPL
 AP
-ATor RasMol 2.7.4.2 may be distributed under the RASMOL license.
+ATor RasMol 2.7.5 may be distributed under the RASMOL license.
 ATSee the file NOTICE
 ATor type the command
 AXRASLIC help RASLIC
@@ -1677,8 +1736,9 @@ NRVersion 2.5-ucb, 2.6-ucb Mods
 NR  Copyright (C) UC Regents/ModularCHEM Consortium 1995, 1996
 NRRasTop 1.3 Copyright (C) Philippe Valadon 2000
 NRVersion 2.7.0, 2.7.1, 2.7.1.1, 2.7.2, 2.7.2.1, 2.7.2.1.1, 
-NR        2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1, 2.7.4.2 Mods 
-NR  Copyright (C) Herbert J. Bernstein 1998-2008 
+NR        2.7.3, 2.7.3.1, 2.7.4, 2.7.4.1, 2.7.4.2,
+NR        2.7.5, 2.7.5.1 Mods 
+NR  Copyright (C) Herbert J. Bernstein 1998-2009 
 NR  (yaya@bernstein-plus-sons.com)
 AB
 
@@ -2359,60 +2419,66 @@ HR<td><a href="#colourmode">ColourMode</a>
 HR<td><a href="#connect">Connect</a>
 HR<td><a href="#spacefill">CPK</a>
 HR<td><a href="#cpknew">CPKnew</a>
+HR<td><a href="#defer">Defer</a>
 HR<td><a href="#define">Define</a>
 HR<td><a href="#depth">Depth</a>
-HR<td><a href="#dots">Dots</a>
 
-HR<tr><td><a href="#echo">Echo</a>
+HR<tr><td><a href="#dots">Dots</a>
+HR<td><a href="#echo">Echo</a>
 HR<td><a href="#english">English</a>
+HR<td><a href="#execute">Execute</a>
 HR<td><a href="#quit">Exit</a>
 HR<td><a href="#french">French</a>
 HR<td><a href="#hbonds">HBonds</a>
 HR<td><a href="#help">Help</a>
-HR<td><a href="#italian">Italian</a>
-HR<td><a href="#Japanese">Japanese</a>
 
-HR<tr><td><a href="#label">Label</a>
+HR<tr><td><a href="#italian">Italian</a>
+HR<td><a href="#japanese">Japanese</a>
+HR<td><a href="#label">Label</a>
 HR<td><a href="#load">Load</a>
 HR<td><a href="#map">Map</a>
 HR<td><a href="#molecule">Molecule</a>
 HR<td><a href="#monitor">Monitor</a>
 HR<td><a href="#notoggle">NoToggle</a>
-HR<td><a href="#pause">Pause</a>
-HR<td><a href="#print">Print</a>
 
-HR<tr><td><a href="#quit">Quit</a>
+HR<tr><td><a href="#pause">Pause</a>
+HR<td><a href="#play">Play</a>
+HR<td><a href="#print">Print</a>
+HR<td><a href="#quit">Quit</a>
+HR<td><a href="#record">Record</a>
 HR<td><a href="#refresh">Refresh</a>
 HR<td><a href="#renumber">Renumber</a>
 HR<td><a href="#reset">Reset</a>
-HR<td><a href="#restrict">Restrict</a>
+
+HR<tr><td><a href="#restrict">Restrict</a>
 HR<td><a href="#ribbons">Ribbons</a>
 HR<td><a href="#rotate">Rotate</a>
 HR<td><a href="#save">Save</a>
-
-HR<tr><td><a href="#script">Script</a>
+HR<td><a href="#script">Script</a>
 HR<td><a href="#select">Select</a>
 HR<td><a href="#set">Set</a>
 HR<td><a href="#show">Show</a>
-HR<td><a href="#slab">Slab</a>
+
+HR<tr><td><a href="#slab">Slab</a>
 HR<td><a href="#script">Source</a>
 HR<td><a href="#spacefill">Spacefill</a>
 HR<td><a href="#spanish">Spanish</a>
-
-HR<tr><td><a href="#ssbonds">SSBonds</a>
+HR<td><a href="#ssbonds">SSBonds</a>
 HR<td><a href="#star">Star</a>
 HR<td><a href="#stereo">Stereo</a>
 HR<td><a href="#strands">Strands</a>
-HR<td><a href="#structure">Structure</a>
+
+HR<tr><td><a href="#structure">Structure</a>
 HR<td><a href="#surface">Surface</a>
 HR<td><a href="#trace">Trace</a>
 HR<td><a href="#translate">Translate</a>
-
-HR<tr><td><a href="#unbond">UnBond</a>
+HR<td><a href="#unbond">UnBond</a>
 HR<td><a href="#wireframe">Wireframe</a>     
 HR<td><a href="#write">Write</a>
 HR<td><a href="#zap">Zap</a>
-HR<td><a href="#zoom">Zoom</a>
+
+HR<tr><td><a href="#zoom">Zoom</a>
+HR<td colspan=7>
 HR</table>
 
 HR</center><hr>
@@ -2439,36 +2505,43 @@ RR{\uldb cpk}{\v cpk}\cell
 RR\row\intbl
 
 RR{\uldb cpknew}{\v cpknew}\cell
+RR{\uldb defer}{\v defer}\cell
 RR{\uldb define}{\v define}\cell
 RR{\uldb depth}{\v depth}\cell
-RR{\uldb dots}{\v dots}\cell
 RR\row\intbl
 
+
+RR{\uldb dots}{\v dots}\cell
 RR{\uldb echo}{\v echo}\cell
 RR{\uldb english}{\v english}\cell
+RR{\uldb execute}{\v execute}\cell
+RR\row\intbl
+
 RR{\uldb exit}{\v exit}\cell
 RR{\uldb french}{\v french}\cell
-RR\row\intbl
-
 RR{\uldb hbonds}{\v hbonds}\cell
 RR{\uldb help}{\v help}\cell
+RR\row\intbl
+
 RR{\uldb italian}{\v italian}\cell
 RR{\uldb japanese}{\v japanese}\cell
-RR\row\intbl
-
 RR{\uldb label}{\v label}\cell
 RR{\uldb load}{\v load}\cell
+RR\row\intbl
+
 RR{\uldb map}{\v map}\cell
 RR{\uldb molecule}{\v molecule}\cell
-RR\row\intbl
-
 RR{\uldb monitor}{\v pause}\cell
 RR{\uldb notoggle}{\v notoggle}\cell
-RR{\uldb pause}{\v pause}\cell
-RR{\uldb print}{\v print}\cell
 RR\row\intbl
 
+RR{\uldb pause}{\v pause}\cell
+RR{\uldb pause}{\v play}\cell
+RR{\uldb print}{\v print}\cell
 RR{\uldb quit}{\v quit}\cell
+RR\row\intbl
+
+RR{\uldb record}{\v record}\cell
 RR{\uldb refresh}{\v refresh}\cell
 RR{\uldb renumber}{\v renumber}\cell
 RR{\uldb reset}{\v reset}\cell
@@ -2852,7 +2925,8 @@ AXbackbone backbone,
 AXribbons ribbons,
 AXlabel labels,
 AXdots dots,
-AXhbonds hbonds
+AXhbonds hbonds,
+AXmap map,
 ATand
 AXssbonds ssbonds.
 ATIf no object is specified, the default keyword 
@@ -2884,6 +2958,7 @@ ATand dot surfaces can also be coloured by
 AXpotentialcolours electrostatic potential.
 ATFor more information type
 AXchcolours help colour <colour>.
+ATMap objects may be coloured by specific color of by nearest atom.
 AB
 
 PR?colourmode
@@ -2947,6 +3022,36 @@ ATcommand.
 
 
 AB
+
+
+ASDefer
+NRSyntax:  defer <name> <command to defer>
+NR
+HR<pre>
+HRSyntax:  defer &lt;name&gt; &lt;command to defer&gt;
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRdefer <name> <command to defer>\par
+RR}\pard\par
+
+ATThe RasMol
+ACdefer
+ATcommand adds the command given to the macro with given name, 
+ATif no name is given, the command is added to the macro with a 
+ATblank name. The command 
+ACzap
+ATis a special case. In that case the macro is erased. If no name is 
+ATgiven the command must begin with a selection, e.g. 
+AC'defer (selection).spacefill'
+AP
+ATThe defered command accumulated under the given name can be executed
+ATusing the
+AXexecute execute
+ATcommand
+
+AB
+
 
 
 ASDefine
@@ -3095,6 +3200,41 @@ ATItalian, Japanese, Russian and Spanish menus and messages if the
 ATappropriate fonts have been installed.
 AB
 
+
+ASExecute
+NRSyntax:  execute <name>
+NR
+HR<pre>
+HRSyntax:  execute &lt;name&gt;
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRexecute <name>\par
+RR}\pard\par
+
+ATThe RasMol
+ACexecute
+ATcommand:
+AP
+AT1.  saves the old poise of the molecule (translation, 
+ATrotation and zoom)
+AP
+AT2. executes the specified macro suppressing both screen 
+ATupdates and recording
+AP
+AT3. animates motion of the newly rendered molecule linearly 
+from the old poise to the new poise
+AP
+The macro must have been previously defined by calls to the
+AXdefer defer
+ATcommand.
+AP
+ATThe animation of the motion depends on the prior settings of the
+AXrecord record
+ATcommand.
+
+
+AB
 
 ASFrench
 NRSyntax:  French
@@ -3468,6 +3608,8 @@ The map selector is a map number (m) or a range of map numbers
 all, next and new (or none) may also be used as map selectors.
 AP
 The map subcommands are
+AXmapcolour map colour,
+ATto colour a map according to a given colour scheme,
 AXmapgenerate map generate,
 ATto generate a map from selected atoms based on pseudo-Gaussians,
 AXmaplevel map level,
@@ -3509,23 +3651,47 @@ ATthat can be considered for display of maps.
 
 AB
 
-PR?mapgenerate
-ASMap generate
-NRSyntax:  map {<map_selector>} generate dots
-NR         map {<map_selector>} generate mesh
-NR         map {<map_selector>} generate surface
+PR?mapcolour
+ASMap colour
+NRSyntax:  map {<map_selector>} colour <colour_scheme>
 NR
 HR<pre>
-HRSyntax:  map {&lt;map_selector&gt;} generate dots
-HR         map {&lt;map_selector&gt;} generate mesh
-HR         map {&lt;map_selector&gt;} generate surface
+HRSyntax:  map {&lt;map_selector&gt;} colour &lt;colour_scheme&gt;
 HR
 HR</pre><p>
 RR\tx1200
 RR{\f2\b Syntax:\tab
-RRmap \{<map_selector>\} generate dots\line\tab
-RRmap \{<map_selector>\} generate mesh\line\tab
-RRmap \{<map_selector>\} generate surface
+RRmap \{<map_selector>\} colour <colour_scheme>
+RR}\pard\par
+
+ATThe RasMol
+ACmap colour
+ATcommand colours the selected maps according to the specified
+ATcolour scheme.  The colour scheme may be a colour name or
+ATand RBG triple in brackets, or the keyword
+ACatom
+ATto cause the map points to be coloured by the color of the
+ATnearest atom.
+AB
+
+
+PR?mapgenerate
+ASMap generate
+NRSyntax:  map {<map_selector>} generate {LRsurf} dots
+NR         map {<map_selector>} generate {LRsurf} mesh
+NR         map {<map_selector>} generate {LRsurf} surface
+NR
+HR<pre>
+HRSyntax:  map {&lt;map_selector&gt;} generate {LRsurf} dots
+HR         map {&lt;map_selector&gt;} generate {LRsurf} mesh
+HR         map {&lt;map_selector&gt;} generate {LRsurf} surface
+HR
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRmap \{<map_selector>\} generate \{LRsurf\} dots\line\tab
+RRmap \{<map_selector>\} generate \{LRsurf\} mesh\line\tab
+RRmap \{<map_selector>\} generate \{LRsurf\} surface
 RR}\pard\par
 
 ATThe RasMol
@@ -3538,7 +3704,8 @@ ATcommand.
 ATIn the default of map scale true, each Gaussian has a height proportional 
 to the atomic number of the
 ATelement type of the atom.
-ATIf map scale false has been executed, each Gaussian is scaled so that
+ATIf the optional 'LRSurf' parameter is given or if map scale false 
+AThas been executed, each Gaussian is scaled so that
 ATthe Gaussian contour level 1 is at the van der Waals radius.
 ATIn either case a standard deviation determined by the
 ATmost recently specified spread or resolution is used.  If a non-zero spread has been
@@ -3777,15 +3944,15 @@ AB
 
 PR?mapselect
 ASMap select
-NRSyntax:  map {<map_selector>} select
+NRSyntax:  map {<map_selector>} select {atom {within} {add} {<search_radius>}}
 NR
 HR<pre>
-HRSyntax:  map {&lt;map_selector&gt;} select
+HRSyntax:  map {&lt;map_selector&gt;} select {atom {within} {add} {search_radius}}
 HR
 HR</pre><p>
 RR\tx1200
 RR{\f2\b Syntax:\tab
-RRmap \{<map_selector>\}  select
+RRmap \{<map_selector>\}  select \{atom \{within\} \{add\} \{search_radius\}\}
 RR}\pard\par
 
 ATThe RasMol
@@ -3795,6 +3962,22 @@ ATsubsequent map commands.  This is similar to the
 AXmaprestrict map restrict
 ATcommand, but does not disable the display of the
 ATmaps that were not selected.
+AP
+ATIf the optional
+ACatom
+ATparameter is given, the command selects the atoms with centres closest to the
+ATmap points.  The radius of the search may be specified by the parameter
+ACsearch_radius.
+ATThe default is to look for atoms within 4 Angstroms plus the probe radius.
+ATIf the optional
+ACwithin
+ATparameter is given, the new selection is taken from within the currently
+ATselected atoms.  If the options
+ACadd
+ATparameter is given, the new selection is added to the currently selected atoms.
+ATThe default is to search within all atoms.
+
+
 AB
 
 
@@ -4044,6 +4227,40 @@ HTdisables picking, which avoids the display of spurious messages
 HTwhilst a script is suspended at a pause.
 AB
 
+ASPlay
+NRSyntax:  play {from <time>} {until <time>} {{on|off|eject} {<type>} <medium>}
+NR
+HR<pre>
+HRSyntax:  play {from <time>} {until <time>} {{on|off|eject} {<type>} <medium>}
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRprint play \{from <time>\} \{until <time>\} \{\{on|off|eject\} \{<type>\} <medium>\}\par
+RR}\pard\par
+
+ATThe RasMol
+ACplay
+ATcommand specifies the recording medium from which to play back a movie. 
+ATThe playback frame start time is given in seconds to millisecond precision. 
+ATSince we are working on computers, the medium is specified as a set of files, 
+ATeach marked with the playback frame start time in milliseconds as part of the 
+ATname. The place in the name at which to look for the playback frame start 
+ATtime in milliseconds is marked by the characters "ssssss" with an 
+ATappropriate number of digits.  RasMol accepts either upper or lower case
+ATs's or decimal digits to mark the place for the time.  The play off and play 
+ATeject commands effectively remove the specified medium from use. If no medium 
+ATis specified, play off suspends playing and play on resumes playing.
+ATNormally play starts immediately and runs to the end of the medium. However, 
+ATif play off and/or or some combination of play from and play until is entered 
+ATbefore 
+AC'play type medium',
+ATthose settings will be used.
+AP
+ATAs of release 2.7.5, RasMol support play from scripts and data files.
+
+AB
+
+
 ASPrint
 NRSyntax:  print
 NR
@@ -4099,6 +4316,64 @@ ATterminates only the current level, while
 ACquit
 ATterminates all nested levels of scripts.
 AB
+
+ASRecord
+NRSyntax:  record {from <time>} {until <time>} {{on|off} {<type>} <medium>}
+NR         record {mouse|motion|appearance} {on|off}
+NR
+HR<pre>
+HRSyntax:  record {from <time>} {until <time>} {{on|off} {<type>} <medium>}
+HR         record {mouse|motion|appearance} {on|off}
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRprint record \{from <time>\} \{until <time>\} \{\{on|off\} \{<type>\} <medium>\}\par
+RR\tab record \{mouse|motion|appearance\} \{on|off\}
+RR}\pard\par
+
+ATThe RasMol
+ACrecord
+ATcommand specifies the recording medium to hold the movie. Since we are 
+ATworking on computers, the medium is specified as a template for a set of 
+ATfiles, each marked with the playback frame start time in milliseconds 
+AT(rather than as seconds to avoid embedding a decimal point) as part of 
+ATthe name. The place in the name to be replaced with the playback frame 
+ATstart time in milliseconds is marked by the characters "ssssss" with 
+ATan appropriate number of digits. RasMol accepts either upper or lower case
+ATs's or decimal digits to mark the place for the time.  The record off 
+ATcommands remove the specified medium from use. If no medium is specified,
+ATrecord off suspends recording and record on resumes recording with the 
+ATnext available time on the same medium. The screen is the default medium 
+ATand is, by default, on. Writing to disk must be explicitly specified so 
+ATthat the disk does not get filled up unintentionally. The type of a 
+ATrecording medium may be an image type such as gif, pict or png to record 
+ATthe actual screen images or script to record the RasMol commands used to 
+ATgenerate the frames.
+AP
+ATNormally recording starts at playback frame start time 0 seconds. 
+ATA non-zero starting time in seconds can be specified with the 
+AC'record from'
+ATcommand as in
+AC'record from 25'
+ATor 
+AC'record from 37.25'
+ATto help in organizing scenes of movies to be assembled later in an 
+ATappropriate order.
+ATThe 
+AC'record until'
+ATcommand allows an upper limit to be set on recording time in seconds. 
+ATThe default is to have no limit. Issuing the commands
+AP
+ACrecord from 600
+AP
+ACrecord until 1800
+AP
+ATwould result in a 20 minute movie segment intended to start 10 
+minutes into a longer movie.
+These commands allow control over rewriting selected time segments.
+AB
+
+
 
 ASRefresh
 NRSyntax:  refresh
@@ -4489,6 +4764,7 @@ HR<TD><a href="#setbondmode">BondMode</a>
 HR<TD><a href="#setbonds">Bonds</a>
 HR<TD><a href="#setboundbox">BoundBox</a>
 HR<TD><a href="#setcartoon">Cartoon</a>
+
 HR<TR><TD><a href="#setcisangle">CisAngle</A>
 HR<TD><a href="#setdisplay">Display</a>
 HR<TD><a href="#setfontsize">FontSize</a>
@@ -4497,26 +4773,31 @@ HR<TD><a href="#sethbonds">HBonds</a>
 HR<TD><a href="#sethetero">Hetero</a>
 HR<TD><a href="#sethourglass">HourGlass</a>
 HR<TD><a href="#sethydrogen">Hydrogen</a>
+
 HR<TR><TD><a href="#setkinemage">Kinemage</a>
 HR<TD><a href="#setmenus">Menus</a>
 HR<TD><a href="#setmonitor">Monitor</a>
 HR<TD><a href="#setmouse">Mouse</a>
 HR<TD><a href="#setpicking">Picking</a>
+HR<TD><a href="#setplay">Play...</a>
 HR<TD><a href="#setradius">Radius</a>
-HR<TD><a href="#setshadepower">ShadePower</a>
+HR<TD><a href="#setrecord">Record...</a>
+
+HR<TR><TD><a href="#setshadepower">ShadePower</a>
 HR<TD><a href="#setshadow">Shadow</a>
-HR<TR><TD><a href="#setslabmode">SlabMode</a>
+HR<TD><a href="#setslabmode">SlabMode</a>
 HR<TD><a href="#setsolvent">Solvent</a>
 HR<TD><a href="#setspecular">Specular</a>
 HR<TD><a href="#setspecpower">SpecPower</a>
 HR<TD><a href="#setstereo">Stereo</a>
 HR<TD><a href="#setssbonds">SSBonds</a>
-HR<TD><a href="#setstrands">Strands</a>
+
+HR<TR><TD><a href="#setstrands">Strands</a>
 HR<TD><a href="#settransparent">Transparent</a>
-HR<TR><TD><a href="#setunitcell">UnitCell</a>
+HR<TD><a href="#setunitcell">UnitCell</a>
 HR<TD><a href="#setvectps">VectPS</a>
 HR<TD><a href="#setwrite">Write</a>
-HR<TD CELLSPAN=5>
+HR<TD CELLSPAN=3>
 HR</table></center>
 
 
@@ -4548,23 +4829,28 @@ RR{\uldb monitor}{\v setmonitor}\cell
 RR{\uldb mouse}{\v setmouse}\cell
 RR\row\intbl
 RR{\uldb picking}{\v setpicking}\cell
+RR{\uldb play...}{\v setplay}\cell
 RR{\uldb radius}{\v setradius}\cell
+RR{\uldb record...}{\v setrecord}\cell
+RR\row\intbl
 RR{\uldb shadepower}{\v setshadepower}\cell
 RR{\uldb shadow}{\v setshadow}\cell
-RR\row\intbl
 RR{\uldb slabmode}{\v setslabmode}\cell
 RR{\uldb solvent}{\v setsolvent}\cell
+RR\row\intbl
 RR{\uldb specular}{\v setspecular}\cell
 RR{\uldb specpower}{\v setspecpower}\cell
-RR\row\intbl
 RR{\uldb ssbonds}{\v setssbonds}\cell
 RR{\uldb stereo}{\v setstereo}\cell
+RR\row\intbl
 RR{\uldb strands}{\v setstrands}\cell
 RR{\uldb transparent}{\v settransparent}\cell
-RR\row\intbl
 RR{\uldb unitcell}{\v setunitcell}\cell
 RR{\uldb vectps}{\v setvectps}\cell
+RR\row\intbl
 RR{\uldb write}{\v setwrite}\cell
+RR\cell
+RR\cell
 RR\cell
 RR\row}
 RR\pard\par\trowd
@@ -5385,7 +5671,8 @@ NR    bondmode        bonds           boundbox        cartoon
 NR    cisangle        display         fontsize        fontstroke
 NR    hbond           hetero          hourglass       hydrogen
 NR    kinemage        menus           monitor         mouse
-NR    picking         radius          shadow          slabmode
+MR    picking         play.fps        radius          record.aps
+NR    record.dwell    record.fps      shadow          slabmode
 NR    solvent         specular        specpower       stereo
 NR    ssbonds         strands         transparent     unitcell
 NR    vectps          write
@@ -5399,6 +5686,7 @@ HR<TD><a href="#setbondmode">BondMode</a>
 HR<TD><a href="#setbonds">Bonds</a>
 HR<TD><a href="#setboundbox">BoundBox</a>
 HR<TD><a href="#setcartoon">Cartoon</a>
+
 HR<TR><TD><a href="#setcisangle">CisAngle</A>
 HR<TD><a href="#setdisplay">Display</a>
 HR<TD><a href="#setfontsize">FontSize</a>
@@ -5407,26 +5695,31 @@ HR<TD><a href="#sethbonds">HBonds</a>
 HR<TD><a href="#sethetero">Hetero</a>
 HR<TD><a href="#sethourglass">HourGlass</a>
 HR<TD><a href="#sethydrogen">Hydrogen</a>
+
 HR<TR><TD><a href="#setkinemage">Kinemage</a>
 HR<TD><a href="#setmenus">Menus</a>
 HR<TD><a href="#setmonitor">Monitor</a>
 HR<TD><a href="#setmouse">Mouse</a>
 HR<TD><a href="#setpicking">Picking</a>
+HR<TD><a href="#setplay">Play...</a>
 HR<TD><a href="#setradius">Radius</a>
-HR<TD><a href="#setshadepower">ShadePower</a>
+HR<TD><a href="#setrecord">Record...</a>
+
+HR<TR><TD><a href="#setshadepower">ShadePower</a>
 HR<TD><a href="#setshadow">Shadow</a>
-HR<TR><TD><a href="#setslabmode">SlabMode</a>
+HR<TD><a href="#setslabmode">SlabMode</a>
 HR<TD><a href="#setsolvent">Solvent</a>
 HR<TD><a href="#setspecular">Specular</a>
 HR<TD><a href="#setspecpower">SpecPower</a>
 HR<TD><a href="#setstereo">Stereo</a>
 HR<TD><a href="#setssbonds">SSBonds</a>
-HR<TD><a href="#setstrands">Strands</a>
+
+HR<TR><TD><a href="#setstrands">Strands</a>
 HR<TD><a href="#settransparent">Transparent</a>
-HR<TR><TD><a href="#setunitcell">UnitCell</a>
+HR<TD><a href="#setunitcell">UnitCell</a>
 HR<TD><a href="#setvectps">VectPS</a>
 HR<TD><a href="#setwrite">Write</a>
-HR<TD CELLSPAN=5>
+HR<TD CELLSPAN=3>
 HR</table></center>
 
 
@@ -5459,23 +5752,28 @@ RR{\uldb monitor}{\v setmonitor}\cell
 RR{\uldb mouse}{\v setmouse}\cell
 RR\row\intbl
 RR{\uldb picking}{\v setpicking}\cell
+RR{\uldb play...}{\v setplay}\cell
 RR{\uldb radius}{\v setradius}\cell
+RR{\uldb record...}{\v setrecord}\cell
+RR\row\intbl
 RR{\uldb shadepower}{\v setshadepower}\cell
 RR{\uldb shadow}{\v setshadow}\cell
-RR\row\intbl
 RR{\uldb slabmode}{\v setslabmode}\cell
 RR{\uldb solvent}{\v setsolvent}\cell
+RR\row\intbl
 RR{\uldb specular}{\v setspecular}\cell
 RR{\uldb specpower}{\v setspecpower}\cell
-RR\row\intbl
 RR{\uldb ssbonds}{\v setssbonds}\cell
 RR{\uldb stereo}{\v setstereo}\cell
+RR\row\intbl
 RR{\uldb strands}{\v setstrands}\cell
 RR{\uldb transparent}{\v settransparent}\cell
-RR\row\intbl
 RR{\uldb unitcell}{\v setunitcell}\cell
 RR{\uldb vectps}{\v setvectps}\cell
+RR\row\intbl
 RR{\uldb write}{\v setwrite}\cell
+RR\cell
+RR\cell
 RR\cell
 RR\row}
 RR\pard\par\trowd
@@ -6311,6 +6609,30 @@ ATof all atoms which agree in chain identifier with the picked atom.
 AB
 
 
+PR?setplay
+ASSet Play
+RRK{\footnote play}
+NRSyntax:  set play.fps {<value>}
+NR
+HR<pre>
+HRSyntax:  set play.fps {&lt;value&gt;}
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRset play.fps \{<value>\}\par
+RR}\pard\par
+
+ATThe RasMol
+ACset play.fps
+ATcommand gives the number of frames per second for playback by the
+AXplay play
+ATcommand (default 24 frames per second).
+AP
+ATIn the current release of RasMol, the play timing is not controlled
+ATby this parameter.
+AB
+
+
 PR?radius
 ASSet Radius
 RRK{\footnote radius}
@@ -6358,6 +6680,42 @@ AXsetsolvent solvent
 ATresets
 ACradius
 ATto its new default value.
+AB
+
+PR?setrecord
+ASSet Record
+RRK{\footnote play}
+NRSyntax:  set record.aps {<value>}
+NR         set record.fps {<value>}
+NR         set record.dwell {<value>}
+NR
+HR<pre>
+HRSyntax:  set record.aps {&lt;value&gt;}
+HR         set record.fps {&lt;value&gt;}
+HRSyntax:  set record.dwell {&lt;value&gt;}
+HR</pre><p>
+RR\tx1200
+RR{\f2\b Syntax:\tab
+RRset record.aps \{<value>\}\par
+RR\tab set record.fps \{<value>\}
+RR\tab set record.dwell \{<value>\}
+RR}\pard\par
+
+ATThe RasMol
+ACset record.aps
+ATgives the maximum on-screen velocity in Angstroms per second in animating 
+ARtranslations, rotations and zooms (default 10 A/second).
+AP
+ATThe RasMol
+ACset record.aps
+ATcommand gives number of frames per second for recording by the
+AXrecord record
+ATcommand (default 24 frames per second).
+AP
+ATThe RasMol
+ACset record.dwell
+ATcommand sets the time in seconds to dwell on a change in appearance
+AT(default .5 sec).
 AB
 
 
@@ -10664,7 +11022,7 @@ HR<a href=http://www.rasmol.org/register.shtml>Register your RasMol</a> |
 HR<br />
 HR</CENTER>
 HR<HR>
-HRUpdated 18 March 2008.<BR>
+HRUpdated 17 April 2009.<BR>
 HRHerbert J. Bernstein<BR>
 HRBernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA<BR>
 HR<script language="javascript" type="text/javascript">

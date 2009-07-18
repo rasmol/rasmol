@@ -1,8 +1,3 @@
-#define NEARTREE_LOCAL
-#define CQRLIB_LOCAL
-#define CVECTOR_LOCAL
-#define XFORMSLIB_LOCAL
-#define CBFLIB_LOCAL
 ###########################################################################
 #                               RasMol 2.7.5                              #
 #                                                                         #

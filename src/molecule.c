@@ -1,10 +1,9 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                            19 November 2007                             *
- *                          (rev. 21 March 2008)                           *
+ *                              13 June 2009                               *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -31,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -233,6 +239,11 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <math.h>
+#include <CVector.h>
+#ifndef CVECTOR_FAR
+#define CVECTOR_FAR
+#endif
+#include <CNearTree.h>
 
 #define MOLECULE
 #include "molecule.h"
@@ -317,6 +328,23 @@ static void TestLadder( Chain __far* );
 /* External RasMac Function Declaration! */
 void SetFileInfo( char*, OSType, OSType, short );
 #endif
+
+#ifndef VMS
+#ifdef APPLEMAC
+#define DirChar ':'
+#else
+#ifdef IBMPC
+#define DirChar  '\\'
+#else
+#define DirChar  '/'
+#endif
+#endif
+#else
+#define DirChar ':'
+#endif
+
+#define basename(fname) \
+  ((strrchr(fname,DirChar))?(1+strrchr(fname,DirChar)):(fname))
 
 
 
@@ -1633,7 +1661,7 @@ void CreateNewBond (Long src, Long dst )
  */
 
 
-static int PreTestSurface(  RAtom __far *sptr,  RAtom __far *dptr, 
+int PreTestSurface(  RAtom __far *sptr,  RAtom __far *dptr, 
       Long C[3],  int *crad, Long Un[3] )
 {
     register Long dx, dy, dz;
@@ -1743,7 +1771,7 @@ static int TestBuriedSurface( RAtom __far *aptr, RAtom __far *dptr, RAtom __far 
 
  
 	register Long dx, dy, dz;
-    register Long maxS, dist, dec, decun;
+    register Long maxS, dist, decun;
     register int erad;
 	Long ECxUn[3];
 
@@ -1753,9 +1781,7 @@ static int TestBuriedSurface( RAtom __far *aptr, RAtom __far *dptr, RAtom __far 
     erad = eptr->radius;
     if (erad < 10 ) erad = Element[eptr->elemno].vdwrad;
     
-    /* Sum of van der Walls radii */
-    dist = erad + crad + ProbeRadius;
-    maxS = dist*dist;  
+    maxS = erad*erad;  
     
     dx = eptr->xorg-C[0] 
          + eptr->fxorg;   if( (dist=dx*dx)>=maxS ) return -1;
@@ -1769,15 +1795,23 @@ static int TestBuriedSurface( RAtom __far *aptr, RAtom __far *dptr, RAtom __far 
 	ECxUn[1] = dz*Un[0]-dx*Un[2];
 	ECxUn[2] = dx*Un[1]-dy*Un[0];
 	
-	/* Compute the hypotenuse */
+	/* Compute the hypotenuse
+     
+                                     /crad
+                                    /
+     *-----------------------------*
+   eptr           EC              /C
+                                 /
+     The most extreme point of the circle C is at 
+     (||EC||+crad*sin(alpha))**2 + (crad*cos(alpha))**2
+     = ||EC||**2 + 2 ||EC||*crad*sin(alpha) + crad**2(sin(alpha)**2+cos(alpha)**2)
+     = ||EC||**2 + crad**2 + 2 crad * (||EC x Un||/4096) 
+     
+     */
 	
-	dec = (Long)(rint(4096*sqrt((double)dist)));
 	decun = (Long)(rint(sqrt((double)(ECxUn[0]*ECxUn[0] + ECxUn[1]*ECxUn[1] + ECxUn[2]*ECxUn[2]))));
-	dist += crad*crad + (2*crad*decun)/dec;
-	/* fprintf(stderr,"TBS E-C = {%ld,%ld,%ld} C={%ld,%ld,%ld}, re=%d, wp=%d, c=%ld,a=%ld,h=%d\n",
-	      dx, dy, dz, C[0],C[1],C[2],erad+ProbeRadius, crad, dec/4096,crad*decun/dec,
-		  (int)sqrt((double)dist)); */
-	if (dist < (erad+ProbeRadius)*(erad+ProbeRadius)) return 0;
+	dist += crad*crad + 2*(crad*decun)/4096;
+	if (dist < erad*erad) return 0;
     
     return 1;
 } 
@@ -2058,26 +2092,64 @@ void CreateMoleculeBonds( int info, int flag, int force )
 }
 
 
-void CreateSurfaceBonds( void )
-{
-    register int i, x, y, z, im, xm, ym, zm;
-    register Long tx, ty, tz;
-    register Long txm, tym, tzm;
-    register Long mx, my, mz; 
-    register Long mxm, mym, mzm; 
+
+int CreateAtomTree( void ) {
+ 
+    register RAtom __far *aptr;
+    register Chain __far *chain;
+    register Group __far *group;
+
+    double coord[3];
+
+    int err;
+    
+    if (!Database) return 0;
+    
+    if (AtomTree)CNearTreeClear(AtomTree);
+    
+    if (!AtomTree && (err = CNearTreeCreate(&AtomTree,3,CNEARTREE_TYPE_DOUBLE | CNEARTREE_DEFER_ALL ))) return err;
+    
+    /* Load the NearTree with all selected atoms */
+    
+    for( chain=Database->clist; chain; chain=chain->cnext ) {
+        for( group=chain->glist; group; group=group->gnext ) {
+            for( aptr=group->alist; aptr; aptr=aptr->anext ) {
+                if (aptr->flag&SelectFlag) { 
+                    
+                    coord[0] =  (double)(aptr->xorg + aptr->fxorg);
+                    coord[1] =  (double)(aptr->yorg + aptr->fyorg);
+                    coord[2] =  (double)(aptr->zorg + aptr->fzorg);
+                    if (CNearTreeInsert(AtomTree,coord,(void CNEARTREE_FAR *)aptr)) {
+                        RasMolFatalExit(MsgStrs[StrMalloc]);
+                    }
+                }
+            }
+		}
+    }
+    
+    return 0;
+    
+}
+
+void CreateSurfaceBonds( void ) {
+    register int i, ii;
     register Long dx, dy, dz;
-    register int lx, ly, lz, ux, uy, uz;
-    register int lxm, lym, lzm, uxm, uym, uzm;
     register RAtom __far *aptr, __far *dptr, __far *eptr;
     register Chain __far *chain;
     register Group __far *group;
-    register Long voxorder, voxorder2;
 	register SurfBond __far *sbptr;
+	
+	
+	CVectorHandle objInRing;
+	CVectorHandle xobjInRing;
+	double coord[3];
+	
 	Long C[3], Un[3];
 	int crad;
 	
     if( !Database ) 
         return;
+    
 	
     dx = (MaxX-MinX)+1;
     dy = (MaxY-MinY)+1;
@@ -2087,134 +2159,74 @@ void CreateSurfaceBonds( void )
     CurMolecule->sblist = (SurfBond __far*)0;
     Info.srfbondcount = 0;
 	
-    ResetVoxelData();
 	
-    voxorder = VOXORDER;
-    voxorder2 =VOXORDER2;
-	
-    if ( dx+749 < 750*VOXORDER && 
-         dy+749 < 750*VOXORDER && 
-         dz+749 < 750*VOXORDER ) {
-		voxorder = (dx+749)/750;
-		if (dy > dx && dy > dz) voxorder = (dy+749)/750;
-		if (dz > dx && dz > dy) voxorder = (dz+749)/750;
-		voxorder2 = voxorder*voxorder;
-    } 
-	
-    /* Load the hash table with all selected atoms and
+    /* Load the NearTree with all selected atoms and
 		clear SurfBondFlag */
 	
-    for( chain=Database->clist; chain; chain=chain->cnext ) {
-        for( group=chain->glist; group; group=group->gnext ) {
-            for( aptr=group->alist; aptr; aptr=aptr->anext ) {
-				if (aptr->flag&SelectFlag) {  
-					
-					mx = aptr->xorg + aptr->fxorg - MinX;
-					my = aptr->yorg + aptr->fyorg - MinY;
-					mz = aptr->zorg + aptr->fzorg - MinZ;
-					
-					x = (int)((voxorder*mx)/dx);
-					y = (int)((voxorder*my)/dy);
-					z = (int)((voxorder*mz)/dz);
-					
-					i = voxorder2*x + voxorder*y + z;
-					aptr->next = (RAtom __far*)HashTable[i];
-					aptr->flag &= ~SurfBondFlag;
-					HashTable[i] = (void __far*)aptr;
-				}
-				VoxelsClean = False;
+    if (!AtomTree) {
+        if (CreateAtomTree()) {
+            RasMolFatalExit(MsgStrs[StrMalloc]);
 			}
 		}
+ 	
+	if (CVectorCreate(&objInRing,sizeof(void CVECTOR_FAR *),1)) {
+	  RasMolFatalExit(MsgStrs[StrMalloc]);
+	}
+	if (CVectorCreate(&xobjInRing,sizeof(void CVECTOR_FAR *),1)) {
+	  RasMolFatalExit(MsgStrs[StrMalloc]);
 	}
 	
     /* Now run through the atoms again and check each atom
-		against the others using the hash table */
+		against the others using the neartree */
 	
     for( chain=Database->clist; chain; chain=chain->cnext ) {
         for( group=chain->glist; group; group=group->gnext ) {
             for( aptr=group->alist; aptr; aptr=aptr->anext ) {
 				if (aptr->flag&SelectFlag && (!(aptr->flag&ExpandFlag))) {
-					
+				    int abort;
+				
+				    coord[0] =  (double)(aptr->xorg + aptr->fxorg);
+				    coord[1] =  (double)(aptr->yorg + aptr->fyorg);
+				    coord[2] =  (double)(aptr->zorg + aptr->fzorg);
 					/* Look for atoms within 6 Angstroms plus 2
 					probe radii of atom aptr */
 					
-					mx = aptr->xorg + aptr->fxorg - MinX;
-					my = aptr->yorg + aptr->fyorg - MinY;
-					mz = aptr->zorg + aptr->fzorg - MinZ;
+				    if (!CNearTreeFindInAnnulus(AtomTree,125.,
+				    (double)(AbsMaxAtomDiam+ProbeRadius+ProbeRadius),
+				    NULL,objInRing,coord,True))  {
+				    	
 					
-					tx = mx-AbsMaxAtomDiam-ProbeRadius-ProbeRadius;  
-					ty = my-AbsMaxAtomDiam-ProbeRadius-ProbeRadius;  
-					tz = mz-AbsMaxAtomDiam-ProbeRadius-ProbeRadius;  
-					
-					lx = (tx>0)? (int)((voxorder*tx)/dx) : 0;
-					ly = (ty>0)? (int)((voxorder*ty)/dy) : 0;
-					lz = (tz>0)? (int)((voxorder*tz)/dz) : 0;
-					
-					tx = mx+AbsMaxAtomDiam+ProbeRadius+ProbeRadius;  
-					ty = my+AbsMaxAtomDiam+ProbeRadius+ProbeRadius;  
-					tz = mz+AbsMaxAtomDiam+ProbeRadius+ProbeRadius;
-					
-					ux = (tx<dx)? (int)((voxorder*tx)/dx) : voxorder-1;
-					uy = (ty<dy)? (int)((voxorder*ty)/dy) : voxorder-1;
-					uz = (tz<dz)? (int)((voxorder*tz)/dz) : voxorder-1;
-					
-					for( x = lx; x <= ux; x++ ) { 
-						i = voxorder2*x + voxorder*ly;
-						for( y = ly; y<=uy; y++ ) {   
-							for( z = lz; z<=uz; z++ ) {
-							    register int abort; 
-								dptr = (RAtom __far*)HashTable[i+z];
-								while( dptr ) {
-								  if( dptr->serno <  aptr->serno ) { 
-									
+					for (i = 0; i < CVectorSize(objInRing); i++) {
+						
+					  dptr = * *(RAtom __far* __far * __far *)CVectorElementAt(objInRing,i);
+					  if (dptr->serno < aptr->serno) {
 									abort = 0;
 									switch (PreTestSurface(aptr,dptr,C,&crad,Un)) {
-										
 										case 0:
-											/* Look for atoms centers within ProbeRadius+AbsMaxAtomRad of C
-											i.e. 3 Angstroms plus the ProbeRadius of C */ 
-											mxm = C[0] - MinX; 
-											mym = C[1] - MinY; 
-											mzm = C[2] - MinZ;
-											
-											txm = mx-AbsMaxAtomRad-ProbeRadius;  
-											tym = my-AbsMaxAtomRad-ProbeRadius;  
-											tzm = mz-AbsMaxAtomRad-ProbeRadius;  
-											
-											lxm = (txm>0)? (int)((voxorder*txm)/dx) : 0;
-											lym = (tym>0)? (int)((voxorder*tym)/dy) : 0;
-											lzm = (tzm>0)? (int)((voxorder*tzm)/dz) : 0;
-											
-											txm = mxm+AbsMaxAtomRad+ProbeRadius; 
-											tym = mym+AbsMaxAtomRad+ProbeRadius;  
-											tzm = mzm+AbsMaxAtomRad+ProbeRadius;
-											
-											uxm = (txm<dx)? (int)((voxorder*txm)/dx) : voxorder-1;
-											uym = (tym<dy)? (int)((voxorder*tym)/dy) : voxorder-1;
-											uzm = (tzm<dz)? (int)((voxorder*tzm)/dz) : voxorder-1;
-											
-											for ( xm = lxm; (xm < uxm&& !abort) ; xm++ ) { 
-												im = voxorder2*xm + voxorder*lym;
-												for ( ym = lym; (ym<=uym && !abort) ; ym++ ) {   
-													for( zm = lz; (zm<=uzm && !abort); zm++ ) {
-														eptr = (RAtom __far*)HashTable[im+zm];
-														while( eptr && (eptr != dptr)  && (eptr != aptr) && !abort ) {
+						  coord[0] = (double)C[0];
+						  coord[1] = (double)C[1];
+						  coord[2] = (double)C[2];
+						  /* Look for atoms centers within AbsMaxAtomRad of C
+						  i.e. 3 Angstroms of C */ 
+						  if (!CNearTreeFindInSphere(AtomTree,
+				            (double)(AbsMaxAtomRad),
+				            NULL,xobjInRing,coord,True))  {
+				            for (ii=0; ii < CVectorSize(xobjInRing) &&!abort; ii++) {
+				              eptr = * *(RAtom __far* __far * __far *)CVectorElementAt(xobjInRing,ii);
+				              if((eptr != dptr)  && (eptr != aptr)) {
 															if (!TestBuriedSurface(aptr,dptr,eptr,C,crad,Un)) {  
 																abort = 1;
 																break;
 															}
-															eptr = eptr->next;
-														}
-													}
-													im += voxorder;
-												}
+				              	
+				              }
+				            	
 											}
 												
+				          }
 											break;
-										case 1:  abort = 0;
-											break;
-										case -1: abort = -1;
-											break;
+				          case 1:  abort = 0; break;
+						  case -1: abort = -1; break;
 									}
 									if ( !abort ) {
 										sbptr = ProcessSurfBond(aptr,dptr);
@@ -2222,20 +2234,22 @@ void CreateSurfaceBonds( void )
 										CurMolecule->sblist = sbptr;
 										Info.srfbondcount++;
 									}
-								  }
-								  dptr = dptr->next;
+
+					  }
+					  
+				    }
+				    
+				    }
+					
                                 }
                             }
-                            i += voxorder;
                         }
 					}
-                }
-            }
-        }
-    }
+    
+    CVectorFree(&objInRing);
+    CVectorFree(&xobjInRing);
 
 }
-
 
 
 /*=================================*/
@@ -3184,6 +3198,8 @@ static void ResetDatabase( void )
         Info.matf2o[i][j] = Info.mato2f[i][j] = ((i!=j)?0.:1.);
       }
     }
+    
+    if (AtomTree)CNearTreeFree(&AtomTree);
 
 }
 
@@ -3273,6 +3289,7 @@ void InitialiseDatabase( void )
     FreeGroup = (void __far*)0;
     FreeAtom = (void __far*)0;
     FreeBond = (void __far*)0;
+    AtomTree = (void __far*)0;
     Info.cisbondcount = -1; /* to ititialize it has to be < 0 */   
     CisBondCutOff = CIS;
     MapLevel = 0.;

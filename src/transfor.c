@@ -1,10 +1,9 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                            19 November 2007                             *
- *                          (rev. 21 March 2008)                           *
+ *                              13 June 2009                               *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -31,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -207,6 +213,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <CNearTree.h>
+#include <cqrlib.h>
 
 #define TRANSFORM
 #include "molecule.h"
@@ -2368,6 +2376,47 @@ void ColourPointPotential( int mapno )
 
 }
 
+void ColourPointAtom( int mapno )
+{
+    register int i,shade;
+    void CNEARTREE_FAR * objClosest;
+    
+    MapPointVec __far *MapPointsPtr;
+    MapInfo mapinfo;
+    double coord[3];
+    
+    if (!AtomTree) {
+        if (CreateAtomTree()) {
+            RasMolFatalExit(MsgStrs[StrMalloc]);
+        }
+    }
+    
+	UseDotColPot = True;
+    
+    if (MapInfoPtr)
+        if (mapno >= 0 && mapno < MapInfoPtr->size) {
+            vector_get_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,mapno );
+            MapPointsPtr = mapinfo.MapPointsPtr;
+            
+            if (MapPointsPtr)
+                for (i=0; i<MapPointsPtr->size; i++) {
+                    if (!(MapPointsPtr->array[i]).flag&SelectFlag) continue;
+                    coord[0] = (double)(MapPointsPtr->array[i]).xpos;
+                    coord[1] = (double)(MapPointsPtr->array[i]).ypos;
+                    coord[2] = (double)(MapPointsPtr->array[i]).zpos;
+                    
+                    if (!CNearTreeNearestNeighbor(AtomTree,(double)(1500+ProbeRadius),NULL,&objClosest,coord)) {
+                        shade = Colour2Shade((MapPointsPtr->array[i]).col);
+                        Shade[shade].refcount--;
+                        (MapPointsPtr->array[i]).col = (*((RAtom __far * *)objClosest))->col;
+                        shade = Colour2Shade((MapPointsPtr->array[i]).col);
+                        Shade[shade].refcount++;
+                    }
+                 }
+        }
+}
+
+
 
 static void ResetColourAttrib( void )
 {
@@ -3243,20 +3292,6 @@ void InitialTransform( void )
       MaxZoom -= 1.0;
     }
     
-    /* Movie and animation intialization */
-    
-    play_fps = record_fps = 24.;  /* default to 24 fps */;
-    record_aps = 10.;             /* default to 10 Angstroms per second */
-    record_on[0] = record_on[1] = False; 
-                                  /* default, not recording motion or appearance */
-    record_frame[0] = record_frame[1] = 0;
-                                  /* start the overall and dwell frame counts at 0 */ 
-    record_dwell = 0.5;           /* dwell half second per command (12 frames)   */
-    RecordTemplate[0] = 0;        /* no initial recording */
-    PlayTemplate[0] = 0;          /* no initial playback  */
-    RecordCurrent = RecordFrom = RecordUntil 
-    = PlayCurrent = PlayFrom = PlayUntil = 0.;
-    RecordPause = True;
 }
 
 
@@ -3478,12 +3513,12 @@ void PrepareTransform( void )
     	DialValueOffset[ii] = DialValue[ii];
     	DialValueBalance[ii] = 0;
     }
-    DialValueOffset[DialTX] -= LastTX;
-    DialValueOffset[DialTY] -= LastTY;
-    DialValueOffset[DialTZ] -= LastTZ;
-    DialValueOffset[DialRX] -= LastRX;
-    DialValueOffset[DialRY] -= LastRY;
-    DialValueOffset[DialRZ] -= LastRZ;
+    DialValueOffset[DialTX] -= LastDialValue[DialTX];
+    DialValueOffset[DialTY] -= LastDialValue[DialTY];
+    DialValueOffset[DialTZ] -= LastDialValue[DialTZ];
+    DialValueOffset[DialRX] -= LastDialValue[DialRX];
+    DialValueOffset[DialRY] -= LastDialValue[DialRY];
+    DialValueOffset[DialRZ] -= LastDialValue[DialRZ];
 
     if( ReDrawFlag )
     {         
@@ -3502,89 +3537,182 @@ void PrepareTransform( void )
           
       	if (DialValueOffset[DialTX]>tlimit) { 
       	   DialValueBalance[DialTX] = DialValueOffset[DialTX] - tlimit;
-      	   DialValueOffset[DialTX]=tlimit; NextReDrawFlag = ReDrawFlag;
+      	   DialValueOffset[DialTX]=tlimit; NextReDrawFlag |= RFTransX;
       	}
       	if (DialValueOffset[DialTX]<-tlimit) { 
       	   DialValueBalance[DialTX] = DialValueOffset[DialTX] + tlimit;
-      	   DialValueOffset[DialTX]=-tlimit;  NextReDrawFlag = ReDrawFlag;
+      	   DialValueOffset[DialTX]=-tlimit;  NextReDrawFlag |= RFTransX;
       	}
       	if (DialValueOffset[DialTY]>tlimit) { 
       	   DialValueBalance[DialTY] = DialValueOffset[DialTY] - tlimit;
-      	   DialValueOffset[DialTY]=tlimit; NextReDrawFlag = ReDrawFlag;
+      	   DialValueOffset[DialTY]=tlimit; NextReDrawFlag |= RFTransY;
       	}
       	if (DialValueOffset[DialTY]<-tlimit) {
       	   DialValueBalance[DialTY] = DialValueOffset[DialTY] + tlimit;
-      	   DialValueOffset[DialTY]=-tlimit;  NextReDrawFlag = ReDrawFlag;
+      	   DialValueOffset[DialTY]=-tlimit;  NextReDrawFlag |= RFTransY;
       	}
       	if (DialValueOffset[DialTZ]>tlimit) { 
       	   DialValueBalance[DialTZ] = DialValueOffset[DialTZ] - tlimit;
-      	   DialValueOffset[DialTZ]=tlimit; NextReDrawFlag = ReDrawFlag;
+      	   DialValueOffset[DialTZ]=tlimit; NextReDrawFlag |= RFTransZ;
       	}
       	if (DialValueOffset[DialTZ]<-tlimit) { 
       	   DialValueBalance[DialTZ] = DialValueOffset[DialTZ] + tlimit;
-      	   DialValueOffset[DialTZ]=-tlimit;  NextReDrawFlag = ReDrawFlag;
+      	   DialValueOffset[DialTZ]=-tlimit; NextReDrawFlag |= RFTransZ;
       	}
       } 
          
-      VecIn[0] = DialValueOffset[DialTX];
-      VecIn[1] = DialValueOffset[DialTY];
-      VecIn[2] = DialValueOffset[DialTZ];
+      VecIn[0] = DialValueOffset[DialTX]*XRange;
+      VecIn[1] = DialValueOffset[DialTY]*YRange;
+      VecIn[2] = DialValueOffset[DialTZ]*ZRange;
 
       RMatVec(VecOut,WIRotX,WIRotY,WIRotZ,VecIn);
       
-      LastTX += VecOut[0]/XRange;
-      LastTY += VecOut[1]/YRange;
-      LastTZ += VecOut[2]/ZRange;
+      LastDialValue[DialTX] += VecOut[0]/XRange;
+      LastDialValue[DialTY] += VecOut[1]/YRange;
+      LastDialValue[DialTZ] += VecOut[2]/ZRange;
       
-      DialValue[DialTX] = LastTX+DialValueBalance[DialTX]/XRange;
-      DialValue[DialTY] = LastTY+DialValueBalance[DialTY]/YRange;
-      DialValue[DialTZ] = LastTZ+DialValueBalance[DialTZ]/ZRange;
+      DialValue[DialTX] = LastDialValue[DialTX]+DialValueBalance[DialTX]/XRange;
+      DialValue[DialTY] = LastDialValue[DialTY]+DialValueBalance[DialTY]/YRange;
+      DialValue[DialTZ] = LastDialValue[DialTZ]+DialValueBalance[DialTZ]/ZRange;
      
     } 
 
-    LOffset[0] = WRange + (int)rint(Zoom*LastTX*XRange);
-    LOffset[1] = HRange + (int)rint(Zoom*LastTY*YRange);
-    LOffset[2] = 10000 + (int)rint(Zoom*LastTZ*ZRange);
+    LOffset[0] = WRange + (int)rint(Zoom*LastDialValue[DialTX]*XRange);
+    LOffset[1] = HRange + (int)rint(Zoom*LastDialValue[DialTY]*YRange);
+    LOffset[2] = 10000 + (int)rint(Zoom*LastDialValue[DialTZ]*ZRange);
         
 
-    if ( ( DialValueOffset[DialRX] != LastRX ) || 
-         ( DialValueOffset[DialRY] != LastRY ) ||
-        ( DialValueOffset[DialRZ] != LastRZ ) ) {
-        
+    if ( ( DialValueOffset[DialRX] != 0 ) || 
+         ( DialValueOffset[DialRY] != 0 ) ||
+         ( DialValueOffset[DialRZ] != 0 ) ||
+         ( DialQRot.w != 0. ) ||
+         ( DialQRot.x != 0. ) ||
+         ( DialQRot.y != 0. ) ||
+         ( DialQRot.z != 0. )
+        ) {
+                 
+        /* *** redo the balance *** */
         if (record_on[0] && record_aps > 0. && record_fps > 0. && !RecordPause) 
         {
             Real slimit;
-            slimit = 39.788*record_aps/record_fps/WorldRadius;
+            Real rangle;
+            Real newcos, newsin, oldsin;
+            Real balcos, balsin;
+            CQRQuaternion quat;
+            CQRQuaternion balquat;
+            CQRQuaternion trot;
+            DialValueOffset[DialRX] *= PI;
+            DialValueOffset[DialRY] *= PI;
+            DialValueOffset[DialRZ] *= PI;
+            if (( DialQRot.w != 0. ) ||
+              ( DialQRot.x != 0. ) ||
+              ( DialQRot.y != 0. ) ||
+              ( DialQRot.z != 0. )) {
+              CQRAngles2Quaternion (&trot, DialValueOffset[DialRX],
+                                      DialValueOffset[DialRY],
+                                      DialValueOffset[DialRZ]);
+              CQRMMultiply(quat,DialQRot,trot);  
+            } else {    
+              CQRAngles2Quaternion (&quat, DialValueOffset[DialRX],
+                  DialValueOffset[DialRY],
+                  DialValueOffset[DialRZ]);
+            }
+            rangle = acos(quat.w);
+            oldsin = sin(rangle);
+            slimit = 62.5*record_aps/record_fps/WorldRadius;
+            newcos = cos(slimit);
+            newsin = sin(slimit);
+            balcos = cos(rangle-slimit);
+            balsin = sin(rangle-slimit);
+            if (rangle > slimit && oldsin != 0.) {
+              newcos = cos(slimit);
+              newsin = sin(slimit);
+              balcos = cos(rangle-slimit);
+              balsin = sin(rangle-slimit);
+              balquat.w = balcos;
+              balquat.x = quat.x*balsin/oldsin;
+              balquat.y = quat.y*balsin/oldsin;
+              balquat.z = quat.z*balsin/oldsin;
+              quat.w = newcos;
+              quat.x = quat.x*newsin/oldsin;
+              quat.y = quat.y*newsin/oldsin;
+              quat.z = quat.z*newsin/oldsin;
+              CQRQuaternion2Angles (&DialValueOffset[DialRX],
+                  &DialValueOffset[DialRY],
+                  &DialValueOffset[DialRZ],&quat);
+              DialValueBalance[DialRX] = DialValueOffset[DialRX];
+              DialValueBalance[DialRY] = DialValueOffset[DialRY];
+              DialValueBalance[DialRZ] = DialValueOffset[DialRZ];              
+              CQRQuaternion2Angles (&DialValueBalance[DialRX],
+                  &DialValueBalance[DialRY],
+                  &DialValueBalance[DialRZ],&balquat);
+              DialValueBalance[DialRX] /= PI;
+              DialValueBalance[DialRY] /= PI;
+              DialValueBalance[DialRZ] /= PI;
+            } else if  (rangle < -slimit && oldsin != 0.) {
+              newcos = cos(-slimit);
+              newsin = sin(-slimit);
+              balcos = cos(rangle+slimit);
+              balsin = sin(rangle+slimit);
+              balquat.w = balcos;
+              balquat.x = quat.x*balsin/oldsin;
+              balquat.y = quat.y*balsin/oldsin;
+              balquat.z = quat.z*balsin/oldsin;
+              quat.w = newcos;
+              quat.x = quat.x*newsin/oldsin;
+              quat.y = quat.y*newsin/oldsin;
+              quat.z = quat.z*newsin/oldsin;
+              CQRQuaternion2Angles (&DialValueOffset[DialRX],
+                  &DialValueOffset[DialRY],
+                  &DialValueOffset[DialRZ],&quat);
+              DialValueBalance[DialRX] = DialValueOffset[DialRX];
+              DialValueBalance[DialRY] = DialValueOffset[DialRY];
+              DialValueBalance[DialRZ] = DialValueOffset[DialRZ];              
+              CQRQuaternion2Angles (&DialValueBalance[DialRX],
+                  &DialValueBalance[DialRY],
+                  &DialValueBalance[DialRZ],&balquat);
+              DialValueBalance[DialRX] /= PI;
+              DialValueBalance[DialRY] /= PI;
+              DialValueBalance[DialRZ] /= PI;
+            }
+            DialValueOffset[DialRX] /= PI;
+            DialValueOffset[DialRY] /= PI;
+            DialValueOffset[DialRZ] /= PI;
             if (DialValueOffset[DialRX] > 1. ) DialValueOffset[DialRX] -=2.;
             if (DialValueOffset[DialRX] < -1. ) DialValueOffset[DialRX] +=2.;
             if (DialValueOffset[DialRY] > 1. ) DialValueOffset[DialRY] -=2.;
             if (DialValueOffset[DialRY] < -1. ) DialValueOffset[DialRY] +=2.;
             if (DialValueOffset[DialRZ] > 1. ) DialValueOffset[DialRZ] -=2.;
             if (DialValueOffset[DialRZ] < -1. ) DialValueOffset[DialRZ] +=2.;
-            if (DialValueOffset[DialRX]>slimit) { 
-                DialValueBalance[DialRX] = DialValueOffset[DialRX] - slimit;
-                DialValueOffset[DialRX]=slimit; NextReDrawFlag = ReDrawFlag;
-            }
-            if (DialValueOffset[DialRX]<-slimit) { 
-                DialValueBalance[DialRX] = DialValueOffset[DialRX] + slimit;
-                DialValueOffset[DialRX]=-slimit;  NextReDrawFlag = ReDrawFlag;
-            }
-            if (DialValueOffset[DialRY]>slimit) { 
-                DialValueBalance[DialRY] = DialValueOffset[DialRY] - slimit;
-                DialValueOffset[DialRY]=slimit; NextReDrawFlag = ReDrawFlag;
-            }
-            if (DialValueOffset[DialRY]<-slimit) {
-                DialValueBalance[DialRY] = DialValueOffset[DialRY] + slimit;
-                DialValueOffset[DialRY]=-slimit;  NextReDrawFlag = ReDrawFlag;
-            }
-            if (DialValueOffset[DialRZ]>slimit) { 
-                DialValueBalance[DialRZ] = DialValueOffset[DialRZ] - slimit;
-                DialValueOffset[DialRZ]=slimit; NextReDrawFlag = ReDrawFlag;
-            }
-            if (DialValueOffset[DialRZ]<-slimit) { 
-                DialValueBalance[DialRZ] = DialValueOffset[DialRZ] + slimit;
-                DialValueOffset[DialRZ]=-slimit;  NextReDrawFlag = ReDrawFlag;
-            }
+            CQRMSet(DialQRot,0.,0.,0.,0.);
+        } else {
+            CQRQuaternion quat;
+            CQRQuaternion trot;
+            DialValueOffset[DialRX] *= PI;
+            DialValueOffset[DialRY] *= PI;
+            DialValueOffset[DialRZ] *= PI;
+            if (( DialQRot.w != 0. ) ||
+                ( DialQRot.x != 0. ) ||
+                ( DialQRot.y != 0. ) ||
+                ( DialQRot.z != 0. )) {
+                CQRAngles2Quaternion (&trot, DialValueOffset[DialRX],
+                                      DialValueOffset[DialRY],
+                                      DialValueOffset[DialRZ]);
+                CQRMMultiply(quat,DialQRot,trot);  
+                CQRQuaternion2Angles (&DialValueOffset[DialRX],
+                                      &DialValueOffset[DialRY],
+                                      &DialValueOffset[DialRZ],&quat);
+            } 
+            DialValueOffset[DialRX] /= PI;
+            DialValueOffset[DialRY] /= PI;
+            DialValueOffset[DialRZ] /= PI;
+            if (DialValueOffset[DialRX] > 1. ) DialValueOffset[DialRX] -=2.;
+            if (DialValueOffset[DialRX] < -1. ) DialValueOffset[DialRX] +=2.;
+            if (DialValueOffset[DialRY] > 1. ) DialValueOffset[DialRY] -=2.;
+            if (DialValueOffset[DialRY] < -1. ) DialValueOffset[DialRY] +=2.;
+            if (DialValueOffset[DialRZ] > 1. ) DialValueOffset[DialRZ] -=2.;
+            if (DialValueOffset[DialRZ] < -1. ) DialValueOffset[DialRZ] +=2.;
+            CQRMSet(DialQRot,0.,0.,0.,0.);
         } 
       	
         RV2RMat(DialValueOffset[DialRX], DialValueOffset[DialRY], DialValueOffset[DialRZ],
@@ -3623,21 +3751,24 @@ void PrepareTransform( void )
         LRotZ[1] = NRotZ[0]*RMat[0][1]+NRotZ[1]*RMat[1][1]+NRotZ[2]*RMat[2][1];
         LRotZ[2] = NRotZ[0]*RMat[0][2]+NRotZ[1]*RMat[1][2]+NRotZ[2]*RMat[2][2];
         
-        RMat2RV(&LastRX, 
-                &LastRY, 
-                &LastRZ, 
+        RMat2RV(&LastDialValue[DialRX], 
+                &LastDialValue[DialRY], 
+                &LastDialValue[DialRZ], 
                 LRotX, LRotY, LRotZ);
         
-        DialValue[DialRX] = LastRX+DialValueBalance[DialRX];
-        DialValue[DialRY] = LastRY+DialValueBalance[DialRY];
-        DialValue[DialRZ] = LastRZ+DialValueBalance[DialRZ];
+        DialValue[DialRX] = LastDialValue[DialRX]+DialValueBalance[DialRX];
+        DialValue[DialRY] = LastDialValue[DialRY]+DialValueBalance[DialRY];
+        DialValue[DialRZ] = LastDialValue[DialRZ]+DialValueBalance[DialRZ];
+        if (DialValueBalance[DialRX]) NextReDrawFlag |= RFRotateX;
+        if (DialValueBalance[DialRX]) NextReDrawFlag |= RFRotateY;
+        if (DialValueBalance[DialRX]) NextReDrawFlag |= RFRotateZ;
         
-        for (ii=DialRX; ii <=DialRY; ii++) {
+        for (ii=DialRX; ii <=DialRZ; ii++) {
             if (DialValue[ii] > 1.) DialValue[ii] -=2.;
             if (DialValue[ii] < -1.) DialValue[ii] +=2.;
         }
         
-        RV2RMat(LastRX, LastRY, LastRZ,
+        RV2RMat(LastDialValue[DialRX], LastDialValue[DialRY], LastDialValue[DialRZ],
                 LRotX, LRotY, LRotZ);
     }
     }
@@ -3904,12 +4035,12 @@ void ResetTransform( void )
     LRotY[0] = 0.0;  LRotY[1] = 1.0;  LRotY[2] = 0.0;
     LRotZ[0] = 0.0;  LRotZ[1] = 0.0;  LRotZ[2] = 1.0;
     
-    LastRX = LastRY = LastRZ = 0.0;
-    LastTX = LastTY = LastTZ = 0.0;
+    LastDialValue[DialRX] = LastDialValue[DialRY] = LastDialValue[DialRZ] = 0.0;
+    LastDialValue[DialTX] = LastDialValue[DialTY] = LastDialValue[DialTZ] = 0.0;
     
-    WRotValue[0] = 0;
-    WRotValue[1] = 0;
-    WRotValue[2] = 0;
+    WorldDialValue[DialRX] = 0;
+    WorldDialValue[DialRY] = 0;
+    WorldDialValue[DialRZ] = 0;
 
     WLRotX[0] = 1.0;  WLRotX[1] = 0.0;  WLRotX[2] = 0.0;
     WLRotY[0] = 0.0;  WLRotY[1] = 1.0;  WLRotY[2] = 0.0;
@@ -3919,9 +4050,9 @@ void ResetTransform( void )
     WIRotY[0] = 0.0;  WIRotY[1] = 1.0;  WIRotY[2] = 0.0;
     WIRotZ[0] = 0.0;  WIRotZ[1] = 0.0;  WIRotZ[2] = 1.0;
 
-    WLastRX = WLastRY = WLastRZ = 0;
-    WTransX = WTransY = WTransZ = 0;
-    WLastTX = WLastTY = WLastTZ = 0;
+    LastWorldDialValue[DialRX] = LastWorldDialValue[DialRY] = LastWorldDialValue[DialRZ] = 0;
+    WorldDialValue[DialTX] = WorldDialValue[DialTY] = WorldDialValue[DialTZ] = 0;
+    LastWorldDialValue[DialTX] = LastWorldDialValue[DialTY] = LastWorldDialValue[DialTZ] = 0;
     
        /* Remove all bonds from the list of selected bonds */
 
