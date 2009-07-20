@@ -308,7 +308,7 @@ extern "C" {
                 sprintf(buffer,"%s\n",strerror(errno));
                 WriteString(buffer);
                 RasMolExit();
-            }
+        }
         _ffree(ciftmp);
 #else
         if ((ciftmpfd = mkstemp(ciftmp)) == -1 || (file = fdopen(ciftmpfd, "wb+")) == NULL) {
