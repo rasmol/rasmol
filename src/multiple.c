@@ -324,7 +324,7 @@ struct {
    /* graphics.h */
     
     { DialValue,          sizeof (DialValue),      0 },
-
+     	
     { &DialQRot,          sizeof (DialQRot),       0 },
 
 
@@ -455,7 +455,7 @@ struct {
     { &BSrcAtom, sizeof (BSrcAtom), 0 },
     { &BDstAtom, sizeof (BDstAtom), 0 },
     { &BondSelected, sizeof (BondSelected), 0 },
-    { &BondsSelected, sizeof (BondsSelected), 0 },
+    { &BondsSelected, sizeof (BondsSelected), 0 },     
     { NULL, 0, 0}
     };
 

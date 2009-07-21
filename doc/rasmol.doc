@@ -466,14 +466,14 @@ HR<tr><td valign="top">Gary Grossman and<br>Marco Molinaro<td>RasMol 2.5-ucb Nov
 HR<td valign="top">&#169 UC Regents/ModularCHEM<br>Consortium 1995, 1996
 HR<tr><td>Philippe Valadon<td>RasTop 1.3 August 2000<td>&#169 Philippe Valadon 2000
 HR<tr><td valign="top">Herbert J. Bernstein<td>RasMol 2.7.0 March 1999<br>
-HRRasMol 2.7.1 June 1999<br>RasMol 2.7.1.1 January 2001<BR>
-HRRasMol 2.7.2 August 2000<br>RasMol 2.7.2.1 April 2001<BR>
-HRRasMol 2.7.2.1.1 January 2004<br>RasMol 2.7.3 February 2005<BR>
-HRRasMol 2.7.3.1 Apr 06<br>RasMol 2.7.4 November 2007<br>
-HRRasMol 2.7.4.1 January 2008<br>
-HRRasMol 2.7.4.2 March 2008<br>
-HRRasMol 2.7.5 June 2009
-HRRasMol 2.7.5.1 July 2009
+HRRasMol 2.7.1 June 1999<br />RasMol 2.7.1.1 January 2001<br />
+HRRasMol 2.7.2 August 2000<br />RasMol 2.7.2.1 April 2001<br />
+HRRasMol 2.7.2.1.1 January 2004<br />RasMol 2.7.3 February 2005<br />
+HRRasMol 2.7.3.1 Apr 06<br>RasMol 2.7.4 November 2007<br />
+HRRasMol 2.7.4.1 January 2008<br />
+HRRasMol 2.7.4.2 March 2008<br />
+HRRasMol 2.7.5 June 2009<br />
+HRRasMol 2.7.5.1 July 2009<br />
 HR<td valign="top">&#169 Herbert J. Bernstein 1998-2009
 HR</table>
 HR</CENTER>
@@ -3045,7 +3045,7 @@ ATis a special case. In that case the macro is erased. If no name is
 ATgiven the command must begin with a selection, e.g. 
 AC'defer (selection).spacefill'
 AP
-ATThe defered command accumulated under the given name can be executed
+ATThe deferred commands accumulated under the given name can be executed
 ATusing the
 AXexecute execute
 ATcommand
@@ -3223,9 +3223,9 @@ AT2. executes the specified macro suppressing both screen
 ATupdates and recording
 AP
 AT3. animates motion of the newly rendered molecule linearly 
-from the old poise to the new poise
+ATfrom the old poise to the new poise
 AP
-The macro must have been previously defined by calls to the
+ATThe macro must have been previously defined by calls to the
 AXdefer defer
 ATcommand.
 AP
@@ -4231,7 +4231,7 @@ ASPlay
 NRSyntax:  play {from <time>} {until <time>} {{on|off|eject} {<type>} <medium>}
 NR
 HR<pre>
-HRSyntax:  play {from <time>} {until <time>} {{on|off|eject} {<type>} <medium>}
+HRSyntax:  play {from &lt;time&gt;} {until &lt;time&gt;} {{on|off|eject} {&lt;type&gt;} &lt;medium&gt;}
 HR</pre><p>
 RR\tx1200
 RR{\f2\b Syntax:\tab
@@ -4322,7 +4322,7 @@ NRSyntax:  record {from <time>} {until <time>} {{on|off} {<type>} <medium>}
 NR         record {mouse|motion|appearance} {on|off}
 NR
 HR<pre>
-HRSyntax:  record {from <time>} {until <time>} {{on|off} {<type>} <medium>}
+HRSyntax:  record {from &lt;time&gt;} {until &lt;time&gt;} {{on|off} {&lt;type&gt;} &lt;medium&gt;}
 HR         record {mouse|motion|appearance} {on|off}
 HR</pre><p>
 RR\tx1200
@@ -4369,8 +4369,8 @@ AP
 ACrecord until 1800
 AP
 ATwould result in a 20 minute movie segment intended to start 10 
-minutes into a longer movie.
-These commands allow control over rewriting selected time segments.
+ATminutes into a longer movie.
+ATThese commands allow control over rewriting selected time segments.
 AB
 
 
@@ -6692,7 +6692,7 @@ NR
 HR<pre>
 HRSyntax:  set record.aps {&lt;value&gt;}
 HR         set record.fps {&lt;value&gt;}
-HRSyntax:  set record.dwell {&lt;value&gt;}
+HR         set record.dwell {&lt;value&gt;}
 HR</pre><p>
 RR\tx1200
 RR{\f2\b Syntax:\tab
@@ -11022,7 +11022,7 @@ HR<a href=http://www.rasmol.org/register.shtml>Register your RasMol</a> |
 HR<br />
 HR</CENTER>
 HR<HR>
-HRUpdated 17 April 2009.<BR>
+HRUpdated 21 July 2009.<BR>
 HRHerbert J. Bernstein<BR>
 HRBernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA<BR>
 HR<script language="javascript" type="text/javascript">

@@ -1,7 +1,7 @@
 .PU
-.TH RASMOL 1 "February 2005"
+.TH RASMOL 1 "July 2009"
 .SH NAME
-rasmol \- Molecular Graphics Visualisation Tool v2.7.4.1
+rasmol \- Molecular Graphics Visualisation Tool v2.7.5
 
 .SH SYNOPSIS
 .B rasmol
@@ -75,14 +75,15 @@ or an earlier version, type the RasMol command
 
 .SH COPYING
 
-This version is based directly on RasMol version 2.7.4.
+This version is based directly on RasMol version 2.7.4.2,
+on RasMol verion 2.7.4.2, on RasMol version 2.7.4,
 on RasMol version 2.7.3.1, on RasMol version 2.7.3,
 on RasMol version 2.7.2.1.1, Rasmol version 2.7.2, RasMol
 version 2.7.1.1 and RasTop version 1.3 and indirectly on
 the RasMol 2.5-ucb and 2.6-ucb versions and version
 2.6_CIF.2, RasMol 2.6x1 and RasMol_2.6.4.
 
-RasMol 2.7.4.1 may be distributed under the terms of the GNU
+RasMol 2.7.5 may be distributed under the terms of the GNU
 General Public License (the GPL), see
 
           http://www.gnu.org/licenses/gpl.txt
@@ -90,7 +91,7 @@ General Public License (the GPL), see
 or the file GPL or type the command
 .B help GPL
 
-or RasMol 2.7.4.1 may be distributed under the RASMOL license.
+or RasMol 2.7.5 may be distributed under the RASMOL license.
 See the file NOTICE
 or type the command
 .B help RASLIC
@@ -717,6 +718,17 @@ a separate line. Keywords are case insensitive and may be entered in
 either upper or lower case letters. All whitespace characters are
 ignored except to separate keywords and their arguments.
 
+All commands may be prefixed by a parenthesized
+.B atom expression
+to temporarily select certain atoms just for the execution
+of that one command.  After execution of the command, the
+previous selection is restored except for the commands
+.B select
+,
+.B restrict
+and
+.B script.
+
 The commands/keywords currently recognised by RasMol are given below.
 
 .TP
@@ -931,7 +943,8 @@ Allowed objects are
 .B ribbons,
 .B labels,
 .B dots,
-.B hbonds
+.B hbonds,
+.B map,
 and
 .B ssbonds.
 If no object is specified, the default keyword
@@ -962,6 +975,7 @@ and dot surfaces can also be coloured by
 .B electrostatic potential.
 For more information type
 .B help colour <colour>.
+Map objects may be coloured by specific color of by nearest atom.
 
 .TP
 .B ColourMode
@@ -996,6 +1010,23 @@ faster implementation. This is the method used to determine bonding,
 if necessary, when a molecule is first read in using the
 .B load
 command.
+
+.TP
+.B Defer
+The RasMol
+.B defer
+command adds the command given to the macro with given name,
+if no name is given, the command is added to the macro with a
+blank name. The command
+.B zap
+is a special case. In that case the macro is erased. If no name is
+given the command must begin with a selection, e.g.
+.B defer (selection).spacefill
+
+The deferred commands accumulated under the given name can be executed
+using the
+.B execute
+command
 
 .TP
 .B Define
@@ -1080,6 +1111,29 @@ and
 may be used to select Bulgarian, Chinese, English, French,
 Italian, Japanese, Russian and Spanish menus and messages if the
 appropriate fonts have been installed.
+
+.TP
+.B Execute
+The RasMol
+.B execute
+command:
+
+1.  saves the old poise of the molecule (translation,
+rotation and zoom)
+
+2. executes the specified macro suppressing both screen
+updates and recording
+
+3. animates motion of the newly rendered molecule linearly
+from the old poise to the new poise
+
+The macro must have been previously defined by calls to the
+.B defer
+command.
+
+The animation of the motion depends on the prior settings of the
+.B record
+command.
 
 .TP
 .B French
@@ -1230,7 +1284,12 @@ formats are
 .B CIF,
 or
 .B mmCIF
-is assumed by default. Up to 5 molecules may be loaded at a time.
+is assumed by default. Up to 20 molecules may be loaded at a time.
+If CHEM_COMP ligand models are included in an mmCIF file, they will be loaded
+as NMR models, first giving the all the NMR models for model
+coordinates if specified and then giving all the NMR models for
+ideal model coordinates.
+
 To delete a molecule prior to loading another use the RasMol
 .B zap
 command.  To select a molecule for manipulation use the RasMol
@@ -1269,8 +1328,10 @@ as available memory permits.  Maps may be read from
 files or generated from Gaussian density distributions
 around atoms.
 
+.B map colour,
+to colour a map according to a given colour scheme,
 .B map generate,
-to generate a map from selected atoms,
+to generate a map from selected atoms based on pseudo-Gaussians,
 .B map level,
 to set the contouring level for selected maps,
 .B map load,
@@ -1283,6 +1344,8 @@ to set the resolution for contouring selected maps,
 to select one or more maps and to disable all others,
 .B map save,
 to save map information to a file,
+.B map scale,
+.B control the scaling of pseudo-Gaussians when generating maps,
 .B map select,
 to select one or more maps,
 .B map show,
@@ -1306,21 +1369,44 @@ command which limits the portion of the display space
 that can be considered for display of maps.
 
 .TP
+.B Map colour
+The RasMol
+.B map colour
+command colours the selected maps according to the specified
+colour scheme.  The colour scheme may be a colour name or
+and RBG triple in brackets, or the keyword
+.B atom
+to cause the map points to be coloured by the color of the
+nearest atom.
+
+.TP
 .B Map generate
 The RasMol
 .B map generate
 command generates a map from whatever atoms are currently selected,
 by summing electron densities approximated by Gaussian distributions.
-Each Gaussian has a height proportional to the atomic number of the
-element type of the atom and a standard deviation determined by the
-most recently specified spread or resolution.  If a spread has been
+The height of each Gaussian is determined by the setting of the
+.B  map scale
+command.
+In the default of map scale true, each Gaussian has a height proportional
+element type of the atom.
+If the optional 'LRSurf' parameter is given or if map scale false
+has been executed, each Gaussian is scaled so that
+the Gaussian contour level 1 is at the van der Waals radius.
+In either case a standard deviation determined by the
+most recently specified spread or resolution is used.  If a non-zero spread has been
 given the radius of the atom is multiplied by the spread to find the
 standard deviation.  The default is 2/3rds.  If a resolution
 has been given, the spread is inferred as 2/3rds of the resolution.
+
 For example, if the resolution is given as 1., and the atom in question
 is a Carbon with a van der Waals radius of 468 RasMol units (1.87 Angstroms),
 the inferred spead is .6667, and the standard deviation of the Gaussian
 is taken as 1.25 Angstroms.
+
+If the spread has been set to zero, the spread for each atom is determined
+from the van der Waals radius and the probe atom radius to simulate the
+effect of a Lee-Richards surface.
 
 If no specific map was given by the map selector, the new map is
 given the next available map number.
@@ -1430,6 +1516,20 @@ selected maps and their masks are written to the file, one
 map and mask pair per data block.
 
 .TP
+.B Map scale
+The RasMol
+.B map scale
+command selects the scaling of pseudo-Gaussians in the
+.B map generate
+commands.
+In the default of map scale true, each Gaussian has a height proportional
+element type of the atom.
+If map scale false has been executed, each Gaussian is scaled so that
+the Gaussian contour level 1 is at the van der Waals radius.
+In either case a standard deviation determined by the
+most recently specified spread or resolution is used.
+
+.TP
 .B Map select
 The RasMol
 .B map select
@@ -1438,6 +1538,20 @@ subsequent map commands.  This is similar to the
 .B map restrict
 command, but does not disable the display of the
 maps that were not selected.
+
+If the optional
+.B atom
+parameter is given, the command selects the atoms with centres closest to the
+map points.  The radius of the search may be specified by the parameter
+.B search_radius.
+The default is to look for atoms within 4 Angstroms plus the probe radius.
+If the optional
+.B within
+parameter is given, the new selection is taken from within the currently
+selected atoms.  If the options
+.B add
+parameter is given, the new selection is added to the currently selected atoms.
+The default is to search within all atoms.
 
 .TP
 .B Map show
@@ -1465,8 +1579,12 @@ The RasMol
 command specifies the reciprocal of the number of
 standard deviations per radius to be used in
 generating maps as sums of Gaussians centered
-on atomic positions.  The default spead is one
+on atomic positions.  The default spread is one
 two thirds (i.e. each radius covers 1.5 standard deviations).
+
+If the spread has been set to zero, the spread for each atom is determined
+from the van der Waals radius and the probe atom radius to simulate the
+effect of a Lee-Richards surface.
 
 .TP
 .B Map zap
@@ -1568,6 +1686,28 @@ translated, scaled, slabbed and picked as usual, but all menu
 commands are disabled.
 
 .TP
+.B Play
+The RasMol
+.B play
+command specifies the recording medium from which to play back a movie.
+The playback frame start time is given in seconds to millisecond precision.
+Since we are working on computers, the medium is specified as a set of files,
+each marked with the playback frame start time in milliseconds as part of the
+name. The place in the name at which to look for the playback frame start
+time in milliseconds is marked by the characters "ssssss" with an
+appropriate number of digits.  RasMol accepts either upper or lower case
+s's or decimal digits to mark the place for the time.  The play off and play
+eject commands effectively remove the specified medium from use. If no medium
+is specified, play off suspends playing and play on resumes playing.
+Normally play starts immediately and runs to the end of the medium. However,
+if play off and/or or some combination of play from and play until is entered
+before
+.B play type medium,
+those settings will be used.
+
+As of release 2.7.5, RasMol support play from scripts and data files.
+
+.TP
 .B Print
 The RasMol
 .B print
@@ -1596,6 +1736,49 @@ are synonymous, except within nested scripts.  In that case,
 terminates only the current level, while
 .B quit
 terminates all nested levels of scripts.
+
+.TP
+.B Record
+The RasMol
+.B record
+command specifies the recording medium to hold the movie. Since we are
+working on computers, the medium is specified as a template for a set of
+files, each marked with the playback frame start time in milliseconds
+(rather than as seconds to avoid embedding a decimal point) as part of
+the name. The place in the name to be replaced with the playback frame
+start time in milliseconds is marked by the characters "ssssss" with
+an appropriate number of digits. RasMol accepts either upper or lower case
+s's or decimal digits to mark the place for the time.  The record off
+commands remove the specified medium from use. If no medium is specified,
+record off suspends recording and record on resumes recording with the
+next available time on the same medium. The screen is the default medium
+and is, by default, on. Writing to disk must be explicitly specified so
+that the disk does not get filled up unintentionally. The type of a
+recording medium may be an image type such as gif, pict or png to record
+the actual screen images or script to record the RasMol commands used to
+generate the frames.
+
+Normally recording starts at playback frame start time 0 seconds.
+A non-zero starting time in seconds can be specified with the
+.B record from
+command as in
+.B record from 25
+or
+.B record from 37.25
+to help in organizing scenes of movies to be assembled later in an
+appropriate order.
+The
+.B record until
+command allows an upper limit to be set on recording time in seconds.
+The default is to have no limit. Issuing the commands
+
+.B record from 600
+
+.B record until 1800
+
+would result in a 20 minute movie segment intended to start 10
+minutes into a longer movie.
+These commands allow control over rewriting selected time segments.
 
 .TP
 .B Refresh
@@ -1657,7 +1840,9 @@ and
 .B backbone
 representations in the non-selected region.
 
-Type "help expression" for more information on RasMol atom expressions.
+Type "help expression" for more information on RasMol atom expressions or
+see section
+.B Atom Expressions.
 
 .TP
 .B Ribbons
@@ -1796,7 +1981,9 @@ and
 .B hydrogen
 parameters.
 
-Type "help expression" for more information on RasMol atom expressions.
+Type "help expression" for more information on RasMol atom expressions or
+see section
+.B Atom Expressions.
 
 .TP
 .B Set
@@ -2308,6 +2495,8 @@ RasMol has a number of internal parameters that may be modified using the
 command. These parameters control a number of program options such as
 rendering options and mouse button mappings.
 
+    picking         play.fps        radius          record.aps
+
 .TP
 .B Set Ambient
 The RasMol
@@ -2780,6 +2969,17 @@ command is given, picking any atom will cause selection
 of all atoms which agree in chain identifier with the picked atom.
 
 .TP
+.B Set Play
+The RasMol
+.B set play.fps
+command gives the number of frames per second for playback by the
+.B play
+command (default 24 frames per second).
+
+In the current release of RasMol, the play timing is not controlled
+by this parameter.
+
+.TP
 .B Set Radius
 The RasMol
 .B set radius
@@ -2815,6 +3015,24 @@ and changing
 resets
 .B radius
 to its new default value.
+
+.TP
+.B Set Record
+The RasMol
+.B set record.aps
+gives the maximum on-screen velocity in Angstroms per second in animating
+translations, rotations and zooms (default 10 A/second).
+
+The RasMol
+.B set record.aps
+command gives number of frames per second for recording by the
+.B record
+command (default 24 frames per second).
+
+The RasMol
+.B set record.dwell
+command sets the time in seconds to dwell on a change in appearance
+(default .5 sec).
 
 .TP
 .B Set ShadePower

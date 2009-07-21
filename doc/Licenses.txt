@@ -1,15 +1,21 @@
                              COPYING
 
-This version is based in large part on RasMol version 2.7.2.1.1, Rasmol version 2.7.2, RasMol version 2.7.1.1 and RasTop version 1.3 and indirectly on the RasMol 2.5-ucb and 2.6-ucb versions and version 2.6_CIF.2, RasMol 2.6x1 and RasMol_2.6.4.
+This version is based in large part on RasMol 2.7.4.2, RasMol 2.7.4.1, RasMol 2.7.3, 
+RasMol version 2.7.2.1.1, Rasmol version 2.7.2, RasMol version 2.7.1.1 and RasTop 
+version 1.3 and indirectly on the RasMol 2.5-ucb and 2.6-ucb versions and 
+version 2.6_CIF.2, RasMol 2.6x1 and RasMol_2.6.4.
 
-RasMol 2.7.3 may be distributed under the terms of the GNU General Public License (the GPL), see
+RasMol 2.7.5 may be distributed under the terms of the GNU General Public License 
+(the GPL), see
  
           http://www.gnu.org/licenses/gpl.txt
 
 or see below or type the command help GPL
 
-or RasMol 2.7.3 may be distributed under the RASMOL license.
-See the below or type the command help RASLIC
+or the source of RasMol 2.7.5 may be distributed under the RASMOL license.
+See the below or type the command help RASLIC.  Binaries, in general should
+only be distributed under the GPL because of the inclusion of other
+GPL's packages.
 
 NEW RasMol License (Valid for versions of RasMol starting with Release 2.7.3)
 		

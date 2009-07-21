@@ -876,8 +876,8 @@
  the macro is erased. If no name is given the command must begin with 
  a selection, e.g. 'defer (selection).spacefill' 
 
- The defered command accumulated under the given name can be executed 
- using the 'execute' command 
+ The deferred commands accumulated under the given name can be 
+ executed using the 'execute' command 
 
 3 Define
  The RasMol 'define' command allows the user to associate an 
@@ -945,9 +945,11 @@
  2. executes the specified macro suppressing both screen updates and 
  recording 
 
- 3. animates motion of the newly rendered molecule linearly 
+ 3. animates motion of the newly rendered molecule linearly from the 
+ old poise to the new poise 
 
- 'defer' command. 
+ The macro must have been previously defined by calls to the 'defer' 
+ command. 
 
  The animation of the motion depends on the prior settings of the 
  'record' command. 
@@ -1387,6 +1389,8 @@
  'record until 1800' 
 
  would result in a 20 minute movie segment intended to start 10 
+ minutes into a longer movie. These commands allow control over 
+ rewriting selected time segments. 
 
 3 Refresh
  The RasMol 'refresh' command redraws the current image. This is 

@@ -91,14 +91,14 @@ and Based on Mods by
 <td valign="top">&#169 UC Regents/ModularCHEM<br>Consortium 1995, 1996
 <tr><td>Philippe Valadon<td>RasTop 1.3 August 2000<td>&#169 Philippe Valadon 2000
 <tr><td valign="top">Herbert J. Bernstein<td>RasMol 2.7.0 March 1999<br>
-RasMol 2.7.1 June 1999<br>RasMol 2.7.1.1 January 2001<BR>
-RasMol 2.7.2 August 2000<br>RasMol 2.7.2.1 April 2001<BR>
-RasMol 2.7.2.1.1 January 2004<br>RasMol 2.7.3 February 2005<BR>
-RasMol 2.7.3.1 Apr 06<br>RasMol 2.7.4 November 2007<br>
-RasMol 2.7.4.1 January 2008<br>
-RasMol 2.7.4.2 March 2008<br>
-RasMol 2.7.5 June 2009
-RasMol 2.7.5.1 July 2009
+RasMol 2.7.1 June 1999<br />RasMol 2.7.1.1 January 2001<br />
+RasMol 2.7.2 August 2000<br />RasMol 2.7.2.1 April 2001<br />
+RasMol 2.7.2.1.1 January 2004<br />RasMol 2.7.3 February 2005<br />
+RasMol 2.7.3.1 Apr 06<br>RasMol 2.7.4 November 2007<br />
+RasMol 2.7.4.1 January 2008<br />
+RasMol 2.7.4.2 March 2008<br />
+RasMol 2.7.5 June 2009<br />
+RasMol 2.7.5.1 July 2009<br />
 <td valign="top">&#169 Herbert J. Bernstein 1998-2009
 </table>
 </CENTER>
@@ -2046,7 +2046,7 @@ is a special case. In that case the macro is erased. If no name is
 given the command must begin with a selection, e.g.
 &quot;<tt><b>defer (selection).spacefill</b></tt>&quot;
 <p>
-The defered command accumulated under the given name can be executed
+The deferred commands accumulated under the given name can be executed
 using the
 '<a href="#execute"><tt><b>execute</b></tt></a>'
 command
@@ -2162,7 +2162,9 @@ rotation and zoom)
 updates and recording
 <p>
 3. animates motion of the newly rendered molecule linearly
+from the old poise to the new poise
 <p>
+The macro must have been previously defined by calls to the
 '<a href="#defer"><tt><b>defer</b></tt></a>'
 command.
 <p>
@@ -2848,7 +2850,7 @@ whilst a script is suspended at a pause.
 <p><hr>
 <a name="play"><h3>Play</h3></a><p>
 <pre>
-Syntax:  play {from <time>} {until <time>} {{on|off|eject} {<type>} <medium>}
+Syntax:  play {from &lt;time&gt;} {until &lt;time&gt;} {{on|off|eject} {&lt;type&gt;} &lt;medium&gt;}
 </pre><p>
 The RasMol
 '<tt><b>play</b></tt>'
@@ -2907,7 +2909,7 @@ terminates all nested levels of scripts.
 <p><hr>
 <a name="record"><h3>Record</h3></a><p>
 <pre>
-Syntax:  record {from <time>} {until <time>} {{on|off} {<type>} <medium>}
+Syntax:  record {from &lt;time&gt;} {until &lt;time&gt;} {{on|off} {&lt;type&gt;} &lt;medium&gt;}
          record {mouse|motion|appearance} {on|off}
 </pre><p>
 The RasMol
@@ -2948,6 +2950,8 @@ The default is to have no limit. Issuing the commands
 '<tt><b>record until 1800</b></tt>'
 <p>
 would result in a 20 minute movie segment intended to start 10
+minutes into a longer movie.
+These commands allow control over rewriting selected time segments.
 <p><hr>
 <a name="refresh"><h3>Refresh</h3></a><p>
 <pre>
@@ -4439,7 +4443,7 @@ to its new default value.
 <pre>
 Syntax:  set record.aps {&lt;value&gt;}
          set record.fps {&lt;value&gt;}
-Syntax:  set record.dwell {&lt;value&gt;}
+         set record.dwell {&lt;value&gt;}
 </pre><p>
 The RasMol
 '<tt><b>set record.aps</b></tt>'
@@ -7263,7 +7267,7 @@ Sciences, Vol. 31, 326-333, 1991.
 <br />
 </CENTER>
 <HR>
-Updated 17 April 2009.<BR>
+Updated 21 July 2009.<BR>
 Herbert J. Bernstein<BR>
 Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA<BR>
 <script language="javascript" type="text/javascript">

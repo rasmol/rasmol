@@ -1182,13 +1182,13 @@ void ExecuteExecuteCommand( void ) {
         SwitchMolecule(save_molecule);
         
         Interactive=False;      /* Supress all screen activity while
-                                   executing the commands first time around */
+         executing the commands first time around */
         do {
             len = 0;
             ch = *definition++;
             while( ch && (ch!='\n') && (ch!='\r') ){
                 if( len<(size_t)MAXBUFFLEN )
-                CurLine[len++] = ch;
+                    CurLine[len++] = ch;
                 ch = *definition++;
             }
             if( ch == '\r' )
@@ -1228,7 +1228,7 @@ void ExecuteExecuteCommand( void ) {
         SwitchMolecule(save_molecule);
         
         RDF = ReDrawFlag;
-
+        
         RefreshScreen();
         
         ReDrawFlag |= RDF;
@@ -1246,8 +1246,8 @@ void ExecuteExecuteCommand( void ) {
     }
     return;
 }
-        
-        
+
+
 /*===========================*/
 /*  Movie Support Utilities  */
 /*===========================*/
@@ -1483,7 +1483,7 @@ void WriteMovieFrame( void ) {
                 break;
         }
     }
-    return;
+	return;
 }
 
 static int PlayMovieFrame( void ) {
@@ -1601,7 +1601,7 @@ static int ConvPRTemplate(char * template, const char * param, size_t limit, dou
     *numfiles = 10.;
     while ((c=*param++)) {
       if (c != 's' && c != 'S' && !(isdigit(c))) break;
-      swid++;    	
+      swid++;
       *numfiles *= 10.;
     }
     *template++='%';
@@ -4063,7 +4063,7 @@ static void ExecuteShowCommand( void )
             
     	case(RecordTok):
     		ShowRecordCommand();
-            break;
+    		break;
             
     	case(MapTok):
             ApplyMapShow();
@@ -7545,7 +7545,7 @@ int ExecuteCommandOne( int * restore )
             {      CommandError(MsgStrs[ErrColour]);
             } else CommandError(MsgStrs[ErrNoCol]);
             break;
- 
+
         case(PlayTok):
         {
             int newPlayFrom, newPlayUntil;

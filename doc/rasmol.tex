@@ -942,7 +942,7 @@ is a special case. In that case the macro is erased. If no name is
 given the command must begin with a selection, e.g.
 'defer (selection).spacefill'
 
-The defered command accumulated under the given name can be executed
+The deferred commands accumulated under the given name can be executed
 using the
 'execute'
 command
@@ -1032,7 +1032,9 @@ rotation and zoom)
 updates and recording
 
 3. animates motion of the newly rendered molecule linearly
+from the old poise to the new poise
 
+The macro must have been previously defined by calls to the
 'defer'
 command.
 
@@ -1627,6 +1629,8 @@ The default is to have no limit. Issuing the commands
 'record until 1800'
 
 would result in a 20 minute movie segment intended to start 10
+minutes into a longer movie.
+These commands allow control over rewriting selected time segments.
 
 The RasMol
 'refresh'

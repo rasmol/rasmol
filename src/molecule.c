@@ -365,13 +365,13 @@ void ReviseTitle( void )
     buffer[0] = 0;
     buffer[TLEN-2] = 0;
     buffer[TLEN-1] = 0;
-
+    
     strncpy(buffer,"RasMol - ", 9);
     buffer[9]=0;
-
+    
     if(*Info.identcode) {
-        strncat(buffer,Info.identcode, 10);
-        strncat(buffer," ",1);
+      strncat(buffer,Info.identcode, 10);
+      strncat(buffer," ",1);
     } else if(*Info.filename) {
         strncat(buffer,(const char *)basename(Info.filename), 40);
         strncat(buffer," ",1);
@@ -2150,7 +2150,7 @@ void CreateSurfaceBonds( void ) {
     if( !Database ) 
         return;
     
-	
+ 	
     dx = (MaxX-MinX)+1;
     dy = (MaxY-MinY)+1;
     dz = (MaxZ-MinZ)+1;
@@ -2166,8 +2166,8 @@ void CreateSurfaceBonds( void ) {
     if (!AtomTree) {
         if (CreateAtomTree()) {
             RasMolFatalExit(MsgStrs[StrMalloc]);
-			}
-		}
+        }
+    }
  	
 	if (CVectorCreate(&objInRing,sizeof(void CVECTOR_FAR *),1)) {
 	  RasMolFatalExit(MsgStrs[StrMalloc]);
@@ -2200,9 +2200,9 @@ void CreateSurfaceBonds( void ) {
 						
 					  dptr = * *(RAtom __far* __far * __far *)CVectorElementAt(objInRing,i);
 					  if (dptr->serno < aptr->serno) {
-									abort = 0;
-									switch (PreTestSurface(aptr,dptr,C,&crad,Un)) {
-										case 0:
+					    abort = 0;
+						switch (PreTestSurface(aptr,dptr,C,&crad,Un)) {
+						  case 0:
 						  coord[0] = (double)C[0];
 						  coord[1] = (double)C[1];
 						  coord[2] = (double)C[2];
@@ -2214,26 +2214,26 @@ void CreateSurfaceBonds( void ) {
 				            for (ii=0; ii < CVectorSize(xobjInRing) &&!abort; ii++) {
 				              eptr = * *(RAtom __far* __far * __far *)CVectorElementAt(xobjInRing,ii);
 				              if((eptr != dptr)  && (eptr != aptr)) {
-															if (!TestBuriedSurface(aptr,dptr,eptr,C,crad,Un)) {  
-																abort = 1;
-																break;
-															}
+				                if (!TestBuriedSurface(aptr,dptr,eptr,C,crad,Un)) {  
+								  abort = 1;
+								  break;
+								}
 				              	
 				              }
 				            	
-											}
-												
+				            }
+				            
 				          }
-											break;
+				          break;
 				          case 1:  abort = 0; break;
 						  case -1: abort = -1; break;
-									}
-									if ( !abort ) {
-										sbptr = ProcessSurfBond(aptr,dptr);
-										sbptr->sbnext = CurMolecule->sblist;
-										CurMolecule->sblist = sbptr;
-										Info.srfbondcount++;
-									}
+						}
+					  	if ( !abort ) {
+						  sbptr = ProcessSurfBond(aptr,dptr);
+						  sbptr->sbnext = CurMolecule->sblist;
+						  CurMolecule->sblist = sbptr;
+						  Info.srfbondcount++;
+						}
 
 					  }
 					  
@@ -2241,10 +2241,10 @@ void CreateSurfaceBonds( void ) {
 				    
 				    }
 					
-                                }
-                            }
-                        }
-					}
+                }
+            }
+        }
+    }
     
     CVectorFree(&objInRing);
     CVectorFree(&xobjInRing);

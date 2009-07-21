@@ -108,6 +108,7 @@ do
     echo '    {--pixeldepth=32}'
     echo '    {--pixeldepth=16}'
     echo '    {--pixeldepth=8}'
+    echo '    {--macosx_fink}'
     ;;
 
   --cbflib_local)

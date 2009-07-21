@@ -446,7 +446,7 @@ void RefreshScreen( void )
     if( !UseSlabPlane )
     {   ReDrawFlag &= ~RFTransZ|RFSlab;
     } else ReDrawFlag &= ~RFTransZ;
-
+    
     ReDrawFlagSave = ReDrawFlag;
     if( ReDrawFlag )
     {   if( ReDrawFlag & RFReSize )
@@ -454,7 +454,7 @@ void RefreshScreen( void )
 
         if( ReDrawFlag & RFColour )
             DefineColourMap();
-
+        
         NextReDrawFlag = 0;
         if( Database )
         {   if( ReDrawFlag & RFApply ) 

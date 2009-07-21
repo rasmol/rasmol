@@ -1007,7 +1007,7 @@ name. The command 'zap' is a special case. In that case the macro is erased.
 If no name is given the command must begin with a selection, e.g. 'defer 
 (selection).spacefill' 
 
-The defered command accumulated under the given name can be executed using 
+The deferred commands accumulated under the given name can be executed using 
 the 'execute' command 
 
 ?define
@@ -1091,9 +1091,10 @@ The RasMol 'execute' command:
 2. executes the specified macro suppressing both screen updates and 
 recording 
 
-3. animates motion of the newly rendered molecule linearly 
+3. animates motion of the newly rendered molecule linearly from the old 
+poise to the new poise 
 
-'defer' command. 
+The macro must have been previously defined by calls to the 'defer' command. 
 
 The animation of the motion depends on the prior settings of the 'record' 
 command. 
@@ -1640,7 +1641,9 @@ default is to have no limit. Issuing the commands
 
 'record until 1800' 
 
-would result in a 20 minute movie segment intended to start 10 
+would result in a 20 minute movie segment intended to start 10 minutes into 
+a longer movie. These commands allow control over rewriting selected time 
+segments. 
 
 ?refresh
 Refresh

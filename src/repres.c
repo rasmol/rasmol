@@ -1437,7 +1437,7 @@ void DisplayMapTangles( void ) {
            */
           if (((MapPointsPtr->array[oth]).col ==  (MapPointsPtr->array[dst]).col)
               &&  ((MapPointsPtr->array[dst]).col == (MapPointsPtr->array[src]).col)) {
-          ClipPolygon(&tangle);
+            ClipPolygon(&tangle);
           } else {
               /* The three corners vary in color.  Introduce the midpoint of
                  the original triangle, and render as up to 6 monchrome triangles
