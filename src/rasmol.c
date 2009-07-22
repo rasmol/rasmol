@@ -1837,10 +1837,10 @@ void RefreshScreen( void )
                 ClearImage();
             DefineColourMap();
         }
-
+        
           NextReDrawFlag = 0;
-        if( Database )
-        {   if( Interactive )
+          if( Database )
+          {   if( Interactive )
                 BeginWait();
             if( ReDrawFlag & RFApply ) 
                 ApplyTransform();
@@ -1849,8 +1849,8 @@ void RefreshScreen( void )
             {   TransferImage();
                 EndWait();
             }
-        } else if( Interactive )
-        {   ClearBuffers();
+          } else if( Interactive )
+          {   ClearBuffers();
             TransferImage();
           }
 	  if ((ReDrawFlagSave & RFApply) && record_on[0] && !RecordPause) {
@@ -1866,7 +1866,7 @@ void RefreshScreen( void )
 	      } else {
 	      	record_frame[1] = 0;
 	      }
-        }
+	  } 
     }
 }
 
@@ -2024,7 +2024,7 @@ static int HandleEvents( int wait )
     while( ReDrawFlag || result )
     {   if( !result )
         {   if( ReDrawFlag )  {
-                RefreshScreen();
+              RefreshScreen();
               ReDrawFlag = NextReDrawFlag;
             }
                 
@@ -2143,7 +2143,7 @@ static struct {
             { "shelx",      FormatSHELX    },
             { "xyz",        FormatXYZ      }
                                 };
-
+    
 static void ProcessOptions( int argc, char *argv[] )
 {
     register char *ptr;
@@ -2507,7 +2507,7 @@ int main( int argc, char *argv[] )
         if( Interactive ) 
         {   FetchEvent(False);
             if( ReDrawFlag ) {
-                RefreshScreen();
+            	RefreshScreen();
                 ReDrawFlag = NextReDrawFlag;
             }
                 

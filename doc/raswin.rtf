@@ -1347,7 +1347,7 @@ is a special case. In that case the macro is erased. If no name is {}
 given the command must begin with a selection, e.g. {}
 '{\f2\b defer (selection).spacefill}' {}
 \par\par
-The defered command accumulated under the given name can be executed {}
+The deferred commands accumulated under the given name can be executed {}
 using the {}
 '{\uldb execute}{\v execute}' {}
 command {}
@@ -1493,7 +1493,9 @@ rotation and zoom) {}
 updates and recording {}
 \par\par
 3. animates motion of the newly rendered molecule linearly {}
+from the old poise to the new poise {}
 \par\par
+The macro must have been previously defined by calls to the {}
 '{\uldb defer}{\v defer}' {}
 command. {}
 \par\par
@@ -2385,6 +2387,8 @@ The default is to have no limit. Issuing the commands {}
 '{\f2\b record until 1800}' {}
 \par\par
 would result in a 20 minute movie segment intended to start 10 {}
+minutes into a longer movie. {}
+These commands allow control over rewriting selected time segments. {}
 \par\page\par
 +{\footnote doc}
 #{\footnote refresh}
