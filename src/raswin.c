@@ -1,10 +1,9 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                            19 November 2007                             *
- *                          (rev. 21 March 2008)                           *
+ *                              13 June 2009                               *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -31,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -71,15 +77,21 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* raswin.c
- $Log: not supported by cvs2svn $
- Revision 1.5  2008/03/21 19:49:05  yaya-hjb
- Update documentation and comments -- HJB
+ $Log$
+ Revision 1.8  2008/06/27 02:47:58  yaya
+ Finished update of windows code for 32-bit color -- HJB
 
- Revision 1.4  2008/03/17 03:26:07  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.7  2008/06/11 01:40:54  yaya
+ Improve gradient for map surfaces and brighten image;
+ Add parenthesized selections before all commands;
+ Change saveSelection and loadSelection to
+ SaveAtomSelection and LoadAtomSelection -- HJB
+
+ Revision 1.6  2008/03/22 17:06:49  yaya
+ Post release cleanup with credits to Ikonen in file headers. -- HJB
+
+ Revision 1.5  2008/03/21 19:13:48  yaya
+ Update documentation and comments -- HJB
 
  Revision 1.5  2008/03/17 03:01:31  yaya
  Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
@@ -1396,16 +1408,24 @@ static HANDLE RenderClipboard( WPARAM format )
     register int i; 
    
     if( format==CF_PALETTE )
+#ifdef EIGHTBIT
     {   if( ColourMap )
 	{   return CreatePalette(Palette);
 	} else return NULL;
-    }    
+    }
+#else
+      return NULL;
+#endif
     
     if( !PixMap || (format!=CF_DIB) )
 	return NULL;
 
     len = (long)XRange*YRange*sizeof(Pixel);
-    size = sizeof(BITMAPINFOHEADER) + 256*sizeof(RGBQUAD);
+#ifdef EIGHTBIT
+    size = sizeof(BITMAPINFOHEADER)  + 256*sizeof(RGBQUAD);
+#else
+    size = sizeof(BITMAPINFOHEADER);
+#endif
     if( !(result=GlobalAlloc(GHND,size+len)) ) return NULL;
     
     bitmap = (BITMAPINFO __far *)GlobalLock(result);
@@ -1413,7 +1433,11 @@ static HANDLE RenderClipboard( WPARAM format )
     bitmap->bmiHeader.biWidth = XRange;
     bitmap->bmiHeader.biHeight = YRange;
     bitmap->bmiHeader.biPlanes = 1;
+#ifdef EIGHTBIT
     bitmap->bmiHeader.biBitCount = 8;
+#else
+    bitmap->bmiHeader.biBitCount = 32;
+#endif
     bitmap->bmiHeader.biCompression = BI_RGB;
     bitmap->bmiHeader.biSizeImage = len;
     bitmap->bmiHeader.biXPelsPerMeter = 0;
@@ -1421,16 +1445,21 @@ static HANDLE RenderClipboard( WPARAM format )
     bitmap->bmiHeader.biClrImportant = 0;
     bitmap->bmiHeader.biClrUsed = 0;
     
+#ifdef EIGHTBIT
     for( i=0; i<256; i++ )
 	if( ULut[i] )
 	{   bitmap->bmiColors[Lut[i]].rgbBlue  = BLut[i];
 	    bitmap->bmiColors[Lut[i]].rgbGreen = GLut[i];
 	    bitmap->bmiColors[Lut[i]].rgbRed   = RLut[i];
 	}
-    
+#endif
    
     src = (Pixel __huge*)GlobalLock(FBufHandle);
+#ifdef EIGHTBIT
     dst = ((Pixel __huge*)bitmap)+size;
+#else
+    dst = ((Pixel __huge*)bitmap)+size/4;
+#endif
     
     /* Transfer the frame buffer */
     while( len-- ) *dst++ = *src++;
@@ -1736,34 +1765,51 @@ void AdviseUpdate( int item )
 
 void RefreshScreen( void )
 {
+    int ReDrawFlagSave;
     ReDrawFlag &= ~RFTransZ;
 
-    if( ReDrawFlag )
-    {   if( RasWinDDEReady )
-	{   RasWinDDEReady = False;
-	    AdviseUpdate( -4 );
-	}
+    if( ReDrawFlag ) {
+      if( RasWinDDEReady ) {
+          RasWinDDEReady = False;
+	      AdviseUpdate( -4 );
+	  }
 	
-	if( ReDrawFlag & RFReSize )
+	  if( ReDrawFlag & RFReSize )
 	    ReSizeScreen();
 
-	if( ReDrawFlag & RFColour )
-	{   ClearImage();
-	    DefineColourMap();
-	}
+	  if( ReDrawFlag & RFColour )
+	  {   ClearImage();
+	      DefineColourMap();
+	  }
 
-	if( Database )
-	{   BeginWait();
-	    if( ReDrawFlag & RFApply ) 
-		ApplyTransform();
-	    DrawFrame();
-	    TransferImage();
-	    EndWait();
-	} else
-	{   ClearBuffers();
-	    TransferImage();
-	}
-	ReDrawFlag = 0;
+      NextReDrawFlag = 0;
+      ReDrawFlagSave = ReDrawFlag;
+	  if( Database )
+	  {   BeginWait();
+	      if( ReDrawFlag & RFApply ) 
+		  ApplyTransform();
+	      DrawFrame();
+	      TransferImage();
+	      EndWait();
+	  } else
+	  {   ClearBuffers();
+	      TransferImage();
+	  }
+	  if ((ReDrawFlagSave & RFApply) && record_on[0] && !RecordPause ) {
+	      WriteMovieFrame();
+	      record_frame[0]++;
+	      record_frame[1] = 0;
+	  } else if ((ReDrawFlagSave & RFAppear) && record_on[1] && !RecordPause) {
+	      WriteMovieFrame();
+	      record_frame[0]++;
+	      record_frame[1]++;
+	      if ((double)(record_frame[1]) <= record_fps*record_dwell) {
+	        NextReDrawFlag |= RFRefresh;
+	      } else {
+	      	NextReDrawFlag = 0;
+	      	record_frame[1] = 0;
+	      }
+	  }
     }
 }
 
@@ -1976,8 +2022,11 @@ LONG FAR PASCAL DDECallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
                     if( (stat==IPC_Quit) || (stat==IPC_Exit) )
                         RasMolExit();
 
-                    if( ReDrawFlag )
-                        RefreshScreen();
+                    if( ReDrawFlag ) {
+	                    RefreshScreen();
+                        ReDrawFlag = NextReDrawFlag;
+                    }
+                    
                     if( !CommandActive )
                         ResetCommandLine(0);
                     return 0L;
@@ -2020,7 +2069,7 @@ void SetHScroll(int pos)
     if ( (RotMode == RotBond) && BondSelected)
 	BondSelected->BRotValue = temp;
     else if ( RotMode == RotAll )
-	WRotValue[1] = temp;
+	WorldDialValue[1] = temp;
     else
 	DialValue[1] = temp;
     ReDrawFlag |= RFRotateY;
@@ -2031,9 +2080,9 @@ void SetVScroll(int pos)
     float temp = 1.0-(pos/50.0);
 
     if ( RotMode == RotAll )
-	WRotValue[0] = temp;
+	WorldDialValue[DialRX] = temp;
     else
-	DialValue[0] = temp;
+	DialValue[DialRX] = temp;
     ReDrawFlag |= RFRotateX;
 }
 
@@ -2210,8 +2259,10 @@ LONG FAR PASCAL CmndCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 	 default:  return DefWindowProc(hWin,uMsg,wArg,lArg);
     }
 
-    if( ReDrawFlag )
-	RefreshScreen();
+    if( ReDrawFlag ) {
+	  RefreshScreen();
+      ReDrawFlag = NextReDrawFlag;
+    }
     if( !CommandActive )
 	ResetCommandLine(0);
     return 0L;
@@ -3041,8 +3092,10 @@ LONG FAR PASCAL MainCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
     register int pos,status;
     register int x,y;
 
-    register COLORREF BackColRef;    
+    register COLORREF BackColRef;
+#ifdef EIGHTBIT    
     register HPALETTE hCMap;
+#endif
     register HANDLE hand;
     register HDC hMemDC;
     register HDC hDC;
@@ -3096,21 +3149,23 @@ LONG FAR PASCAL MainCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 #endif
 
 	case(WM_QUERYNEWPALETTE):
+#ifdef EIGHTBIT
 			      if( ColourMap )
 			      {   hDC = GetDC(hWin);
 				  hCMap = SelectPalette(hDC,ColourMap,False);
 				  status = RealizePalette(hDC);
 				  if( hCMap ) SelectPalette(hDC,hCMap,False);
 				  ReleaseDC(hWin,hDC);
-				  
 				  if( status )
 				  {   InvalidateRect(hWin,NULL,True);
 				      return True;
 				  }
 			      }
+#endif
 			      return 0L;
 			      
 	case(WM_PALETTECHANGED):
+#ifdef EIGHTBIT
 			      if( ColourMap && ((HWND)wArg != hWin) )
 			      {   hDC = GetDC(hWin);
 				  hCMap = SelectPalette(hDC,ColourMap,False);
@@ -3119,6 +3174,7 @@ LONG FAR PASCAL MainCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 				  if( hCMap ) SelectPalette(hDC,hCMap,False);
 				  ReleaseDC(hWin,hDC);
 			      }
+#endif
 			      return 0L;
 			      			     
 	case(WM_INITMENUPOPUP):  /* Initialise Checks */
@@ -3238,9 +3294,11 @@ LONG FAR PASCAL MainCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 	
 	case(WM_PAINT):       hDC = BeginPaint(hWin,&ps);
 			      SetBkMode(hDC,TRANSPARENT);
+#ifdef EIGHTBIT
 			      if( PixMap )
 			      {   hCMap = SelectPalette(hDC,ColourMap,False);
 				  RealizePalette(hDC);
+#endif
 #ifdef _WIN32
 				  SetWindowOrgEx(hDC,0,0,NULL);
 #else
@@ -3251,19 +3309,32 @@ LONG FAR PASCAL MainCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 				  BitBlt(hDC,0,0,XRange,YRange,
 					 hMemDC,0,0,SRCCOPY);
 					 
-				  SelectPalette(hDC,hCMap,False);      
+#ifdef EIGHTBIT
+				  SelectPalette(hDC,hCMap,False);
+#endif      
 				  DeleteDC(hMemDC);
+#ifdef EIGHTBIT
 			      } else /* Erase Update Region */
-			      {    if( ColourMap )
+#endif
+			      {
+#ifdef EIGHTBIT
+			       if( ColourMap )
 				   {   hCMap=SelectPalette(hDC,ColourMap,0);
+			           BackColRef = RGB(BackR,BackG,BackB);
 				       RealizePalette(hDC);
+				   } else {
+				   	   BackColRef = RGB(0,0,0);
 				   }
+#else
 				   BackColRef = RGB(BackR,BackG,BackB);
+#endif
 				   hand = CreateSolidBrush(BackColRef);
 				   GetUpdateRect(hWin,&rc,False);
 				   FillRect( hDC, &rc, hand );
+#ifdef EIGHTBIT
 				   if( ColourMap && hCMap )
 				       SelectPalette(hDC,hCMap,False);
+#endif
 				   DeleteObject(hand);
 			      }
 			      EndPaint(hWin,&ps);
@@ -3344,8 +3415,11 @@ LONG FAR PASCAL MainCallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
 
     }
 	
-    if( ReDrawFlag )
-	RefreshScreen();
+    if( ReDrawFlag ) {
+	  RefreshScreen();
+      ReDrawFlag = NextReDrawFlag;
+    }
+    
     if( !CommandActive )
 	ResetCommandLine(0);	
     return 0L;
@@ -3887,6 +3961,7 @@ int PASCAL WinMain( HINSTANCE hCurrent, HINSTANCE hPrevious,
     }
 
     RefreshScreen();
+    ReDrawFlag = NextReDrawFlag;
     if( !CommandActive )
 	ResetCommandLine(0);
 

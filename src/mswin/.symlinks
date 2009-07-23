@@ -1,12 +1,7 @@
 #!/bin/csh
-foreach file ( rasmol.hlp rasmol.hlp.gz raswin.hlp.gz )
+foreach file ( rasmol.hlp rasmol.hlp.gz raswin.hlp raswin.hlp.gz )
   if ( ! -Le $file ) then
     ln -s ../../doc/$file $file
-  endif
-end
-foreach file ( raswin.exe raswin.exe.gz raswin.exe.gz.txt )
-  if ( ! -Le $file ) then
-    ln -s ../../../RasMol_2.7.3.1.MSWIN/$file $file
   endif
 end
 foreach file ( raswin.idm )
@@ -15,9 +10,9 @@ foreach file ( raswin.idm )
   endif
 end
 foreach file (*)
-  if ( -d $file ) then
-    if ( -e $file/.symlinks ) then
-      (cd $file; source .symlinks)
+  if ( -d "$file" ) then
+    if ( -e "$file"/.symlinks ) then
+      (cd "$file"; source .symlinks)
     endif
   endif
 end

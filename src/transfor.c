@@ -1,10 +1,9 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                            19 November 2007                             *
- *                          (rev. 21 March 2008)                           *
+ *                              13 June 2009                               *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -31,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -70,15 +76,22 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* transfor.c
- $Log: not supported by cvs2svn $
- Revision 1.6  2008/03/21 19:49:05  yaya-hjb
- Update documentation and comments -- HJB
+ $Log$
+ Revision 1.13  2008/06/18 20:04:53  yaya
+ Start in infrastructure for animation
+ Start on WPDB code -- HJB
 
- Revision 1.5  2008/03/17 03:26:07  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.12  2008/06/09 17:48:12  hk0i
+ added loadSelection() and saveSelection() routines for new color commands. *gm*
+
+ Revision 1.11  2008/04/15 19:25:37  hk0i
+ fixed 'color bond' bug
+
+ Revision 1.10  2008/04/01 17:31:19  hk0i
+ updated new color mode feature for dots
+
+ Revision 1.9  2008/03/22 18:42:55  yaya
+ Post release cleanup and credit to Ikonen in file headers. -- HJB
 
  Revision 1.8  2008/03/17 03:01:31  yaya
  Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
@@ -200,6 +213,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <CNearTree.h>
+#include <cqrlib.h>
 
 #define TRANSFORM
 #include "molecule.h"
@@ -215,6 +230,7 @@
 #include "wbrotate.h" /* [GSG 11/14/95] */
 #include "langsel.h"
 #include "maps.h"
+#include "tokens.h"
 
 #define CPKMAX  16
 static ShadeRef CPKShade[] = {
@@ -2360,6 +2376,47 @@ void ColourPointPotential( int mapno )
 
 }
 
+void ColourPointAtom( int mapno )
+{
+    register int i,shade;
+    void CNEARTREE_FAR * objClosest;
+    
+    MapPointVec __far *MapPointsPtr;
+    MapInfo mapinfo;
+    double coord[3];
+    
+    if (!AtomTree) {
+        if (CreateAtomTree()) {
+            RasMolFatalExit(MsgStrs[StrMalloc]);
+        }
+    }
+    
+	UseDotColPot = True;
+    
+    if (MapInfoPtr)
+        if (mapno >= 0 && mapno < MapInfoPtr->size) {
+            vector_get_element((GenericVec __far *)MapInfoPtr,(void __far *)&mapinfo,mapno );
+            MapPointsPtr = mapinfo.MapPointsPtr;
+            
+            if (MapPointsPtr)
+                for (i=0; i<MapPointsPtr->size; i++) {
+                    if (!(MapPointsPtr->array[i]).flag&SelectFlag) continue;
+                    coord[0] = (double)(MapPointsPtr->array[i]).xpos;
+                    coord[1] = (double)(MapPointsPtr->array[i]).ypos;
+                    coord[2] = (double)(MapPointsPtr->array[i]).zpos;
+                    
+                    if (!CNearTreeNearestNeighbor(AtomTree,(double)(1500+ProbeRadius),NULL,&objClosest,coord)) {
+                        shade = Colour2Shade((MapPointsPtr->array[i]).col);
+                        Shade[shade].refcount--;
+                        (MapPointsPtr->array[i]).col = (*((RAtom __far * *)objClosest))->col;
+                        shade = Colour2Shade((MapPointsPtr->array[i]).col);
+                        Shade[shade].refcount++;
+                    }
+                 }
+        }
+}
+
+
 
 static void ResetColourAttrib( void )
 {
@@ -2436,6 +2493,7 @@ void ScaleColourAttrib( int attr )
     register int i;
 
     if( !Database ) return;
+	ColourBondNone();
 
     switch( attr )
     {   case(ChainAttr):   attrno = Info.chaincount;   
@@ -2625,6 +2683,8 @@ void ScaleColourAttrib( int attr )
     /* Now add colours for any alternate conformations used */    
 
     AddAltlColours();
+	if (DotCount && !UseOldColorCode)
+		CalculateSurface(DotCount);
     return;      
 
 }
@@ -2779,6 +2839,54 @@ void UserMaskAttrib( int fields )
     }
 }
 
+/* REMOVE THIS... maybe */
+void testFlags (void)
+{
+	/* test function for loadSelection and saveSelection */
+	register Chain __far *chain;
+	register Group __far *group;
+	register RAtom __far *ptr;
+
+	int i = 0;
+	char tmp[255];
+
+	WriteString("Showing Flags:\n"
+			  "\tAtom#\tName\tSaved?\tSelected?\n");
+
+	ForEachAtom
+	{
+		sprintf(tmp,"\t%d\t%s",i,ElemDesc[ptr->refno]);
+		WriteString(tmp);
+		if (ptr->flag & SaveFlag)
+		{
+			sprintf(tmp, "\tSaved");
+			WriteString(tmp);
+		}
+		else
+		{
+			sprintf(tmp,"\tNo");
+			WriteString(tmp);
+		}
+
+		if (ptr->flag & SelectFlag)
+		{
+			sprintf(tmp,"\tSelected");
+			WriteString(tmp);
+		}
+		else
+		{
+			sprintf(tmp,"\tNo");
+			WriteString(tmp);
+		}
+		sprintf(tmp,"\n");
+		WriteString(tmp);
+		i++;
+	}
+}
+
+
+
+	
 
 void CPKColourAttrib( void )
 {
@@ -2789,10 +2897,19 @@ void CPKColourAttrib( void )
     register int i;
 
     if( !Database ) return;
+	ColourBondNone();
     for( i=0; i<CPKMAX; i++ )
         CPKShade[i].col = 0;
     ResetColourAttrib();
     ScaleColourMap(CPKMAX);
+
+	/* test for saveSelection 
+	WriteString("Saving Selection...\n");
+	saveSelection();
+	testFlags();
+
+	SelectZone(AllAtomFlag);
+	testFlags();*/
 
     ForEachAtom
         if( ptr->flag&SelectFlag )
@@ -2807,6 +2924,12 @@ void CPKColourAttrib( void )
         }
 
     AddAltlColours();
+	if (DotCount && !UseOldColorCode)
+		CalculateSurface(DotCount);
+
+	/*WriteString("Loading selection...\n");
+	loadSelection();
+	testFlags();*/
 
 }
 
@@ -2819,6 +2942,7 @@ void CpkNewColourAttrib( void )
     register int i;
 
     if ( !Database ) return;
+	ColourBondNone();
     for ( i=0; i<CpkNewMax; i++ )
 	 CpkNewShade[i].col = 0;
     ResetColourAttrib();
@@ -2836,7 +2960,8 @@ void CpkNewColourAttrib( void )
 	    ptr->col = ref->col;
 	}
     AddAltlColours();
-
+	if (DotCount && !UseOldColorCode)
+		CalculateSurface(DotCount);
 }
 
 
@@ -2850,6 +2975,7 @@ void AminoColourAttrib( void )
     register int i;
 
     if( !Database ) return;
+	ColourBondNone();
     for( i=0; i<13; i++ )
         AminoShade[i].col = 0;
     ResetColourAttrib();
@@ -2870,6 +2996,8 @@ void AminoColourAttrib( void )
         }
 
     AddAltlColours();
+	if (DotCount && !UseOldColorCode)
+		CalculateSurface(DotCount);
 
 }
 
@@ -2883,6 +3011,7 @@ void ShapelyColourAttrib( void )
     register int i;
 
     if( !Database ) return;
+	ColourBondNone();
     for( i=0; i<30; i++ )
         Shapely[i].col = 0;
     ResetColourAttrib();
@@ -2916,6 +3045,8 @@ void ShapelyColourAttrib( void )
         }
 
     AddAltlColours();
+	if (DotCount && !UseOldColorCode)
+		CalculateSurface(DotCount);
 
 }
 
@@ -2930,6 +3061,7 @@ void StructColourAttrib( void )
 
     if( !Database )
         return;
+	ColourBondNone();
 
     if( Info.helixcount < 0 )
         DetermineStructure(False);
@@ -2957,6 +3089,8 @@ void StructColourAttrib( void )
         }
 
     AddAltlColours();
+	if (DotCount && !UseOldColorCode)
+		CalculateSurface(DotCount);
 
 }
 
@@ -3000,12 +3134,86 @@ int IsVDWRadius( RAtom __far *ptr )
 
 void DefaultRepresentation( void )
 {
-    if( Database )
-    {   ReDrawFlag |= RFRefresh | RFColour;
-        if( Info.bondcount < 1 )
-        {   EnableBackbone(CylinderFlag,80,64);
-        } else EnableWireframe(WireFlag,0,0);
-        CPKColourAttrib();
+    if( Database ) {
+        ReDrawFlag |= RFRefresh | RFColour;
+        switch(RepDefault) {
+            case REP_BACKBONE:
+                EnableBackbone(CylinderFlag,80,64);
+                break;
+            case REP_STICKS:
+                if( MainAtomCount<256 ) {
+                    EnableWireframe(CylinderFlag,40,32);
+                } else {
+                    EnableWireframe(CylinderFlag,80,64);
+                }
+                break;
+            case REP_SPHERES:
+                SetVanWaalRadius(SphereFlag);
+                break;
+            case REP_BALLSTICK:
+                SetRadiusValue(120, SphereFlag);
+                EnableWireframe(CylinderFlag,40,32);
+                break;
+            case REP_RIBBONS:
+                SetRibbonStatus(True,RibbonFlag,0);
+                break;
+            case REP_STRANDS:
+                SetRibbonStatus(True,StrandFlag,0);
+                break;
+            case REP_CARTOONS:
+                SetRibbonCartoons();
+                break;
+            case REP_WIREFRAME:
+            default:
+                if( Info.bondcount < 1 ) {
+                    EnableBackbone(CylinderFlag,80,64);
+                } else
+                    EnableWireframe(WireFlag,0,0);
+                break;
+        }
+        switch(ColDefault) {
+            case(CpkNewTok):
+                CpkNewColourAttrib();
+                break;
+            case(AminoTok):
+                AminoColourAttrib();
+                break;
+            case(ShapelyTok):
+                ShapelyColourAttrib();
+                break;
+            case(UserTok):
+                CPKColourAttrib();
+                UserMaskAttrib(MaskColourFlag);
+                break;
+            case(GroupTok):
+                ScaleColourAttrib(GroupAttr);
+                break;
+            case(ChainTok):
+                ScaleColourAttrib(ChainAttr);
+                break;
+            case(ModelTok):
+                ScaleColourAttrib(ModelAttr);
+                break;
+            case(AltlTok):
+                ScaleColourAttrib(AltAttr);
+                break;
+            case(ChargeTok):
+                ScaleColourAttrib(ChargeAttr);
+                break;
+            case(TemperatureTok):
+                ScaleColourAttrib(TempAttr);
+                break;
+            case(StructureTok):
+                StructColourAttrib();
+                break;
+            case(WhiteTok):
+                MonoColourAttrib(255,255,255);
+                break;
+            case(CPKTok):
+            default:
+                CPKColourAttrib();
+                break;
+        }
     }
 }
 
@@ -3083,6 +3291,7 @@ void InitialTransform( void )
       ZoomRange = Range;
       MaxZoom -= 1.0;
     }
+    
 }
 
 
@@ -3107,12 +3316,8 @@ void ReviseInvMatrix( void )
 }
 
 /*
-    RMatZtoV computes rotation matrix, RMat, to rotate the Z axis
-    into nomalized vector V, keeping the axis orthogonal to the
-    VZ plane fixed.
-
-    Returns 0 if sucessful, nonzero if the computation fails
-
+    RMatInv computes the inverse of a rotation matrix given
+    three vectors.
   */
 
 void RMatInv( Real RMX[3], Real RMY[3], Real RMZ[3],
@@ -3134,6 +3339,16 @@ void RMatInv( Real RMX[3], Real RMY[3], Real RMZ[3],
   
 }
 
+/*
+    RMatVec applies a rotation matrix given a three rows
+  
+      |  RMX  |
+      |  RMY  |
+      |  RMZ  |
+      
+    applies it to VecIn and returns VecOut
+  */
+  
 void RMatVec( Real VecOut[3], 
               Real RMX[3], Real RMY[3], Real RMZ[3],
               Real VecIn[3] ) {
@@ -3143,6 +3358,12 @@ void RMatVec( Real VecOut[3],
   VecOut[2] = RMZ[0]*VecIn[0] + RMZ[1]*VecIn[1] + RMZ[2]*VecIn[2];
   return;
 }
+ 
+/*
+   RMatRMat applies a rotation matrix given as three rows
+   and applies it to 3x3 matrix MatIn and returns MatOut
+
+   */
  
 void RMatRMat( Real MatOut[3][3], 
               Real RMX[3], Real RMY[3], Real RMZ[3],
@@ -3157,6 +3378,13 @@ void RMatRMat( Real MatOut[3][3],
   }
   return;
 }
+
+/*
+    Rv2RMat creates a rotation matrix as three rows from
+    three rotation dial values ranging from -1 for -PI radians
+    to +1 for PI radians
+
+  */
 
 void RV2RMat( Real RX, Real RY, Real RZ, 
   Real RMX[3], Real RMY[3], Real RMZ[3]  ) {
@@ -3271,99 +3499,277 @@ void PrepareTransform( void )
     
     Real NRotX[3], NRotY[3], NRotZ[3];
     Real RMat[3][3], SMat[3][3], TMat[3][3];
-    
+    Real DialValueOffset[11], DialValueBalance[11];
     Real VecIn[3], VecOut[3];
 
     if ( BondSelected )
 	BondRotate();
 
+    for (ii=DialTX; ii<DialTZ+1; ii++) {
+    	DialValueOffset[ii] = DialValue[ii];
+    	DialValueBalance[ii] = 0;
+    }
+    for (ii=DialRX; ii<DialRZ+1; ii++) {
+    	DialValueOffset[ii] = DialValue[ii];
+    	DialValueBalance[ii] = 0;
+    }
+    DialValueOffset[DialTX] -= LastDialValue[DialTX];
+    DialValueOffset[DialTY] -= LastDialValue[DialTY];
+    DialValueOffset[DialTZ] -= LastDialValue[DialTZ];
+    DialValueOffset[DialRX] -= LastDialValue[DialRX];
+    DialValueOffset[DialRY] -= LastDialValue[DialRY];
+    DialValueOffset[DialRZ] -= LastDialValue[DialRZ];
+
     if( ReDrawFlag )
     {         
  
-    if ( (DialValue[DialTX] != LastTX ) ||
-         (DialValue[DialTY] != LastTY ) ||
-         (DialValue[DialTZ] != LastTZ ) ) {
+    if ( (DialValueOffset[DialTX] != 0 ) ||
+         (DialValueOffset[DialTY] != 0 ) ||
+         (DialValueOffset[DialTZ] != 0 ) ) {
+
+      if (record_on[0] && record_aps > 0. && record_fps > 0. && !RecordPause) 
+      {
+      	Real tlimit;
+      	tlimit = Scale*250.*record_aps/record_fps;
+        DialValueOffset[DialTX] *= XRange;
+        DialValueOffset[DialTY] *= YRange;
+        DialValueOffset[DialTZ] *= ZRange;
+          
+      	if (DialValueOffset[DialTX]>tlimit) { 
+      	   DialValueBalance[DialTX] = DialValueOffset[DialTX] - tlimit;
+      	   DialValueOffset[DialTX]=tlimit; NextReDrawFlag |= RFTransX;
+      	}
+      	if (DialValueOffset[DialTX]<-tlimit) { 
+      	   DialValueBalance[DialTX] = DialValueOffset[DialTX] + tlimit;
+      	   DialValueOffset[DialTX]=-tlimit;  NextReDrawFlag |= RFTransX;
+      	}
+      	if (DialValueOffset[DialTY]>tlimit) { 
+      	   DialValueBalance[DialTY] = DialValueOffset[DialTY] - tlimit;
+      	   DialValueOffset[DialTY]=tlimit; NextReDrawFlag |= RFTransY;
+      	}
+      	if (DialValueOffset[DialTY]<-tlimit) {
+      	   DialValueBalance[DialTY] = DialValueOffset[DialTY] + tlimit;
+      	   DialValueOffset[DialTY]=-tlimit;  NextReDrawFlag |= RFTransY;
+      	}
+      	if (DialValueOffset[DialTZ]>tlimit) { 
+      	   DialValueBalance[DialTZ] = DialValueOffset[DialTZ] - tlimit;
+      	   DialValueOffset[DialTZ]=tlimit; NextReDrawFlag |= RFTransZ;
+      	}
+      	if (DialValueOffset[DialTZ]<-tlimit) { 
+      	   DialValueBalance[DialTZ] = DialValueOffset[DialTZ] + tlimit;
+      	   DialValueOffset[DialTZ]=-tlimit; NextReDrawFlag |= RFTransZ;
+      	}
+      } 
          
-      VecIn[0] = (DialValue[DialTX]-LastTX)*XRange;
-      VecIn[1] = (DialValue[DialTY]-LastTY)*YRange;
-      VecIn[2] = (DialValue[DialTZ]-LastTZ)*ZRange;
+      VecIn[0] = DialValueOffset[DialTX]*XRange;
+      VecIn[1] = DialValueOffset[DialTY]*YRange;
+      VecIn[2] = DialValueOffset[DialTZ]*ZRange;
 
       RMatVec(VecOut,WIRotX,WIRotY,WIRotZ,VecIn);
       
-      LastTX += VecOut[0]/XRange;
-      LastTY += VecOut[1]/YRange;
-      LastTZ += VecOut[2]/ZRange;
+      LastDialValue[DialTX] += VecOut[0]/XRange;
+      LastDialValue[DialTY] += VecOut[1]/YRange;
+      LastDialValue[DialTZ] += VecOut[2]/ZRange;
       
-      DialValue[DialTX] = LastTX;
-      DialValue[DialTY] = LastTY;
-      DialValue[DialTZ] = LastTZ;
+      DialValue[DialTX] = LastDialValue[DialTX]+DialValueBalance[DialTX]/XRange;
+      DialValue[DialTY] = LastDialValue[DialTY]+DialValueBalance[DialTY]/YRange;
+      DialValue[DialTZ] = LastDialValue[DialTZ]+DialValueBalance[DialTZ]/ZRange;
      
     } 
 
-    LOffset[0] = WRange + (int)rint(Zoom*DialValue[DialTX]*XRange);
-    LOffset[1] = HRange + (int)rint(Zoom*DialValue[DialTY]*YRange);
-    LOffset[2] = 10000 + (int)rint(Zoom*DialValue[DialTZ]*ZRange);
+    LOffset[0] = WRange + (int)rint(Zoom*LastDialValue[DialTX]*XRange);
+    LOffset[1] = HRange + (int)rint(Zoom*LastDialValue[DialTY]*YRange);
+    LOffset[2] = 10000 + (int)rint(Zoom*LastDialValue[DialTZ]*ZRange);
         
 
-    if ( ( DialValue[DialRX] != LastRX ) || 
-         ( DialValue[DialRY] != LastRY ) ||
-         ( DialValue[DialRZ] != LastRZ ) ) {
-         
-      RV2RMat(DialValue[DialRX]-LastRX,
-        DialValue[DialRY]-LastRY,
-        DialValue[DialRZ]-LastRZ,
-        SMat[0],SMat[1],SMat[2]);
-      
-      /* SMat is the incremental rotation on the World frame       */
-      /* We transform to WInv S W, the rotation in the local frame */
-      
-      RMatRMat(TMat,WIRotX,WIRotY,WIRotZ,SMat);
-      
-      for (ii = 0; ii < 3; ii++) {
-        RMat[0][ii] = WLRotX[ii];
-        RMat[1][ii] = WLRotY[ii];
-        RMat[2][ii] = WLRotZ[ii];
-      }
-      RMatRMat(SMat,TMat[0],TMat[1],TMat[2],RMat);
-      
-      for (ii = 0; ii < 3; ii++) {
-        RMat[0][ii] = LRotX[ii];
-        RMat[1][ii] = LRotY[ii];
-        RMat[2][ii] = LRotZ[ii];
-        NRotX[ii] = SMat[0][ii];
-        NRotY[ii] = SMat[1][ii];
-        NRotZ[ii] = SMat[2][ii];
-      }
-
-      LRotX[0] = NRotX[0]*RMat[0][0]+NRotX[1]*RMat[1][0]+NRotX[2]*RMat[2][0];
-      LRotX[1] = NRotX[0]*RMat[0][1]+NRotX[1]*RMat[1][1]+NRotX[2]*RMat[2][1];
-      LRotX[2] = NRotX[0]*RMat[0][2]+NRotX[1]*RMat[1][2]+NRotX[2]*RMat[2][2];
-
-      LRotY[0] = NRotY[0]*RMat[0][0]+NRotY[1]*RMat[1][0]+NRotY[2]*RMat[2][0];
-      LRotY[1] = NRotY[0]*RMat[0][1]+NRotY[1]*RMat[1][1]+NRotY[2]*RMat[2][1];
-      LRotY[2] = NRotY[0]*RMat[0][2]+NRotY[1]*RMat[1][2]+NRotY[2]*RMat[2][2];
-
-      LRotZ[0] = NRotZ[0]*RMat[0][0]+NRotZ[1]*RMat[1][0]+NRotZ[2]*RMat[2][0];
-      LRotZ[1] = NRotZ[0]*RMat[0][1]+NRotZ[1]*RMat[1][1]+NRotZ[2]*RMat[2][1];
-      LRotZ[2] = NRotZ[0]*RMat[0][2]+NRotZ[1]*RMat[1][2]+NRotZ[2]*RMat[2][2];
-      
-      RMat2RV(&(DialValue[0]), 
-        &(DialValue[1]), 
-        &(DialValue[2]), 
-        LRotX, LRotY, LRotZ);
-
-      RV2RMat(DialValue[0], DialValue[1], DialValue[2],
-        LRotX, LRotY, LRotZ);
-
-      LastRX = DialValue[0];
-      LastRY = DialValue[1];
-      LastRZ = DialValue[2];
- 
-/*    } else {
-    
-      RV2RMat(DialValue[0], DialValue[1], DialValue[2],
-        LRotX, LRotY, LRotZ);
- */
+    if ( ( DialValueOffset[DialRX] != 0 ) || 
+         ( DialValueOffset[DialRY] != 0 ) ||
+         ( DialValueOffset[DialRZ] != 0 ) ||
+         ( DialQRot.w != 0. ) ||
+         ( DialQRot.x != 0. ) ||
+         ( DialQRot.y != 0. ) ||
+         ( DialQRot.z != 0. )
+        ) {
+                 
+        /* *** redo the balance *** */
+        if (record_on[0] && record_aps > 0. && record_fps > 0. && !RecordPause) 
+        {
+            Real slimit;
+            Real rangle;
+            Real newcos, newsin, oldsin;
+            Real balcos, balsin;
+            CQRQuaternion quat;
+            CQRQuaternion balquat;
+            CQRQuaternion trot;
+            DialValueOffset[DialRX] *= PI;
+            DialValueOffset[DialRY] *= PI;
+            DialValueOffset[DialRZ] *= PI;
+            if (( DialQRot.w != 0. ) ||
+              ( DialQRot.x != 0. ) ||
+              ( DialQRot.y != 0. ) ||
+              ( DialQRot.z != 0. )) {
+              CQRAngles2Quaternion (&trot, DialValueOffset[DialRX],
+                                      DialValueOffset[DialRY],
+                                      DialValueOffset[DialRZ]);
+              CQRMMultiply(quat,DialQRot,trot);  
+            } else {    
+              CQRAngles2Quaternion (&quat, DialValueOffset[DialRX],
+                  DialValueOffset[DialRY],
+                  DialValueOffset[DialRZ]);
+            }
+            rangle = acos(quat.w);
+            oldsin = sin(rangle);
+            slimit = 62.5*record_aps/record_fps/WorldRadius;
+            newcos = cos(slimit);
+            newsin = sin(slimit);
+            balcos = cos(rangle-slimit);
+            balsin = sin(rangle-slimit);
+            if (rangle > slimit && oldsin != 0.) {
+              newcos = cos(slimit);
+              newsin = sin(slimit);
+              balcos = cos(rangle-slimit);
+              balsin = sin(rangle-slimit);
+              balquat.w = balcos;
+              balquat.x = quat.x*balsin/oldsin;
+              balquat.y = quat.y*balsin/oldsin;
+              balquat.z = quat.z*balsin/oldsin;
+              quat.w = newcos;
+              quat.x = quat.x*newsin/oldsin;
+              quat.y = quat.y*newsin/oldsin;
+              quat.z = quat.z*newsin/oldsin;
+              CQRQuaternion2Angles (&DialValueOffset[DialRX],
+                  &DialValueOffset[DialRY],
+                  &DialValueOffset[DialRZ],&quat);
+              DialValueBalance[DialRX] = DialValueOffset[DialRX];
+              DialValueBalance[DialRY] = DialValueOffset[DialRY];
+              DialValueBalance[DialRZ] = DialValueOffset[DialRZ];              
+              CQRQuaternion2Angles (&DialValueBalance[DialRX],
+                  &DialValueBalance[DialRY],
+                  &DialValueBalance[DialRZ],&balquat);
+              DialValueBalance[DialRX] /= PI;
+              DialValueBalance[DialRY] /= PI;
+              DialValueBalance[DialRZ] /= PI;
+            } else if  (rangle < -slimit && oldsin != 0.) {
+              newcos = cos(-slimit);
+              newsin = sin(-slimit);
+              balcos = cos(rangle+slimit);
+              balsin = sin(rangle+slimit);
+              balquat.w = balcos;
+              balquat.x = quat.x*balsin/oldsin;
+              balquat.y = quat.y*balsin/oldsin;
+              balquat.z = quat.z*balsin/oldsin;
+              quat.w = newcos;
+              quat.x = quat.x*newsin/oldsin;
+              quat.y = quat.y*newsin/oldsin;
+              quat.z = quat.z*newsin/oldsin;
+              CQRQuaternion2Angles (&DialValueOffset[DialRX],
+                  &DialValueOffset[DialRY],
+                  &DialValueOffset[DialRZ],&quat);
+              DialValueBalance[DialRX] = DialValueOffset[DialRX];
+              DialValueBalance[DialRY] = DialValueOffset[DialRY];
+              DialValueBalance[DialRZ] = DialValueOffset[DialRZ];              
+              CQRQuaternion2Angles (&DialValueBalance[DialRX],
+                  &DialValueBalance[DialRY],
+                  &DialValueBalance[DialRZ],&balquat);
+              DialValueBalance[DialRX] /= PI;
+              DialValueBalance[DialRY] /= PI;
+              DialValueBalance[DialRZ] /= PI;
+            }
+            DialValueOffset[DialRX] /= PI;
+            DialValueOffset[DialRY] /= PI;
+            DialValueOffset[DialRZ] /= PI;
+            if (DialValueOffset[DialRX] > 1. ) DialValueOffset[DialRX] -=2.;
+            if (DialValueOffset[DialRX] < -1. ) DialValueOffset[DialRX] +=2.;
+            if (DialValueOffset[DialRY] > 1. ) DialValueOffset[DialRY] -=2.;
+            if (DialValueOffset[DialRY] < -1. ) DialValueOffset[DialRY] +=2.;
+            if (DialValueOffset[DialRZ] > 1. ) DialValueOffset[DialRZ] -=2.;
+            if (DialValueOffset[DialRZ] < -1. ) DialValueOffset[DialRZ] +=2.;
+            CQRMSet(DialQRot,0.,0.,0.,0.);
+        } else {
+            CQRQuaternion quat;
+            CQRQuaternion trot;
+            DialValueOffset[DialRX] *= PI;
+            DialValueOffset[DialRY] *= PI;
+            DialValueOffset[DialRZ] *= PI;
+            if (( DialQRot.w != 0. ) ||
+                ( DialQRot.x != 0. ) ||
+                ( DialQRot.y != 0. ) ||
+                ( DialQRot.z != 0. )) {
+                CQRAngles2Quaternion (&trot, DialValueOffset[DialRX],
+                                      DialValueOffset[DialRY],
+                                      DialValueOffset[DialRZ]);
+                CQRMMultiply(quat,DialQRot,trot);  
+                CQRQuaternion2Angles (&DialValueOffset[DialRX],
+                                      &DialValueOffset[DialRY],
+                                      &DialValueOffset[DialRZ],&quat);
+            } 
+            DialValueOffset[DialRX] /= PI;
+            DialValueOffset[DialRY] /= PI;
+            DialValueOffset[DialRZ] /= PI;
+            if (DialValueOffset[DialRX] > 1. ) DialValueOffset[DialRX] -=2.;
+            if (DialValueOffset[DialRX] < -1. ) DialValueOffset[DialRX] +=2.;
+            if (DialValueOffset[DialRY] > 1. ) DialValueOffset[DialRY] -=2.;
+            if (DialValueOffset[DialRY] < -1. ) DialValueOffset[DialRY] +=2.;
+            if (DialValueOffset[DialRZ] > 1. ) DialValueOffset[DialRZ] -=2.;
+            if (DialValueOffset[DialRZ] < -1. ) DialValueOffset[DialRZ] +=2.;
+            CQRMSet(DialQRot,0.,0.,0.,0.);
+        } 
+      	
+        RV2RMat(DialValueOffset[DialRX], DialValueOffset[DialRY], DialValueOffset[DialRZ],
+                SMat[0],SMat[1],SMat[2]);
+        
+        /* SMat is the incremental rotation on the World frame       */
+        /* We transform to WInv S W, the rotation in the local frame */
+        
+        RMatRMat(TMat,WIRotX,WIRotY,WIRotZ,SMat);
+        
+        for (ii = 0; ii < 3; ii++) {
+            RMat[0][ii] = WLRotX[ii];
+            RMat[1][ii] = WLRotY[ii];
+            RMat[2][ii] = WLRotZ[ii];
+        }
+        RMatRMat(SMat,TMat[0],TMat[1],TMat[2],RMat);
+        
+        for (ii = 0; ii < 3; ii++) {
+            RMat[0][ii] = LRotX[ii];
+            RMat[1][ii] = LRotY[ii];
+            RMat[2][ii] = LRotZ[ii];
+            NRotX[ii] = SMat[0][ii];
+            NRotY[ii] = SMat[1][ii];
+            NRotZ[ii] = SMat[2][ii];
+        }
+        
+        LRotX[0] = NRotX[0]*RMat[0][0]+NRotX[1]*RMat[1][0]+NRotX[2]*RMat[2][0];
+        LRotX[1] = NRotX[0]*RMat[0][1]+NRotX[1]*RMat[1][1]+NRotX[2]*RMat[2][1];
+        LRotX[2] = NRotX[0]*RMat[0][2]+NRotX[1]*RMat[1][2]+NRotX[2]*RMat[2][2];
+        
+        LRotY[0] = NRotY[0]*RMat[0][0]+NRotY[1]*RMat[1][0]+NRotY[2]*RMat[2][0];
+        LRotY[1] = NRotY[0]*RMat[0][1]+NRotY[1]*RMat[1][1]+NRotY[2]*RMat[2][1];
+        LRotY[2] = NRotY[0]*RMat[0][2]+NRotY[1]*RMat[1][2]+NRotY[2]*RMat[2][2];
+        
+        LRotZ[0] = NRotZ[0]*RMat[0][0]+NRotZ[1]*RMat[1][0]+NRotZ[2]*RMat[2][0];
+        LRotZ[1] = NRotZ[0]*RMat[0][1]+NRotZ[1]*RMat[1][1]+NRotZ[2]*RMat[2][1];
+        LRotZ[2] = NRotZ[0]*RMat[0][2]+NRotZ[1]*RMat[1][2]+NRotZ[2]*RMat[2][2];
+        
+        RMat2RV(&LastDialValue[DialRX], 
+                &LastDialValue[DialRY], 
+                &LastDialValue[DialRZ], 
+                LRotX, LRotY, LRotZ);
+        
+        DialValue[DialRX] = LastDialValue[DialRX]+DialValueBalance[DialRX];
+        DialValue[DialRY] = LastDialValue[DialRY]+DialValueBalance[DialRY];
+        DialValue[DialRZ] = LastDialValue[DialRZ]+DialValueBalance[DialRZ];
+        if (DialValueBalance[DialRX]) NextReDrawFlag |= RFRotateX;
+        if (DialValueBalance[DialRX]) NextReDrawFlag |= RFRotateY;
+        if (DialValueBalance[DialRX]) NextReDrawFlag |= RFRotateZ;
+        
+        for (ii=DialRX; ii <=DialRZ; ii++) {
+            if (DialValue[ii] > 1.) DialValue[ii] -=2.;
+            if (DialValue[ii] < -1.) DialValue[ii] +=2.;
+        }
+        
+        RV2RMat(LastDialValue[DialRX], LastDialValue[DialRY], LastDialValue[DialRZ],
+                LRotX, LRotY, LRotZ);
     }
     }
     WorldRotate();
@@ -3380,12 +3786,26 @@ static void ApplyTransformOne( void )
     register RAtom __far *ptr;
 
     if( ReDrawFlag & (RFMagnify | RFZoom) )
-    {   
+    {   Real ZoomSave, zlimit;
+        
+        ZoomSave = Zoom;
 
         if( DialValue[DialZoom] <= 0.0 )
         {   Zoom = DialValue[DialZoom]+1.0;
             if( Zoom<0.1 ) Zoom=0.1;
         } else Zoom = (DialValue[DialZoom]*MaxZoom) + 1.0;
+        
+        if (record_on[0] && record_aps != 0. && record_fps != 0 && !RecordPause) {
+            zlimit = 250.*record_aps/record_fps/WorldRadius;
+            if (Zoom-ZoomSave > zlimit ) {
+                Zoom = ZoomSave+zlimit;
+                NextReDrawFlag |= RFMagnify | RFZoom;
+            }
+            if (Zoom-ZoomSave < -zlimit )  {
+                Zoom = ZoomSave-zlimit;
+                NextReDrawFlag |= RFMagnify | RFZoom;
+            }
+        }
 
         Scale = Zoom*DScale*Range;
         LScale = (Long)(Scale*256);
@@ -3615,12 +4035,12 @@ void ResetTransform( void )
     LRotY[0] = 0.0;  LRotY[1] = 1.0;  LRotY[2] = 0.0;
     LRotZ[0] = 0.0;  LRotZ[1] = 0.0;  LRotZ[2] = 1.0;
     
-    LastRX = LastRY = LastRZ = 0.0;
-    LastTX = LastTY = LastTZ = 0.0;
+    LastDialValue[DialRX] = LastDialValue[DialRY] = LastDialValue[DialRZ] = 0.0;
+    LastDialValue[DialTX] = LastDialValue[DialTY] = LastDialValue[DialTZ] = 0.0;
     
-    WRotValue[0] = 0;
-    WRotValue[1] = 0;
-    WRotValue[2] = 0;
+    WorldDialValue[DialRX] = 0;
+    WorldDialValue[DialRY] = 0;
+    WorldDialValue[DialRZ] = 0;
 
     WLRotX[0] = 1.0;  WLRotX[1] = 0.0;  WLRotX[2] = 0.0;
     WLRotY[0] = 0.0;  WLRotY[1] = 1.0;  WLRotY[2] = 0.0;
@@ -3630,9 +4050,9 @@ void ResetTransform( void )
     WIRotY[0] = 0.0;  WIRotY[1] = 1.0;  WIRotY[2] = 0.0;
     WIRotZ[0] = 0.0;  WIRotZ[1] = 0.0;  WIRotZ[2] = 1.0;
 
-    WLastRX = WLastRY = WLastRZ = 0;
-    WTransX = WTransY = WTransZ = 0;
-    WLastTX = WLastTY = WLastTZ = 0;
+    LastWorldDialValue[DialRX] = LastWorldDialValue[DialRY] = LastWorldDialValue[DialRZ] = 0;
+    WorldDialValue[DialTX] = WorldDialValue[DialTY] = WorldDialValue[DialTZ] = 0;
+    LastWorldDialValue[DialTX] = LastWorldDialValue[DialTY] = LastWorldDialValue[DialTZ] = 0;
     
        /* Remove all bonds from the list of selected bonds */
 

@@ -1,10 +1,9 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                            19 November 2007                             *
- *                          (rev. 21 March 2008)                           *
+ *                              13 June 2009                               *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -31,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -70,15 +76,21 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* x11win.c
- $Log: not supported by cvs2svn $
- Revision 1.8  2008/03/21 19:49:06  yaya-hjb
- Update documentation and comments -- HJB
+ $Log$
+ Revision 1.13  2008/06/28 14:25:26  yaya
+ Make more IPC errors non-fatal.  -- HJB
 
- Revision 1.7  2008/03/17 03:26:07  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.12  2008/06/28 14:06:37  yaya
+ Fix unused variable warning in command.c
+ Start changes for loading models in infile.c
+ Make handling of IPC errors non-fatal in x11win.c -- HJB
+
+ Revision 1.11  2008/06/18 20:04:53  yaya
+ Start in infrastructure for animation
+ Start on WPDB code -- HJB
+
+ Revision 1.10  2008/03/22 18:42:56  yaya
+ Post release cleanup and credit to Ikonen in file headers. -- HJB
 
  Revision 1.9  2008/03/17 03:01:32  yaya
  Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
@@ -276,7 +288,7 @@ typedef struct _MenuItem {
         } MenuItem;
 
 
-static MenuItem FilMenu[11] = {
+static MenuItem FilMenu[21] = {
     { &MsgStrs[StrMOpen]   /* "Open..."   */,   0x11,  &MsgAuxl[StrMOpen],
         &MsgLens[StrMOpen],     NULL, 0     },
     { &MsgStrs[StrMSaveAs] /*" Save As..."*/,   0x11,  &MsgAuxl[StrMSaveAs],
@@ -298,7 +310,27 @@ static MenuItem FilMenu[11] = {
     { &(MolNStr[3]),                            0x01,  0, 
         &MolNLen[3],            &MoleculeIndex, 3 },  
     { &(MolNStr[4]),                            0x01,  0, 
-        &MolNLen[4],            &MoleculeIndex, 4 } };
+        &MolNLen[4],            &MoleculeIndex, 4 },
+    { &(MolNStr[5]),                            0x01,  0, 
+        &MolNLen[5],            &MoleculeIndex, 5 },  
+    { &(MolNStr[6]),                            0x01,  0, 
+        &MolNLen[6],            &MoleculeIndex, 6 },  
+    { &(MolNStr[7]),                            0x01,  0, 
+        &MolNLen[7],            &MoleculeIndex, 7 },  
+    { &(MolNStr[8]),                            0x01,  0, 
+        &MolNLen[8],            &MoleculeIndex, 8 },  
+    { &(MolNStr[9]),                            0x01,  0, 
+        &MolNLen[9],            &MoleculeIndex, 9 },
+    { &(MolNStr[10]),                            0x01,  0, 
+        &MolNLen[10],            &MoleculeIndex, 10 },  
+    { &(MolNStr[11]),                            0x01,  0, 
+        &MolNLen[11],            &MoleculeIndex, 11 },  
+    { &(MolNStr[12]),                            0x01,  0, 
+        &MolNLen[12],            &MoleculeIndex, 12 },  
+    { &(MolNStr[13]),                            0x01,  0, 
+        &MolNLen[13],            &MoleculeIndex, 13 },  
+    { &(MolNStr[14]),                            0x01,  0, 
+        &MolNLen[14],            &MoleculeIndex, 14 }};
 
 static MenuItem DisMenu[9] = {
     { &MsgStrs[StrMWirefr] /* "Wireframe"    */,     0x11,  &MsgAuxl[StrMWirefr],
@@ -503,10 +535,10 @@ static int UseDials;
 XShmSegmentInfo xshminfo;
 int SharedMemOption;
 int SharedMemFlag;
+#else
+#define SharedMemOption False
 #endif
 
-#define XScrlDial  1 /*1*/
-#define YScrlDial  0 /*0*/
 #define XScrlSkip  8
 #define YScrlSkip  8
 
@@ -965,19 +997,27 @@ static int RegisterInterpName( char *name )
 
     register int result;
     register char *ptr;
+    register int (*handler)();
 
     registry = NULL;
+    handler = XSetErrorHandler( HandleIPCError );
     result = XGetWindowProperty(dpy, RootWindow(dpy,0), InterpAtom,
                                 0, 100000, False, XA_STRING, &type,
                                 &format, &len, &left, &registry );
+    XSync(dpy,False);
+    XSetErrorHandler(handler);
 
     if( (result!=Success) || (format!=8) || (type!=XA_STRING) )
     {   if( (type!=None) && registry ) XFree( (char*)registry );
 
         sprintf(buffer,"%x %s",(int)MainWin,name);
+        handler = XSetErrorHandler( HandleIPCError );
         XChangeProperty( dpy, RootWindow(dpy,0), InterpAtom, XA_STRING, 
                          8, PropModeReplace, (unsigned char*)buffer, 
                          (int)strlen(buffer)+1 );
+        XSync(dpy,False);
+        XSetErrorHandler(handler);
+
         return( True );
     }
 
@@ -998,9 +1038,12 @@ static int RegisterInterpName( char *name )
 
     XFree( (char*)registry );
     sprintf(buffer,"%x %s",(int)MainWin,name);
+    handler = XSetErrorHandler( HandleIPCError );
     XChangeProperty( dpy, RootWindow(dpy,0), InterpAtom, XA_STRING, 
                      8, PropModeAppend, (unsigned char*)buffer, 
                      (int)strlen(buffer)+1 );
+    XSync(dpy,False);
+    XSetErrorHandler(handler);
     return( True );
 }
 
@@ -1014,19 +1057,26 @@ static void DeRegisterInterpName( char *name )
 
     register char *src, *dst;
     register int result;
+    register int (*handler)();
 
     /* Avoid compiler warnings */
     src = (char *)0;
  
     registry = NULL;
+    handler = XSetErrorHandler( HandleIPCError );    
     result = XGetWindowProperty(dpy, RootWindow(dpy,0), InterpAtom,
                                 0, 100000, False, XA_STRING, &type,
                                 &format, &len, &left, &registry );
+    XSync(dpy,False);
+    XSetErrorHandler(handler);
     if( type==None )
         return;
 
     if( (result!=Success) || (format!=8) || (type!=XA_STRING) )
-    {   XDeleteProperty( dpy, RootWindow(dpy,0), InterpAtom );
+    {   handler = XSetErrorHandler( HandleIPCError );
+        XDeleteProperty( dpy, RootWindow(dpy,0), InterpAtom );
+        XSync(dpy,False);
+        XSetErrorHandler(handler);
         if( registry ) XFree( (char*)registry );
         return;
     }
@@ -1052,9 +1102,11 @@ static void DeRegisterInterpName( char *name )
         while( *src )
             while( (*dst++ = *src++) );
         *dst = 0;
-
+        handler = XSetErrorHandler( HandleIPCError );
         XChangeProperty( dpy, RootWindow(dpy,0), InterpAtom, XA_STRING,
                          8, PropModeReplace, registry, (int)(dst-(char*)registry) );
+        XSync(dpy,False);
+        XSetErrorHandler(handler);
     }
     XFree( (char*)registry );
 }
@@ -1064,18 +1116,23 @@ static void OpenIPCComms( void )
 {
     auto char buffer[16];
     register int i;
+    register int (*handler)();
 
     CommAtom = XInternAtom( dpy, "Comm", False );
     InterpAtom = XInternAtom( dpy, "InterpRegistry", False );
     AppNameAtom = XInternAtom(dpy, "TK_APPLICATION", False );
     DelWinXAtom = XInternAtom(dpy, "WM_DELETE_WINDOW", False);
+    XSync(dpy, False);
     /* XSetWMProtocols(dpy,MainWin,&DelWinXAtom,True); */
-    if( (ProtoXAtom = XInternAtom(dpy,"WM_PROTOCOLS",False)) )
+    if( (ProtoXAtom = XInternAtom(dpy,"WM_PROTOCOLS",False)) ) {
+    	handler = XSetErrorHandler( HandleIPCError );
         XChangeProperty( dpy, MainWin, ProtoXAtom, XA_ATOM, 32, 
                         PropModeReplace, (Byte*)&DelWinXAtom, True );
-
+        XSync(dpy,False);
+        XSetErrorHandler(handler);
+    }
     i = 0;
-    XGrabServer( dpy );
+    XSync(dpy,False);
     if( !RegisterInterpName("rasmol") )
     {   strcpy(TkInterp,"rasmol #0");
         for( i=1; i<10; i++ )
@@ -1087,12 +1144,18 @@ static void OpenIPCComms( void )
         if( i < 10 ) 
         {   /* Tk4.0 and later! */
             strcpy(buffer,"{rasmol #0}");  buffer[9] = i+'0';
+    	    handler = XSetErrorHandler( HandleIPCError );
             XChangeProperty( dpy, MainWin, AppNameAtom, XA_STRING, 
                              8, PropModeReplace, (Byte*)buffer, 12 );
+            XSync(dpy,False);
+            XSetErrorHandler(handler);
         } else *TkInterp = 0;
-    } else 
-    {   XChangeProperty( dpy, MainWin, AppNameAtom, XA_STRING,
+    } else  {  
+        handler = XSetErrorHandler( HandleIPCError );
+        XChangeProperty( dpy, MainWin, AppNameAtom, XA_STRING,
                          8, PropModeReplace, (Byte*)"rasmol", 7 );
+        XSync(dpy,False);
+        XSetErrorHandler(handler);
         strcpy(TkInterp,"rasmol");
     }
     XUngrabServer( dpy );
@@ -1341,7 +1404,7 @@ void UpdateScrollBars( void )
 
 
     if ( RotMode == RotAll ) {
-      temp = (WRotValue[YScrlDial]+1.0)*(YRange-48); 
+      temp = (WorldDialValue[YScrlDial]+1.0)*(YRange-48); 
     } else {
       temp = (DialValue[YScrlDial]+1.0)*(YRange-48); 
     } 
@@ -1358,7 +1421,7 @@ void UpdateScrollBars( void )
       temp = ((BondSelected->BRotValue)+1.0)*(XRange-48);
     } else {
       if ( RotMode == RotAll ) {
-        temp = (WRotValue[XScrlDial]+1.0)*(XRange-48);
+        temp = (WorldDialValue[XScrlDial]+1.0)*(XRange-48);
       } else {
         temp = (DialValue[XScrlDial]+1.0)*(XRange-48);
       }
@@ -1524,7 +1587,7 @@ static void HandleDialEvent( XDeviceMotionEvent *ptr )
                 ReDrawFlag |= RFRotBond;
               } else {
                 if ( RotMode == RotAll ) {
-                  temp += WRotValue[num];
+                  temp += WorldDialValue[num];
                   ReDrawFlag |= (1<<num);
                 } else {
                   temp += DialValue[num];
@@ -1549,7 +1612,7 @@ static void HandleDialEvent( XDeviceMotionEvent *ptr )
                 ReDrawFlag |= RFRotBond;
               } else {
                 if ( RotMode == RotAll ) {
-                  WRotValue[num] = temp;
+                  WorldDialValue[num] = temp;
                 } else {
                   DialValue[num] = temp;
                 }
@@ -2622,8 +2685,10 @@ int OpenDisplay( void )
     Monochrome = False;
     XHeldButton = -1;
 
-    for( i=0; i<8; i++ )
+    for( i=0; i<11; i++ )
          DialValue[i] = 0.0;
+         
+    CQRMSet(DialQRot,0.,0.,0.,0.);
 
     RLut[0]=0;   GLut[0]=0;   BLut[0]=0;    ULut[0]=True;
     RLut[1]=100; GLut[1]=100; BLut[1]=100;  ULut[1]=True;
@@ -2827,9 +2892,9 @@ int CreateImage( void )
 #endif
 
     if( !Interactive )
-    {   if( FBuffer ) free(FBuffer);
+    {   if( FBuffer ) _ffree(FBuffer);
         size = (long)XRange*YRange*sizeof(Pixel);
-        FBuffer = (Pixel*)malloc( size+32 );
+        FBuffer = (Pixel*)_fmalloc( size+32 );
 	return((FBuffer!=(Pixel*)NULL)?True : False);
     }
 
@@ -2838,7 +2903,7 @@ int CreateImage( void )
     if( image ) 
     {   /* Monochrome Mode Frame Buffer! */
         if( FBuffer && (FBuffer!=(Pixel*)image->data) )
-            free(FBuffer);
+            _ffree(FBuffer);
 #ifdef MITSHM
         if( SharedMemFlag )
         {   XShmDetach( dpy, &xshminfo );
@@ -2853,7 +2918,7 @@ int CreateImage( void )
     if( Monochrome )
     {   /* Monochrome Mode Frame Buffer! */
         size = (long)XRange*YRange*sizeof(Pixel);
-        FBuffer = (Pixel*)malloc( size+32 );
+        FBuffer = (Pixel*)_fmalloc( size+32 );
 	if( FBuffer == (Pixel*)NULL) return False;
 
         /* Bit per Pixel ScanLines! */
@@ -2906,7 +2971,7 @@ int CreateImage( void )
 #endif
 
     /* Allocate Frame Buffer! */
-    ptr = (Pixel*)malloc( size );
+    ptr = (Pixel*)_fmalloc( size );
     if( ptr == (Pixel*)NULL) return False;
 
     if( !Monochrome ) FBuffer = ptr;
@@ -3242,7 +3307,7 @@ static void DoneEvents( void )
 
         temp = ((Real)(NewScrlY-16))/(YRange-48);
         if( RotMode == RotAll ) {
-          WRotValue[YScrlDial] = 2.0*temp - 1.0;
+          WorldDialValue[YScrlDial] = 2.0*temp - 1.0;
         } else {
           DialValue[YScrlDial] = 2.0*temp - 1.0;
         }
@@ -3279,7 +3344,7 @@ static void DoneEvents( void )
           ReDrawFlag |= RFRotBond;
         } else {
           if( RotMode == RotAll ) {
-            WRotValue[XScrlDial] = 2.0*temp - 1.0;
+            WorldDialValue[XScrlDial] = 2.0*temp - 1.0;
             ReDrawFlag |= (1<<XScrlDial);
           } else {
             DialValue[XScrlDial] = 2.0*temp - 1.0;

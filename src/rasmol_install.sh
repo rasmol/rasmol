@@ -90,7 +90,7 @@
 #
 
 
-VERSION=${RASMOL_VERSION-"RasMol_2_7_4"};
+VERSION=${RASMOL_VERSION-"RasMol_2_7_5"};
 
 prefix= ;
 system="no" ;
@@ -127,6 +127,7 @@ do
       echo ""
       echo "optional variables:"
       echo "   RASMOLPATH          path to rasmol directory"
+      echo "   RASMOL_BROWSER      name of browser to use"
       echo "   RASMOL_LANTIN1FDIR  path to X11 ISO 8859-1 font directory"
       echo "   RASMOL_CP1251FDIR   path to X11 ISO CP 1251 font directory"
       echo "   RASMOL_CHINESEFDIR  path to X11 Intlfonts-1.2.1/Chinese directory"
@@ -405,7 +406,7 @@ else
   if [ "$RASMOL_CHINESEFDIR" ]; then
     rm -r -f $RASMOLPATH/Chinese.X ;
     cp -r -p $RASMOL_CHINESEFDIR $RASMOLPATH/Chinese.X ;
-    echo Installed Latin1 fonts in $RASMOLPATH/jmk
+    echo Installed Chinese fonts in $RASMOLPATH/Chinese.X
     if [ "$compilefonts" = "yes" ] ; then
       savecurdir=`pwd`;
       cd $RASMOLPATH/Chinese.X;
@@ -428,7 +429,7 @@ fi
 if ( (xlsfonts -fn "*-r-*-14-*-jisx0208.1983-0" | grep "jisx0208.1983") > /dev/null  2>&1 );
 then
   echo Japanese \(jisx0208.1983\) fonts available
-elif [ -d $RASMOLPATH/Japanese ] ; then
+elif [ -d $RASMOLPATH/Japanese.X ] ; then
   echo Japanese fonts in $RASMOLPATH/Japanese.X
 else
   for japanesefdir in \
@@ -458,7 +459,7 @@ else
   if [ "$RASMOL_JAPANESEFDIR" ]; then
     rm -r -f $RASMOLPATH/Japanese.X ;
     cp -r -p $RASMOL_JAPANESEFDIR $RASMOLPATH/Japanese.X ;
-    echo Installed Latin1 fonts in $RASMOLPATH/jmk
+    echo Installed Japanese fonts in $RASMOLPATH/Japanese.X
     if [ "$compilefonts" = "yes" ] ; then
       savecurdir=`pwd`;
       cd $RASMOLPATH/Japanese.X;

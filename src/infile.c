@@ -1,10 +1,9 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                            19 November 2007                             *
- *                          (rev. 21 March 2008)                           *
+ *                              13 June 2009                               *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -31,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -70,15 +76,27 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* infile.c
- $Log: not supported by cvs2svn $
- Revision 1.6  2008/03/21 19:49:05  yaya-hjb
- Update documentation and comments -- HJB
+ $Log: infile.c,v $
+ Revision 1.14  2008/07/18 01:11:01  yaya
+ Report a syntax error on rotate all 3 in command.c
+ Change const char * to char * for datablock name in infile.c -- HJB
 
- Revision 1.5  2008/03/17 03:26:06  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.13  2008/06/28 22:38:45  yaya
+ Update for mmCIF CHEM_COMP ligand support.  Add notes
+ to rasmol.doc; cif_datablock_name and cif_rewind_datablock;
+ add logic to read CHEM_COMP_ATOM and CHEM_COMP_BOND parses
+ to LoadCIFMolecule, putting models in a NMR models. -- HJB
+
+ Revision 1.12  2008/06/28 14:06:37  yaya
+ Fix unused variable warning in command.c
+ Start changes for loading models in infile.c
+ Make handling of IPC errors non-fatal in x11win.c -- HJB
+
+ Revision 1.11  2008/06/19 18:41:57  yaya
+ Correct missing ) -- HJB
+
+ Revision 1.9  2008/03/22 18:42:52  yaya
+ Post release cleanup and credit to Ikonen in file headers. -- HJB
 
  Revision 1.8  2008/03/17 03:01:31  yaya
  Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
@@ -276,6 +294,7 @@ static Feature __far *FeatList;
 static RAtom __far *ConnectAtom;
 static char __far Record[256];
 static FILE *DataFile;
+static int WPDB;
 
 
 
@@ -689,14 +708,16 @@ static void ApplyBondInfo( char __far *ResName1, char Chain1,int ResNum1,
 
 static Long ReadPDBCoord( int offset )
 {
-    register int len,neg;
+    register int len,neg,decpos;
     register Long result;
     register char *ptr;
     register char ch;
  
     result = 0;
     neg = False;
+	decpos = -1;
     len = 8;
+	if (WPDB) len = 13;
  
     ptr = Record+offset;
     while( len-- )
@@ -704,26 +725,39 @@ static Long ReadPDBCoord( int offset )
         if( (ch>='0') && (ch<='9') )
         {   result = (10*result)+(ch-'0');
         } else if( ch=='-' )
+		  {
             neg = True;
+		  } else if (ch=='.')
+		    {
+			  decpos = len;
+		    } else if (ch==' ')
+			  {
+	             result *= 10;
+			  }
     }
- 
-    /* Handle Chem3D PDB Files! */
-    if( Record[offset+3]=='.' )
+	if (decpos == -1) {
+	  if (WPDB) result /= 100;
+	} else {
+	  decpos -= 3;
+	  while (decpos > 0) {
         result /= 10;
+		decpos--;
+	  }
+	}
     return( neg? -result : result );
 }
 
 
 static void ProcessPDBGroup( int heta, int serno )
 {
-    PDBInsert = Record[26];
-    if( !CurChain || (CurChain->ident!=Record[21]) )
+    PDBInsert = Record[WPDB?64:26];
+    if( !CurChain || (CurChain->ident!=Record[WPDB?54:21]) )
     {   ConnectAtom = (RAtom __far*)0;
-        CreateChain( Record[21] );
+        CreateChain( Record[WPDB?54:21] );
     }
     CreateGroup( GroupPool );
  
-    CurGroup->refno = FindResNo( Record+17 );
+    CurGroup->refno = FindResNo( Record+(WPDB?42:17) );
     CurGroup->serno = serno;
     ProcessGroup( heta );
 }
@@ -737,13 +771,25 @@ static void ProcessPDBAtom( int heta, double pdb_version )
     register Long dx,dy,dz;
     register int temp,serno;
  
+    if (WPDB) {
+      dx = ReadPDBCoord(65);
+	  dy = ReadPDBCoord(78);
+      dz = ReadPDBCoord(91);
+	} else {
     dx = ReadPDBCoord(30);
     dy = ReadPDBCoord(38);
     dz = ReadPDBCoord(46);
+	}
  
     /* Process Pseudo Atoms Limits!! */
-    if( (Record[13]=='Q') && (Record[12]==' ') )
-    {   temp = (int)ReadValue(60,6);
+
+    if( (WPDB && (Record[23]=='Q') && (Record[22]==' ')) ||
+	    ( (!WPDB) && (Record[13]=='Q') && (Record[12]==' ') ))
+    {   if (WPDB) {
+	      temp = (int)ReadValue(110,6);
+		} else {
+	      temp = (int)ReadValue(60,6);
+		}
         if( MMinMaxFlag )
         {   if( temp < MinMainTemp )
             {   MinMainTemp = temp;
@@ -781,13 +827,22 @@ static void ProcessPDBAtom( int heta, double pdb_version )
     if( (dx==9999000L) && (dy==9999000L) && (dz==9999000L) )
         return;
  
+    if (WPDB) {
+    serno = (int)ReadValue(55,9);
+    if( !CurGroup || (CurGroup->serno!=serno)
+        || (CurChain->ident!=Record[54])
+        || (PDBInsert!=Record[64]) )
+        ProcessPDBGroup( heta, serno );
+	} else {
     serno = (int)ReadValue(22,4);
     if( !CurGroup || (CurGroup->serno!=serno)
         || (CurChain->ident!=Record[21])
         || (PDBInsert!=Record[26]) )
         ProcessPDBGroup( heta, serno );
+	}
  
     /* Handle Strange PDB Files */
+	if (!WPDB) {
     if( (Record[12]==' ') && (Record[13]==' ') )
     {   /* Right Justified Atom Name! */
         if( Record[14] == ' ' )
@@ -799,18 +854,21 @@ static void ProcessPDBAtom( int heta, double pdb_version )
             Record[15] = ' ';
         }
     }
+	}
  
     ptr = CreateAtom();
-    ptr->refno = ComplexAtomType(Record+12);
-    ptr->serno = ReadValue(6,5);
-    ptr->temp = (int)ReadValue(60,6);
-    ptr->altl = Record[16];
+    ptr->refno = ComplexAtomType(Record+(WPDB?22:12));
+    ptr->serno = ReadValue(WPDB?8:6,WPDB?9:5);
+    ptr->temp = (int)ReadValue(WPDB?110:60,6);
+    ptr->altl = Record[WPDB?32:16];
     ptr->model = NMRModel;
  
     /* Handle CONCORD PDB Files */
+	if (!WPDB) {
     if( (Record[12]==' ') && islower(Record[14])
         && !strncmp(Record+15,"       ",7) ) 
         ptr->refno = SimpleAtomType(Record+13);
+	}
 
     ptr->xorg =  dx/4;
     ptr->yorg =  dy/4;
@@ -823,7 +881,7 @@ static void ProcessPDBAtom( int heta, double pdb_version )
     if (pdb_version < 3.)
       ProcessAtomType( ptr, "  ");
     else 
-      ProcessAtomType( ptr, Record+76);
+      ProcessAtomType( ptr, Record+(WPDB?128:76));
  
     /* Create biopolymer Backbone */
     if( IsAlphaCarbon(ptr->refno) && IsProtein(CurGroup->refno) )
@@ -860,20 +918,20 @@ static void ProcessPDBBond( void )
 
     len = strlen(Record);
     if( len < (size_t)16 ) return;
-    srcatm = (Long)ReadValue(6,5);
+    srcatm = (Long)ReadValue(WPDB?22:6,WPDB?9:5);
     if( !srcatm ) return;
 
-    for( i=11; i<=26 && Record[i]; i+=5 )
-    { if( len < (size_t)(i+5) ) return;
-      dstatm = (Long)ReadValue(i,5);
+    for( i=(WPDB?32:11); i<=(WPDB?62:26) && Record[i]; i+=(WPDB?10:5) )
+    { if( len < (size_t)(i+(WPDB?9:5)) ) return;
+      dstatm = (Long)ReadValue(i,WPDB?9:5);
       if( dstatm )
       CreateNewBond(srcatm,dstatm);
     }
 
-    for( i=31; i<=56 && Record[i]; i+=5 )
-    { if( len < (size_t)(i+5) ) return;
-      dstatm = (int)ReadValue(i,5);
-      if( i < 41 || (i > 45 && i < 56)) {
+    for( i=(WPDB?72:31); i<=(WPDB?122:56) && Record[i]; i+=(WPDB?10:5) )
+    { if( len < (size_t)(i+(WPDB?9:5)) ) return;
+      dstatm = (int)ReadValue(i,WPDB?9:5);
+      if( i < (WPDB?92:41) || (i > (WPDB?101:45) && i < (WPDB?122:56))) {
         if( dstatm && srcatm < dstatm )
           CreateBond(srcatm,dstatm,HydrBondFlag);
       } else {
@@ -925,20 +983,20 @@ static void ProcessPDBUnitCell( void )
     register char *src;
     register char *dst;
 
-    dst = Info.spacegroup;  src=Record+55;
-    while( *src && src<Record+66 )
+    dst = Info.spacegroup;  src=Record+(WPDB?94:55);
+    while( *src && src<Record+(WPDB?107:66) )
     if( *src!=' ' ) 
     {   *dst++ = *src++;
     } else src++;
     *dst = 0;
  
-    Info.cella = Info.cell[0] = ReadDecValue( 6,9);
-    Info.cellb = Info.cell[1] = ReadDecValue(15,9);
-    Info.cellc = Info.cell[2] = ReadDecValue(24,9);
+    Info.cella = Info.cell[0] = ReadDecValue(WPDB?22:6,WPDB?13:9);
+    Info.cellb = Info.cell[1] = ReadDecValue(WPDB?22:15,WPDB?13:9);
+    Info.cellc = Info.cell[2] = ReadDecValue(WPDB?50:24,WPDB?13:9);
 
-    Info.cellalpha = Deg2Rad*(Info.cell[3] = ReadDecValue(33,7));
-    Info.cellbeta  = Deg2Rad*(Info.cell[4] = ReadDecValue(40,7));
-    Info.cellgamma = Deg2Rad*(Info.cell[5] = ReadDecValue(47,7));
+    Info.cellalpha = Deg2Rad*(Info.cell[3] = ReadDecValue(WPDB?64:33,WPDB?9:7));
+    Info.cellbeta  = Deg2Rad*(Info.cell[4] = ReadDecValue(WPDB?74:40,WPDB?9:7));
+    Info.cellgamma = Deg2Rad*(Info.cell[5] = ReadDecValue(WPDB?84:47,WPDB?9:7));
 
     result_cell = cell2mat(Info.cell, Info.matf2o, Info.mato2f);
     if( !result_cell )
@@ -968,6 +1026,7 @@ int LoadPDBMolecule( FILE *fp,  int flag )
 
     ignore = False;
     notCIF = False;
+	WPDB = False;
     FeatList = (void __far*)0;
     DataFile = fp;
     NMRModel = 0;
@@ -1003,13 +1062,13 @@ int LoadPDBMolecule( FILE *fp,  int flag )
                                                                  
                           } else if( !strncmp("COMP",Record,4) )
                           {   /* First or MOLECULE: COMPND record */
-                              if( (Record[9]==' ') && 
-                                  strncmp(Record+10,"MOL_ID:",7) )  
-                              {   ExtractString(60,Record+10,
+                              if( (Record[WPDB?21:9]==' ') && 
+                                  strncmp(Record+(WPDB?22:10),"MOL_ID:",7) )  
+                              {   ExtractString(60,Record+(WPDB?22:10),
                                                 Info.moleculename);
                               } else if( !Info.moleculename[0] &&
-                                         !strncmp(Record+11,"MOLECULE: ",10) )
-                                  ExtractString(49,Record+21,
+                                         !strncmp(Record+(WPDB?22:11),"MOLECULE: ",10) )
+                                  ExtractString(49,Record+(WPDB?32:21),
                                                 Info.moleculename);
                           } else if( !strncmp("CRYS",Record,4) )
                           {   ProcessPDBUnitCell();
@@ -1063,9 +1122,23 @@ int LoadPDBMolecule( FILE *fp,  int flag )
                           }
                           break;
 
-            case('M'):    if( !strncmp("MODE",Record,4) )
+			case('L'):    if( !strncmp("LEAD",Record,4) )
+                          {   ExtractString(60,Record+22,
+                                Info.classification);
+                              ExtractString(15,Record+95,Info.identcode);
+                              ExtractString(11,Record+83,Info.date);
+							  WPDB = True;
+                          }
+                          break;
+
+            case('M'):    if( !strncmp("MODE",Record,4) ) {
+			                  if(WPDB) {
+							    NMRModel = (int)ReadValue(8,9);
+							  } else {
                               NMRModel = (int)ReadValue(10,5);
+							  }
                               flag = True;
+						  }
                           break;
 
         	case('R'):    if( !strncmp(Record, "REMARK   4", 10) 
@@ -1078,24 +1151,25 @@ int LoadPDBMolecule( FILE *fp,  int flag )
  
             case('S'):    if( !strncmp("SHEE",Record,4) )
                           {   if( ignore ) break;
+						      if (WPDB && (Record[6]!='S')) break;
                               /* Remaining SHEET record fields   */
                               /* 38-39 .... Strand Parallelism   */
                               /* 32 ....... Same Chain as 21?    */
                               ptr = AllocFeature();
                               ptr->type = FeatSheet;
-                              ptr->chain = Record[21];
-                              ptr->init = (int)ReadValue(22,4);
-                              ptr->term = (int)ReadValue(33,4);
+                              ptr->chain = Record[WPDB?52:21];
+                              ptr->init = (int)ReadValue(WPDB?53:22,WPDB?9:4);
+                              ptr->term = (int)ReadValue(WPDB?84:33,WPDB?9:4);
                           } else if (!strncmp("SCAL",Record,4) )
 			  { 
                             int rownum;
 
                             rownum = (int)ReadValue(5,1);
                             if ((rownum > 0) && (rownum < 4) ) {
-                              Info.mato2f[rownum-1][0] =  ReadDecValue(10,10);
-                              Info.mato2f[rownum-1][1] =  ReadDecValue(20,10);
-                              Info.mato2f[rownum-1][2] =  ReadDecValue(30,10);
-                              Info.veco2f[rownum-1] =  ReadDecValue(45,10);
+                              Info.mato2f[rownum-1][0] =  ReadDecValue(WPDB?22:10,WPDB?13:10);
+                              Info.mato2f[rownum-1][1] =  ReadDecValue(WPDB?36:20,WPDB?13:10);
+                              Info.mato2f[rownum-1][2] =  ReadDecValue(WPDB?50:30,WPDB?13:10);
+                              Info.veco2f[rownum-1] =  ReadDecValue(WPDB?64:45,WPDB?13:10);
                             if (rownum == 3) {
                                 if (invxfrm(Info.mato2f,Info.veco2f,
                                   Info.matf2o,Info.vecf2o) ) {
@@ -1122,9 +1196,9 @@ int LoadPDBMolecule( FILE *fp,  int flag )
  
                               ptr = AllocFeature();
                               ptr->type = FeatTurn;
-                              ptr->chain = Record[19];
-                              ptr->init = (int)ReadValue(20,4);
-                              ptr->term = (int)ReadValue(31,4);
+                              ptr->chain = Record[WPDB?52:19];
+                              ptr->init = (int)ReadValue(WPDB?53:20,WPDB?9:4);
+                              ptr->term = (int)ReadValue(WPDB?84:31,WPDB?9:4);
                           } else if( !strncmp("TER",Record,3) )
                           {   if( !Record[3] || (Record[3]==' ') )
                               {   ConnectAtom = (void __far*)0;
@@ -2032,6 +2106,55 @@ void ConvertNames( char __far type_symbol[5],  char __far label_atom_id[5] )
     return;
 }
 
+static Long find_chem_comp_id(cif_handle cif, char __far * comp_id, char __far * atom_id ) {
+  	if ((!cif_findtag(cif,"_chem_comp_atom.model_Cartn_x")) ||
+      (!cif_findtag(cif,"_chem_comp_atom.model_Cartn_x_ideal"))||
+      (!cif_findtag(cif,"_chem_comp_atom.pdbx_model_Cartn_x_ideal"))){
+      unsigned int 
+        col_comp_id=-1,
+        col_atom_id=-1;
+      unsigned int rows, rownum;
+      
+      char __far label_atom_id[5], idstr[11], 
+        label_comp_id[4]="   "; 
+        
+                
+      /* Load column numbers for the tags we have */
+      if ((!cif_find_column(cif,"comp_id"))||
+          (!cif_find_column(cif,"pdbx_alt_comp_id"))||
+          (!cif_find_column(cif,"alt_comp_id")))
+          cif_column_number(cif,&col_comp_id);
+        
+      if ((!cif_find_column(cif,"atom_id"))||
+          (!cif_find_column(cif,"pdbx_alt_atom_id"))||
+          (!cif_find_column(cif,"alt_atom_id")))
+          cif_column_number(cif,&col_atom_id);
+ 
+          /* Process atom_site rows, one at a time */
+
+      cif_count_rows(cif,(unsigned int __far *)&rows);
+      for (rownum = 0; rownum < rows; ++rownum){
+        cif_select_row(cif,rownum);
+        ReadCIFstr(cif,col_atom_id,label_atom_id,4);
+        if (strncasecmp(label_atom_id, atom_id, 5)) continue;
+        ReadCIFstr(cif,col_comp_id,label_comp_id,3);
+        if (strncasecmp(label_comp_id, comp_id, 4)) continue;
+        {
+          char __far * endptr;
+          Long serno;
+          serno = (int)strtol(idstr, (char __far * __far *)&endptr,10);
+          if (*endptr != '\0') serno = rownum+1;
+          return serno;
+        } 
+      }
+
+    } 
+
+    return -1;
+
+}
+
+
 int LoadCIFMolecule( FILE *fp )
 {
     cif_handle cif;
@@ -2044,11 +2167,24 @@ int LoadCIFMolecule( FILE *fp )
     int result_a, result_b, result_c,
        result_alpha, result_beta, result_gamma;
     int result_scale, result_vector, result_cell;
+    long minsernum, maxsernum, maxnmrmodel;
+    
+    minsernum = 99999999L;
+    maxsernum = -99999999L;
+    maxnmrmodel = 0;
    
     DataFile = fp;
     cif_make_handle (&cif);
     cif_read_file (cif, fp);
     FeatList = (void __far*)0;
+    
+    strcpy (Info.classification,"");
+    strcpy (Info.identcode,"");
+    strcpy (Info.moleculename,"");
+    strcpy (Info.technique,"");
+    strcpy (Info.spacegroup,"");
+    
+    cif_rewind_datablock(cif);
 
     /*  Recover the HEADER information */
     if (!cif_findtag(cif, "_struct_biol.details")) {
@@ -2069,6 +2205,11 @@ int LoadCIFMolecule( FILE *fp )
       (!cif_findtag(cif, "_chemical_name_systematic")) ||
       (!cif_findtag(cif, "_chemical_name_mineral"))) {
       ReadcurCIFstr(cif,Info.moleculename,56);
+    } else {
+      char * dbname;
+      if (!cif_datablock_name (cif, &dbname))
+        strncpy(Info.moleculename,dbname,55);
+        Info.moleculename[55] = '\0';
     }
 
     /* Recover the Experimental Technique */
@@ -2355,6 +2496,7 @@ int LoadCIFMolecule( FILE *fp )
             NMRModel = (int)strtol(modelstr,
               (char __far * __far *)&endptr, 10);
             if (! (NMRModel == oNMRModel) ) {
+               if (NMRModel > maxnmrmodel) maxnmrmodel = NMRModel;
                ConnectAtom = (void __far*)0;
                CurGroup = (void __far*)0;
                CurChain = (void __far*)0;
@@ -2399,7 +2541,13 @@ int LoadCIFMolecule( FILE *fp )
           char __far * endptr;
           ptr->serno = (int)strtol(idstr, (char __far * __far *)&endptr,10);
           if (*endptr != '\0') ptr->serno = rownum+1;
-	} 
+          if (maxsernum < minsernum) {
+            maxsernum=minsernum=ptr->serno;
+          } else  {
+            if (ptr->serno > maxsernum) maxsernum=ptr->serno;
+            if (ptr->serno < minsernum) minsernum=ptr->serno;
+          } 
+        }
         ptr->altl = label_alt_id[0];
         ptr->model = NMRModel;
         cartn_x = 0.;
@@ -3059,6 +3207,327 @@ int LoadCIFMolecule( FILE *fp )
     }
     }
     }
+    
+    
+    if ((!cif_findtag(cif,"_chem_comp_atom.model_Cartn_x")) ||
+      (!cif_findtag(cif,"_chem_comp_atom.model_Cartn_x_ideal"))||
+      (!cif_findtag(cif,"_chem_comp_atom.pdbx_model_Cartn_x_ideal"))){
+        unsigned int 
+        col_comp_id=-1,
+        col_atom_id=-1,
+        col_type_symbol=-1,
+        col_substruct_code=-1,
+        col_model_cartn_x=-1, col_model_cartn_y=-1, col_model_cartn_z=-1,
+        col_ideal_cartn_x=-1, col_ideal_cartn_y=-1, col_ideal_cartn_z=-1,
+        col_ordinal;
+        int ipass;
+        unsigned int rows, rownum;
+        char __far label_atom_id[5], idstr[10], 
+            label_comp_id[4]="   ",
+            olabel_comp_id[4]="   ", label_asym_id[2]=" ",
+            type_symbol[5];
+        double cartn_x, cartn_y, cartn_z;
+        int heta;
+        register RAtom __far *ptr;
+        int oNMRModel;
+        int seroffset;
+        
+        /*  _chem_comp_atom.comp_id
+            _chem_comp_atom.alt_comp_id
+            _chem_comp_atom.pdbx_alt_comp_id
+            
+            _chem_comp_atom.atom_id
+            _chem_comp_atom.alt_atom_id
+            _chem_comp_atom.pdbx_alt_atom_id
+            
+            _chem_comp_atom.type_symbol
+            _chem_comp_atom.substruct_code
+            
+            _chem_comp_atom.model_Cartn_x
+            _chem_comp_atom.model_Cartn_y
+            _chem_comp_atom.model_Cartn_z
+            
+            _chem_comp_atom.model_Cartn_x_ideal
+            _chem_comp_atom.model_Cartn_y_ideal
+            _chem_comp_atom.model_Cartn_z_ideal
+            
+            _chem_comp_atom.pdbx_model_Cartn_x_ideal
+            _chem_comp_atom.pdbx_model_Cartn_y_ideal
+            _chem_comp_atom.pdbx_model_Cartn_z_ideal
+            
+            _chem_comp_atom.ordinal
+            _chem_comp_atom.pdbx_ordinal
+            
+            */
+        
+        
+        
+        /* Load column numbers for the tags we have */
+        if ((!cif_find_column(cif,"comp_id"))||
+            (!cif_find_column(cif,"pdbx_alt_comp_id"))||
+            (!cif_find_column(cif,"alt_comp_id")))
+            cif_column_number(cif,&col_comp_id);
+        
+        if ((!cif_find_column(cif,"atom_id"))||
+            (!cif_find_column(cif,"pdbx_alt_atom_id"))||
+            (!cif_find_column(cif,"alt_atom_id")))
+            cif_column_number(cif,&col_atom_id);
+        
+        if ((!cif_find_column(cif,"type_symbol")))
+            cif_column_number(cif,&col_type_symbol);
+        
+        if ((!cif_find_column(cif,"substruct_code")))
+            cif_column_number(cif,&col_substruct_code);
+        
+        if ((!cif_find_column(cif,"model_cartn_x")))
+            cif_column_number(cif,&col_model_cartn_x);
+        if ((!cif_find_column(cif,"model_cartn_y")))
+            cif_column_number(cif,&col_model_cartn_y);
+        if ((!cif_find_column(cif,"model_cartn_z")))
+            cif_column_number(cif,&col_model_cartn_z);
+        
+        if ((!cif_find_column(cif,"model_cartn_x_ideal"))||
+            (!cif_find_column(cif,"pdbx_model_cartn_x_ideal")))
+            cif_column_number(cif,&col_ideal_cartn_x);
+        if ((!cif_find_column(cif,"model_cartn_y_ideal"))||
+            (!cif_find_column(cif,"pdbx_model_cartn_y_ideal")))
+            cif_column_number(cif,&col_ideal_cartn_y);
+        if ((!cif_find_column(cif,"model_cartn_z_ideal"))||
+            (!cif_find_column(cif,"pdbx_model_cartn_z_ideal")))
+            cif_column_number(cif,&col_ideal_cartn_z);
+        
+        
+        if ((!cif_find_column(cif,"ordinal"))||
+            (!cif_find_column(cif,"pdbx_ordinal")))
+            cif_column_number(cif,&col_ordinal);
+        
+        
+        for (ipass=0; ipass< 2; ipass++) {
+
+            oNMRModel = NMRModel;
+            ConnectAtom = (void __far*)0;
+            CurGroup = (void __far*)0;
+            CurChain = (void __far*)0;
+        
+            strncpy(olabel_comp_id,"   ",4);
+        
+            
+            seroffset = 0;
+            if (maxsernum >= minsernum)  {
+                NMRModel = maxnmrmodel;
+                seroffset=maxsernum+1;
+            } else {
+            	NMRModel = 0;
+            }
+            
+            if (ipass==0) {
+                if (cif_findtag(cif,"_chem_comp_atom.model_Cartn_x")
+                  || col_model_cartn_x == (unsigned int)(-1) 
+                  || col_model_cartn_y == (unsigned int)(-1) 
+                  || col_model_cartn_z == (unsigned int)(-1)  )
+                     break;
+            } else {
+                if((cif_findtag(cif,"_chem_comp_atom.model_Cartn_x_ideal")&&
+                  cif_findtag(cif,"_chem_comp_atom.pdbx_model_Cartn_x_ideal"))
+                  || col_ideal_cartn_x == (unsigned int)(-1) 
+                  || col_ideal_cartn_y == (unsigned int)(-1) 
+                  || col_ideal_cartn_z == (unsigned int)(-1)  )
+                    break;
+            }
+            
+            /* Process atom_site rows, one at a time */
+            
+            cif_count_rows(cif,(unsigned int __far *)&rows);
+            for (rownum = 0; rownum < rows; ++rownum) {
+                cif_select_row(cif,rownum);
+                heta = False;
+                ReadCIFstr(cif,col_atom_id,label_atom_id,4);
+                ReadCIFstr(cif,col_type_symbol,type_symbol,4);
+                ReadCIFstr(cif,col_comp_id,label_comp_id,3);
+                if (strlen(label_comp_id)<(size_t)3) RightJustify(label_comp_id,3);
+                strcpy(label_asym_id," ");
+                {
+                    int seqnum, sseqnum, icode, sicode;
+                    if (strncasecmp(olabel_comp_id,label_comp_id,4)) {
+                        oNMRModel = NMRModel;
+                        ConnectAtom = (void __far*)0;
+                        CurGroup = (void __far*)0;
+                        CurChain = (void __far*)0;
+                        NMRModel = ++maxnmrmodel;
+                        strncpy(olabel_comp_id,label_comp_id,4);
+                    }
+                    
+                    seqnum = sseqnum = 1;
+                    icode = sicode = ' ';
+                    if ( !CurGroup || (CurGroup->serno!=seqnum)
+                         || (CurChain->ident!=label_asym_id[0])
+                         || (PDBInsert != icode) ) {
+                        PDBInsert = icode;
+                        if( !CurChain || (CurChain->ident!=label_asym_id[0] )) {
+                            ConnectAtom = (RAtom __far*)0;
+                            CreateChain (label_asym_id[0]);
+                        }
+                        CreateGroup( GroupPool );
+                        CurGroup->refno = FindResNo(label_comp_id);
+                        CurGroup->serno = seqnum;
+                        CurGroup->insert = icode;
+                        CurGroup->sserno = sseqnum;
+                        CurGroup->sinsert = sicode;
+                        ProcessGroup (heta);              
+                    }
+                }
+                ptr = CreateAtom();
+                ReadCIFstr(cif,col_ordinal,idstr,10);
+                if (idstr[0] == '\0') sprintf(idstr,"%d",rownum+1);
+                {
+                    char __far * endptr;
+                    ptr->serno = seroffset+(int)strtol(idstr, (char __far * __far *)&endptr,10);
+                    if (*endptr != '\0') ptr->serno = seroffset+rownum+1;
+                    if (ptr->serno > maxsernum) maxsernum = ptr->serno;
+                    if (ptr->serno < minsernum) minsernum = ptr->serno;
+                } 
+                ptr->altl = ' ';
+                ptr->model = NMRModel;
+                cartn_x = 0.;
+                cartn_y = 0.;
+                cartn_z = 0.;
+                if (ipass==0) {
+                    ReadCIFRowValue(cif,  (double __far *)&cartn_x, col_model_cartn_x);
+                    ReadCIFRowValue(cif,  (double __far *)&cartn_y, col_model_cartn_y);
+                    ReadCIFRowValue(cif,  (double __far *)&cartn_z, col_model_cartn_z);
+                } else {
+                    ReadCIFRowValue(cif,  (double __far *)&cartn_x, col_ideal_cartn_x);
+                    ReadCIFRowValue(cif,  (double __far *)&cartn_y, col_ideal_cartn_y);
+                    ReadCIFRowValue(cif,  (double __far *)&cartn_z, col_ideal_cartn_z);
+                    
+                }
+                ptr->xorg = (Long)(cartn_x*250.);
+                ptr->yorg = (Long)(cartn_y*250.);
+                ptr->zorg = -(Long)(cartn_z*250.);
+                ptr->xtrl = (short)(10000.0*cartn_x-40.0*(double)ptr->xorg);
+                ptr->ytrl = (short)(10000.0*cartn_y-40.0*(double)ptr->yorg);
+                ptr->ztrl = (short)(-10000.0*cartn_z-40.0*(double)ptr->zorg);
+                
+                if (label_atom_id[0]=='\0')  strncpy(label_atom_id,idstr,4);
+                {
+                    int i, laid, lat;
+                    char __far tmparg[5];
+                    
+                    lat = (int)strlen(type_symbol);
+                    if (lat > 1) {
+                        if ((type_symbol[lat-1] =='+') || (type_symbol[lat-1] == '-')) {
+                            if (strchr("0123456789",type_symbol[lat-2])) {
+                                lat -= 2;
+                            } else {
+                                lat--;
+                            }
+                        }
+                    }
+                    laid = (int)strlen(label_atom_id);
+                    for (i = laid; i < 5; i++) label_atom_id[i] = '\0';
+                    strcpy(tmparg,label_atom_id);
+                    if ((label_atom_id[0] < '0') || (label_atom_id[0] > '9') ){
+                        if (laid>0 && laid < 4 && lat > 0 ) {
+                            if ((strncmp(label_atom_id, type_symbol, lat) == 0) &&
+                                lat ==1) {
+                                label_atom_id[0] = ' ';
+                                strcpy(label_atom_id+1,tmparg);
+                            } 
+                        } else {
+                            if ((laid > 0) && (laid < 4)) {
+                                label_atom_id[0] = ' ';
+                                strcpy(label_atom_id+1,tmparg);
+                            }
+                        }
+                    }
+                    if (lat == 1) {
+                        strncpy(tmparg,type_symbol,4);
+                        type_symbol[0] = ' ';
+                        strncpy(type_symbol+1,tmparg,3);
+                        type_symbol[4] = '\0';
+                    }
+                    
+                    if (label_atom_id[3] == '\0') label_atom_id[3] = ' ';
+                    if (label_atom_id[2] == '\0') label_atom_id[2] = ' ';
+                    ptr->refno = ComplexAtomType(label_atom_id);
+                    
+                }
+                
+                
+                ProcessAtom(ptr);
+                
+            }
+            ConnectAtom = (void __far*)0;
+            CurGroup = (void __far*)0;
+            CurChain = (void __far*)0;
+            
+            
+            /* Process Bonds */
+            NullBonds = 0;
+            if (!cif_findtag(cif,"_chem_comp_bond.ordinal")||
+                !cif_findtag(cif,"_chem_comp_bond.pdbx_ordinal")) {
+                unsigned int
+                col_comp_id,
+                col_atom_id_1=-1, col_atom_id_2=-1,
+                col_bond_value=-1,col_ordinal=-1;
+                unsigned int rows, rownum;
+                char __far atom_id_1[10],atom_id_2[10],
+                    label_comp_id[4], bond_value[6];
+                
+                int bvalue;
+                Long id1,id2; 
+                
+                
+                if ((!cif_find_column(cif,"comp_id")) )
+                    cif_column_number(cif,&col_comp_id);
+                
+                if ((!cif_find_column(cif,"atom_id_1")) )
+                    cif_column_number(cif,&col_atom_id_1);
+                
+                if ((!cif_find_column(cif,"atom_id_2")) )
+                    cif_column_number(cif,&col_atom_id_2);
+                
+                if ((!cif_find_column(cif,"value_order")) )
+                    cif_column_number(cif,&col_bond_value);
+                
+                if ((!cif_find_column(cif,"ordinal"))||
+                    (!cif_find_column(cif,"pdbx_ordinal")) )
+                    cif_column_number(cif,&col_ordinal);
+                
+                
+                cif_count_rows(cif,(unsigned int __far *)&rows);
+                rownum=rows;
+                
+                for (rownum = 0; rownum < rows; ++rownum) {
+                    cif_select_row(cif,rownum);
+                    
+                    ReadCIFstr(cif,col_comp_id, label_comp_id,3);
+                    ReadCIFstr(cif,col_atom_id_1, atom_id_1,4);
+                    ReadCIFstr(cif,col_atom_id_2, atom_id_2,4);
+                    ReadCIFstr(cif,col_bond_value, bond_value,5);
+                    if(!strncasecmp(bond_value, "SING",5)){
+                        bvalue=NormBondFlag;
+                    }else if(!strncasecmp(bond_value, "DOUB",5)){
+                        bvalue=DoubBondFlag;
+                    }else if(!strncasecmp(bond_value, "TRIP",5)){
+                        bvalue=TripBondFlag;
+                    }else if(!strncasecmp(bond_value, "AROM",5)){
+                        bvalue=AromBondFlag;
+                    }else
+                        bvalue=NormBondFlag;
+                    id1 = seroffset + find_chem_comp_id(cif,label_comp_id, atom_id_1);
+                    id2 = seroffset + find_chem_comp_id(cif,label_comp_id, atom_id_2);
+                    if (id1 > seroffset && id2 > seroffset) CreateBond(id1,id1,bvalue);
+                    else NullBonds++;
+                    if (cif_findtag(cif,"_chem_comp_bond.ordinal"))
+                        cif_findtag(cif,"_chem_comp_bond.pdbx_ordinal");
+                }
+            }
+            if (NullBonds && ipass==0) WriteString("Warning: Null bonds in models in CHEM_COMP_BOND!\n");
+            if (NullBonds && ipass==1) WriteString("Warning: Null bonds in ideal models in CHEM_COMP_BOND!\n");
+        }
+    }
+
 
     cif_free_handle(cif);
     
@@ -3108,6 +3577,7 @@ int SavePDBMolecule( char *filename )
     register int model;
     register char ch = '\0';
     register int i;
+    char eltype[2];
  
     if( !Database )
         return False;
@@ -3153,10 +3623,31 @@ int SavePDBMolecule( char *filename )
             if( aptr->flag&HeteroFlag )
             {      fputs("HETATM",DataFile);
             } else fputs("ATOM  ",DataFile);
-            fprintf( DataFile, "%5d %-4.4s%c%3.3s %c%4d    ",
+            eltype[0] = ElemDesc[aptr->refno][0];
+            eltype[1] = ElemDesc[aptr->refno][1];
+            if (isdigit(eltype[1])) eltype[1]=' ';
+            if (isdigit(eltype[0])) eltype[0]=' ';
+            if (eltype[0]!=' '
+              && GetElemDescNumber(eltype)!=aptr->elemno)
+              { char c[5];
+                int ic;
+                c[0]=ElemDesc[aptr->refno][3];
+                c[1]=ElemDesc[aptr->refno][0];
+                c[2]=ElemDesc[aptr->refno][1];
+                c[3]=ElemDesc[aptr->refno][2];
+                c[4]=0;
+                for (ic=0; ic<4; ic++) if (!c[ic]) c[ic]=' ';
+                fprintf( DataFile, "%5d %-4.4s%c%3.3s %c%4d    ",
+                     count++, c,
+                     aptr->altl, Residue[group->refno],
+                     chain->ident, group->serno );
+            	
+            } else {
+              fprintf( DataFile, "%5d %-4.4s%c%3.3s %c%4d    ",
                      count++, ElemDesc[aptr->refno],
                      aptr->altl, Residue[group->refno],
                      chain->ident, group->serno );
+            }   
  
             x = (double)(aptr->xorg + aptr->fxorg + OrigCX)/250.0
                 +(double)(aptr->xtrl)/10000.0;
@@ -3178,6 +3669,124 @@ int SavePDBMolecule( char *filename )
  
     if( prev )
         fprintf( DataFile, "TER   %5d      %.3s %c%4d \n",
+                 count, Residue[prev->refno], ch, prev->serno);
+    if( model )
+        fputs("ENDMDL\n",DataFile);
+    fputs("END   \n",DataFile);
+    fclose( DataFile );
+#ifdef APPLEMAC
+    SetFileInfo(filename,'RSML','TEXT',131);
+#endif
+    return True;
+}
+ 
+int SaveWPDBMolecule( char *filename )
+{
+    register double x, y, z;
+    register Group __far *prev;
+    register Chain __far *chain;
+    register Group __far *group;
+    register RAtom __far *aptr;
+    register char *ptr;
+    register int count;
+    register int model;
+    register char ch = '\0';
+    register int i;
+    char eltype[2];
+ 
+    if( !Database )
+        return False;
+ 
+    DataFile = fopen( filename, "w" );
+    if( !DataFile )
+    {   InvalidateCmndLine();
+        WriteString("Error: Unable to create file!\n\n");
+        return False;
+    }
+ 
+    if( *Info.classification || *Info.identcode )
+             /*12345678901234567890123456789012*/
+    {   fputs("HEADER                          ",DataFile);
+ 
+        ptr = Info.classification;
+        for( i=11; i<=60; i++ )
+            putc( (*ptr ? *ptr++ : ' '), DataFile );
+        fprintf(DataFile," %-11.11s %-15.15s\n",Info.date,Info.identcode);
+    }
+ 
+                        /*12345678901234567890123456789012*/
+    if( *Info.moleculename )
+        fprintf(DataFile,"COMPND                          %.110s\n",Info.moleculename);
+    if( *Info.technique )
+        fprintf(DataFile,"EXPDTA                          %.110s\n",Info.technique);
+    prev = (void __far*)0; 
+    count = 1;
+    model = 0;
+    ch = ' ';
+
+    ForEachAtom
+        if( aptr->flag&SelectFlag )
+        {   if( prev && (chain->ident!=ch) )
+                fprintf( DataFile, "TER     %9d                  %.10s         %c%9d \n",
+                         count++, Residue[prev->refno], ch, prev->serno);
+            if( chain->model != model )
+            {   if( model )
+                    fputs("ENDMDL\n",DataFile);
+                fprintf(DataFile,"MODEL   %9d\n",chain->model);
+                model = chain->model;
+            }
+ 
+            if( aptr->flag&HeteroFlag )
+            {      fputs("HETATM",DataFile);
+            } else fputs("ATOM  ",DataFile);
+
+            eltype[0] = ElemDesc[aptr->refno][0];
+            eltype[1] = ElemDesc[aptr->refno][1];
+            if (isdigit(eltype[1])) eltype[1]=' ';
+            if (isdigit(eltype[0])) eltype[0]=' ';
+            if (eltype[0]!=' '
+              && GetElemDescNumber(eltype)!=aptr->elemno )
+              { char c[11];
+                int ic;
+                c[0]=' ';
+                for (ic=0; ic<9; ic++){
+                  c[ic+1]=ElemDesc[aptr->refno][ic];
+                  if(!c[ic+1])c[ic+1]=' ';
+                }
+                c[10]=0;
+                fprintf( DataFile, "  %9d     %-10.10s  %c%10.10s         %c%9d ",
+                     count++, c,
+                     aptr->altl, Residue[group->refno],
+                     chain->ident, group->serno );
+            	
+            } else {
+ 
+              fprintf( DataFile, "  %9d     %-10.10s  %c%10.10s         %c%9d ",
+                     count++, ElemDesc[aptr->refno],
+                     aptr->altl, Residue[group->refno],
+                     chain->ident, group->serno );
+            }
+ 
+            x = (double)(aptr->xorg + aptr->fxorg + OrigCX)/250.0
+                +(double)(aptr->xtrl)/10000.0;
+            y = (double)(aptr->yorg + aptr->fyorg + OrigCY)/250.0
+                +(double)(aptr->ytrl)/10000.0;
+            z = (double)(aptr->zorg + aptr->fzorg + OrigCZ)/250.0
+                +(double)(aptr->ztrl)/10000.0;
+ 
+#ifdef INVERT
+            fprintf(DataFile,"%13.3f%13.3f%13.3f",x,-y,-z);
+#else
+            fprintf(DataFile,"%13.3f%13.3f%13.3f",x,y,-z);
+#endif
+            fprintf(DataFile,"  1.00%6.2f\n",aptr->temp/100.0);
+ 
+            ch = chain->ident;
+            prev = group;
+        }
+ 
+    if( prev )
+        fprintf( DataFile, "TER     %9d                  %.10s         %c%9d \n",
                  count, Residue[prev->refno], ch, prev->serno);
     if( model )
         fputs("ENDMDL\n",DataFile);

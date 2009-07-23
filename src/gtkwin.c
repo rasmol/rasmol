@@ -1,10 +1,9 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                            19 November 2007                             *
- *                          (rev. 21 March 2008)                           *
+ *                              13 June 2009                               *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -31,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -81,6 +87,7 @@
 #include <vte/vte.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <gdk-pixbuf/gdk-pixdata.h>
 
 #define GRAPHICS
 #include "rasmol.h"
@@ -96,11 +103,13 @@
 #include "vector.h"
 #include "wbrotate.h"
 #include "langsel.h"
+#include "gtkwin.h"
 #include "gtkui.h"
 #include "eggfileformatchooser.h"
 
-#define XScrlDial  1 /*1*/
-#define YScrlDial  0 /*0*/
+
+#define RASGTK_MINWIDTH  300
+#define RASGTK_MINHEIGHT 300
 
 typedef union {
     Long longword;
@@ -111,10 +120,6 @@ typedef union {
 #ifdef THIRTYTWOBIT
 static int SwapBytes;
 #endif
-
-static int MaxWidth, MaxHeight;
-static int MinWidth, MinHeight;
-static int MainWide, MainHigh;
 
 extern int ProcessCommand( void );
 
@@ -162,11 +167,7 @@ GtkActionGroup *action_group;
 GtkUIManager *ui_manager;
 GtkAccelGroup *accel_group;	
 guint merge_id;
-static int termfd;
-extern FILE *OutFp;
-extern int FileNo;
 gboolean dragging = FALSE;
-
 
 #define ADDSIGNAL(A,B) g_signal_connect(gtk_ui_manager_get_action(ui_manager,\
 (A)),"activate", G_CALLBACK(handlemenu_cb), (gpointer) &(B));
@@ -259,8 +260,10 @@ gboolean handlemenu_cb(GtkAction *action, gpointer user_data)
 	if(menu == m_o_stereo) {
 		gtk_toggle_action_set_active((GtkToggleAction *)action, UseStereo);
 	}
-	if( ReDrawFlag )
+	if( ReDrawFlag ) {
     	RefreshScreen();
+    	ReDrawFlag = NextReDrawFlag;
+	}
 	return FALSE;
 }
 
@@ -270,45 +273,83 @@ void radio_cb (GtkRadioAction *action, GtkRadioAction *current, gpointer user_da
 
 	value = gtk_radio_action_get_current_value (action);
 	HandleMenu(value);
-	if( ReDrawFlag )
+	if( ReDrawFlag ) {
     	RefreshScreen();
+    	ReDrawFlag = NextReDrawFlag;
+	}
 }
 
 void open_cb(GtkAction *action, gpointer user_data)
 {
-	static char *prevname = NULL;
-	GtkWidget *opendialog = NULL;
-	GtkRecentManager* rman = NULL;
-	
-	opendialog = gtk_file_chooser_dialog_new ("Open File",
-				      GTK_WINDOW(mainwin),
-				      GTK_FILE_CHOOSER_ACTION_OPEN,
-				      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				      GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-				      NULL);		
-	if(prevname) {
-		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER (opendialog), prevname);
-	}
-	if (gtk_dialog_run (GTK_DIALOG (opendialog)) == GTK_RESPONSE_ACCEPT) {
-		if(prevname)
-			g_free (prevname);
-    	prevname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (opendialog));
-		if(FetchFile(FormatPDB, False, prevname)) {
-			char tmp[4096];
-			
-			tmp[0] = '\0';
-			strcat(tmp, "file://");
-			strcat(tmp, prevname);
-			rman = gtk_recent_manager_get_default();
-			gtk_recent_manager_add_item(rman, tmp);
-			DefaultRepresentation();
-			RefreshScreen();	
-		} else {
-			;
-		}
-  	}
+    static char *prevname = NULL;
+    GtkWidget *opendialog = NULL;
+    GtkRecentManager* rman = NULL;
+    GtkFileFilter* filter = NULL;
 
-	gtk_widget_destroy (opendialog);
+    opendialog = gtk_file_chooser_dialog_new ("Open File",
+        GTK_WINDOW(mainwin),
+        GTK_FILE_CHOOSER_ACTION_OPEN,
+        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+        GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+        NULL);
+
+    filter = gtk_file_filter_new();
+    gtk_file_filter_set_name(filter, "Molecular structures");
+    gtk_file_filter_add_pattern(filter, "*.pdb");
+    gtk_file_filter_add_pattern(filter, "*.PDB");
+    gtk_file_filter_add_pattern(filter, "*.mol");
+    gtk_file_filter_add_pattern(filter, "*.MOL");
+    gtk_file_filter_add_pattern(filter, "*.mol2");
+    gtk_file_filter_add_pattern(filter, "*.xyz");
+    gtk_file_filter_add_pattern(filter, "*.XYZ");
+    gtk_file_filter_add_pattern(filter, "*.mop");
+    gtk_file_filter_add_pattern(filter, "*.MOP");
+    gtk_file_filter_add_pattern(filter, "*.mopcrt");
+    gtk_file_filter_add_pattern(filter, "*.MOPCRT");
+    gtk_file_filter_add_pattern(filter, "*.mopint");
+    gtk_file_filter_add_pattern(filter, "*.MOPINT");
+    gtk_file_filter_add_pattern(filter, "*.mopout");
+    gtk_file_filter_add_pattern(filter, "*.MOPOUT");
+    gtk_file_filter_add_pattern(filter, "*.alc");
+    gtk_file_filter_add_pattern(filter, "*.ALC");
+    gtk_file_filter_add_pattern(filter, "*.crd");
+    gtk_file_filter_add_pattern(filter, "*.cor");
+    gtk_file_filter_add_pattern(filter, "*.cif");
+    gtk_file_filter_add_pattern(filter, "*.CIF");
+    gtk_file_filter_add_pattern(filter, "*.mmcif");
+    gtk_file_filter_add_pattern(filter, "*.mmCIF");
+    gtk_file_filter_add_pattern(filter, "*.MMCIF");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(opendialog), filter);
+    filter = gtk_file_filter_new();
+    gtk_file_filter_set_name(filter, "All files");
+    gtk_file_filter_add_pattern(filter, "*");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(opendialog), filter);
+
+    if(prevname) {
+        gtk_file_chooser_set_filename(GTK_FILE_CHOOSER (opendialog), prevname);
+    }
+    if (gtk_dialog_run (GTK_DIALOG (opendialog)) == GTK_RESPONSE_ACCEPT) {
+        if(prevname)
+            g_free (prevname);
+        prevname = gtk_file_chooser_get_filename (
+            GTK_FILE_CHOOSER (opendialog));
+        strcpy(DataFileName, prevname);
+        if(FetchFile(FormatPDB, False, prevname)) {
+            char tmp[PATH_MAX+10];
+
+            strcpy(tmp, "file://");
+            if(realpath(prevname, tmp+7)) {
+                rman = gtk_recent_manager_get_default();
+                gtk_recent_manager_add_item(rman, tmp);
+            }
+            DefaultRepresentation();
+            RefreshScreen();
+        } else {
+            ;
+        }
+    }
+
+    gtk_widget_destroy (opendialog);
 }
 
 void save_cb(GtkAction *action, gpointer user_data)
@@ -389,6 +430,7 @@ void render_buffer(Pixel *buf, int xsize, int ysize)
 	
 	ReDrawFlag |= RFReSize;
 	RefreshScreen();
+	ReDrawFlag = NextReDrawFlag;
 }
 
 gboolean sizespin_cb(GtkSpinButton button, gpointer data)
@@ -862,10 +904,28 @@ void build_window(void)
 	}
 }
 
+
 void view_cb(GtkAction *action, gpointer user_data)
 {
 	build_window();
 }
+
+
+void set_ui_elements(int mask)
+{
+    GtkAction* a;
+
+    a = gtk_ui_manager_get_action(ui_manager, "/MainMenu/ViewMenu/Command");
+    gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(a), mask & UI_COMMAND);
+    a = gtk_ui_manager_get_action(ui_manager, "/MainMenu/ViewMenu/Scrolls");
+    gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(a), mask & UI_SCROLLS);
+    a = gtk_ui_manager_get_action(ui_manager, "/MainMenu/ViewMenu/Menus");
+    gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(a), mask & UI_MENUS);
+    a = gtk_ui_manager_get_action(ui_manager, "/MainMenu/ViewMenu/Fullscreen");
+    gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(a), mask & UI_FULLSCREEN);
+    build_window();
+}
+
 
 void setfont_cb(GtkAction *action, gpointer user_data)
 {
@@ -887,25 +947,26 @@ void setfont_cb(GtkAction *action, gpointer user_data)
 
 void recent_cb(GtkAction *recent, gpointer user_data)
 {
-	gchar *uri;
-	
-	uri = gtk_recent_chooser_get_current_uri(GTK_RECENT_CHOOSER(recent));
-	if(strncmp(uri, "file:", 5) == 0) {
-		FetchFile(FormatPDB, False, uri+5);
-		DefaultRepresentation();
-		RefreshScreen();	
-	}
+    gchar *uri;
+
+    uri = gtk_recent_chooser_get_current_uri(GTK_RECENT_CHOOSER(recent));
+    if(strncmp(uri, "file:", 5) == 0) {
+        strcpy(DataFileName, uri+5);
+        FetchFile(FormatPDB, False, uri+5);
+        DefaultRepresentation();
+        RefreshScreen();
+    }
 }
 
 static const GtkActionEntry menuentries[] = {
   { "FileMenu", NULL, "_File" },
   { "Open", GTK_STOCK_OPEN, "_Open...", "<control>O", "Open a file", G_CALLBACK(open_cb) },
   { "SaveAs", GTK_STOCK_SAVE_AS, "_Save As...", "<control>S", "Save a file", G_CALLBACK(save_cb) }, 
-  { "Export", GTK_STOCK_CONVERT, "_Export...", "<control>E", "Export current image", G_CALLBACK(export_cb) },    
-  { "Close", GTK_STOCK_CLOSE, "_Close", "", "Close the selected molecule", NULL },
+  { "Export", GTK_STOCK_CONVERT, "_Export...", "<control>X", "Export current image", G_CALLBACK(export_cb) },
+  { "Close", GTK_STOCK_CLOSE, "_Close", "<control>W", "Close the selected molecule", NULL },
   { "PageSetup", NULL, "Page Set_up...", "", "Set the page parameters", G_CALLBACK(pagesetup_cb) },
-  { "Print", GTK_STOCK_PRINT, "_Print...", "", "Print the current image", G_CALLBACK(print_cb) },
-  { "Exit", GTK_STOCK_QUIT, "E_xit", "<control>Q", "Exit the program", gtk_main_quit },
+  { "Print", GTK_STOCK_PRINT, "_Print...", "<control>P", "Print the current image", G_CALLBACK(print_cb) },
+  { "Exit", GTK_STOCK_QUIT, "E_xit", "<control>Q", "Exit the program", RasMolExit },
   { "ViewMenu", NULL, "_View" },
   { "Setfont", NULL, "Set command font...", "", "", G_CALLBACK(setfont_cb) },
   { "DispMenu", NULL, "_Display" },
@@ -913,9 +974,9 @@ static const GtkActionEntry menuentries[] = {
   { "Backbone", NULL, "_Backbone", "", "", NULL },
   { "Sticks", NULL, "S_ticks", "", "", NULL },
   { "Spheres", NULL, "_Spacefill", "", "", NULL},
-  { "Ballstick", NULL, "_Ball & stick", "", "", NULL },
+  { "Ballstick", NULL, "B_all & stick", "", "", NULL },
   { "Ribbons", NULL, "_Ribbons", "", "", NULL },
-  { "Strands", NULL, "Str_ands", "", "", NULL },
+  { "Strands", NULL, "Stran_ds", "", "", NULL },
   { "Cartoons", NULL, "_Cartoons", "", "", NULL },
   { "MolSurf", NULL, "_Molecular Surface", "", "", NULL },
   { "ColMenu", NULL, "_Colours" },
@@ -932,24 +993,24 @@ static const GtkActionEntry menuentries[] = {
   { "OptMenu", NULL, "_Options" },
   { "SetMenu", NULL, "_Settings" },
   { "HelpMenu", NULL, "_Help" },
-  { "Manual", GTK_STOCK_HELP, "_User Manual", "", "", NULL },
+  { "Manual", GTK_STOCK_HELP, "_User Manual", "F1", "", NULL },
   { "Register", NULL, "_Register", "", "", NULL },
   { "Donate", NULL, "_Donate", "", "", NULL },
   { "About", GTK_STOCK_ABOUT, "_About", "", "", G_CALLBACK(about_cb) },
 };
 
 static const GtkToggleActionEntry view_toggles[] = {
-  { "Command", NULL, "_Command prompt", "", "", NULL, FALSE },
-  { "Scrolls", NULL, "_Scrollbars", "", "", NULL, FALSE },
-  { "Menus",   NULL, "_Menubar", "", "", NULL, TRUE },
-  { "Fullscreen",   NULL, "_Full Screen", "", "", NULL, FALSE },
+  { "Command", NULL, "_Command prompt", "F7", "", NULL, FALSE },
+  { "Scrolls", NULL, "_Scrollbars", "F8", "", NULL, FALSE },
+  { "Menus",   NULL, "_Menubar", "F9", "", NULL, TRUE },
+  { "Fullscreen",   NULL, "_Full Screen", "F11", "", NULL, FALSE },
 };
 
 static const GtkToggleActionEntry opt_toggles[] = {
   { "Slab", NULL, "_Slab Mode", "", "", NULL, FALSE },
-  { "Hydrogens", NULL, "H_ydrogens", "", "", NULL, FALSE },
+  { "Hydrogens", NULL, "Hy_drogens", "", "", NULL, FALSE },
   { "Heteros", NULL, "He_tero Atoms", "", "", NULL, FALSE },
-  { "Specular", NULL, "S_pecular", "", "", NULL, FALSE },
+  { "Specular", NULL, "Spe_cular", "", "", NULL, FALSE },
   { "Shadows", NULL, "S_hadows", "", "", NULL, FALSE },
   { "Stereo", NULL, "Stere_o", "", "", NULL, FALSE },
   { "Labels", NULL, "_Labels", "", "", NULL, FALSE }
@@ -990,140 +1051,183 @@ void EnableRotBondMenu(int rot_enable)
 	}
 }
 
+void set_gtk_open_file(int index)
+{
+    GList *alist;
+    GtkRadioAction *radact;
+
+    alist = gtk_action_group_list_actions(ofiles_group);
+    if(alist && alist->data) {
+        radact = (GtkRadioAction *) alist->data;
+        g_signal_handlers_block_by_func(radact, radio_cb, NULL);
+        gtk_radio_action_set_current_value(radact, m_ofiles + index);
+        g_signal_handlers_unblock_by_func(radact, radio_cb, NULL);
+    }
+    g_list_free(alist);
+}
+
+
 void UpdateGtkMoleculeList(void) 
 {
-	int i;
-	char itemname[4];
-	char itlabel[2*MAX_MOLNAME+1];
-	GList *alist;
-	GSList *group = NULL;
-	GtkRadioAction *rad;	
-	GError *err = NULL;
-	GRegex *re = NULL;
+    int i;
+    char itemname[4];
+    char itlabel[2*MAX_MOLNAME+1];
+    GList *alist, *ahead;
+    GSList *group = NULL;
+    GtkRadioAction *rad;
+    GError *err = NULL;
+    GRegex *re = NULL;
 
-	gtk_ui_manager_remove_ui(ui_manager, merge_id);
-	merge_id = gtk_ui_manager_new_merge_id(ui_manager);
-	alist = gtk_action_group_list_actions (ofiles_group);
-	while(alist) {
-		gtk_action_group_remove_action(ofiles_group, (GtkAction *) alist->data);	
-		alist = alist->next;
-	}
-	itlabel[2*MAX_MOLNAME] = '\0';
-	re = g_regex_new("[_]", 0, 0, &err);
-	for(i = 0; i < NumMolecules; i++) {
-		gchar *rep;
-		// GTK menu labels use the underscore for accelerator, replace w. __
-		rep = g_regex_replace_literal(re, MolNStr[i], -1, 0, "__", 0, &err);
-		strncpy((itlabel+1), rep, 2*MAX_MOLNAME);
-		g_free(rep);
-		itlabel[0] = '_';
-		snprintf(itemname, 3, "%d", i);
-		rad = gtk_radio_action_new(itemname, itlabel, NULL, NULL, (m_ofiles + i));
-		gtk_radio_action_set_group (rad, group);
-		group = gtk_radio_action_get_group(rad);	
-		if (i == MoleculeIndex)
-			gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (rad), TRUE);
-		gtk_action_group_add_action(ofiles_group, (GtkAction *) rad);
-		g_object_unref(rad);
-	}
-        g_regex_unref(re);
-	alist = gtk_action_group_list_actions (ofiles_group);
-	if(alist) {
-		g_signal_connect(alist->data, "changed", G_CALLBACK (radio_cb), NULL);
-	}
-	for(i = 0; i < NumMolecules; i++) {
-		snprintf(itemname, 3, "%d", i); 
-		gtk_ui_manager_add_ui(ui_manager, merge_id, "/MainMenu/FileMenu/OFiles", itemname, itemname, GTK_UI_MANAGER_MENUITEM, FALSE);
-		gtk_ui_manager_add_ui(ui_manager, merge_id, "/popup/OFiles", itemname, itemname, GTK_UI_MANAGER_MENUITEM, FALSE);
-	}
-	
-	gtk_ui_manager_ensure_update (ui_manager);
+    gtk_ui_manager_remove_ui(ui_manager, merge_id);
+    merge_id = gtk_ui_manager_new_merge_id(ui_manager);
+
+    alist = gtk_action_group_list_actions (ofiles_group);
+    ahead = alist;
+    while(alist) {
+        gtk_action_group_remove_action(ofiles_group,
+                                       (GtkAction *) alist->data);
+        alist = alist->next;
+    }
+    g_list_free(ahead);
+
+    itlabel[2*MAX_MOLNAME] = '\0';
+    re = g_regex_new("[_]", 0, 0, &err);
+    for(i = 0; i < NumMolecules; i++) {
+        gchar *rep;
+        // GTK menu labels use the underscore for accelerator, replace w. __
+        rep = g_regex_replace_literal(re, MolNStr[i], -1, 0, "__", 0, &err);
+        strncpy((itlabel+1), rep, 2*MAX_MOLNAME);
+        g_free(rep);
+        itlabel[0] = '_';
+        snprintf(itemname, 3, "%d", i);
+        rad = gtk_radio_action_new(itemname, itlabel, NULL, NULL,
+                                   (m_ofiles + i));
+        gtk_radio_action_set_group (rad, group);
+        group = gtk_radio_action_get_group(rad);
+        if (i == MoleculeIndex)
+            gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (rad), TRUE);
+        gtk_action_group_add_action(ofiles_group, (GtkAction *) rad);
+        g_object_unref(rad);
+    }
+    g_regex_unref(re);
+
+    alist = gtk_action_group_list_actions(ofiles_group);
+    if(alist) {
+        g_signal_connect(alist->data, "changed", G_CALLBACK (radio_cb), NULL);
+    }
+    g_list_free(alist);
+
+    for(i = 0; i < NumMolecules; i++) {
+        snprintf(itemname, 3, "%d", i);
+        gtk_ui_manager_add_ui(ui_manager, merge_id,
+                              "/MainMenu/FileMenu/OFiles", itemname,
+                              itemname, GTK_UI_MANAGER_MENUITEM, FALSE);
+        gtk_ui_manager_add_ui(ui_manager, merge_id, "/popup/OFiles",
+                              itemname, itemname,
+                              GTK_UI_MANAGER_MENUITEM, FALSE);
+    }
+
+    gtk_ui_manager_ensure_update (ui_manager);
 }
+
 
 GtkWidget *build_gtkmenu(void)
 {
-	GError *error;
-	GtkAction *recentaction = NULL;
-	GtkRecentFilter *filter = NULL;
-	int i;
-	
-	action_group = gtk_action_group_new ("MenuActions");
-	gtk_action_group_add_actions (action_group, menuentries, G_N_ELEMENTS (menuentries), NULL);
- 	
-	recentaction = gtk_recent_action_new("Recent", "Open _Recent", "Open a recently opened file", NULL);
-	filter = gtk_recent_filter_new();
-	gtk_recent_filter_add_application(filter, "RasMol");
-	gtk_recent_chooser_set_local_only(GTK_RECENT_CHOOSER(recentaction), TRUE);
-	gtk_recent_chooser_set_filter(GTK_RECENT_CHOOSER(recentaction), filter);
-//	gtk_recent_action_set_show_numbers(GTK_RECENT_ACTION(recentaction), TRUE);
-	g_signal_connect(GTK_RECENT_CHOOSER(recentaction), "item-activated", G_CALLBACK(recent_cb), NULL);
-	gtk_action_group_add_action (action_group, recentaction);
-	
-	gtk_action_group_add_toggle_actions (action_group, view_toggles, G_N_ELEMENTS (view_toggles), NULL);
-	gtk_action_group_add_toggle_actions (action_group, opt_toggles, G_N_ELEMENTS (opt_toggles), NULL);
-  	gtk_action_group_add_radio_actions (action_group, pick_radios, G_N_ELEMENTS (pick_radios), m_s_pident, G_CALLBACK(radio_cb), NULL);
-	gtk_action_group_add_radio_actions (action_group, rot_radios, G_N_ELEMENTS (rot_radios), m_s_rmol, G_CALLBACK(radio_cb), NULL);
+    GError *error;
+    GtkAction *recentaction = NULL;
+    GtkRecentFilter *filter = NULL;
+    int i;
 
-	ui_manager = gtk_ui_manager_new ();
-	gtk_ui_manager_insert_action_group (ui_manager, action_group, 0);
-	
-	accel_group = gtk_ui_manager_get_accel_group (ui_manager);
-	gtk_window_add_accel_group (GTK_WINDOW (mainwin), accel_group);
-	
-	error = NULL;
-	if (!gtk_ui_manager_add_ui_from_string (ui_manager, actionmenu_str, -1, &error)) {
-    	g_message ("building menus failed: s", error->message);
-    	g_error_free (error);
-    	exit (EXIT_FAILURE);
-  	}
-	
-	EnableRotBondMenu(False);
-		
-	ADDSIGNAL("/MainMenu/FileMenu/Close", m_f_close);
-	ADDSIGNAL("/MainMenu/DispMenu/Wireframe", m_d_wireframe);
-	ADDSIGNAL("/MainMenu/DispMenu/Backbone", m_d_backbone);
-	ADDSIGNAL("/MainMenu/DispMenu/Sticks", m_d_sticks);
-	ADDSIGNAL("/MainMenu/DispMenu/Spheres", m_d_spheres);
-	ADDSIGNAL("/MainMenu/DispMenu/Ballstick", m_d_ballstick);
-	ADDSIGNAL("/MainMenu/DispMenu/Ribbons", m_d_ribbons);
-	ADDSIGNAL("/MainMenu/DispMenu/Strands", m_d_strands);
-	ADDSIGNAL("/MainMenu/DispMenu/Cartoons", m_d_cartoons);
-	ADDSIGNAL("/MainMenu/DispMenu/MolSurf", m_d_molsurf);
-	ADDSIGNAL("/MainMenu/ColMenu/Monochrome", m_c_monochrome);
-	ADDSIGNAL("/MainMenu/ColMenu/CPK", m_c_cpk);
-	ADDSIGNAL("/MainMenu/ColMenu/Shapely", m_c_shapely);
-	ADDSIGNAL("/MainMenu/ColMenu/Group", m_c_group);
-	ADDSIGNAL("/MainMenu/ColMenu/Chain", m_c_chain);
-	ADDSIGNAL("/MainMenu/ColMenu/Temperature", m_c_temperature);
-	ADDSIGNAL("/MainMenu/ColMenu/Structure", m_c_structure);
-	ADDSIGNAL("/MainMenu/ColMenu/User", m_c_user);
-	ADDSIGNAL("/MainMenu/ColMenu/Model", m_c_model);
-	ADDSIGNAL("/MainMenu/ColMenu/Alt", m_c_alt);
-	ADDSIGNAL("/MainMenu/OptMenu/Slab", m_o_slab);
-	ADDSIGNAL("/MainMenu/OptMenu/Hydrogens", m_o_hydrogens);
-	ADDSIGNAL("/MainMenu/OptMenu/Heteros", m_o_heteros);
-	ADDSIGNAL("/MainMenu/OptMenu/Specular", m_o_specular);
-	ADDSIGNAL("/MainMenu/OptMenu/Shadows", m_o_shadows);
-	ADDSIGNAL("/MainMenu/OptMenu/Stereo", m_o_stereo);
-	ADDSIGNAL("/MainMenu/OptMenu/Labels", m_o_labels);
-	ADDSIGNAL("/MainMenu/HelpMenu/Manual", m_h_manual);
-	ADDSIGNAL("/MainMenu/HelpMenu/Register", m_h_register);
-	ADDSIGNAL("/MainMenu/HelpMenu/Donate", m_h_donate);
+    action_group = gtk_action_group_new("MenuActions");
+    gtk_action_group_add_actions(action_group, menuentries,
+                                  G_N_ELEMENTS(menuentries), NULL);
 
-	g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Command"), "activate", G_CALLBACK(view_cb), NULL);
-	g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Scrolls"), "activate", G_CALLBACK(view_cb), NULL);
-	g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Menus"), "activate", G_CALLBACK(view_cb), NULL);
-	g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Fullscreen"), "activate", G_CALLBACK(view_cb), NULL);
+    recentaction = gtk_recent_action_new("Recent", "Open _Recent",
+                                         "Open a recently opened file", NULL);
+    filter = gtk_recent_filter_new();
+    gtk_recent_filter_add_application(filter, "RasMol");
+    gtk_recent_chooser_set_filter(GTK_RECENT_CHOOSER(recentaction), filter);
+    gtk_recent_chooser_set_local_only(GTK_RECENT_CHOOSER(recentaction), TRUE);
+    gtk_recent_chooser_set_sort_type(GTK_RECENT_CHOOSER(recentaction),
+                                     GTK_RECENT_SORT_MRU);
+    gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER(recentaction), 30);
+    g_signal_connect(GTK_RECENT_CHOOSER(recentaction), "item-activated",
+                     G_CALLBACK(recent_cb), NULL);
+    gtk_action_group_add_action(action_group, recentaction);
 
- 	/* merge id for filemenu additions */
-	merge_id = gtk_ui_manager_new_merge_id(ui_manager);
-	ofiles_group = gtk_action_group_new("OFileActions");
-	gtk_ui_manager_insert_action_group(ui_manager, ofiles_group, 1);
+    gtk_action_group_add_toggle_actions(action_group, view_toggles,
+                                        G_N_ELEMENTS(view_toggles), NULL);
+    gtk_action_group_add_toggle_actions(action_group, opt_toggles,
+                                        G_N_ELEMENTS(opt_toggles), NULL);
+    gtk_action_group_add_radio_actions(action_group, pick_radios,
+                                       G_N_ELEMENTS(pick_radios), m_s_pident,
+                                       G_CALLBACK(radio_cb), NULL);
+    gtk_action_group_add_radio_actions(action_group, rot_radios,
+                                       G_N_ELEMENTS(rot_radios), m_s_rmol,
+                                       G_CALLBACK(radio_cb), NULL);
 
-	menubar = gtk_ui_manager_get_widget (ui_manager, "/MainMenu");
-	
-	return menubar;
+    ui_manager = gtk_ui_manager_new();
+    gtk_ui_manager_insert_action_group(ui_manager, action_group, 0);
+
+    accel_group = gtk_ui_manager_get_accel_group(ui_manager);
+    gtk_window_add_accel_group(GTK_WINDOW(mainwin), accel_group);
+
+    error = NULL;
+    if(!gtk_ui_manager_add_ui_from_string(ui_manager, actionmenu_str,
+                                          -1, &error)) {
+        g_message("building menus failed: s", error->message);
+        g_error_free(error);
+        exit(EXIT_FAILURE);
+    }
+
+    EnableRotBondMenu(False);
+
+    ADDSIGNAL("/MainMenu/FileMenu/Close", m_f_close);
+    ADDSIGNAL("/MainMenu/DispMenu/Wireframe", m_d_wireframe);
+    ADDSIGNAL("/MainMenu/DispMenu/Backbone", m_d_backbone);
+    ADDSIGNAL("/MainMenu/DispMenu/Sticks", m_d_sticks);
+    ADDSIGNAL("/MainMenu/DispMenu/Spheres", m_d_spheres);
+    ADDSIGNAL("/MainMenu/DispMenu/Ballstick", m_d_ballstick);
+    ADDSIGNAL("/MainMenu/DispMenu/Ribbons", m_d_ribbons);
+    ADDSIGNAL("/MainMenu/DispMenu/Strands", m_d_strands);
+    ADDSIGNAL("/MainMenu/DispMenu/Cartoons", m_d_cartoons);
+    ADDSIGNAL("/MainMenu/DispMenu/MolSurf", m_d_molsurf);
+    ADDSIGNAL("/MainMenu/ColMenu/Monochrome", m_c_monochrome);
+    ADDSIGNAL("/MainMenu/ColMenu/CPK", m_c_cpk);
+    ADDSIGNAL("/MainMenu/ColMenu/Shapely", m_c_shapely);
+    ADDSIGNAL("/MainMenu/ColMenu/Group", m_c_group);
+    ADDSIGNAL("/MainMenu/ColMenu/Chain", m_c_chain);
+    ADDSIGNAL("/MainMenu/ColMenu/Temperature", m_c_temperature);
+    ADDSIGNAL("/MainMenu/ColMenu/Structure", m_c_structure);
+    ADDSIGNAL("/MainMenu/ColMenu/User", m_c_user);
+    ADDSIGNAL("/MainMenu/ColMenu/Model", m_c_model);
+    ADDSIGNAL("/MainMenu/ColMenu/Alt", m_c_alt);
+    ADDSIGNAL("/MainMenu/OptMenu/Slab", m_o_slab);
+    ADDSIGNAL("/MainMenu/OptMenu/Hydrogens", m_o_hydrogens);
+    ADDSIGNAL("/MainMenu/OptMenu/Heteros", m_o_heteros);
+    ADDSIGNAL("/MainMenu/OptMenu/Specular", m_o_specular);
+    ADDSIGNAL("/MainMenu/OptMenu/Shadows", m_o_shadows);
+    ADDSIGNAL("/MainMenu/OptMenu/Stereo", m_o_stereo);
+    ADDSIGNAL("/MainMenu/OptMenu/Labels", m_o_labels);
+    ADDSIGNAL("/MainMenu/HelpMenu/Manual", m_h_manual);
+    ADDSIGNAL("/MainMenu/HelpMenu/Register", m_h_register);
+    ADDSIGNAL("/MainMenu/HelpMenu/Donate", m_h_donate);
+
+    g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Command"), "activate", G_CALLBACK(view_cb), NULL);
+    g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Scrolls"), "activate", G_CALLBACK(view_cb), NULL);
+    g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Menus"), "activate", G_CALLBACK(view_cb), NULL);
+    g_signal_connect(gtk_ui_manager_get_action(ui_manager,"/MainMenu/ViewMenu/Fullscreen"), "activate", G_CALLBACK(view_cb), NULL);
+
+    /* merge id for filemenu additions */
+    merge_id = gtk_ui_manager_new_merge_id(ui_manager);
+    ofiles_group = gtk_action_group_new("OFileActions");
+    gtk_ui_manager_insert_action_group(ui_manager, ofiles_group, 1);
+
+    menubar = gtk_ui_manager_get_widget(ui_manager, "/MainMenu");
+
+    return menubar;
 }
+
 
 static void do_popup_menu (GtkWidget *widget, GdkEventButton *event)
 {
@@ -1185,7 +1289,7 @@ void UpdateScrollBars( void )
     gdouble new, old;
 
     if ( RotMode == RotAll ) {
-		new = WRotValue[YScrlDial]; 
+		new = WorldDialValue[YScrlDial]; 
     } else {
 		new = DialValue[YScrlDial];
     }
@@ -1202,7 +1306,7 @@ void UpdateScrollBars( void )
 		new = BondSelected->BRotValue;
     } else {
 		if ( RotMode == RotAll ) {
-	    	new = WRotValue[XScrlDial];
+	    	new = WorldDialValue[XScrlDial];
 		} else {
 	    	new = DialValue[XScrlDial];
 		}
@@ -1291,6 +1395,7 @@ gboolean configure_cb(GtkWidget *widget, GdkEventConfigure *event, gpointer user
     
     ReDrawFlag |= RFReSize;
 	RefreshScreen();
+	ReDrawFlag = NextReDrawFlag;
 	
     return FALSE;
 }
@@ -1298,9 +1403,10 @@ gboolean configure_cb(GtkWidget *widget, GdkEventConfigure *event, gpointer user
 
 void vscroll_cb(GtkRange *range, gpointer user_data)
 {
-    WRotValue[YScrlDial] = gtk_range_get_value(range);
+    WorldDialValue[YScrlDial] = gtk_range_get_value(range);
     ReDrawFlag |= (1<<YScrlDial);
     RefreshScreen();
+    ReDrawFlag = NextReDrawFlag;
 }
 
 void hscroll_cb(GtkRange *range, gpointer user_data)
@@ -1312,10 +1418,11 @@ void hscroll_cb(GtkRange *range, gpointer user_data)
           BondSelected->BRotValue =  val;
           ReDrawFlag |= RFRotBond;
 	} else {
-    	WRotValue[XScrlDial] = val;
+    	WorldDialValue[XScrlDial] = val;
     	ReDrawFlag |= (1<<XScrlDial);
 	}
     RefreshScreen();
+    ReDrawFlag = NextReDrawFlag;
 }
 
 static gboolean popup_cb (GtkWidget *widget)
@@ -1332,8 +1439,10 @@ gboolean motion_cb(GtkWidget *canvas, GdkEventMotion *event, gpointer user_data)
 	dragging = TRUE;
     stat = GetStatus(event->state);
     ProcessMouseMove(event->x,event->y,stat);
-    if(ReDrawFlag)
+    if(ReDrawFlag) {
 		RefreshScreen();
+        ReDrawFlag = NextReDrawFlag;
+    }
     xorig = event->x;
     yorig = event->y;
     gdk_window_get_pointer(canvas->window, &x, &y, &mask);
@@ -1367,78 +1476,106 @@ gboolean button_release_cb(GtkWidget *canvas, GdkEventButton *event, gpointer us
     return TRUE;
 }
 
+
 void do_char(char c) 
 {
-	if(ProcessCharacter(c) ) {
-       	if( ProcessCommand() )
-        	gtk_main_quit();
-	 	if( !CommandActive ) {
-        	ResetCommandLine(0);
-			RefreshScreen();
-		}
+    if(ProcessCharacter(c)) {
+        if(ProcessCommand())
+            RasMolExit();
+        if(!CommandActive) {
+            ResetCommandLine(0);
+            RefreshScreen();
+            ReDrawFlag = NextReDrawFlag;
+        }
     }	
 }
 
-gboolean termin_cb(GIOChannel *source, GIOCondition condition, gpointer data) 
-{
-	gchar buf;
-	static char prev = 0;
-	gsize bread;
-	gsize i;
-	GError *gp;
-	
-	gp = NULL;
-	if(g_io_channel_read_chars(source, &buf, 1, &bread, &gp)  != G_IO_STATUS_NORMAL) {
-		return FALSE;
-	}
-	
-	switch(prev) {
-		case '\0':
-			if(buf!=0x1b) {
-				do_char(buf);
-				prev = '\0';
-			} else {
-				prev = 0x1b;
-			}
-			break;
-		case 0x1b:
-			if( (buf!='[') && (buf!='O') ) {
-				do_char(buf);
-				prev = '\0';
-			} else {
-				prev = buf;
-			}
-			break;
-		case '[':
-		case 'O':			
-			switch( buf ) {   
-				case('A'): do_char(0x10); break;
-        		case('B'): do_char(0x0e); break;
-        		case('C'): do_char(0x06); break;
-        		case('D'): do_char(0x02); break;
-				default:
-					do_char(prev);
-					do_char(buf);
-			}
-			prev = '\0';
-    }
 
-	return TRUE;
+void termin_cb(VteTerminal *vte, gchar *str, guint len, gpointer user_data)
+{
+    int i;
+    gchar buf;
+    static char prev = 0;
+
+    /* Map xterm escape sequences to ASCII control chars */
+    for(i = 0; i < len; i++) {
+        buf = str[i];
+        switch(prev) {
+            case '\0':
+                if(buf!=0x1b) {
+                    do_char(buf);
+                    prev = '\0';
+                } else {
+                    prev = 0x1b;
+                }
+                break;
+            case 0x1b:
+                if( (buf!='[') && (buf!='O') ) {
+                    do_char(buf);
+                    prev = '\0';
+                } else {
+                    prev = buf;
+                }
+                break;
+            case '[':
+            case 'O':
+                switch( buf ) {
+                    /* Arrow keys */
+                    case('A'): do_char(0x10); break;
+                    case('B'): do_char(0x0e); break;
+                    case('C'): do_char(0x06); break;
+                    case('D'): do_char(0x02); break;
+                    /* Delete */
+                    case('3'): do_char(0x04); i++; break;
+                    /* Ignore the rest */
+                    default:
+                        i = len;
+                }
+                prev = '\0';
+        }
+    }
 }
 
 
-int OpenDisplay( int x, int y )
+void WriteChar(int ch)
+{
+    char buf[3];
+
+    switch(ch) {
+        case('\n'):
+            buf[0] = '\n';
+            buf[1] = '\r';
+            buf[2] = '\0';
+            vte_terminal_feed(VTE_TERMINAL(vte), buf, 2);
+            break;
+        default:
+            buf[0] = ch;
+            buf[1] = '\0';
+            vte_terminal_feed(VTE_TERMINAL(vte), buf, 1);
+    }
+}
+
+
+void WriteString(char *ptr)
+{
+    while(*ptr)
+        WriteChar(*ptr++);
+}
+
+
+int OpenDisplay(void)
 {
 #ifdef THIRTYTWOBIT
     static ByteTest test;
 #endif
     register int i,num;
     static char VersionStr[50];
+    GError *gerr = NULL;
 
-   	sprintf (VersionStr,"RasMol Version %s", VERSION);
+    sprintf (VersionStr,"RasMol Version %s", VERSION);
 
-    for( i=0; i<8; i++ )
-         DialValue[i] = 0.0;
+    for( i=0; i<11; i++ )
+        DialValue[i] = 0.0;
 
     RLut[0]=0;   GLut[0]=0;   BLut[0]=0;    ULut[0]=True;
     RLut[1]=100; GLut[1]=100; BLut[1]=100;  ULut[1]=True;
@@ -1446,112 +1583,98 @@ int OpenDisplay( int x, int y )
     RLut[3]=200; GLut[3]=200; BLut[3]=200;  ULut[3]=True;
     RLut[4]=255; GLut[4]=255; BLut[4]=255;  ULut[4]=True;
 
-    XRange = x;  WRange = XRange>>1;
-    YRange = y;  HRange = YRange>>1;
+    XRange = DefaultWide;
+    YRange = DefaultHigh;
+    if (InitWidth  >= RASGTK_MINWIDTH) XRange = InitWidth;
+    if (InitHeight >= RASGTK_MINHEIGHT) YRange = InitHeight;
+    WRange = XRange>>1;
+    HRange = YRange>>1;
     Range = MinFun(XRange,YRange);
 
-    if( !Interactive ) return( False );
+    if( !Interactive )
+        return( False );
 
-	g_set_application_name("RasMol");
+    g_set_application_name("RasMol");
     mainwin = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_widget_add_events(mainwin, GDK_KEY_PRESS_MASK);
+    gtk_widget_add_events(mainwin, GDK_KEY_PRESS_MASK);
     g_signal_connect (mainwin, "delete-event",
-		      G_CALLBACK (gtk_main_quit), NULL);
-    g_signal_connect (mainwin, "destroy",
-		      G_CALLBACK (gtk_main_quit), NULL);
+        G_CALLBACK (RasMolExit), NULL);
 
-	menubar = build_gtkmenu();
+    menubar = build_gtkmenu();
 
     mainvbox = gtk_vbox_new(FALSE, 0);
-    
+
     ctable = gtk_table_new(2, 2, FALSE);   
-    
+
     canvasarea = gtk_drawing_area_new();
-    gtk_widget_set_size_request(canvasarea, XRange, YRange);
     gtk_widget_add_events(canvasarea, GDK_POINTER_MOTION_HINT_MASK);
     gtk_widget_add_events(canvasarea, GDK_BUTTON_PRESS_MASK);
     gtk_widget_add_events(canvasarea, GDK_BUTTON_RELEASE_MASK);    
     gtk_widget_add_events(canvasarea, GDK_BUTTON_MOTION_MASK);        
     g_signal_connect (G_OBJECT (canvasarea), "expose-event",  
-		      G_CALLBACK (expose_cb), NULL);
+        G_CALLBACK (expose_cb), NULL);
     g_signal_connect (G_OBJECT (canvasarea), "configure-event",  
-		      G_CALLBACK (configure_cb), NULL);            
+        G_CALLBACK (configure_cb), NULL);
     g_signal_connect (G_OBJECT (canvasarea), "motion-notify-event",  
-		      G_CALLBACK (motion_cb), NULL);
+        G_CALLBACK (motion_cb), NULL);
     g_signal_connect (G_OBJECT (canvasarea), "button-press-event",  
-		      G_CALLBACK (button_press_cb), NULL);
+        G_CALLBACK (button_press_cb), NULL);
     g_signal_connect (G_OBJECT (canvasarea), "button-release-event",  
-		      G_CALLBACK (button_release_cb), NULL);
+        G_CALLBACK (button_release_cb), NULL);
     g_signal_connect (G_OBJECT (canvasarea), "popup-menu",  
-		      G_CALLBACK (popup_cb), NULL);			
-     
+        G_CALLBACK (popup_cb), NULL);
+
     vscrollbar = gtk_vscrollbar_new(NULL);
     gtk_range_set_update_policy(GTK_RANGE(vscrollbar),
-				GTK_UPDATE_CONTINUOUS);
+        GTK_UPDATE_CONTINUOUS);
     gtk_range_set_range(GTK_RANGE(vscrollbar), -1.0, 1.0);
     gtk_range_set_increments(GTK_RANGE(vscrollbar), 0.01, 0.1);
     vscr_handler = g_signal_connect(G_OBJECT(vscrollbar), "value-changed",
-				    G_CALLBACK(vscroll_cb), NULL);
-  
+        G_CALLBACK(vscroll_cb), NULL);
+
     hscrollbar = gtk_hscrollbar_new(NULL);
     gtk_range_set_update_policy(GTK_RANGE(hscrollbar),
-				GTK_UPDATE_CONTINUOUS);
+        GTK_UPDATE_CONTINUOUS);
     gtk_range_set_range(GTK_RANGE(hscrollbar), -1.0, 1.0);
     gtk_range_set_increments(GTK_RANGE(hscrollbar), 0.01, 0.1);
     hscr_handler = g_signal_connect(G_OBJECT(hscrollbar), "value-changed",
 				    G_CALLBACK(hscroll_cb), NULL);
-		 
-	int amaster;
-	int aslave;
-	if((amaster = posix_openpt(O_RDWR|O_NOCTTY)) < 0) {
-		error("Could not open master pty");
-	}
-	if((grantpt(amaster) + unlockpt(amaster)) < 0) {
-		error("Could not grant/unlock pty");
-	}
-	if((aslave = open(ptsname(amaster), O_RDWR|O_NOCTTY)) < 0) {
-		error("Could not open slave pty");
-	}	
-	OutFp = fdopen(aslave, "w");
-	setbuf(OutFp,(char *)NULL);
-	FileNo = aslave;
 
-	vte = vte_terminal_new();
-	vte_terminal_set_size(VTE_TERMINAL(vte), 80, 10);
-	vte_terminal_set_font_from_string(VTE_TERMINAL(vte), "Monospace 10");
-	vte_terminal_set_pty(VTE_TERMINAL(vte), amaster);
-	vte_terminal_set_scroll_on_output(VTE_TERMINAL(vte), TRUE);
-	
-	GIOChannel *termin;
-	GError *errg = NULL;
-	termin = g_io_channel_unix_new(FileNo);
-	g_io_channel_set_encoding(termin, NULL, &errg); 
-	g_io_add_watch(termin, G_IO_IN | G_IO_PRI, termin_cb, NULL);
-	
-	termhbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(termhbox), vte, TRUE, TRUE, 0);
-	
-	GtkWidget *termscroll;
-	termscroll = gtk_vscrollbar_new(VTE_TERMINAL(vte)->adjustment);
-	gtk_box_pack_start(GTK_BOX(termhbox), termscroll, FALSE, FALSE, 0);
-	
-	mainvpane = gtk_vpaned_new();
-	
-	build_window();
-	
+    vte = vte_terminal_new();
+    g_assert(vte);
+    vte_terminal_set_size(VTE_TERMINAL(vte), 80, 10);
+    vte_terminal_set_font_from_string(VTE_TERMINAL(vte), "Monospace 10");
+    vte_terminal_set_scroll_on_output(VTE_TERMINAL(vte), TRUE);
+    vte_terminal_set_backspace_binding(VTE_TERMINAL(vte), VTE_ERASE_ASCII_BACKSPACE);
+    vte_terminal_set_delete_binding(VTE_TERMINAL(vte), VTE_ERASE_DELETE_SEQUENCE);
+    g_signal_connect(G_OBJECT(vte), "commit", G_CALLBACK(termin_cb), NULL);
+
+    termhbox = gtk_hbox_new(FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(termhbox), vte, TRUE, TRUE, 0);
+
+    GtkWidget *termscroll;
+    termscroll = gtk_vscrollbar_new(VTE_TERMINAL(vte)->adjustment);
+    gtk_box_pack_start(GTK_BOX(termhbox), termscroll, FALSE, FALSE, 0);
+
+    mainvpane = gtk_vpaned_new();
+
+    build_window();
+
     GdkGeometry geo;
-    geo.min_width = 300;
-    geo.min_height = 300;
+    geo.min_width = RASGTK_MINWIDTH;
+    geo.min_height = RASGTK_MINHEIGHT;
     gtk_window_set_geometry_hints(GTK_WINDOW(mainwin), GTK_WIDGET(mainvbox),
-				  &geo, GDK_HINT_MIN_SIZE);
-				 
-	gtk_container_add (GTK_CONTAINER (mainwin), mainvbox);
-	gtk_widget_show_all (mainwin);
-     
+        &geo, GDK_HINT_MIN_SIZE);
+    gtk_window_set_default_icon(gdk_pixbuf_from_pixdata(&rasmol_icon,
+                                                        TRUE, &gerr));
+
+    gtk_container_add (GTK_CONTAINER (mainwin), mainvbox);
+    gtk_widget_set_size_request(mainwin, XRange, YRange);
+    gtk_widget_show_all (mainwin);
 
     test.longword = (Long)0x000000ff;    
     SwapBytes = test.bytes[0];
-    
+
     return True;
 }
 
@@ -1562,9 +1685,9 @@ int CreateImage( void )
     register Pixel *ptr;
   
 	if( FBuffer ) 
-		free(FBuffer);
+		_ffree(FBuffer);
 	size = (long)XRange*YRange*sizeof(Pixel);
-	FBuffer = (Pixel*)malloc( size+32 );
+	FBuffer = (Pixel*)_fmalloc( size+32 );
 	
 	return((FBuffer!=(Pixel*)NULL)?True : False);
 }
@@ -1617,4 +1740,21 @@ void EndWait( void )
 void CloseDisplay( void )
 {
 
+}
+
+
+void RasMolExit( void )
+{
+    gtk_main_quit();
+    exit(0);
+}
+
+
+void RasMolFatalExit( char *msg )
+{
+    putc('\n', stdout);
+    fputs(msg, stdout);
+    putc('\n', stdout);
+    gtk_main_quit();
+    exit(1);
 }

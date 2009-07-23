@@ -1,10 +1,9 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                            19 November 2007                             *
- *                          (rev. 21 March 2008)                           *
+ *                              13 June 2009                               *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -31,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -70,9 +76,9 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* wbrotate.c
- $Log: not supported by cvs2svn $
- Revision 1.6  2008/03/21 19:49:06  yaya-hjb
- Update documentation and comments -- HJB
+ $Log$
+ Revision 1.9  2008/03/22 18:42:55  yaya
+ Post release cleanup and credit to Ikonen in file headers. -- HJB
 
  Revision 1.8  2008/03/19 01:33:11  yaya
  Documentation update. -- HJB
@@ -711,25 +717,25 @@ void WorldRotate( void )
     int i;
     
 
-    if (ReDrawFlag || WRotValue[0] != WLastRX || 
-      WRotValue[1] != WLastRY ||
-      WRotValue[2] != WLastRZ ||
+    if (ReDrawFlag || WorldDialValue[DialRX] != LastWorldDialValue[DialRX] || 
+      WorldDialValue[DialRY] != LastWorldDialValue[DialRY] ||
+      WorldDialValue[DialRZ] != LastWorldDialValue[DialRZ] ||
       WRotStereo != WLastRS   ||
-      WTransX != WLastTX ||
-      WTransY != WLastTY ||
-      WTransZ != WLastTZ ) {
+      WorldDialValue[DialTX] != LastWorldDialValue[DialTX] ||
+      WorldDialValue[DialTY] != LastWorldDialValue[DialTY] ||
+      WorldDialValue[DialTZ] != LastWorldDialValue[DialTZ] ) {
 
-      if ( ( WRotValue[0] != WLastRX ) || 
-        ( WRotValue[1] != WLastRY ) ||
-        ( WRotValue[2] != WLastRZ ) ||
+      if ( ( WorldDialValue[DialRX] != LastWorldDialValue[DialRX] ) || 
+        ( WorldDialValue[DialRY] != LastWorldDialValue[DialRY] ) ||
+        ( WorldDialValue[DialRZ] != LastWorldDialValue[DialRZ] ) ||
         ( WRotStereo != WLastRS  ) ) {
         
-        RV2RMat(WRotValue[0]-WLastRX, 
-          WRotValue[1]-WLastRY, 
-          WRotValue[2]-WLastRZ,
+        RV2RMat(WorldDialValue[DialRX]-LastWorldDialValue[DialRX], 
+          WorldDialValue[DialRY]-LastWorldDialValue[DialRY], 
+          WorldDialValue[DialRZ]-LastWorldDialValue[DialRZ],
           NRotX, NRotY, NRotZ);
 
-        RV2RMat(WLastRX, WLastRY, WLastRZ,
+        RV2RMat(LastWorldDialValue[DialRX], LastWorldDialValue[DialRY], LastWorldDialValue[DialRZ],
           RMat[0], RMat[1], RMat[2]);
 
         WLRotX[0] = NRotX[0]*RMat[0][0]+NRotX[1]*RMat[1][0]+NRotX[2]*RMat[2][0];
@@ -744,9 +750,9 @@ void WorldRotate( void )
         WLRotZ[1] = NRotZ[0]*RMat[0][1]+NRotZ[1]*RMat[1][1]+NRotZ[2]*RMat[2][1];
         WLRotZ[2] = NRotZ[0]*RMat[0][2]+NRotZ[1]*RMat[1][2]+NRotZ[2]*RMat[2][2];
       
-        RMat2RV(&(WRotValue[0]), 
-          &(WRotValue[1]), 
-          &(WRotValue[2]), 
+        RMat2RV(&(WorldDialValue[DialRX]), 
+          &(WorldDialValue[DialRY]), 
+          &(WorldDialValue[DialRZ]), 
           WLRotX, WLRotY, WLRotZ);
 
         if (WRotStereo != 0.) {
@@ -774,9 +780,9 @@ void WorldRotate( void )
           
         RMatInv( WLRotX, WLRotY, WLRotZ, WIRotX, WIRotY, WIRotZ);
 
-        WLastRX = WRotValue[0];
-        WLastRY = WRotValue[1];
-        WLastRZ = WRotValue[2];
+        LastWorldDialValue[DialRX] = WorldDialValue[DialRX];
+        LastWorldDialValue[DialRY] = WorldDialValue[DialRY];
+        LastWorldDialValue[DialRZ] = WorldDialValue[DialRZ];
  
       }
     
@@ -807,9 +813,9 @@ void WorldRotate( void )
 	  RotY[i] = B[1][i]/Scale;
 	  RotZ[i] = B[2][i]/Scale;
     }
-    XOffset = B[0][3]+WRange+WTransX*Zoom*XRange;
-    YOffset = B[1][3]+HRange+WTransY*Zoom*YRange;
-    ZOffset = B[2][3]+10000+WTransZ*Zoom*ZRange;
+    XOffset = B[0][3]+WRange+WorldDialValue[DialTX]*Zoom*XRange;
+    YOffset = B[1][3]+HRange+WorldDialValue[DialTY]*Zoom*YRange;
+    ZOffset = B[2][3]+10000+WorldDialValue[DialTZ]*Zoom*ZRange;
     
     
     if (UseStereo) {
@@ -817,12 +823,12 @@ void WorldRotate( void )
     }
     
     
-    WLastRX = WRotValue[0];
-    WLastRY = WRotValue[1];
-    WLastRZ = WRotValue[2];
-    WLastTX = WTransX;
-    WLastTY = WTransY;
-    WLastTZ = WTransZ;
+    LastWorldDialValue[DialRX] = WorldDialValue[DialRX];
+    LastWorldDialValue[DialRY] = WorldDialValue[DialRY];
+    LastWorldDialValue[DialRZ] = WorldDialValue[DialRZ];
+    LastWorldDialValue[DialTX] = WorldDialValue[DialTX];
+    LastWorldDialValue[DialTY] = WorldDialValue[DialTY];
+    LastWorldDialValue[DialTZ] = WorldDialValue[DialTZ];
     WLastRS = WRotStereo;
     
     /* Make transfor.c recalculate everything */
@@ -835,11 +841,11 @@ void WorldRotate( void )
 void InitialiseWBRotate( void )
 {
     BondsSelected = BondSelected = (BondRot __far *)NULL;
-    WRotValue[0] = 0;
-    WRotValue[1] = 0;
-    WRotValue[2] = 0;
-    WLastRX = WLastRY = WLastRZ = 0;
-    WTransX = WTransY = WTransZ = 0;
-    WLastTX = WLastTY = WLastTZ = 0;
+    WorldDialValue[DialRX] = 0;
+    WorldDialValue[DialRY] = 0;
+    WorldDialValue[DialRZ] = 0;
+    LastWorldDialValue[DialRX] = LastWorldDialValue[DialRY] = LastWorldDialValue[DialRZ] = 0;
+    WorldDialValue[DialTX] = WorldDialValue[DialTY] = WorldDialValue[DialTZ] = 0;
+    LastWorldDialValue[DialTX] = LastWorldDialValue[DialTY] = LastWorldDialValue[DialTZ] = 0;
 }
 

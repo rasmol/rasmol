@@ -1,10 +1,9 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                            19 November 2007                             *
- *                          (rev. 21 March 2008)                           *
+ *                              13 June 2009                               *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -31,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -70,15 +76,21 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* mswin31.c
- $Log: not supported by cvs2svn $
- Revision 1.5  2008/03/21 19:49:05  yaya-hjb
- Update documentation and comments -- HJB
+ $Log$
+ Revision 1.8  2008/06/27 02:47:58  yaya
+ Finished update of windows code for 32-bit color -- HJB
 
- Revision 1.4  2008/03/17 03:26:06  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.7  2008/06/11 01:40:54  yaya
+ Improve gradient for map surfaces and brighten image;
+ Add parenthesized selections before all commands;
+ Change saveSelection and loadSelection to
+ SaveAtomSelection and LoadAtomSelection -- HJB
+
+ Revision 1.6  2008/03/22 17:06:48  yaya
+ Post release cleanup with credits to Ikonen in file headers. -- HJB
+
+ Revision 1.5  2008/03/21 19:13:47  yaya
+ Update documentation and comments -- HJB
 
  Revision 1.5  2008/03/17 03:01:31  yaya
  Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
@@ -179,6 +191,7 @@ static HMENU hMenu;
 
 void AllocateColourMap( void )
 {
+#ifdef EIGHTBIT			
     register COLORREF ref;      
     register int i;
     
@@ -208,7 +221,8 @@ void AllocateColourMap( void )
        if( ULut[i] )
        {   ref = RGB(RLut[i],GLut[i],BLut[i]);
            Lut[i] = GetNearestPaletteIndex(ColourMap,ref);
-       }    
+       } 
+#endif   
 }
 
 
@@ -226,7 +240,9 @@ int CreateImage( void )
 
 void TransferImage( void )
 {
+#ifdef EIGHTBIT
     HPALETTE OldCMap;
+#endif
     HDC hDC;
         
     if( PixMap )
@@ -239,16 +255,19 @@ void TransferImage( void )
     FBuffer = (Pixel  __huge*)GlobalLock(FBufHandle);
     /* CreateBitMap(XRange,YRange,1,8,FBuffer); */
 
+#ifdef EIGHTBIT
     if( ColourMap )
     {   OldCMap = SelectPalette(hDC,ColourMap,FALSE);
         RealizePalette(hDC);  /* GDI Bug?? */
     }
+#endif
         
     PixMap = CreateDIBitmap( hDC, (BITMAPINFOHEADER __far *)BitInfo, 
                              CBM_INIT, FBuffer, BitInfo, DIB_RGB_COLORS);
-        
+#ifdef EIGHTBIT
     if( ColourMap && OldCMap )                         
         SelectPalette(hDC,OldCMap,False);
+#endif
 
     GlobalUnlock(FBufHandle);
     ReleaseDC(NULL,hDC);
@@ -381,14 +400,22 @@ int ClipboardImage( void )
 
         if( PixMap )
         {   len = (long)XRange*YRange*sizeof(Pixel);
+#ifdef EIGHTBIT
             size = sizeof(BITMAPINFOHEADER) + 256*sizeof(RGBQUAD);
+#else
+            size = sizeof(BITMAPINFOHEADER);
+#endif
             if( (hand=GlobalAlloc(GHND,size+len)) )
             {   bitmap = (BITMAPINFO __far *)GlobalLock(hand);
                 bitmap->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
                 bitmap->bmiHeader.biWidth = XRange;
                 bitmap->bmiHeader.biHeight = YRange;
                 bitmap->bmiHeader.biPlanes = 1;
+#ifdef EIGHTBIT
                 bitmap->bmiHeader.biBitCount = 8;
+#else
+                bitmap->bmiHeader.biBitCount = 32;
+#endif
                 bitmap->bmiHeader.biCompression = BI_RGB;
                 bitmap->bmiHeader.biSizeImage = len;
                 bitmap->bmiHeader.biXPelsPerMeter = 0;
@@ -396,16 +423,22 @@ int ClipboardImage( void )
                 bitmap->bmiHeader.biClrImportant = 0;
                 bitmap->bmiHeader.biClrUsed = 0;
 
+#ifdef EIGHTBIT
                 for( i=0; i<256; i++ )
                     if( ULut[i] )
                     {   bitmap->bmiColors[Lut[i]].rgbBlue  = BLut[i];
                         bitmap->bmiColors[Lut[i]].rgbGreen = GLut[i];
                         bitmap->bmiColors[Lut[i]].rgbRed   = RLut[i];
                     }
+#endif
 
 
                 src = (Pixel __huge*)GlobalLock(FBufHandle);
+#ifdef EIGHTBIT
                 dst = ((Pixel __huge*)bitmap)+size;
+#else
+                dst = ((Pixel __huge*)bitmap)+size/4;
+#endif
 
                 /* Transfer the frame buffer */
                 while( len-- ) *dst++ = *src++;
@@ -613,6 +646,8 @@ int OpenDisplay( HANDLE instance, int mode )
 
     for( i=0; i<10; i++ )
          DialValue[i] = 0.0;
+         
+    CQRMSet(DialQRot,0.,0.,0.,0.);
 
     ULut[0] = True;
     RLut[0] = GLut[0] = BLut[0] = 0;
@@ -669,7 +704,11 @@ int OpenDisplay( HANDLE instance, int mode )
     BitInfo->bmiHeader.biYPelsPerMeter = 0;
     BitInfo->bmiHeader.biClrImportant = 0;
     BitInfo->bmiHeader.biSizeImage = 0;
+#ifdef EIGHTBIT
     BitInfo->bmiHeader.biBitCount = 8;
+#else
+    BitInfo->bmiHeader.biBitCount = 32;
+#endif
     BitInfo->bmiHeader.biPlanes = 1;
 
     /* Initialise Palette! */

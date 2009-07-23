@@ -1,10 +1,9 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                            19 November 2007                             *
- *                          (rev. 21 March 2008)                           *
+ *                              13 June 2009                               *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -31,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -70,15 +76,15 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* repres.c
- $Log: not supported by cvs2svn $
- Revision 1.6  2008/03/21 19:49:05  yaya-hjb
- Update documentation and comments -- HJB
+ $Log$
+ Revision 1.22  2008/06/11 01:42:41  yaya
+ Finish map surface update. -- HJB
 
- Revision 1.5  2008/03/17 03:26:07  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.21  2008/04/01 17:31:19  hk0i
+ updated new color mode feature for dots
+
+ Revision 1.20  2008/03/22 18:42:55  yaya
+ Post release cleanup and credit to Ikonen in file headers. -- HJB
 
  Revision 1.19  2008/03/17 03:01:31  yaya
  Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
@@ -339,7 +345,7 @@ static void ResetLabels( void )
     {   ptr = LabelList;
         LabelList = ptr->next;
         ptr->next = FreeLabel;
-        free(ptr->label);
+        _ffree(ptr->label);
         FreeLabel = ptr;
     }
 }
@@ -356,7 +362,7 @@ void DeleteLabel( Label *label )
  
         *ptr = label->next;
         label->next = FreeLabel;
-        free(label->label);
+        _ffree(label->label);
         FreeLabel = label;
     } else label->refcount--;
 }
@@ -397,10 +403,10 @@ Label *CreateLabel( char *text, int len )
  
     if( FreeLabel )
     {   ptr = FreeLabel;  FreeLabel = ptr->next;
-    } else if( !(ptr=(Label*)malloc(sizeof(Label))) )
+    } else if( !(ptr=(Label*)_fmalloc(sizeof(Label))) )
         FatalRepresError("label");
  
-    ptr->label = (char*)malloc(len+1);
+    ptr->label = (char*)_fmalloc(len+1);
     if( !ptr->label ) FatalRepresError("label");
     strcpy(ptr->label,text);
  
@@ -686,7 +692,7 @@ void AddMonitors2( RAtom __far *src, RAtom __far *dst,
     /* Create a new monitor! */
     if( FreeMonit )
     {   ptr = FreeMonit;  FreeMonit = ptr->next;
-    } else if( !(ptr=(Monitor*)malloc(sizeof(Monitor))) )
+    } else if( !(ptr=(Monitor*)_fmalloc(sizeof(Monitor))) )
         FatalRepresError("monitor");
  
     ptr->dist = dist;
@@ -1106,6 +1112,8 @@ void CalculateSurface( int density )
  
     if( !Database )
         return;
+
+	DotCount = density;
  
     DeleteSurface();
     ResetVoxelData();
@@ -1354,8 +1362,8 @@ void DisplayMapTangles( void ) {
     MapPointVec __far *MapPointsPtr;
     MapTangleVec __far *MapTanglePtr;
     MapInfo mapinfo;
-    Poly tangle;
-    int inten;
+    Poly tangle, tangletemp;
+    int inten[4];
     
     Cenx=(int)rint(CenX*MatX[0]+CenY*MatX[1]+CenZ*MatX[2]);
     Ceny=(int)rint(CenX*MatY[0]+CenY*MatY[1]+CenZ*MatY[2]);
@@ -1393,55 +1401,137 @@ void DisplayMapTangles( void ) {
           worldnormals[0]=(MapPointsPtr->array[src]).Un;
           worldnormals[1]=(MapPointsPtr->array[dst]).Un;
           worldnormals[2]=(MapPointsPtr->array[oth]).Un;
-          /* if (i==0) 
-          {
-          	fprintf(stderr,"WorldNormal 0: [%ld,%ld,%ld], 1: [%ld,%ld,%ld], 2:[%ld,%ld,%ld]\n",
-          	worldnormals[0][0], worldnormals[0][1], worldnormals[0][2],
-          	worldnormals[1][0], worldnormals[1][1], worldnormals[1][2],
-          	worldnormals[2][0], worldnormals[2][1], worldnormals[2][2]
-          	);
-          } */
           for (ii=0; ii<3; ii++ ) {
-            normals[ii][0] = ((Long)rint((worldnormals[ii][0]*RotX[0]+worldnormals[ii][1]*RotX[1]+worldnormals[ii][2]*RotX[2]))/30.);
-            normals[ii][1] = ((Long)rint((worldnormals[ii][0]*RotY[0]+worldnormals[ii][1]*RotY[1]+worldnormals[ii][2]*RotY[2]))/30.);
-            normals[ii][2] = ((Long)rint((worldnormals[ii][0]*RotZ[0]+worldnormals[ii][1]*RotZ[1]+worldnormals[ii][2]*RotZ[2]))/30.);
+            normals[ii][0] = ((Long)rint((worldnormals[ii][0]*RotX[0]+worldnormals[ii][1]*RotX[1]+worldnormals[ii][2]*RotX[2]))/32.);
+            normals[ii][1] = ((Long)rint((worldnormals[ii][0]*RotY[0]+worldnormals[ii][1]*RotY[1]+worldnormals[ii][2]*RotY[2]))/32.);
+            normals[ii][2] = ((Long)rint((worldnormals[ii][0]*RotZ[0]+worldnormals[ii][1]*RotZ[1]+worldnormals[ii][2]*RotZ[2]))/32.);
           }
-          /* if (i==0) 
-          {
-          	fprintf(stderr,"Normal 0: [%ld,%ld,%ld], 1: [%ld,%ld,%ld], 2:[%ld,%ld,%ld]\n",
-          	normals[0][0], normals[0][1], normals[0][2],
-          	normals[1][0], normals[1][1], normals[1][2],
-          	normals[2][0], normals[2][1], normals[2][2]
-          	);
-          } */
-          /* inten = (normals[0][0]-normals[0][1]+normals[0][2]); */
-          inten = LightDot(normals[0][0],normals[0][1],normals[0][2]);
-          if (inten > 0) {
-            inten = (MapPointsPtr->array[src]).col+((inten*colconst(255))>>ColBits);
+          inten[0] = LightDot(normals[0][0],normals[0][1],normals[0][2]);
+          if (inten[0] > 0) {
+             inten[0] = ((inten[0]*colconst(128))>>ColBits);
+             if (inten[0] > ColourMask) inten[0] = ColourMask;
           } else {
-          	inten = (MapPointsPtr->array[src]).col;
+          	 inten[0] = 0;
           }
-          tangle.v[0].inten = inten;
-          /* inten = (normals[1][0]-normals[1][1]+normals[1][2]); */
-          inten = LightDot(normals[1][0],normals[1][1],normals[1][2]);
-          if (inten > 0) {
-            inten = (MapPointsPtr->array[dst]).col+((inten*colconst(255))>>ColBits);
+          tangle.v[0].inten =  (MapPointsPtr->array[src]).col+inten[0];
+          inten[1] = LightDot(normals[1][0],normals[1][1],normals[1][2]);
+          if (inten[1] > 0) {
+             inten[1] = ((inten[1]*colconst(128))>>ColBits);
+             if (inten[1] > ColourMask) inten[1] = ColourMask;
           } else {
-          	inten = (MapPointsPtr->array[dst]).col;
+          	 inten[1] = 0;
           }
-          tangle.v[1].inten = inten;
-          /* inten = (normals[2][0]-normals[2][1]+normals[2][2]); */
-          inten = LightDot(normals[2][0],normals[2][1],normals[2][2]);
-          if (inten > 0) {
-            inten = (MapPointsPtr->array[oth]).col+((inten*colconst(255))>>ColBits);
+          tangle.v[1].inten = (MapPointsPtr->array[dst]).col+inten[1];
+          inten[2] = LightDot(normals[2][0],normals[2][1],normals[2][2]);
+          if (inten[2] > 0) {
+             inten[2] = ((inten[2]*colconst(128))>>ColBits);
+             if (inten[2] > ColourMask) inten[2] = ColourMask;
           } else {
-          	inten = (MapPointsPtr->array[oth]).col;
+          	 inten[2] = 0;
           }
-          tangle.v[2].inten = inten;
+          tangle.v[2].inten = (MapPointsPtr->array[oth]).col+inten[2];
           tangle.count = 3;
-          ClipPolygon(&tangle);
-          /*  Debug code for surface normals 
-          for(ii=0;ii<3;ii++) {
+            
+          /* If all three corners are the same color and vary only in
+             intensity, render as a single triangle
+           */
+          if (((MapPointsPtr->array[oth]).col ==  (MapPointsPtr->array[dst]).col)
+              &&  ((MapPointsPtr->array[dst]).col == (MapPointsPtr->array[src]).col)) {
+            ClipPolygon(&tangle);
+          } else {
+              /* The three corners vary in color.  Introduce the midpoint of
+                 the original triangle, and render as up to 6 monchrome triangles
+                 using edge midpoints when the edge is not of one color
+               */
+              tangletemp.count = 3;
+              tangletemp.v[2].x = (tangle.v[0].x+tangle.v[1].x+tangle.v[2].x)/3;
+              tangletemp.v[2].y = (tangle.v[0].y+tangle.v[1].y+tangle.v[2].y)/3;
+              tangletemp.v[2].z = (tangle.v[0].z+tangle.v[1].z+tangle.v[2].z)/3;
+              tangletemp.v[0].x = tangle.v[0].x;
+              tangletemp.v[0].y = tangle.v[0].y;
+              tangletemp.v[0].z = tangle.v[0].z;
+              inten[3] = (inten[0]+inten[1]+inten[2]+2)/3;
+              if ((MapPointsPtr->array[dst]).col == (MapPointsPtr->array[src]).col){
+                  tangletemp.v[1].x = tangle.v[1].x;
+                  tangletemp.v[1].y = tangle.v[1].y;
+                  tangletemp.v[1].z = tangle.v[1].z;
+                  tangletemp.v[0].inten = tangle.v[0].inten;
+                  tangletemp.v[1].inten = tangle.v[1].inten;
+                  tangletemp.v[2].inten = (MapPointsPtr->array[src]).col+inten[3];
+                  ClipPolygon(&tangletemp);
+              } else {
+                  tangletemp.v[1].x = (tangle.v[0].x+tangle.v[1].x)/2;
+                  tangletemp.v[1].y = (tangle.v[0].y+tangle.v[1].y)/2;
+                  tangletemp.v[1].z = (tangle.v[0].z+tangle.v[1].z)/2;
+                  tangletemp.v[0].inten = tangle.v[0].inten;
+                  tangletemp.v[1].inten = (MapPointsPtr->array[src]).col+(inten[0]+inten[1]+1)/2;
+                  tangletemp.v[2].inten = (MapPointsPtr->array[src]).col+inten[3];
+                  ClipPolygon(&tangletemp);
+                  tangletemp.v[0].x = tangle.v[1].x;
+                  tangletemp.v[0].y = tangle.v[1].y;
+                  tangletemp.v[0].z = tangle.v[1].z;
+                  tangletemp.v[0].inten = tangle.v[1].inten;
+                  tangletemp.v[1].inten = (MapPointsPtr->array[dst]).col+(inten[0]+inten[1]+1)/2;
+                  tangletemp.v[2].inten = (MapPointsPtr->array[dst]).col+inten[3];
+                  ClipPolygon(&tangletemp);
+             }
+              tangletemp.v[0].x = tangle.v[1].x;
+              tangletemp.v[0].y = tangle.v[1].y;
+              tangletemp.v[0].z = tangle.v[1].z;
+              if ((MapPointsPtr->array[dst]).col == (MapPointsPtr->array[oth]).col){
+                  tangletemp.v[1].x = tangle.v[2].x;
+                  tangletemp.v[1].y = tangle.v[2].y;
+                  tangletemp.v[1].z = tangle.v[2].z;
+                  tangletemp.v[0].inten = tangle.v[1].inten;
+                  tangletemp.v[1].inten = tangle.v[2].inten;
+                  tangletemp.v[2].inten = (MapPointsPtr->array[dst]).col+inten[3];
+                  ClipPolygon(&tangletemp);
+              } else {
+                  tangletemp.v[1].x = (tangle.v[1].x+tangle.v[2].x)/2;
+                  tangletemp.v[1].y = (tangle.v[1].y+tangle.v[2].y)/2;
+                  tangletemp.v[1].z = (tangle.v[1].z+tangle.v[2].z)/2;
+                  tangletemp.v[0].inten = tangle.v[1].inten;
+                  tangletemp.v[1].inten = (MapPointsPtr->array[dst]).col+(inten[1]+inten[2]+1)/2;
+                  tangletemp.v[2].inten = (MapPointsPtr->array[dst]).col+inten[3];
+                  ClipPolygon(&tangletemp);
+                  tangletemp.v[0].x = tangle.v[2].x;
+                  tangletemp.v[0].y = tangle.v[2].y;
+                  tangletemp.v[0].z = tangle.v[2].z;
+                  tangletemp.v[0].inten = tangle.v[2].inten;
+                  tangletemp.v[1].inten = (MapPointsPtr->array[oth]).col+(inten[1]+inten[2]+1)/2;
+                  tangletemp.v[2].inten = (MapPointsPtr->array[oth]).col+inten[3];
+                  ClipPolygon(&tangletemp);
+              }
+              tangletemp.v[0].x = tangle.v[2].x;
+              tangletemp.v[0].y = tangle.v[2].y;
+              tangletemp.v[0].z = tangle.v[2].z;
+              if ((MapPointsPtr->array[oth]).col == (MapPointsPtr->array[src]).col){
+                  tangletemp.v[1].x = tangle.v[0].x;
+                  tangletemp.v[1].y = tangle.v[0].y;
+                  tangletemp.v[1].z = tangle.v[0].z;
+                  tangletemp.v[0].inten = tangle.v[2].inten;
+                  tangletemp.v[1].inten = tangle.v[0].inten;
+                  tangletemp.v[2].inten = (MapPointsPtr->array[oth]).col+inten[3];
+                  ClipPolygon(&tangletemp);
+              } else {
+                  tangletemp.v[1].x = (tangle.v[2].x+tangle.v[0].x)/2;
+                  tangletemp.v[1].y = (tangle.v[2].y+tangle.v[0].y)/2;
+                  tangletemp.v[1].z = (tangle.v[2].z+tangle.v[0].z)/2;
+                  tangletemp.v[0].inten = tangle.v[2].inten;
+                  tangletemp.v[1].inten = (MapPointsPtr->array[oth]).col+(inten[2]+inten[0]+1)/2;
+                  tangletemp.v[2].inten = (MapPointsPtr->array[oth]).col+inten[3];
+                  ClipPolygon(&tangletemp);
+                  tangletemp.v[0].x = tangle.v[0].x;
+                  tangletemp.v[0].y = tangle.v[0].y;
+                  tangletemp.v[0].z = tangle.v[0].z;
+                  tangletemp.v[0].inten = tangle.v[0].inten;
+                  tangletemp.v[1].inten = (MapPointsPtr->array[src]).col+(inten[2]+inten[0]+1)/2;
+                  tangletemp.v[2].inten = (MapPointsPtr->array[src]).col+inten[3];
+                  ClipPolygon(&tangletemp);
+              }
+          }
+          /* Debug code for surface normals */ 
+          /* for(ii=0;ii<3;ii++) {
             ClipTwinVector(tangle.v[ii].x,tangle.v[ii].y,tangle.v[ii].z,
               tangle.v[ii].x+normals[ii][0]/10,tangle.v[ii].y+normals[ii][1]/10,tangle.v[ii].z+normals[ii][2]/10,
                (MapPointsPtr->array[dst]).col,(MapPointsPtr->array[dst]).col,' ');          	
@@ -1983,7 +2073,7 @@ void InitialiseRepres( void )
     DotPtr = (DotStruct __far*)0;
     MapInfoPtr = (MapInfoVec __far *)0;
     MapLevel = 0.0;
-    MapFlag = MapMeanFlag;
+    MapFlag = MapMeanFlag|MapScaleFlag;
     MapSpacing = 250L;
     MapSpread = .6667;
     MapRGBCol[0] = 0xFA;

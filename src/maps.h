@@ -1,9 +1,9 @@
 /***************************************************************************
- *                              RasMol 2.7.4                               *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                              18 May 2007                                *
+ *                              13 June 2009                                *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -30,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -183,9 +190,9 @@ typedef struct {
      dzpos =  MapR2M(map,2,0)*(gradient)[0] + MapR2M(map,2,1)*(gradient)[1] + MapR2M(map,2,2)*(gradient)[2]; \
      glen = sqrt(dxpos*dxpos+dypos*dypos+dzpos*dzpos); \
      if (glen > 0.) {                                  \
-       (mp).Un[0] = -(Long)(4096.*(dxpos/glen)); \
-       (mp).Un[1] = -(Long)(4096.*(dypos/glen)); \
-       (mp).Un[2] = -(Long)(4096.*(dzpos/glen)); \
+       (mp).Un[0] = -(Long)(4095.*(dxpos/glen)); \
+       (mp).Un[1] = -(Long)(4095.*(dypos/glen)); \
+       (mp).Un[2] = -(Long)(4095.*(dzpos/glen)); \
      } \
      } \
   }
@@ -257,11 +264,14 @@ typedef struct {
 #define MapNoSelectFlag 0x004    /* Set when no map selector was 
                                     given                           */
 #define MapColourPot    0x010    /* Set for colour by potential     */
+#define MapColourAtom   0x020    /* Set for colour by nearest atom  */
 #define MapPointFlag    0x100    /* Represent map as points         */
 #define MapMeshFlag     0x200    /* Represent map as mesh           */
 #define MapMeshDashFlag 0x210    /* Represent map as dashed mesh    */
 #define MapSurfFlag     0x400    /* Represent map as surface        */
 #define MapMeanFlag     0x800    /* Map level relative to MEAN      */
+#define MapScaleFlag    0x1000   /* Map scaled to atomic no. Z      */
+#define MapLRSurfFlag   0x2000   /* Map with Lee-Richards approx    */  
 #define MAP_ORTHOGONAL  0x000    /* Orthogonal map coordinates      */
 #define MAP_FRACTIONAL  0x001    /* Fractional map coordinates      */
 
@@ -321,6 +331,7 @@ extern Long               MapPointRad; /* global radius for
 extern Long               MapSpacing;  /* global map spacing   */
 extern Real               MapSpread;   /* global map spread    */
 extern Long               MapFlag;     /* global map flags     */
+
 extern int                MapRGBCol[3];/* global map color     */
 extern Card               MapRadius;   /* global map radius    */
 extern char*              MapLabel;    /* global map label     */
@@ -424,7 +435,8 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno );
       
    Each atom is mapped to a 3D Gaussian based on sig_per_rad
    sigmas per radius, with the Gaussian treated as zero
-   at 4.5 sigma.  The Gaussian is scaled to the atomic number.
+   at 4.5 sigma.  If ScaletoAN is set, the Gaussian is scaled to the 
+   atomic number, otherwise it is scaled to 1.
    
    sig_per_rad is the reciprocal of the spread.
    
@@ -433,7 +445,8 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno );
 int generate_map(MapStruct **map, 
                             Long xint, Long yint, Long zint,
                             Long xorig, Long yorig, Long zorig,
-                            Long buffer, double sig_per_rad);
+                            Long buffer, double sig_per_rad,
+                            int ScaletoAN);
                             
                             
 /* Interpolate a map value from map at position [xpos,ypos,zpos]

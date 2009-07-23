@@ -1,0 +1,447 @@
+###########################################################################
+#                               RasMol 2.7.5                              #
+#                                                                         #
+#                                  RasMol                                 #
+#                  Molecular Graphics Visualisation Tool                  #
+#                               13 June 2009                              #
+#                                                                         #
+#                   Based on RasMol 2.6 by Roger Sayle                    #
+# Biomolecular Structures Group, Glaxo Wellcome Research & Development,   #
+#                      Stevenage, Hertfordshire, UK                       #
+#         Version 2.6, August 1995, Version 2.6.4, December 1998          #
+#                   Copyright (C) Roger Sayle 1992-1999                   #
+#                                                                         #
+#                          and Based on Mods by                           #
+#Author             Version, Date             Copyright                   #
+#Arne Mueller       RasMol 2.6x1   May 98     (C) Arne Mueller 1998       #
+#Gary Grossman and  RasMol 2.5-ucb Nov 95     (C) UC Regents/ModularCHEM  #
+#Marco Molinaro     RasMol 2.6-ucb Nov 96         Consortium 1995, 1996   #
+#                                                                         #
+#Philippe Valadon   RasTop 1.3     Aug 00     (C) Philippe Valadon 2000   #
+#                                                                         #
+#Herbert J.         RasMol 2.7.0   Mar 99     (C) Herbert J. Bernstein    # 
+#Bernstein          RasMol 2.7.1   Jun 99         1998-2008               #
+#                   RasMol 2.7.1.1 Jan 01                                 #
+#                   RasMol 2.7.2   Aug 00                                 #
+#                   RasMol 2.7.2.1 Apr 01                                 #
+#                   RasMol 2.7.2.1.1 Jan 04                               #
+#                   RasMol 2.7.3   Feb 05                                 #
+#                   RasMol 2.7.3.1 Apr 06                                 #
+#                   RasMol 2.7.4   Nov 07                                 #
+#                   RasMol 2.7.4.1 Jan 08                                 #
+#                   RasMol 2.7.5   May 09                                 #
+#                                                                         #
+# RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev#
+# and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        #
+# supported in part by grant 1R15GM078077-01 from the National Institute  #
+# of General Medical Sciences (NIGMS), U.S. National Institutes of Health #
+# and by grant ER63601-1021466-0009501 from the Office of Biological &    #
+# Environmental Research (BER), Office of Science, U. S. Department of    #
+# Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     #
+# N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol #
+# 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and #
+# grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  #
+# changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   #
+# on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    #
+# and EF-0312612 from the U.S. National Science Foundation and grant      #
+# DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility#
+# of the authors and does not necessarily represent the official views of #
+# the funding organizations.                                              #
+#                                                                         #
+# The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    #
+# written by Teemu Ikonen.                                                #
+#                                                                         #
+#                    and Incorporating Translations by                    #
+#  Author                               Item                     Language #
+#  Isabel Servan Martinez,                                                #
+#  Jose Miguel Fernandez Fernandez      2.6   Manual             Spanish  #
+#  Jose Miguel Fernandez Fernandez      2.7.1 Manual             Spanish  #
+#  Fernando Gabriel Ranea               2.7.1 menus and messages Spanish  #
+#  Jean-Pierre Demailly                 2.7.1 menus and messages French   #
+#  Giuseppe Martini, Giovanni Paolella, 2.7.1 menus and messages          #
+#  A. Davassi, M. Masullo, C. Liotto    2.7.1 help file          Italian  #
+#  G. Pozhvanov                         2.7.3 menus and messages Russian  #
+#  G. Todorov                           2.7.3 menus and messages Bulgarian#
+#  Nan Jia, G. Todorov                  2.7.3 menus and messages Chinese  #
+#  Mamoru Yamanishi, Katajima Hajime    2.7.3 menus and messages Japanese #
+#                                                                         #
+#                             This Release by                             #
+# Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Ln, Bellport, NY, USA#
+#                       yaya@bernstein-plus-sons.com                      #
+#               Copyright(C) Herbert J. Bernstein 1998-2008               #
+#                                                                         #
+#                READ THE FILE NOTICE FOR RASMOL LICENSES                 #
+#Please read the file NOTICE for important notices which apply to this    #
+#package and for license terms (GPL or RASLIC).                           #
+###########################################################################
+#
+# Imakefile
+# RasMol2 Molecular Graphics
+# Roger Sayle, June 1994
+# Version 2.6.4
+# Roger Sayle, December 1998
+#
+# Version 2.6.9
+# Herbert J. Bernstein, March 1999
+# yaya@bernstein-plus-sons.com
+
+# Version 2.7.2.1+
+# Herbert J. Bernstein, April 2002
+# yaya@Bernstein-plus-sons.com
+
+# Version 2.7.3
+# Herbert J. Bernstein, February 2005
+# yaya@Bernstein-plus-sons.com
+
+# USER DEFINITIONS
+#
+#  At this point, you may define the cpp macro PIXELDEPTH as 8, 16 or 32
+
+#ifdef PIXELDEPTH
+#if PIXELDEPTH==8
+  DEPTHDEF = -DEIGHTBIT
+#endif
+#if PIXELDEPTH==16
+  DEPTHDEF = -DSIXTEENBIT
+#endif
+#if PIXELDEPTH==32
+  DEPTHDEF = -DTHIRTYTWOBIT
+#endif
+#else
+DEPTHDEF = -DTHIRTYTWOBIT
+# DEPTHDEF = -DSIXTEENBIT
+# DEPTHDEF = -DEIGHTBIT
+#endif
+
+#ifdef OLDX_LOCALE
+  LOCALEDEF = -DX_LOCALE
+#else
+  LOCALEDEF =
+#endif
+
+PKGDIR = $(HOME)
+
+#ifndef GTKWIN
+#define X11WIN
+#endif
+
+#ifdef GTKWIN
+GTKLIBS = $(shell pkg-config --libs vte gtk+-2.0)
+GTKCFLAGS = $(shell pkg-config --cflags vte gtk+-2.0)
+GUISRC = gtkwin.c eggfileformatchooser.c 
+GUIOBJ = gtkwin.o eggfileformatchooser.o
+GUIDEF = -DGTKWIN
+DEPTHDEF = -DTHIRTYTWOBIT
+#endif
+
+#ifdef X11WIN
+GUISRC = x11win.c
+GUIOBJ = x11win.o
+GUIDEF = -DX11WIN
+#endif
+
+# External Packages Directory
+#
+EXTPKGDIR = ../external_packages
+
+# Definitions for XFORMSLIB
+#
+XFORMSLIB_LDLIB =
+XFORMSLIB_OBJDEP =
+#define NO_XFORMS_BUILD
+#ifdef X11WIN
+#ifdef USE_XFORMSLIB
+GUIOPTION = -DXFORMSLIB
+#ifdef XFORMSLIB_LOCAL
+XFORMSLIB_VERSION = 1.0.91
+XFORMSLIB_TARBALL = xforms-$(XFORMSLIB_VERSION).tar.gz
+XFORMSLIB_TARBALLDIR = $(EXTPKGDIR)
+XFORMSLIB_TARBALL_URL = http://download.savannah.gnu.org/releases-noredirect/xforms/$(XFORMSLIB_TARBALL)
+XFORMSLIB_DIR = $(XFORMSLIB_TARBALLDIR)/xforms-$(XFORMSLIB_VERSION)
+XFORMSLIB_INCLUDE_DIR = $(XFORMSLIB_DIR)/lib/include
+XFORMSLIB_LDLIB = $(XFORMSLIB_DIR)/lib/.libs/libforms.a
+XFORMSLIB_OBJDEP = $(XFORMSLIB_DIR)/lib/.libs/libforms.a
+#undef NO_XFORMS_BUILD
+#else
+ifeq ($(strip $(XFORMSLIB_DIR)),)
+#ifdef MACOSX_FINK
+XFORMSLIB_DIR = /sw
+#else
+XFORMSLIB_DIR = /usr/local
+#endif
+endif
+XFORMSLIB_INCLUDE_DIR = $(XFORMSLIB_DIR)/include
+XFORMSLIB_LDLIB = -lXpm -L$(XFORMSLIB_DIR)/lib -lforms
+#endif
+#endif
+#endif
+
+
+# Definitions for CBFLIB
+#
+#ifdef CBFLIB_LOCAL
+CBFLIB_VERSION = 0.8.1
+CBFLIB_TARBALL = CBFlib-$(CBFLIB_VERSION).tar.gz
+CBFLIB_TARBALLDIR = $(EXTPKGDIR)
+CBFLIB_TARBALL_URL = http://downloads.sf.net/cbflib/$(CBFLIB_TARBALL)
+CBFLIB_DIR = $(CBFLIB_TARBALLDIR)/CBFlib-$(CBFLIB_VERSION)
+CBFLIB_INCLUDE_DIR = $(CBFLIB_DIR)/include
+CBFLIB_LDLIB = $(CBFLIB_DIR)/lib/libcbf.a
+CBFLIB_OBJDEP = $(CBFLIB_DIR)/lib/libcbf.a
+#else
+ifeq ($(strip $(CBFLIB_DIR)),)
+CBFLIB_DIR = $(PKGDIR)
+endif
+CBFLIB_INCLUDE_DIR = $(CBFLIB_DIR)/include/cbflib
+CBFLIB_LDLIB = -L$(CBFLIB_DIR)/lib -lcbf
+CBFLIB_OBJDEP =
+#define NO_CBFLIB_BUILD
+#endif
+
+# Definitions for CQRLIB
+#
+#ifdef CQRLIB_LOCAL
+CQRLIB_VERSION = 1.0.3
+CQRLIB_TARBALL = CQRlib-$(CQRLIB_VERSION).tar.gz
+CQRLIB_TARBALLDIR = $(EXTPKGDIR)
+CQRLIB_TARBALL_URL = http://downloads.sf.net/cqrlib/$(CQRLIB_TARBALL)
+CQRLIB_DIR = $(CQRLIB_TARBALLDIR)/CQRlib-$(CQRLIB_VERSION)
+CQRLIB_INCLUDE_DIR = $(CQRLIB_DIR)
+CQRLIB_LDLIB = $(CQRLIB_DIR)/cqrlib.o
+CQRLIB_SRC = $(CQRLIB_DIR)/cqrlib.c
+CQRLIB_OBJDEP = $(CQRLIB_DIR)/cqrlib.o
+#else
+ifeq ($(strip $(CQRLIB_DIR)),)
+CQRLIB_DIR = $(PKGDIR)
+endif
+CQRLIB_INCLUDE_DIR = $(CQRLIB_DIR)/include
+CQRLIB_LDLIB = -L$(CQRLIB_DIR)/lib -lCQRlib
+CQRLIB_SRC =
+CQRLIB_OBJDEP =
+#define NO_CQRLIB_BUILD
+#endif
+
+# Definitions for CVector
+#
+#ifdef CVECTOR_LOCAL
+CVECTOR_VERSION = 1.0.3
+CVECTOR_TARBALL = CVector-$(CVECTOR_VERSION).tar.gz
+CVECTOR_TARBALLDIR = $(EXTPKGDIR)
+CVECTOR_TARBALL_URL = http://downloads.sf.net/cvector/$(CVECTOR_TARBALL)
+CVECTOR_DIR = $(CVECTOR_TARBALLDIR)/CVector-$(CVECTOR_VERSION)
+CVECTOR_INCLUDE_DIR = $(CVECTOR_DIR)
+CVECTOR_LDLIB = $(CVECTOR_DIR)/CVector.o
+CVECTOR_SRC = $(CVECTOR_DIR)/CVector.c
+CVECTOR_OBJDEP = $(CVECTOR_DIR)/CVector.o
+#else
+ifeq ($(strip $(CVECTOR_DIR)),)
+CVECTOR_DIR = $(PKGDIR)
+endif
+CVECTOR_INCLUDE_DIR = $(CVECTOR_DIR)/include
+CVECTOR_LDLIB = -L$(CVECTOR_DIR)/lib -lCVector
+CVECTOR_SRC =
+CVECTOR_OBJDEP =
+#define NO_CVECTOR_BUILD
+#endif
+
+# Definitions for NEARTREE
+#
+#ifdef NEARTREE_LOCAL
+NEARTREE_VERSION = 2.1.3
+NEARTREE_TARBALL = NearTree-$(NEARTREE_VERSION).tar.gz
+NEARTREE_TARBALLDIR = $(EXTPKGDIR)
+NEARTREE_TARBALL_URL = http://downloads.sf.net/neartree/$(NEARTREE_TARBALL)
+NEARTREE_DIR = $(NEARTREE_TARBALLDIR)/NearTree-$(NEARTREE_VERSION)
+NEARTREE_INCLUDE_DIR = $(NEARTREE_DIR)
+NEARTREE_LDLIB = $(NEARTREE_DIR)/CNearTree.o
+NEARTREE_SRC = $(NEARTREE_DIR)/CNearTree.c
+NEARTREE_OBJDEP = $(NEARTREE_DIR)/CNearTree.o
+#else
+ifeq ($(strip $(NEARTREE_DIR)),)
+NEARTREE_DIR = $(PKGDIR)
+endif
+NEARTREE_INCLUDE_DIR = $(NEARTREE_DIR)/include
+NEARTREE_LDLIB = -L$(NEARTREE_DIR)/lib -lCNearTree
+NEARTREE_SRC =
+NEARTREE_OBJDEP =
+#define NO_NEARTREE_BUILD
+#endif
+
+
+
+# RasMol's on-line help direcory
+#   e.g. /usr/local/lib/rasmol/rasmol.hlp
+RASMOLDIR = $(USRLIBDIR)/rasmol/
+
+
+#ifndef USE_XFORMSLIB
+DEFINES = $(GTKCFLAGS) $(GUIDEF) -DRASMOLDIR=\"$(RASMOLDIR)\" $(DEPTHDEF) $(LOCALEDEF) \
+          -D_USE_RASMOL_H_ $(GUIOPTION) -I$(CBFLIB_INCLUDE_DIR) \
+          -I$(CQRLIB_INCLUDE_DIR) \
+          -I$(CVECTOR_INCLUDE_DIR) \
+          -I$(NEARTREE_INCLUDE_DIR)
+#else
+DEFINES = $(GTKCFLAGS) $(GUIDEF) -DRASMOLDIR=\"$(RASMOLDIR)\" $(DEPTHDEF) $(LOCALEDEF) \
+	-D_USE_RASMOL_H_ $(GUIOPTION) -I$(CBFLIB_INCLUDE_DIR) \
+	-I$(CQRLIB_INCLUDE_DIR) \
+	-I$(CVECTOR_INCLUDE_DIR) \
+	-I$(NEARTREE_INCLUDE_DIR) \
+  	-I$(XFORMSLIB_INCLUDE_DIR)
+#endif
+
+
+SRCS = rasmol.c rasmol.h molecule.c molecule.h abstree.c abstree.h \
+       cmndline.c cmndline.h command.c command.h tokens.h transfor.c \
+       transfor.h render.c render.h graphics.h pixutils.c \
+       pixutils.h font.h outfile.c outfile.h script.c script.h infile.c \
+       infile.h repres.c repres.h tokens.c cif_fract.c cif_fract.h cif.c \
+       cif.h cif_ctonum.c cif_ctonum.h cif_stx.c \
+       multiple.h multiple.c vector.h vector.c \
+       wbrotate.c wbrotate.c langsel.h langsel_unix.c maps.h maps.c $(GUISRC) \
+       $(CQRLIB_SRC) $(CVECTOR_SRC) $(NEARTREE_SRC)
+
+
+OBJS = rasmol.o molecule.o abstree.o cmndline.o command.o transfor.o \
+       render.o repres.o  pixutils.o outfile.o script.o \
+       infile.o tokens.o  cif_fract.o cif.o cif_ctonum.o cif_stx.o \
+       multiple.o vector.o wbrotate.o langsel_unix.o maps.o $(GUIOBJ)
+
+# Previous Risc/Os definition
+# LDLIBS = -lm -lXinput $(XLIB)
+
+# Additional RS6000 AIX MITSHM Library
+# LDLIBS = -lm -lXi -lXextSam $(XLIB)
+
+LDLIBS = -lm -lXi $(XLIB) $(EXTRA_LIBRARIES) $(XFORMSLIB) $(GTKLIBS) \
+			$(CBFLIB_LDLIB) \
+			$(CQRLIB_LDLIB) \
+			$(CVECTOR_LDLIB) \
+			$(NEARTREE_LDLIB) $(XFORMSLIB_LDLIB)
+
+
+#
+# Architecture Specific Rules
+#
+#    If running under HPUX, define the appropriate variant
+#    with #define
+#
+
+#ifdef HPArchitecture
+CCOPTIONS = -Ae
+CDEBUGFLAGS = +O2 +Onolimit
+
+#ifdef HPUX_PARISC_32
+CCOPTIONS = -Ae +DA2.0 +DS2.0
+#endif
+
+#ifdef HPUX_PARISC_64
+CCOPTIONS = -Ae +DA2.0W +DS2.0 -D_LONGLONG
+#endif
+
+#ifdef HPUX_IA64_32
+CCOPTIONS = -Ae +DD32 +DSmckinley
+#endif
+
+#ifdef HPUX_IA64_64
+CCOPTIONS = -Ae +DD64 +DSmckinley -D_LONGLONG
+#endif
+#endif
+
+
+ComplexProgramTarget(rasmol)
+MakeDirectories(install,$(RASMOLDIR))
+InstallNonExec(../doc/rasmol.hlp,$(RASMOLDIR))
+InstallNonExec(../data/1crn.pdb,$(RASMOLDIR))
+InstallNonExec(../data/3cro.pdb,$(RASMOLDIR))
+
+cleandir:: 
+	   $(RM) gtkui.h rasmol.man
+
+rasmol.man::	../doc/rasmol.1
+		ln -s ../doc/rasmol.1 rasmol.man
+
+../doc/rasmol.1:	../doc/rasmol.1.gz
+		gunzip  <../doc/rasmol.1.gz > ../doc/rasmol.1
+		
+
+$(EXTPKGDIR):
+		mkdir -p -v $(EXTPKGDIR)
+
+#ifndef NO_XFORMSLIB_BUILD
+$(XFORMSLIB_DIR):
+		(cd $(XFORMSLIB_TARBALLDIR);\
+		  wget $(XFORMSLIB_TARBALL_URL);\
+		  touch $(XFORMSLIB_TARBALL);\
+		  gunzip < $(XFORMSLIB_TARBALL) | tar xvf -)
+
+$(XFORMSLIB_DIR)/lib/.libs/libforms.a: $(XFORMSLIB_DIR)
+		(cd $(XFORMSLIB_DIR); ./configure --enable-static)
+		(cd $(XFORMSLIB_DIR)/lib; make all)
+#endif
+
+#ifndef NO_CBFLIB_BUILD
+$(CBFLIB_DIR):
+		(cd $(CBFLIB_TARBALLDIR);\
+		  wget $(CBFLIB_TARBALL_URL);\
+		  touch $(CBFLIB_TARBALL);\
+		  gunzip < $(CBFLIB_TARBALL) | tar xvf -)
+		  
+$(CBFLIB_DIR)/lib/libcbf.a: $(CBFLIB_DIR)
+		(cd $(CBFLIB_DIR); make lib/libcbf.a)
+#endif
+
+#ifndef NO_CQRLIB_BUILD
+$(CQRLIB_DIR):
+		(cd $(CQRLIB_TARBALLDIR);\
+		  wget $(CQRLIB_TARBALL_URL);\
+		  touch $(CQRLIB_TARBALL);\
+		  gunzip < $(CQRLIB_TARBALL) | tar xvf -)
+		  
+$(CQRLIB_DIR)/cqrlib.c: $(CQRLIB_DIR)
+#endif
+
+#ifndef NO_CVECTOR_BUILD
+$(CVECTOR_DIR):
+		(cd $(CVECTOR_TARBALLDIR);\
+		  wget $(CVECTOR_TARBALL_URL);\
+		  touch $(CVECTOR_TARBALL);\
+		  gunzip < $(CVECTOR_TARBALL) | tar xvf -)
+		  
+$(CVECTOR_DIR)/CVector.c: $(CVECTOR_DIR)
+#endif
+
+#ifndef NO_NEARTREE_BUILD
+$(NEARTREE_DIR):
+		(cd $(NEARTREE_TARBALLDIR);\
+		  wget $(NEARTREE_TARBALL_URL);\
+	          touch $(NEARTREE_TARBALL);\
+		  gunzip < $(NEARTREE_TARBALL) | tar xvf -)
+		  
+$(NEARTREE_DIR)/CNearTree.c: $(NEARTREE_DIR)
+#endif		  
+
+$(OBJS):  $(EXTPKGDIR) $(CBFLIB_OBJDEP) \
+			$(CQRLIB_OBJDEP) \
+			$(CVECTOR_OBJDEP) \
+			$(NEARTREE_OBJDEP) \
+			$(XFORMSLIB_OBJDEP)
+
+
+gtkwin.c: gtkui.h
+
+gtkui.h: sizechooser.glade printing-resolution.glade actionmenu.gtk
+	 echo "/* Automatically generated GTK ui definitions, do not edit! */" > gtkui.h
+	 echo >> gtkui.h
+	 echo "const gchar *actionmenu_str = \"\\" >> gtkui.h
+	 cat actionmenu.gtk | sed "s/$$/\\\/" | sed 's/"/\\\"/g' >> gtkui.h
+	 echo "\";" >> gtkui.h
+	 echo >> gtkui.h
+	 echo "const gchar *sizechooser_str = \"\\" >> gtkui.h
+	 gtk-builder-convert -w sizechooser.glade - | sed "s/$$/\\\/" | sed 's/"/\\\"/g' >> gtkui.h
+	 echo "\";" >> gtkui.h
+	 echo >> gtkui.h
+	 echo "const gchar *print_resolution_str = \"\\" >> gtkui.h
+	 gtk-builder-convert -w printing-resolution.glade - | sed "s/$$/\\\/" | sed 's/"/\\\"/g' >> gtkui.h
+	 echo "\";" >> gtkui.h
+	 echo >> gtkui.h
+	 gdk-pixbuf-csource --name=rasmol_icon --struct rasmol_48x48.xpm  >> gtkui.h

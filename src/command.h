@@ -1,10 +1,9 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                            19 November 2007                             *
- *                          (rev. 21 March 2008)                           *
+ *                              13 June 2009                               *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -31,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -70,18 +76,15 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* command.h
- $Log: not supported by cvs2svn $
- Revision 1.6  2008/03/22 19:23:09  yaya-hjb
- Post release cleanup and add Ikonen credit for GTK to file headers. -- HJB
+ $Log$
+ Revision 1.12  2008/04/10 13:42:54  yaya
+ Fix handling of load pdb and add Bulgarian to rasmol_run.sh -- HJB
 
- Revision 1.5  2008/03/21 19:49:05  yaya-hjb
- Update documentation and comments -- HJB
+ Revision 1.11  2008/04/01 17:31:19  hk0i
+ updated new color mode feature for dots
 
- Revision 1.4  2008/03/17 03:26:06  yaya-hjb
- Align with RasMol 2.7.4.2 release to use cxterm to support Chinese and
- Japanese for Linux and Mac OS X versions using rasmol_install and
- rasmol_run scripts, and align command line options for size and
- position of initial window. -- HJB
+ Revision 1.10  2008/03/22 18:42:51  yaya
+ Post release cleanup and credit to Ikonen in file headers. -- HJB
 
  Revision 1.9  2008/03/17 03:01:31  yaya
  Update to agree with 2.7.4.2 release and T. Ikonen GTK mods -- HJB
@@ -98,7 +101,8 @@
  Update CVS to RasMol_2.7.4.1 -- HJB
 
  Revision 1.7  2007/12/06 18:47:09  hk0i
- added NoToggle and ColourMode commands + messages (translations needed), README for lang files, script to generate all langsel files (uses previous scripts).
+ added NoToggle and ColourMode commands + messages (translations needed), 
+ README for lang files, script to generate all langsel files (uses previous scripts).
 
  Revision 1.6  2007/11/25 04:11:58  yaya
  Updates to map mask logic and inverse transforms -- HJB
@@ -156,6 +160,10 @@
 
  */
 
+#ifndef COMMAND_H
+#define COMMAND_H
+
+
 /* Format values are related to Tokens */
 #define Tok2Format(x) ((x)-PDBTok+1)
 #define Format2Tok(x) ((x)+PDBTok-1)
@@ -189,9 +197,31 @@
 #define IPC_Exit    2
 #define IPC_Quit    3
 
+#define SymbolPool  256
+
+
+/* structs needed for defer and execute */
+
+typedef struct _Symbol{
+  struct _Symbol __far * Symbol_Next;
+  const char __far *   string;
+  const char __far *   definition;
+  size_t         definition_size;
+  size_t         definition_capacity;
+} Symbol;
+
+
 #ifdef COMMAND
+Symbol __far *Defer_Symbols[256];
+Symbol __far *FreeSymbol;
 int DataFileFormat;
 char DataFileName[1024];
+char RecordTemplate[1024];
+char PlayTemplate[1024];
+double RecordCurrent, RecordFrom, RecordUntil, PlayCurrent, PlayFrom, PlayUntil;
+double RecordMaxMS, PlayMaxMS;
+int RecordOption, RecordSubOption, RecordPause;
+int PlayOption, PlaySubOption, PlayPause;
 Long SelectCount;
 int Interactive;
 int FileDepth;
@@ -207,8 +237,16 @@ int UseOldColorCode   = 0;
 int NoToggle          = 0;
 
 #else
+extern Symbol __far  *DeferSymbols[256];
+extern Symbol __far  *FreeSymbol;
 extern int DataFileFormat;
 extern char DataFileName[1024];
+extern char RecordTemplate[1024];
+extern char PlayTemplate[1024];
+extern double RecordCurrent, RecordFrom, RecordUntil, PlayCurrent, PlayFrom, PlayUntil;
+extern double RecordMaxMS, PlayMaxMS;
+extern int RecordOption, RecordSubOption, RecordPause;
+extern int PlayOption, PlaySubOption, PlayPause;
 extern Long SelectCount;
 extern int Interactive;
 extern int FileDepth;
@@ -220,10 +258,14 @@ extern int CalcSurfFlag;
 extern int AllowWrite;
 
 extern int DefaultBackground;
+
+extern int UseOldColorCode;
+extern int NoToggle;
 #endif
 
 int ProcessCharacter( int );
 int FetchFile( int, int, char* );
+int FetchStdin( int );
 int ProcessFile( int, int, FILE* );
 void LoadScriptFile( FILE*, char* );
 void ResetCommandLine( int );
@@ -237,3 +279,7 @@ void ResumePauseCommand( void );
 void InterruptPauseCommand( void );
 void ApplyMapColour( void );
 void ApplyMapShow( void );
+void WriteMovieFrame( void );
+
+#endif
+

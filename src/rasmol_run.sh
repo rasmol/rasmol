@@ -92,7 +92,7 @@
 #
 
 
-VERSION=${RASMOL_VERSION-"RasMol_2_7_4"};
+VERSION=${RASMOL_VERSION-"RasMol_2_7_5"};
 
 for rasmolarg in "$@" ;
 do

@@ -1,10 +1,9 @@
 /***************************************************************************
- *                             RasMol 2.7.4.2                              *
+ *                              RasMol 2.7.5                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
- *                            19 November 2007                             *
- *                          (rev. 21 March 2008)                           *
+ *                              13 June 2009                               *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -31,20 +30,27 @@
  *                   RasMol 2.7.4   Nov 07                                 *
  *                   RasMol 2.7.4.1 Jan 08                                 *
  *                   RasMol 2.7.4.2 Mar 08                                 *
+ *                   RasMol 2.7.5   May 09                                 *
  *                                                                         *
- * RasMol 2.7.3 incorporates changes by Clarice Chigbo, Ricky Chachra,     *
- * and Mamoru Yamanishi.  Work on RasMol 2.7.3 supported in part by        *
- * grants DBI-0203064, DBI-0315281 and EF-0312612 from the U.S. National   *
- * Science Foundation and grant DE-FG02-03ER63601 from the U.S. Department *
- * of Energy.  RasMol 2.7.4 incorporates changes by G. Todorov, Nan Jia,   *
- * N. Darakev, P. Kamburov, G. McQuillan, J. Jemilawon.  Work on RasMol    *
- * 2.7.4 supported in part by grant 1R15GM078077-01 from the National      *
- * Institute of General Medical Sciences (NIGMS). The content is solely    *
- * the responsibility of the authors and does not necessarily represent    * 
- * the official views of the funding organizations.                        *
+ * RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev*
+ * and L. Andrews (via the neartree package).  Work on RasMol 2.7.5        *
+ * supported in part by grant 1R15GM078077-01 from the National Institute  *
+ * of General Medical Sciences (NIGMS), U.S. National Institutes of Health *
+ * and by grant ER63601-1021466-0009501 from the Office of Biological &    *
+ * Environmental Research (BER), Office of Science, U. S. Department of    *
+ * Energy.  RasMol 2.7.4 incorporated  changes by G. Todorov, Nan Jia,     *
+ * N. Darakev, P. Kamburov, G. McQuillan, and J. Jemilawon. Work on RasMol *
+ * 2.7.4 supported in part by grant 1R15GM078077-01 from the NIGMS/NIH and *
+ * grant ER63601-1021466-0009501 from BER/DOE.  RasMol 2.7.3 incorporates  *
+ * changes by Clarice Chigbo, Ricky Chachra, and Mamoru Yamanishi.  Work   *
+ * on RasMol 2.7.3 supported in part by grants DBI-0203064, DBI-0315281    *
+ * and EF-0312612 from the U.S. National Science Foundation and grant      *
+ * DE-FG02-03ER63601 from BER/DOE. The content is solely the responsibility*
+ * of the authors and does not necessarily represent the official views of *
+ * the funding organizations.                                              *
  *                                                                         *
- * The code for use of RasMol under GTK in RasMol 2.7.4.2 was written by   *
- * Teemu  Ikonen.                                                          *
+ * The code for use of RasMol under GTK in RasMol 2.7.4.2 and 2.7.5 was    *
+ * written by Teemu Ikonen.                                                *
  *                                                                         *
  *                    and Incorporating Translations by                    *
  *  Author                               Item                     Language *
@@ -196,6 +202,31 @@
 extern "C" {
 
 #endif
+
+#ifdef USE_CBFLIB
+
+#include <cbf.h>
+
+
+  /* Read a file */
+int cif_read_file (cbf_handle handle, FILE *stream);
+ 
+#define cif_column_number(handle,column_number) cbf_column_number((handle),(column_number) )
+#define cif_count_rows(handle,rows) cbf_count_rows((handle),(rows) )
+#define cif_datablock_name(handle,dbname) cbf_datablock_name((handle),(const char **)(dbname))
+#define cif_findtag(handle,tag) cbf_find_tag((handle), (const char *)(tag) )
+#define cif_find_column(handle,column) cbf_find_column((handle), (column))
+#define cif_free_handle(handle) cbf_free_handle((handle) )
+#define cif_make_handle(handle) cbf_make_handle((handle))
+#define cif_rewind_datablock(handle) cbf_rewind_datablock((handle))
+#define cif_select_column(handle,column) cbf_select_column((handle), (column))
+#define cif_select_row(handle,rownum) cbf_select_row((handle), (rownum))
+#define cif_get_value(handle,value) cbf_get_value((handle), (const char **)(value))
+#define CIF_TOKEN_NULL CBF_TOKEN_NULL
+typedef cbf_handle cif_handle;
+
+#else
+
 
 #if !defined(IBMPC) || defined(_WIN32)
 #ifndef __far
@@ -438,8 +469,15 @@ int cif_count_rows (cif_handle handle, unsigned int __far *rows);
 int cif_delete_row (cif_handle handle, const int rownumber);
   /* Count the columns in the current category */
 int cif_count_columns (cif_handle handle, unsigned int __far *columns);
+  /* Get the name of the current data block */
+int cif_datablock_name (cif_handle handle, char __far * __far *datablockname);
+  /* Make the first data block the current data block */
+int cif_rewind_datablock (cif_handle handle);
+
 
 int cif_parse (void *context);
+
+#endif
 
 #ifdef __cplusplus
 
