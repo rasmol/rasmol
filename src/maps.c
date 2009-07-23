@@ -3170,7 +3170,8 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno ) {
     }
     
     NSYMBT = (NSYMBT+79)/80;
-
+    NSYMBT *= 80;                                     /*THNX TO Marian Szebenyi*/
+    
     for (ii=0; ii<NSYMBT; ii++) {                     /* 257 -- 256+(NSYMBT/4) */
       cbf_onfailnez(cbf_get_integer(mapfile,&DUMMY,0,8)
       ,cbf_free_file(&mapfile))
