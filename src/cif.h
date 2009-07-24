@@ -223,11 +223,12 @@ int cif_read_file (cbf_handle handle, FILE *stream);
 #define cif_select_row(handle,rownum) cbf_select_row((handle), (rownum))
 #define cif_get_value(handle,value) cbf_get_value((handle), (const char **)(value))
 #define CIF_TOKEN_NULL CBF_TOKEN_NULL
+#define CIF_PRFX "_"
 typedef cbf_handle cif_handle;
 
 #else
 
-
+#define CIF_PRFX "_"
 #if !defined(IBMPC) || defined(_WIN32)
 #ifndef __far
 #define __far
