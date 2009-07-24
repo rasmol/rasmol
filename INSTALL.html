@@ -380,7 +380,8 @@ environment variable RASMOLPATH)
 <P>
 
 <H4>UNIX X11:</H4>
-<P>
+
+<p>
 If you are using a precompiled binary, see the instructions that are provided
 with the binary kit.  In general, the binary kits for unix provided directly
 by this project are tarballs of the $HOME/lib/RasMol_2_7_5 created by
@@ -396,6 +397,14 @@ fonts in intlfonts-1.2.1.tar.gz in external_pakages seem to be satisfactory.
 
 <LI> In the RasMol src directory, either 
   <ul>
+  <li><P>
+<b>Note for 64 bit CPUs:</b>  If you are building RasMol for a 64-bit CPU
+with a compiler that has a 64-bit long data type, you must either use
+the build_all.sh script, or manually<P>
+#define _LONGLONG
+<p>
+in rasmol.h
+
 <LI>Modify the #defines in the file rasmol.h (see below)
         Note: IBMPC should not be defined.
   <li> either
@@ -431,7 +440,7 @@ rasmol_build_options.sh is in general perferred
  or
    <ul>
    <li>edit the script build_all.sh
-   <li>excute build_all.sh
+   <li>execute build_all.sh
    </ul>
   to build as many variants of rasmol as possible.
 <LI>A common problem is that SUN OpenWindows keeps its include files in the
