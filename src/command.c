@@ -669,11 +669,11 @@ static int FetchFileOne( int format, int info, char *name )
         
         if( done == 0x9d )
         {   /* Should #include <signal.h> and trap "" SIGPIPE */
-            sprintf(buffer,"trap \"\" 13; uncompress -c %s 2> /dev/null\n",
+            sprintf(buffer,"trap \"\" 13; uncompress -c '%s' 2> /dev/null\n",
                     DataFileName);
         } else if( done == 0x8b )
         {   /* Should #include <signal.h> and trap "" SIGPIPE */
-            sprintf(buffer,"trap \"\" 13; gzip -cdq %s 2> /dev/null\n",
+            sprintf(buffer,"trap \"\" 13; gzip -cdq '%s' 2> /dev/null\n",
                     DataFileName);
         } else /* bad magic number! */
         {   InvalidateCmndLine();
