@@ -449,7 +449,6 @@ struct {
     { &ZoneBoth,          sizeof (ZoneBoth),       0 },
 
     /* bond rotation stuff */
-    { &BRotValue, sizeof (BRotValue), 0 },
     { &BLastRot, sizeof (BLastRot), 0 },
     { BAxis, sizeof (BAxis), 0 },
     { &BSrcAtom, sizeof (BSrcAtom), 0 },

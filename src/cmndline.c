@@ -1,9 +1,10 @@
 /***************************************************************************
- *                              RasMol 2.7.5                               *
+ *                             RasMol 2.7.5                                *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
  *                              13 June 2009                               *
+ *                          (rev. 9 August 2009)                           *
  *                                                                         *
  *                   Based on RasMol 2.6 by Roger Sayle                    *
  * Biomolecular Structures Group, Glaxo Wellcome Research & Development,   *
@@ -723,6 +724,8 @@ static void PerformMouseFunc( int func, int delta, int max )
     {   case(MM_ROTX):  dvalue = ((Real)(2*delta))/((Real)(max));
                         if ( (RotMode == RotBond) && BondSelected) {
                           WrapDial( DialBRot, dvalue );
+                BondSelected->BRotValue = DialValue[DialBRot];
+                ReDrawFlag |= RFRotBond;
                         } else if (MouseMode==MMRasOld) {
                           dist = PointX-XRange/2;
                           if (dist < -XRange/8) {
@@ -785,6 +788,8 @@ static void PerformMouseFunc( int func, int delta, int max )
                           dvalue = ((Real)(2*delta))/((Real)(max));
                           if ( (RotMode == RotBond) && BondSelected) {
                           WrapDial( DialBRot, dvalue );
+                BondSelected->BRotValue = DialValue[DialBRot];
+                ReDrawFlag |= RFRotBond;
                         } else if (MouseMode==MMRasOld) {
                           dist = PointY-YRange/2;
                           if (dist < -YRange/8) {

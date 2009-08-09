@@ -198,7 +198,7 @@ BondRot *BondsSelected;
 RAtom __far *BSrcAtom;
 RAtom __far *BDstAtom;
 Real BAxis[3];
-Real BRotValue, BLastRot;
+Real BLastRot;
 Real GenRotAxis[3];
 Real GenRotValue, GenRotLast;
 Real WRotStereo;
@@ -214,7 +214,7 @@ extern RAtom __far *BSrcAtom;
 extern RAtom __far *BDstAtom;
 #endif
 extern Real BAxis[3];
-extern Real BRotValue, BLastRot;
+extern Real BLastRot;
 extern Real GenRotAxis[3];
 extern Real GenRotValue, GenRotLast;
 extern Real WLRotX[3],WLRotY[3],WLRotZ[3];
