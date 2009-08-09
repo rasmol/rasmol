@@ -2405,29 +2405,29 @@ int LoadCIFMolecule( FILE *fp )
   
       /* Load column numbers for the tags we have */
       if ((!cif_find_column(cif,"cartn_x"))||
-        (!cif_find_column(cif,"atom_site_cartn_x")))
+        (!cif_find_column(cif,CIF_PRFX "atom_site_cartn_x")))
           cif_column_number(cif,&col_cartn_x);
       if ((!cif_find_column(cif,"cartn_y"))||
-        (!cif_find_column(cif,"atom_site_cartn_y")))
+        (!cif_find_column(cif,CIF_PRFX "atom_site_cartn_y")))
           cif_column_number(cif,&col_cartn_y);
       if ((!cif_find_column(cif,"cartn_z"))||
-        (!cif_find_column(cif,"atom_site_cartn_z")))
+        (!cif_find_column(cif,CIF_PRFX "atom_site_cartn_z")))
           cif_column_number(cif,&col_cartn_z);
       if ((!cif_find_column(cif,"fract_x"))||
-        (!cif_find_column(cif,"atom_site_fract_x")))
+        (!cif_find_column(cif,CIF_PRFX "atom_site_fract_x")))
           cif_column_number(cif,&col_fract_x);
       if ((!cif_find_column(cif,"fract_y"))||
-        (!cif_find_column(cif,"atom_site_fract_y")))
+        (!cif_find_column(cif,CIF_PRFX "atom_site_fract_y")))
           cif_column_number(cif,&col_fract_y);
       if ((!cif_find_column(cif,"fract_z"))||
-        (!cif_find_column(cif,"atom_site_fract_z")))
+        (!cif_find_column(cif,CIF_PRFX "atom_site_fract_z")))
           cif_column_number(cif,&col_fract_z);
       if ((!cif_find_column(cif,"group_pdb")))
           cif_column_number(cif,&col_group_PDB);
       if ((!cif_find_column(cif,"label_atom_id")))
           cif_column_number(cif,&col_label_atom_id);
       if ((!cif_find_column(cif,"label_alt_id"))||
-        (!cif_find_column(cif,"atom_site_disorder_group")))
+        (!cif_find_column(cif,CIF_PRFX "atom_site_disorder_group")))
           cif_column_number(cif,&col_label_alt_id);
       if ((!cif_find_column(cif,"label_comp_id")))
           cif_column_number(cif,&col_label_comp_id);
@@ -2440,19 +2440,19 @@ int LoadCIFMolecule( FILE *fp )
       if ((!cif_find_column(cif,"auth_seq_id")))
           cif_column_number(cif,&col_auth_seq_id);
       if ((!cif_find_column(cif,"b_iso_or_equiv"))||
-        (!cif_find_column(cif,"atom_site_b_iso_or_equiv")))
+        (!cif_find_column(cif,CIF_PRFX "atom_site_b_iso_or_equiv")))
           cif_column_number(cif,&col_B_iso);
       if ((!cif_find_column(cif,"u_iso_or_equiv"))||
-        (!cif_find_column(cif,"atom_site_u_iso_or_equiv")))
+        (!cif_find_column(cif,CIF_PRFX "atom_site_u_iso_or_equiv")))
           cif_column_number(cif,&col_U_iso);
       if ((!cif_find_column(cif,"type_symbol"))||
-        (!cif_find_column(cif,"atom_site_type_symbol")))
+        (!cif_find_column(cif,CIF_PRFX "atom_site_type_symbol")))
           cif_column_number(cif,&col_type_symbol);
       if ((!cif_find_column(cif,"label_model_id"))||
         (!cif_find_column(cif,"pdb2cif_label_model_id")))
           cif_column_number(cif,&col_model_id);
       if ((!cif_find_column(cif,"id"))||
-        (!cif_find_column(cif,"atom_site_label")))
+        (!cif_find_column(cif,CIF_PRFX "atom_site_label")))
           cif_column_number(cif,&col_id);
 
       NMRModel = 0;
@@ -2909,54 +2909,54 @@ int LoadCIFMolecule( FILE *fp )
        
   
       /* Load column numbers for the tags we have */
-      if ((!cif_find_column(cif,"atom_site_id_1")) ||
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_id_1")) ||
         (!cif_find_column(cif,"geom_bond_atom_site_label_1")))
         cif_column_number(cif,&col_atom_site_id_1);
-      if ((!cif_find_column(cif,"atom_site_label_alt_id_1")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_label_alt_id_1")))
         cif_column_number(cif,&col_label_alt_id_1);
-      if ((!cif_find_column(cif,"atom_site_label_atom_id_1")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_label_atom_id_1")))
         cif_column_number(cif,&col_label_atom_id_1);
-      if ((!cif_find_column(cif,"atom_site_label_comp_id_1")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_label_comp_id_1")))
         cif_column_number(cif,&col_label_comp_id_1);
-      if ((!cif_find_column(cif,"atom_site_label_seq_id_1")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_label_seq_id_1")))
         cif_column_number(cif,&col_label_seq_id_1);
-      if ((!cif_find_column(cif,"atom_site_label_asym_id_1")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_label_asym_id_1")))
         cif_column_number(cif,&col_label_asym_id_1);
       if ((!cif_find_column(cif,"site_symmetry_1")) ||
         (!cif_find_column(cif,"geom_bond_site_symmetry_1")))
         cif_column_number(cif,&col_symmetry_1);
-      if ((!cif_find_column(cif,"atom_site_auth_atom_id_1")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_auth_atom_id_1")))
         cif_column_number(cif,&col_auth_atom_id_1);
-      if ((!cif_find_column(cif,"atom_site_auth_asym_id_1")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_auth_asym_id_1")))
         cif_column_number(cif,&col_auth_asym_id_1);
-      if ((!cif_find_column(cif,"atom_site_auth_comp_id_1")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_auth_comp_id_1")))
         cif_column_number(cif,&col_auth_comp_id_1);
-      if ((!cif_find_column(cif,"atom_site_auth_seq_id_1")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_auth_seq_id_1")))
         cif_column_number(cif,&col_auth_seq_id_1);
 
-      if ((!cif_find_column(cif,"atom_site_id_2")) ||
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_id_2")) ||
         (!cif_find_column(cif,"geom_bond_atom_site_label_2")))
         cif_column_number(cif,&col_atom_site_id_2);
-      if ((!cif_find_column(cif,"atom_site_label_alt_id_2")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_label_alt_id_2")))
         cif_column_number(cif,&col_label_alt_id_2);
-      if ((!cif_find_column(cif,"atom_site_label_atom_id_2")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_label_atom_id_2")))
         cif_column_number(cif,&col_label_atom_id_2);
-      if ((!cif_find_column(cif,"atom_site_label_comp_id_2")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_label_comp_id_2")))
         cif_column_number(cif,&col_label_comp_id_2);
-      if ((!cif_find_column(cif,"atom_site_label_seq_id_2")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_label_seq_id_2")))
         cif_column_number(cif,&col_label_seq_id_2);
-      if ((!cif_find_column(cif,"atom_site_label_asym_id_2")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_label_asym_id_2")))
         cif_column_number(cif,&col_label_asym_id_2);
       if ((!cif_find_column(cif,"site_symmetry_2")) ||
         (!cif_find_column(cif,"geom_bond_site_symmetry_2")))
         cif_column_number(cif,&col_symmetry_2);
-      if ((!cif_find_column(cif,"atom_site_auth_atom_id_2")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_auth_atom_id_2")))
         cif_column_number(cif,&col_auth_atom_id_2);
-      if ((!cif_find_column(cif,"atom_site_auth_asym_id_2")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_auth_asym_id_2")))
         cif_column_number(cif,&col_auth_asym_id_2);
-      if ((!cif_find_column(cif,"atom_site_auth_comp_id_2")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_auth_comp_id_2")))
         cif_column_number(cif,&col_auth_comp_id_2);
-      if ((!cif_find_column(cif,"atom_site_auth_seq_id_2")))
+      if ((!cif_find_column(cif,CIF_PRFX "atom_site_auth_seq_id_2")))
         cif_column_number(cif,&col_auth_seq_id_2);
 
       if ((!cif_find_column(cif,"dist")) ||

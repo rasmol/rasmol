@@ -71,7 +71,7 @@ Installer</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
 </center>
 <H3 ALIGN=CENTER>
 Molecular Graphics Visualisation Tool<br />
-3 June 2009 (rev. 17 July 2009)<br />
+3 June 2009 (rev. 23 July 2009)<br />
 </h3>
 </font><font color="#000000">
 <CENTER>
@@ -263,6 +263,19 @@ license terms (<a href=GPL>GPL</a> or <A href=RASLIC>RASLIC</a>).
 2.7.5.  This release is based on 
 <a href="http://www.bernstein-plus-sons.com/software/RasMol_2.7.4.2">RasMol 2.7.4.2</a>,
 the final reference release for the 2.7.4 series.
+<p>
+The changes made between the 2.7.5 release candidate release of 17 July 2009
+and the formal release on 23 July 2009 were:
+<ul>
+   <li> Correction to the support for core CIF data file loads that was disabled in the
+move to CBFlib in place of the internal CIF support.
+   <li> Correction to the CCP4 map read logic in the case of symmetry
+lines.  Thanks to Marian Szebenyi for finding this bug.
+   <li> Clarification to the install instructions for 64-bit unix systems.
+Thanks to Marian Szebenyi and Mark Diekhans for pointing out the lack
+of clarity.
+</ul>
+<p>
 The major changes from the 2.7.4.2 release to the 2.7.5 release include:
 <ul>
   <li> Support for SBEVSL movie commands.
@@ -398,7 +411,7 @@ modified version of RasMol should be directed to
 </CENTER>
 
 <HR>
-Updated 19 July 2009.<BR>
+Updated 23 July 2009.<BR>
 Herbert J. Bernstein<BR>
 Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA<BR>
 <script language="javascript" type="text/javascript">
