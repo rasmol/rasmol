@@ -7320,7 +7320,7 @@ int ExecuteCommandOne( int * restore )
                         TokenValue/18000.0;
                         while( BondSelected->BRotValue < -1.0 )
                             BondSelected->BRotValue += 2.0;
-                        while( BRotValue > 1.0 )
+                        while( BondSelected->BRotValue > 1.0 )
                             BondSelected->BRotValue -= 2.0;
                     } else {
                         double xtemp;
