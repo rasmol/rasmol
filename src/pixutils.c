@@ -2836,6 +2836,8 @@ void DrawTorus( int x1, int y1, int z1,
     rad = -1;
 	smax = SBD.t1;
     
+    if (SBD.sxyz < 1) return;
+    
     for (u = SBD.t1; u <= SBD.sxyz-SBD.t2+2*sstep; u+=sstep ) {
 	  if ( u < SBD.u1+sstep ) {
 	    smax = s = u;

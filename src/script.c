@@ -2148,7 +2148,141 @@ static void WriteVRMLColour( int indent, int shade )
     fputs(" }\n",OutFile);
 }
 
+                
+                    
+static void WriteVRMLCylinder(double src[3], double dst[3], double radius, int indent, int shade ) {
+                    
+    register int i;
+    double raxis[3], baxis[3];
+    double nsqr, nsqb, dotp, sangle, cangle, angle, height;
+                    
+    /*  baxis = dst-src
+        raxis = baxis x [0,1,0]
+        nsqr = (raxis,raxis)
+        nsqb = (baxis,baxis)
+        dotp = (baxis,[0,1,0])
+        
+        angle = angle between baxis and [0,1,0]
+        cos(angle) = dotp/sqrt(nsqb)
+        sin(angle) = sqrt(nsqr)/sqrt(nsqb)
+             
+    */
+                    
+    for( i=0; i < 3; i++) baxis[i] = dst[i]-src[i];
+    raxis[0] = -baxis[2];
+    raxis[1] = 0;
+    raxis[2] = baxis[0];
+    nsqr = nsqb = 0.;
+    for( i=0; i < 3; i++) nsqr += raxis[i]*raxis[i];
+    for( i=0; i < 3; i++) nsqb += baxis[i]*baxis[i];            
+    dotp = baxis[1];
+    cangle = 1.;
+    sangle = 0;
+    angle = 0.;
+    height = 0.;
+    if (nsqb > 1.e-15) {
+        height = sqrt(nsqb);
+        sangle = sqrt(nsqr)/height;
+        cangle = dotp/height;
+        angle = atan2(sangle,cangle);
+    }
+    if (nsqr > 1.e-15) {
+      raxis[0] = raxis[0]/sqrt(nsqr);
+      raxis[2] = raxis[2]/sqrt(nsqr);
+    } else {
+      raxis[0] = raxis[2] = 0.;
+      raxis[1] = 1.;
+    }
+                    
+    for( i=0; i<indent; i++ ) fputc(' ',OutFile);
+    fputs("Separator {\n",OutFile);
+    WriteVRMLColour(indent+2, shade);
+    for( i=0; i<indent+2; i++ ) fputc(' ',OutFile);
+    fputs("Translation { translation ", OutFile);
+    WriteVRMLTriple(src[0],src[1],src[2]);
+    fputs("}\n", OutFile);
+    for( i=0; i<indent+2; i++ ) fputc(' ',OutFile);
+    fputs("Sphere {", OutFile);
+    fprintf(OutFile," radius %g }\n",radius);
 
+    for( i=0; i<indent+2; i++ ) fputc(' ',OutFile);
+    fputs("Translation { translation ", OutFile);
+    WriteVRMLTriple(dst[0]-src[0],dst[1]-src[1],dst[2]-src[2]);
+    fputs("}\n", OutFile);
+    for( i=0; i<indent+2; i++ ) fputc(' ',OutFile);
+    fputs("Sphere {", OutFile);
+    fprintf(OutFile," radius %g }\n",radius);
+
+    for( i=0; i<indent+2; i++ ) fputc(' ',OutFile);
+    fputs("Translation { translation ", OutFile);
+    WriteVRMLTriple((src[0]-dst[0])/2.,(src[1]-dst[1])/2.,(src[2]-dst[2])/2.);
+    fputs("}\n", OutFile);
+                    
+    for( i=0; i<indent; i++ ) fputc(' ',OutFile);
+    fputs("Rotation { rotation ", OutFile);
+    fprintf(OutFile, "%g %g %g %g ", raxis[0], raxis[1], raxis[2], -angle);
+    fputs("}\n", OutFile);
+                    
+    for( i=0; i<indent+2; i++ ) fputc(' ',OutFile);
+    fputs("Cylinder {\n", OutFile);
+    for( i=0; i<indent+4; i++ ) fputc(' ',OutFile);
+    fprintf(OutFile," radius %g height %g\n",radius,height);
+    for( i=0; i<indent+4; i++ ) fputc(' ',OutFile);
+    fputs("}\n", OutFile);
+    for( i=0; i<indent; i++ ) fputc(' ',OutFile);
+    fputs("}\n", OutFile);
+}
+
+static void WriteVRMLBondCylinder(RAtom __far * asrc, RAtom __far * adst, short radius, short col) {
+    double src[3], dst[3], mid[3];
+                    
+    src[0] = (double)(asrc->xorg + asrc->fxorg)/250.0
+                    + (double)(asrc->xtrl)/10000.;
+    src[1] = (double)(asrc->yorg + asrc->fyorg)/250.0
+                    + (double)(asrc->ytrl)/10000.;
+    src[2]= -(double)(asrc->zorg + asrc->fzorg)/250.0
+                    - (double)(asrc->ztrl)/10000.;
+
+    dst[0] = (double)(adst->xorg + adst->fxorg)/250.0
+                    + (double)(adst->xtrl)/10000.;
+    dst[1] = (double)(adst->yorg + adst->fyorg)/250.0
+                    + (double)(adst->ytrl)/10000.;
+    dst[2]= -(double)(adst->zorg + adst->fzorg)/250.0
+                    - (double)(adst->ztrl)/10000.;
+
+    if ( vrml_mirror ) {
+        src[0] = -src[0];
+        src[1] = -(RestoreY(src[1]));
+        src[2] = -src[2];
+        dst[0] = -dst[0];
+        dst[1] = -(RestoreY(dst[1]));
+        dst[2] = -dst[2];
+    } else {
+      if (vrml_rotate) {
+        src[1] = -(RestoreY(src[1]));
+        src[2] = -src[2];
+        dst[1] = -(RestoreY(dst[1]));
+        dst[2] = -dst[2];
+      } else {
+        src[1] = (RestoreY(src[1]));
+        dst[1] = (RestoreY(dst[1]));
+      }
+    }
+    
+    if (radius < 10) radius=10;
+                    
+    if (col) { 
+        WriteVRMLCylinder(src, dst, ((double)radius)/250., 2, Colour2Shade(col));
+    } else {
+        mid[0] = (src[0]+dst[0])/2;
+        mid[1] = (src[1]+dst[1])/2;
+        mid[2] = (src[2]+dst[2])/2;
+        WriteVRMLCylinder(src, mid, ((double)radius)/250., 2, Colour2Shade(asrc->col));
+        WriteVRMLCylinder(mid, dst, ((double)radius)/250., 2, Colour2Shade(adst->col));
+    }
+            
+}
+                    
 static void WriteVRMLAtoms( void )
 {
     register Chain __far *chain;
@@ -2219,139 +2353,55 @@ static void WriteVRMLLine( int src, int dst, int shade, int *flag )
 
 static void WriteVRMLWireframe( void )
 {
-    register Chain __far *chain;
-    register Group __far *group;
-    register RAtom __far *aptr;
     register Bond __far *bptr;
     register RAtom __far *src;
     register RAtom __far *dst;
-    register double x,y,z;
-    register int i,j;
-    static int flag;
 
-    ForEachAtom
-        aptr->mbox = 0;
-
-    i = 0;
     ForEachBond
-        if( bptr->flag & WireFlag )
+        if (bptr->flag & DrawBondFlag)
         {   src = bptr->srcatom;
             dst = bptr->dstatom;
-            if( i == 0 )
-            {   fputs("  Separator {\n",OutFile);
-                fputs("    Coordinate3 {\n",OutFile);
-                fputs("      point [\n",OutFile);
-            }
-
-            if( !src->mbox )
-            {   x = (double)(src->xorg + src->fxorg)/250.0
-                  + (double)(src->xtrl)/10000.;
-                y = (double)(src->yorg + src->fyorg)/250.0
-                  + (double)(src->ytrl)/10000.;
-                z = -(double)(src->zorg + src->fzorg)/250.0
-                  - (double)(src->ztrl)/10000.;
-
-                fputs("        ",OutFile);
-                if (vrml_mirror) {
-                  WriteVRMLTriple(-x,-(RestoreY(y)),-z);
-                } else {
-                  if (vrml_rotate) {
-                    WriteVRMLTriple(x,-(RestoreY(y)),-z);
-                  } else {
-                    WriteVRMLTriple(x,RestoreY(y),z);
-                  }
-                }
-                fputs(",\n",OutFile);
-                src->mbox = ++i;
-            }
-            
-            if( !dst->mbox )
-            {   x = (double)(dst->xorg + dst->fxorg)/250.0
-                  + (double)(dst->xtrl)/10000.;
-                y = (double)(dst->yorg + dst->fyorg)/250.0
-                  + (double)(dst->ytrl)/10000.;
-                z = -(double)(dst->zorg + dst->fzorg)/250.0
-                  - (double)(dst->ztrl)/10000.;
-
-                fputs("        ",OutFile);
-                if (vrml_mirror) {
-                  WriteVRMLTriple(-x,-(RestoreY(y)),-z);
-                } else {
-                  if (vrml_rotate) {
-                    WriteVRMLTriple(x,-(RestoreY(y)),-z);
-                  } else {
-                    WriteVRMLTriple(x,RestoreY(y),z);
-                  }
-                }
-                fputs(",\n",OutFile);
-                dst->mbox = ++i;
-            }
-
-            if( !bptr->col && (src->col!=dst->col) )
-            {   x = (double)(src->xorg + dst->xorg +
-                      src->fxorg + dst->fxorg)/500.0
-                      +(double)(src->xtrl + dst->xtrl)/20000.;
-                y = (double)(src->yorg + dst->yorg +
-                      src->fyorg + dst->fyorg)/500.0
-                      +(double)(src->ytrl + dst->ytrl)/20000.;
-                z = -(double)(src->zorg + dst->zorg +
-                      src->fzorg + dst->fzorg)/500.0
-                      -(double)(src->ztrl + dst->ztrl)/20000.;
-                
-                fputs("        ",OutFile);
-                if (vrml_mirror) {
-                  WriteVRMLTriple(-x,-(RestoreY(y)),-z);
-                } else {
-                  if (vrml_rotate) {
-                    WriteVRMLTriple(x,-(RestoreY(y)),-z);
-                  } else {
-                WriteVRMLTriple(x,RestoreY(y),z);
-                  }
-                }
-                fputs(",\n",OutFile);
-                i++;
-            }
+            WriteVRMLBondCylinder(src, dst, bptr->radius, bptr->col);
         }
 
-    /* No wireframe! */
-    if( !i )  return;
+}
 
-    fputs("      ]\n",OutFile);
-    fputs("    }\n",OutFile);
-    
-    for( j=0; j<LastShade; j++ )
-        if( Shade[j].refcount )
-        {   i = 1;
-            flag = False;
-            ForEachBond
-                if( bptr->flag & WireFlag )
-                {   src = bptr->srcatom;   
-                    dst = bptr->dstatom;
+static void WriteVRMLBackbone( void )
+{
+    register Chain __far *chain;
+    register Bond __far *bptr;
+    register RAtom __far *src;
+    register RAtom __far *dst;
 
-                    if( src->mbox == i ) i++;
-                    if( dst->mbox == i ) i++;
-
-                    if( bptr->col )
-                    {   if( Colour2Shade(bptr->col) == j )
-                            WriteVRMLLine(src->mbox,dst->mbox,j,&flag);
-                    } else if( src->col == dst->col )
-                    {   if( Colour2Shade(src->col) == j )
-                            WriteVRMLLine(src->mbox,dst->mbox,j,&flag);
-                    } else /* Two Colour Bond */
-                    {   if( Colour2Shade(src->col) == j )
-                        {   WriteVRMLLine(src->mbox,i,j,&flag);
-                        } else if( Colour2Shade(dst->col) == j )
-                            WriteVRMLLine(dst->mbox,i,j,&flag);
-                        i++;
-                    }
-                }
-
-            if( flag )
-            {   fputs("      ]\n",OutFile);
-                fputs("    }\n",OutFile);
-            }
+    ForEachBack
+        if (bptr->flag & DrawBondFlag)
+        {   src = bptr->srcatom;
+            dst = bptr->dstatom;
+            WriteVRMLBondCylinder(src, dst, bptr->radius, bptr->col);
         }
-    fputs("  }\n",OutFile);
+
+}
+
+static void WriteVRMLHbonds( void )
+{
+    register HBond __far *hptr;
+    register RAtom __far *src;
+    register RAtom __far *dst;
+
+    for( hptr=Database->slist; hptr; hptr=hptr->hnext )
+        if( hptr->flag & DrawBondFlag ) {
+            if (SSBondMode) {
+              src = hptr->srcCA;
+              dst = hptr->dstCA;
+            } else {
+              src = hptr->src;
+              dst = hptr->dst;
+            }
+            src = hptr->src;
+            dst = hptr->dst;
+            WriteVRMLBondCylinder(src, dst, hptr->radius, hptr->col);
+        }
+
 }
 
 
@@ -2456,6 +2506,10 @@ int WriteVRMLFile( char *name, int subtype )
 
     WriteVRMLAtoms();
     WriteVRMLWireframe();
+    WriteVRMLBackbone();
+    WriteVRMLHbonds();
+    /*if (DrawRibbon )
+        WriteVRMLRibbon(); */
     if( DotPtr )
         WriteVRMLDots();
 
