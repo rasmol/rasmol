@@ -4041,6 +4041,8 @@ void ResetTransform( void )
     WorldDialValue[DialRX] = 0;
     WorldDialValue[DialRY] = 0;
     WorldDialValue[DialRZ] = 0;
+    
+    WorldDialQRot.w = WorldDialQRot.x = WorldDialQRot.y = WorldDialQRot.z = 0.;
 
     WLRotX[0] = 1.0;  WLRotX[1] = 0.0;  WLRotX[2] = 0.0;
     WLRotY[0] = 0.0;  WLRotY[1] = 1.0;  WLRotY[2] = 0.0;

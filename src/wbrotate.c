@@ -713,26 +713,225 @@ void WorldRotate( void )
     Real SRotX[3], SRotY[3], SRotZ[3];
     Real RMat[3][3];
     
- 
-    int i;
+    Real WorldDialValueOffset[11], WorldDialValueBalance[11];
+    Real VecIn[3], VecOut[3];
     
 
-    if (ReDrawFlag || WorldDialValue[DialRX] != LastWorldDialValue[DialRX] || 
-      WorldDialValue[DialRY] != LastWorldDialValue[DialRY] ||
-      WorldDialValue[DialRZ] != LastWorldDialValue[DialRZ] ||
+    int i, ii;
+    
+    for (ii=DialTX; ii<DialTZ+1; ii++) {
+    	WorldDialValueOffset[ii] = WorldDialValue[ii];
+    	WorldDialValueBalance[ii] = 0;
+    }
+    for (ii=DialRX; ii<DialRZ+1; ii++) {
+    	WorldDialValueOffset[ii] = WorldDialValue[ii];
+    	WorldDialValueBalance[ii] = 0;
+    }
+    WorldDialValueOffset[DialTX] -= LastWorldDialValue[DialTX];
+    WorldDialValueOffset[DialTY] -= LastWorldDialValue[DialTY];
+    WorldDialValueOffset[DialTZ] -= LastWorldDialValue[DialTZ];
+    WorldDialValueOffset[DialRX] -= LastWorldDialValue[DialRX];
+    WorldDialValueOffset[DialRY] -= LastWorldDialValue[DialRY];
+    WorldDialValueOffset[DialRZ] -= LastWorldDialValue[DialRZ];
+    
+    if (ReDrawFlag ||
+        WorldDialValueOffset[DialRX] != 0. || 
+        WorldDialValueOffset[DialRY] != 0. || 
+        WorldDialValueOffset[DialRZ] != 0. || 
+        WorldDialQRot.w != 0. || WorldDialQRot.x != 0. ||
+        WorldDialQRot.y != 0. || WorldDialQRot.z != 0. ||
       WRotStereo != WLastRS   ||
-      WorldDialValue[DialTX] != LastWorldDialValue[DialTX] ||
-      WorldDialValue[DialTY] != LastWorldDialValue[DialTY] ||
-      WorldDialValue[DialTZ] != LastWorldDialValue[DialTZ] ) {
-
-      if ( ( WorldDialValue[DialRX] != LastWorldDialValue[DialRX] ) || 
-        ( WorldDialValue[DialRY] != LastWorldDialValue[DialRY] ) ||
-        ( WorldDialValue[DialRZ] != LastWorldDialValue[DialRZ] ) ||
+        WorldDialValueOffset[DialTX] != 0. ||
+        WorldDialValueOffset[DialTY] != 0. ||
+        WorldDialValueOffset[DialTZ] != 0.  ) {
+        
+        if ( (WorldDialValueOffset[DialTX] != 0 ) ||
+            (WorldDialValueOffset[DialTY] != 0 ) ||
+            (WorldDialValueOffset[DialTZ] != 0 ) ) {
+            
+            if (record_on[0] && record_aps > 0. && record_fps > 0. && !RecordPause) 
+            {
+                Real tlimit;
+                tlimit = Scale*250.*record_aps/record_fps;
+                WorldDialValueOffset[DialTX] *= XRange;
+                WorldDialValueOffset[DialTY] *= YRange;
+                WorldDialValueOffset[DialTZ] *= ZRange;
+                
+                if (WorldDialValueOffset[DialTX]>tlimit) { 
+                    WorldDialValueBalance[DialTX] = WorldDialValueOffset[DialTX] - tlimit;
+                    WorldDialValueOffset[DialTX]=tlimit; NextReDrawFlag |= RFTransX;
+                }
+                if (WorldDialValueOffset[DialTX]<-tlimit) { 
+                    WorldDialValueBalance[DialTX] = WorldDialValueOffset[DialTX] + tlimit;
+                    WorldDialValueOffset[DialTX]=-tlimit;  NextReDrawFlag |= RFTransX;
+                }
+                if (WorldDialValueOffset[DialTY]>tlimit) { 
+                    WorldDialValueBalance[DialTY] = WorldDialValueOffset[DialTY] - tlimit;
+                    WorldDialValueOffset[DialTY]=tlimit; NextReDrawFlag |= RFTransY;
+                }
+                if (WorldDialValueOffset[DialTY]<-tlimit) {
+                    WorldDialValueBalance[DialTY] = WorldDialValueOffset[DialTY] + tlimit;
+                    WorldDialValueOffset[DialTY]=-tlimit;  NextReDrawFlag |= RFTransY;
+                }
+                if (WorldDialValueOffset[DialTZ]>tlimit) { 
+                    WorldDialValueBalance[DialTZ] = WorldDialValueOffset[DialTZ] - tlimit;
+                    WorldDialValueOffset[DialTZ]=tlimit; NextReDrawFlag |= RFTransZ;
+                }
+                if (WorldDialValueOffset[DialTZ]<-tlimit) { 
+                    WorldDialValueBalance[DialTZ] = WorldDialValueOffset[DialTZ] + tlimit;
+                    WorldDialValueOffset[DialTZ]=-tlimit; NextReDrawFlag |= RFTransZ;
+                }
+            } 
+            
+            VecIn[0] = WorldDialValueOffset[DialTX]*XRange;
+            VecIn[1] = WorldDialValueOffset[DialTY]*YRange;
+            VecIn[2] = WorldDialValueOffset[DialTZ]*ZRange;
+            
+            RMatVec(VecOut,WIRotX,WIRotY,WIRotZ,VecIn);
+            
+            LastWorldDialValue[DialTX] += VecOut[0]/XRange;
+            LastWorldDialValue[DialTY] += VecOut[1]/YRange;
+            LastWorldDialValue[DialTZ] += VecOut[2]/ZRange;
+            
+            WorldDialValue[DialTX] = LastWorldDialValue[DialTX]+WorldDialValueBalance[DialTX]/XRange;
+            WorldDialValue[DialTY] = LastWorldDialValue[DialTY]+WorldDialValueBalance[DialTY]/YRange;
+            WorldDialValue[DialTZ] = LastWorldDialValue[DialTZ]+WorldDialValueBalance[DialTZ]/ZRange;
+            
+        } 
+        
+        if ( WorldDialValueOffset[DialRX] != 0. || 
+            WorldDialValueOffset[DialRY] != 0. || 
+            WorldDialValueOffset[DialRZ] != 0. ||
+            WorldDialQRot.w != 0. || WorldDialQRot.x != 0. ||
+            WorldDialQRot.y != 0. || WorldDialQRot.z != 0. ||
         ( WRotStereo != WLastRS  ) ) {
         
-        RV2RMat(WorldDialValue[DialRX]-LastWorldDialValue[DialRX], 
-          WorldDialValue[DialRY]-LastWorldDialValue[DialRY], 
-          WorldDialValue[DialRZ]-LastWorldDialValue[DialRZ],
+            /* *** redo the balance *** */
+            if (record_on[0] && record_aps > 0. && record_fps > 0. && !RecordPause) {
+                Real slimit;
+                Real rangle;
+                Real newcos, newsin, oldsin;
+                Real balcos, balsin;
+                CQRQuaternion quat;
+                CQRQuaternion balquat;
+                CQRQuaternion trot;
+                WorldDialValueOffset[DialRX] *= PI;
+                WorldDialValueOffset[DialRY] *= PI;
+                WorldDialValueOffset[DialRZ] *= PI;
+                if (( WorldDialQRot.w != 0. ) ||
+                    ( WorldDialQRot.x != 0. ) ||
+                    ( WorldDialQRot.y != 0. ) ||
+                    ( WorldDialQRot.z != 0. )) {
+                    CQRAngles2Quaternion (&trot, WorldDialValueOffset[DialRX],
+                                          WorldDialValueOffset[DialRY],
+                                          WorldDialValueOffset[DialRZ]);
+                    CQRMMultiply(quat,WorldDialQRot,trot);  
+                } else {    
+                    CQRAngles2Quaternion (&quat, WorldDialValueOffset[DialRX],
+                                          WorldDialValueOffset[DialRY],
+                                          WorldDialValueOffset[DialRZ]);
+                }
+                rangle = acos(quat.w);
+                oldsin = sin(rangle);
+                slimit = 62.5*record_aps/record_fps/WorldRadius;
+                newcos = cos(slimit);
+                newsin = sin(slimit);
+                balcos = cos(rangle-slimit);
+                balsin = sin(rangle-slimit);
+                if (rangle > slimit && oldsin != 0.) {
+                    newcos = cos(slimit);
+                    newsin = sin(slimit);
+                    balcos = cos(rangle-slimit);
+                    balsin = sin(rangle-slimit);
+                    balquat.w = balcos;
+                    balquat.x = quat.x*balsin/oldsin;
+                    balquat.y = quat.y*balsin/oldsin;
+                    balquat.z = quat.z*balsin/oldsin;
+                    quat.w = newcos;
+                    quat.x = quat.x*newsin/oldsin;
+                    quat.y = quat.y*newsin/oldsin;
+                    quat.z = quat.z*newsin/oldsin;
+                    CQRQuaternion2Angles (&WorldDialValueOffset[DialRX],
+                                          &WorldDialValueOffset[DialRY],
+                                          &WorldDialValueOffset[DialRZ],&quat);
+                    WorldDialValueBalance[DialRX] = WorldDialValueOffset[DialRX];
+                    WorldDialValueBalance[DialRY] = WorldDialValueOffset[DialRY];
+                    WorldDialValueBalance[DialRZ] = WorldDialValueOffset[DialRZ];              
+                    CQRQuaternion2Angles (&WorldDialValueBalance[DialRX],
+                                          &WorldDialValueBalance[DialRY],
+                                          &WorldDialValueBalance[DialRZ],&balquat);
+                    WorldDialValueBalance[DialRX] /= PI;
+                    WorldDialValueBalance[DialRY] /= PI;
+                    WorldDialValueBalance[DialRZ] /= PI;
+                } else if  (rangle < -slimit && oldsin != 0.) {
+                    newcos = cos(-slimit);
+                    newsin = sin(-slimit);
+                    balcos = cos(rangle+slimit);
+                    balsin = sin(rangle+slimit);
+                    balquat.w = balcos;
+                    balquat.x = quat.x*balsin/oldsin;
+                    balquat.y = quat.y*balsin/oldsin;
+                    balquat.z = quat.z*balsin/oldsin;
+                    quat.w = newcos;
+                    quat.x = quat.x*newsin/oldsin;
+                    quat.y = quat.y*newsin/oldsin;
+                    quat.z = quat.z*newsin/oldsin;
+                    CQRQuaternion2Angles (&WorldDialValueOffset[DialRX],
+                                          &WorldDialValueOffset[DialRY],
+                                          &WorldDialValueOffset[DialRZ],&quat);
+                    WorldDialValueBalance[DialRX] = WorldDialValueOffset[DialRX];
+                    WorldDialValueBalance[DialRY] = WorldDialValueOffset[DialRY];
+                    WorldDialValueBalance[DialRZ] = WorldDialValueOffset[DialRZ];              
+                    CQRQuaternion2Angles (&WorldDialValueBalance[DialRX],
+                                          &WorldDialValueBalance[DialRY],
+                                          &WorldDialValueBalance[DialRZ],&balquat);
+                    WorldDialValueBalance[DialRX] /= PI;
+                    WorldDialValueBalance[DialRY] /= PI;
+                    WorldDialValueBalance[DialRZ] /= PI;
+                }
+                WorldDialValueOffset[DialRX] /= PI;
+                WorldDialValueOffset[DialRY] /= PI;
+                WorldDialValueOffset[DialRZ] /= PI;
+                if (WorldDialValueOffset[DialRX] > 1. ) WorldDialValueOffset[DialRX] -=2.;
+                if (WorldDialValueOffset[DialRX] < -1. ) WorldDialValueOffset[DialRX] +=2.;
+                if (WorldDialValueOffset[DialRY] > 1. ) WorldDialValueOffset[DialRY] -=2.;
+                if (WorldDialValueOffset[DialRY] < -1. ) WorldDialValueOffset[DialRY] +=2.;
+                if (WorldDialValueOffset[DialRZ] > 1. ) WorldDialValueOffset[DialRZ] -=2.;
+                if (WorldDialValueOffset[DialRZ] < -1. ) WorldDialValueOffset[DialRZ] +=2.;
+                CQRMSet(WorldDialQRot,0.,0.,0.,0.);
+            } else {
+                CQRQuaternion quat;
+                CQRQuaternion trot;
+                WorldDialValueOffset[DialRX] *= PI;
+                WorldDialValueOffset[DialRY] *= PI;
+                WorldDialValueOffset[DialRZ] *= PI;
+                if (( WorldDialQRot.w != 0. ) ||
+                    ( WorldDialQRot.x != 0. ) ||
+                    ( WorldDialQRot.y != 0. ) ||
+                    ( WorldDialQRot.z != 0. )) {
+                    CQRAngles2Quaternion (&trot, WorldDialValueOffset[DialRX],
+                                          WorldDialValueOffset[DialRY],
+                                          WorldDialValueOffset[DialRZ]);
+                    CQRMMultiply(quat,WorldDialQRot,trot);  
+                    CQRQuaternion2Angles (&WorldDialValueOffset[DialRX],
+                                          &WorldDialValueOffset[DialRY],
+                                          &WorldDialValueOffset[DialRZ],&quat);
+                } 
+                WorldDialValueOffset[DialRX] /= PI;
+                WorldDialValueOffset[DialRY] /= PI;
+                WorldDialValueOffset[DialRZ] /= PI;
+                if (WorldDialValueOffset[DialRX] > 1. ) WorldDialValueOffset[DialRX] -=2.;
+                if (WorldDialValueOffset[DialRX] < -1. ) WorldDialValueOffset[DialRX] +=2.;
+                if (WorldDialValueOffset[DialRY] > 1. ) WorldDialValueOffset[DialRY] -=2.;
+                if (WorldDialValueOffset[DialRY] < -1. ) WorldDialValueOffset[DialRY] +=2.;
+                if (WorldDialValueOffset[DialRZ] > 1. ) WorldDialValueOffset[DialRZ] -=2.;
+                if (WorldDialValueOffset[DialRZ] < -1. ) WorldDialValueOffset[DialRZ] +=2.;
+                CQRMSet(WorldDialQRot,0.,0.,0.,0.);
+                
+            }
+            
+            RV2RMat(WorldDialValueOffset[DialRX], WorldDialValueOffset[DialRY], 
+                    WorldDialValueOffset[DialRZ],
           NRotX, NRotY, NRotZ);
 
         RV2RMat(LastWorldDialValue[DialRX], LastWorldDialValue[DialRY], LastWorldDialValue[DialRZ],
@@ -749,6 +948,19 @@ void WorldRotate( void )
         WLRotZ[0] = NRotZ[0]*RMat[0][0]+NRotZ[1]*RMat[1][0]+NRotZ[2]*RMat[2][0];
         WLRotZ[1] = NRotZ[0]*RMat[0][1]+NRotZ[1]*RMat[1][1]+NRotZ[2]*RMat[2][1];
         WLRotZ[2] = NRotZ[0]*RMat[0][2]+NRotZ[1]*RMat[1][2]+NRotZ[2]*RMat[2][2];
+            
+            WorldDialValue[DialRX] = LastWorldDialValue[DialRX]+WorldDialValueBalance[DialRX];
+            WorldDialValue[DialRY] = LastWorldDialValue[DialRY]+WorldDialValueBalance[DialRY];
+            WorldDialValue[DialRZ] = LastWorldDialValue[DialRZ]+WorldDialValueBalance[DialRZ];
+            if (WorldDialValueBalance[DialRX]) NextReDrawFlag |= RFRotateX;
+            if (WorldDialValueBalance[DialRX]) NextReDrawFlag |= RFRotateY;
+            if (WorldDialValueBalance[DialRX]) NextReDrawFlag |= RFRotateZ;
+            
+            for (ii=DialRX; ii <=DialRZ; ii++) {
+                if (WorldDialValue[ii] > 1.) WorldDialValue[ii] -=2.;
+                if (WorldDialValue[ii] < -1.) WorldDialValue[ii] +=2.;
+            }
+            
       
         RMat2RV(&(WorldDialValue[DialRX]), 
           &(WorldDialValue[DialRY]), 
@@ -776,14 +988,12 @@ void WorldRotate( void )
             WLRotZ[i]=NRotZ[i];          	
           }
         }
-
           
         RMatInv( WLRotX, WLRotY, WLRotZ, WIRotX, WIRotY, WIRotZ);
 
         LastWorldDialValue[DialRX] = WorldDialValue[DialRX];
         LastWorldDialValue[DialRY] = WorldDialValue[DialRY];
         LastWorldDialValue[DialRZ] = WorldDialValue[DialRZ];
- 
       }
     
     IdentityMatrix(A);
@@ -813,22 +1023,15 @@ void WorldRotate( void )
 	  RotY[i] = B[1][i]/Scale;
 	  RotZ[i] = B[2][i]/Scale;
     }
-    XOffset = B[0][3]+WRange+WorldDialValue[DialTX]*Zoom*XRange;
-    YOffset = B[1][3]+HRange+WorldDialValue[DialTY]*Zoom*YRange;
-    ZOffset = B[2][3]+10000+WorldDialValue[DialTZ]*Zoom*ZRange;
+        XOffset = B[0][3]+WRange+LastWorldDialValue[DialTX]*Zoom*XRange;
+        YOffset = B[1][3]+HRange+LastWorldDialValue[DialTY]*Zoom*YRange;
+        ZOffset = B[2][3]+10000+LastWorldDialValue[DialTZ]*Zoom*ZRange;
     
     
     if (UseStereo) {
       XOffset -= XRange/4;
     }
     
-    
-    LastWorldDialValue[DialRX] = WorldDialValue[DialRX];
-    LastWorldDialValue[DialRY] = WorldDialValue[DialRY];
-    LastWorldDialValue[DialRZ] = WorldDialValue[DialRZ];
-    LastWorldDialValue[DialTX] = WorldDialValue[DialTX];
-    LastWorldDialValue[DialTY] = WorldDialValue[DialTY];
-    LastWorldDialValue[DialTZ] = WorldDialValue[DialTZ];
     WLastRS = WRotStereo;
     
     /* Make transfor.c recalculate everything */
@@ -837,7 +1040,6 @@ void WorldRotate( void )
     } 
     
 }
-
 void InitialiseWBRotate( void )
 {
     BondsSelected = BondSelected = (BondRot __far *)NULL;

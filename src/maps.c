@@ -3733,7 +3733,7 @@ int generate_map(MapStruct **map,
         
         Long rad;
         
-        Long sig6;
+        Long sigcut;
         
         double sig;
         
@@ -3752,7 +3752,15 @@ int generate_map(MapStruct **map,
 
         }
         
-        sig6 = (Long)(6* sig);
+#ifdef HIPREC
+        sigcut = (Long)(6* sig);
+#else
+#ifdef LOPREC
+        sigcut = (Long)(3* sig);
+#else
+        sigcut = (Long)(4.5*sig);
+#endif
+#endif
 
         xpos = ptr->xorg+ptr->fxorg+OrigCX;
 #ifdef INVERT
@@ -3762,12 +3770,12 @@ int generate_map(MapStruct **map,
 #endif
         zpos = -(ptr->zorg+ptr->fzorg+OrigCZ);
         
-        if (xpos-sig6 < xsellow) xsellow = xpos-sig6;
-        if (ypos-sig6 < ysellow) ysellow = ypos-sig6;
-        if (zpos-sig6 < zsellow) zsellow = zpos-sig6;
-        if (xpos+sig6 > xselhigh) xselhigh = xpos+sig6;
-        if (ypos+sig6 > yselhigh) yselhigh = ypos+sig6;
-        if (zpos+sig6 > zselhigh) zselhigh = zpos+sig6;
+        if (xpos-sigcut < xsellow) xsellow = xpos-sigcut;
+        if (ypos-sigcut < ysellow) ysellow = ypos-sigcut;
+        if (zpos-sigcut < zsellow) zsellow = zpos-sigcut;
+        if (xpos+sigcut > xselhigh) xselhigh = xpos+sigcut;
+        if (ypos+sigcut > yselhigh) yselhigh = ypos+sigcut;
+        if (zpos+sigcut > zselhigh) zselhigh = zpos+sigcut;
       }
       
       xsellow -= buffer;
@@ -3829,7 +3837,7 @@ int generate_map(MapStruct **map,
         
         Long rad;
         
-        Long sig6;
+        Long sigcut;
         
         double sig, coeff;
         
@@ -3851,7 +3859,15 @@ int generate_map(MapStruct **map,
 
         }
         
-        sig6 = (Long)(6* sig);
+#ifdef HIPREC
+        sigcut = (Long)(6* sig);
+#else
+#ifdef LOPREC
+        sigcut = (Long)(3 *sig);
+#else
+        sigcut = (Long)(4.5 *sig);
+#endif
+#endif
         
         sig /= 250.;
         
@@ -3875,33 +3891,37 @@ int generate_map(MapStruct **map,
 #endif
         zpos = -(ptr->zorg + ptr->fzorg +OrigCZ) -zorig;
         
-        xsellow = xpos - sig6;
+        xsellow = xpos - sigcut;
         if (xsellow< 0) xsellow = ( xsellow - (xint-1) )/xint;
         else xsellow = ( xsellow + (xint-1) )/xint;
         if (xsellow < (*map)->xlow) xsellow = (*map)->xlow;
         if (xsellow > (*map)->xhigh) xsellow = (*map)->xhigh;
-        ysellow = ypos - sig6;
+
+        ysellow = ypos - sigcut;
         if (ysellow< 0) ysellow = ( ysellow - (yint-1) )/yint;
         else ysellow = ( ysellow + (yint-1) )/yint;
         if (ysellow < (*map)->ylow) ysellow = (*map)->ylow;
         if (ysellow > (*map)->yhigh) ysellow = (*map)->yhigh;
-        zsellow = zpos - sig6;
+
+        zsellow = zpos - sigcut;
         if (zsellow< 0) zsellow = ( zsellow - (zint-1) )/zint;
         else zsellow = ( zsellow + (zint-1) )/zint;
         if (zsellow < (*map)->zlow) zsellow = (*map)->zlow;
         if (zsellow > (*map)->zhigh) zsellow = (*map)->zhigh;
 
-        xselhigh = xpos + sig6;
+        xselhigh = xpos + sigcut;
         if (xselhigh< 0) xselhigh = ( xselhigh - (xint-1) )/xint;
         else xselhigh = ( xselhigh + (xint-1) )/xint;
         if (xselhigh < (*map)->xlow) xselhigh = (*map)->xlow;
         if (xselhigh > (*map)->xhigh) xselhigh = (*map)->xhigh;
-        yselhigh = ypos + sig6;
+
+        yselhigh = ypos + sigcut;
         if (yselhigh< 0) yselhigh = ( yselhigh - (yint-1) )/yint;
         else yselhigh = ( yselhigh + (yint-1) )/yint;
         if (yselhigh < (*map)->ylow) yselhigh = (*map)->ylow;
         if (yselhigh > (*map)->yhigh) yselhigh = (*map)->yhigh;
-        zselhigh = zpos + sig6;
+
+        zselhigh = zpos + sigcut;
         if (zselhigh< 0) zselhigh = ( zselhigh - (zint-1) )/zint;
         else zselhigh = ( zselhigh + (zint-1) )/zint;
         if (zselhigh < (*map)->zlow) zselhigh = (*map)->zlow;

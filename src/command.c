@@ -4810,9 +4810,10 @@ static void ApplyMapAtomSelection(int dontadd, int searchwithin, int SearchRadiu
                         QAtom->flag &= ~SaveFlag;
                     }
                 }
+     }
+
         if (CreateAtomTree()) {
             RasMolFatalExit(MsgStrs[StrMalloc]);
-        }
     }
     
     
