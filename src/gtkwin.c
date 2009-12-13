@@ -1464,15 +1464,18 @@ gboolean button_release_cb(GtkWidget *canvas, GdkEventButton *event, gpointer us
 {
     int stat;
 
-	if (!dragging && event->button == 3 && event->type == GDK_BUTTON_RELEASE && !(event->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK))) {
-		do_popup_menu (canvas, event);
+    if (!dragging && event->button == 3 && event->type == GDK_BUTTON_RELEASE
+        && !(event->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK))) {
+        do_popup_menu (canvas, event);
     } else {
-    	stat = GetStatus(event->state);
-    	ProcessMouseUp(event->x,event->y,stat);
-	}
+        stat = GetStatus(event->state);
+        ProcessMouseUp(event->x,event->y,stat);
+    }
+    if( ReDrawFlag ) {
+        RefreshScreen();
+    }
+    dragging = FALSE;
 
-	dragging = FALSE;
-	
     return TRUE;
 }
 
