@@ -1299,7 +1299,6 @@ void UpdateScrollBars( void )
 		g_signal_handler_block(G_OBJECT(vscrollbar), vscr_handler);
 		gtk_range_set_value(GTK_RANGE(vscrollbar), new);
 		g_signal_handler_unblock(G_OBJECT(vscrollbar), vscr_handler);
-		ReDrawFlag |= (1<<YScrlDial);
     }
 
     if ( (RotMode == RotBond) && BondSelected ) {
@@ -1317,7 +1316,6 @@ void UpdateScrollBars( void )
 		g_signal_handler_block(G_OBJECT(hscrollbar), hscr_handler);
 		gtk_range_set_value(GTK_RANGE(hscrollbar), new);
 		g_signal_handler_unblock(G_OBJECT(hscrollbar), hscr_handler);
-		ReDrawFlag |= (1<<XScrlDial);
     }
 
 }
