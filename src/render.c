@@ -2013,42 +2013,43 @@ void SetPickMode( int mode )
 }
 
 
-static void DescribeAtom( AtomRef *ptr, int flag )
+static int DescribeAtom(char *dest, AtomRef *ptr, int flag )
 {
     register char *str;
     register int i,ch;
-    char buffer[40];
+    char *cur;
 
+    cur = dest;
     str = Residue[ptr->grp->refno];
     for( i=0; i<3; i++ )
         if( str[i]!=' ' )
-            WriteChar(str[i]);
+            *(cur++) = str[i];
 
-    sprintf(buffer,"%d",ptr->grp->serno);
-    WriteString(buffer);
+    cur += sprintf(cur,"%d",ptr->grp->serno);
 
     ch = ptr->chn->ident;
     if( ch != ' ' ) {
         if( isdigit(ch) )
-            WriteChar(':');
-        WriteChar(ch);
+            *(cur++) = ':';
+        *(cur++) = ch;
     }
 
-    WriteChar('.');
+    *(cur++) = '.';
     str = ElemDesc[ptr->atm->refno];
     for( i=0; str[i] && i<12; i++ )
         if( str[i]!=' ' )
-            WriteChar(str[i]);
+            *(cur++) = str[i];
 
     if (ptr->atm->model) {
-        sprintf(buffer,"/%d",ptr->atm->model);
-        WriteString(buffer);
+        cur += sprintf(cur, "/%d", ptr->atm->model);
     }
 
     if( flag ) {
-        sprintf(buffer," (%ld)",ptr->atm->serno);
-        WriteString(buffer);
+        cur += sprintf(cur, " (%ld)", ptr->atm->serno);
     }
+
+    *(cur++) = 0;
+    return (cur - dest - 1);
 }
 
 
@@ -2059,10 +2060,14 @@ int PickAtoms( int shift, int xpos, int ypos )
     register double temp;
     register char *str;
     register size_t len;
-
     char buffer[80];
     AtomRef ref;
+    char msg[MSG_MAX];
+    char *cur;
+#define MsgString(mstr) cur += sprintf(cur, (mstr))
+#define MsgChar(c) *(cur++) = (c)
 
+    cur = msg;
     if( PickMode == PickNone )
         return False;
 
@@ -2085,56 +2090,53 @@ int PickAtoms( int shift, int xpos, int ypos )
         return True;
     } else if( PickMode == PickIdent || PickMode == PickCoord ) {
         InvalidateCmndLine();
-        WriteString("Atom: ");
+        MsgString("Atom: ");
         str = ElemDesc[QAtom->refno];
         if( str[0]!=' ' )
-            WriteChar(str[0]);
-        WriteChar(str[1]);
-        WriteChar(str[2]);
+            MsgChar(str[0]);
+        MsgChar(str[1]);
+        MsgChar(str[2]);
         { int iii;
             for (iii = 3; str[iii] && iii < 12; iii++) {
                 if( str[iii]!=' ' )
-                    WriteChar(str[iii]);
+                    MsgChar(str[iii]);
             }
         }
 
         if( !(QAtom->altl == ' ')) {
-            WriteChar(';');
-            WriteChar(QAtom->altl);
+            MsgChar(';');
+            MsgChar(QAtom->altl);
         }
 
-        sprintf(buffer," %ld  ",QAtom->serno);
-        WriteString(buffer);
+        cur += sprintf(cur, " %ld  ", QAtom->serno);
 
         if (!(QGroup->serno == -9999)) {
             str = Residue[QGroup->refno];
             if( QAtom->flag&HeteroFlag ) {
-                WriteString("Hetero: ");
+                MsgString("Hetero: ");
             } else
-                WriteString("Group: ");
+                MsgString("Group: ");
 
             if( str[0]!=' ' )
-                WriteChar(str[0]);
-            WriteChar(str[1]);
-            WriteChar(str[2]);
+                MsgChar(str[0]);
+            MsgChar(str[1]);
+            MsgChar(str[2]);
 
-            sprintf(buffer," %d",QGroup->serno);
-            WriteString(buffer);
+            cur += sprintf(cur, " %d", QGroup->serno);
             if (!(QGroup->insert == ' ') && !(QGroup->insert=='\0'))
-                WriteChar(QGroup->insert);
+                MsgChar(QGroup->insert);
         }
 
         if( QChain->ident!=' ' ) {
-            WriteString("  Chain: ");
-            WriteChar(QChain->ident);
+            MsgString("  Chain: ");
+            MsgChar(QChain->ident);
         }
 
         if( QAtom->model) {
-            sprintf(buffer,"  Model: %d",QAtom->model);
-            WriteString(buffer);
+            cur += sprintf(cur, "  Model: %d", QAtom->model);
         }
-        WriteChar('\n');
         if (PickMode == PickCoord || shift != 0 ) {
+            MsgChar('\n');
             register double x, y, z;
 
             x = (double)(QAtom->xorg + QAtom->fxorg + OrigCX)/250.0
@@ -2144,11 +2146,10 @@ int PickAtoms( int shift, int xpos, int ypos )
             z = (double)(QAtom->zorg + QAtom->fzorg + OrigCZ)/250.0
                 +(double)(QAtom->ztrl)/10000.0;
 #ifdef INVERT
-            sprintf(buffer, "  Coordinates: %9.3f %9.3f %9.3f\n",x,-y,-z);
+            cur += sprintf(cur, "  Coordinates: %9.3f %9.3f %9.3f",x,-y,-z);
 #else
-            sprintf(buffer, "  Coordinates: %9.3f %9.3f %9.3f\n",x,y,-z);
+            cur += sprintf(cur, "  Coordinates: %9.3f %9.3f %9.3f",x,y,-z);
 #endif
-            WriteString(buffer);
         }
 
     } else if( PickMode == PickLabel ) {
@@ -2189,9 +2190,8 @@ int PickAtoms( int shift, int xpos, int ypos )
         ref.atm = QAtom;
 
         InvalidateCmndLine();
-        WriteString("Rotating about ");
-        DescribeAtom(&ref,True);
-        WriteChar('\n');
+        MsgString("Rotating about ");
+        cur += DescribeAtom(cur, &ref,True);
 
     } else if( PickMode == PickOrign ) {
         CentreTransform(QAtom->xorg + QAtom->fxorg,
@@ -2203,9 +2203,8 @@ int PickAtoms( int shift, int xpos, int ypos )
         ref.atm = QAtom;
 
         InvalidateCmndLine();
-        WriteString("Rotating about ");
-        DescribeAtom(&ref,True);
-        WriteChar('\n');
+        MsgString("Rotating about ");
+        cur += DescribeAtom(cur, &ref,True);
 
     } else if( PickMode == PickMonit ) {
         /* State Machine Implementation */
@@ -2248,11 +2247,14 @@ int PickAtoms( int shift, int xpos, int ypos )
             WriteChar('\n');
         CommandActive = False;
 
-        WriteString("Atom #");
-        WriteChar(PickCount+'0');
-        WriteString(": ");
-        DescribeAtom(ptr,True);
-        WriteChar('\n');
+        MsgString("Atom #");
+        MsgChar(PickCount+'0');
+        MsgString(": ");
+        cur += DescribeAtom(cur, ptr,True);
+        MsgChar('\n');
+        MsgChar(0);
+        WriteMsg(msg);
+        cur = msg;
 
         if( PickCount == 2 )
             SetBondAxis(PickHist[0].atm, PickHist[1].atm);
@@ -2271,11 +2273,10 @@ int PickAtoms( int shift, int xpos, int ypos )
         PickCount++;
 
         InvalidateCmndLine();
-        WriteString("Atom #");
-        WriteChar(PickCount+'0');
-        WriteString(": ");
-        DescribeAtom(ptr,True);
-        WriteChar('\n');
+        MsgString("Atom #");
+        MsgChar(PickCount+'0');
+        MsgString(": ");
+        cur += DescribeAtom(cur, ptr,True);
 
         if( PickCount == PickMode ) {
             /* [GSG 11/29/95] */
@@ -2284,12 +2285,12 @@ int PickAtoms( int shift, int xpos, int ypos )
             if( PickMode == PickDist ) {
                 temp = (double)CalcDistance(PickHist[0].atm, PickHist[1].atm);
 
-                WriteString("Distance ");
-                DescribeAtom(PickHist,False);
-                WriteChar('-');
-                DescribeAtom(PickHist+1,False);
-                sprintf(buffer,": %.2f\n\n",temp);
-                WriteString(buffer);
+                MsgChar('\n');
+                MsgString("Distance ");
+                cur += DescribeAtom(cur, PickHist, False);
+                MsgChar('-');
+                cur += DescribeAtom(cur, PickHist+1, False);
+                cur += sprintf(cur, ": %.2f", temp);
                 /* [GSG 11/21/95] */
                 AddMonitors(PickHist[0].atm, QAtom);
                 ReDrawFlag |= RFRefresh;
@@ -2299,14 +2300,14 @@ int PickAtoms( int shift, int xpos, int ypos )
                                          PickHist[1].atm,
                                          PickHist[2].atm);
 
-                WriteString("Angle ");
-                DescribeAtom(PickHist,False);
-                WriteChar('-');
-                DescribeAtom(PickHist+1,False);
-                WriteChar('-');
-                DescribeAtom(PickHist+2,False);
-                sprintf(buffer,": %.2f\n\n",temp);
-                WriteString(buffer);
+                MsgChar('\n');
+                MsgString("Angle ");
+                cur += DescribeAtom(cur, PickHist, False);
+                MsgChar('-');
+                cur += DescribeAtom(cur, PickHist+1, False);
+                MsgChar('-');
+                cur += DescribeAtom(cur, PickHist+2, False);
+                cur += sprintf(cur, ": %.2f", temp);
 
                 /* [GSG 11/21/95] */
                 AddMonitors2(PickHist[0].atm, PickHist[2].atm,
@@ -2319,17 +2320,16 @@ int PickAtoms( int shift, int xpos, int ypos )
                                            PickHist[2].atm,
                                            PickHist[3].atm);
 
-                WriteString("Torsion ");
-                DescribeAtom(PickHist,False);
-                WriteChar('-');
-                DescribeAtom(PickHist+1,False);
-                WriteChar('-');
-                DescribeAtom(PickHist+2,False);
-                WriteChar('-');
-                DescribeAtom(PickHist+3,False);
-                sprintf(buffer,": %.2f\n\n",temp);
-                WriteString(buffer);
-                WriteString(buffer);
+                MsgChar('\n');
+                MsgString("Torsion ");
+                cur += DescribeAtom(cur, PickHist, False);
+                MsgChar('-');
+                cur += DescribeAtom(cur, PickHist+1, False);
+                MsgChar('-');
+                cur += DescribeAtom(cur, PickHist+2, False);
+                MsgChar('-');
+                cur += DescribeAtom(cur, PickHist+3, False);
+                cur += sprintf(cur, ": %.2f", temp);
 
                 /* [GSG 11/21/95] */
                 AddMonitors2(PickHist[0].atm, PickHist[3].atm,
@@ -2338,6 +2338,10 @@ int PickAtoms( int shift, int xpos, int ypos )
                 ReDrawFlag |= RFRefresh;
             }
         }
+    }
+    if(cur > msg) {
+        MsgChar(0);
+        WriteMsg(msg);
     }
     return True;
 }
