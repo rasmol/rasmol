@@ -1571,7 +1571,7 @@ int OpenDisplay(void)
 #ifdef THIRTYTWOBIT
     static ByteTest test;
 #endif
-    register int i,num;
+    int i;
     static char VersionStr[50];
     GError *gerr = NULL;
 
@@ -1684,15 +1684,15 @@ int OpenDisplay(void)
 
 int CreateImage( void )
 {
-    register long size;
-    register Pixel *ptr;
-  
-	if( FBuffer ) 
-		_ffree(FBuffer);
-	size = (long)XRange*YRange*sizeof(Pixel);
-	FBuffer = (Pixel*)_fmalloc( size+32 );
-	
-	return((FBuffer!=(Pixel*)NULL)?True : False);
+    long size;
+
+    if(FBuffer) {
+        _ffree(FBuffer);
+    }
+    size = (long)XRange*YRange*sizeof(Pixel);
+    FBuffer = (Pixel*)_fmalloc( size+32 );
+
+    return((FBuffer!=(Pixel*)NULL)?True : False);
 }
 
 
