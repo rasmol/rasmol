@@ -213,6 +213,7 @@ typedef short Pixel;
 
 void WriteChar( int );
 void WriteString( char* );
+void WriteMsg( char* );
 void RasMolFatalExit( char* );
 void AdviseUpdate( int );
 void RefreshScreen( void );

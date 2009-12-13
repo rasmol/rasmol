@@ -144,6 +144,12 @@ static int FileFormat;
 static int ProfCount;
 
 
+void WriteMsg( char *ptr )
+{
+    WriteString(ptr);
+    WriteChar ('\n');
+}
+
 
 void WriteChar( int ch )
 {   putc(ch,OutFp);

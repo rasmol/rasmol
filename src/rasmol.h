@@ -284,8 +284,10 @@ typedef short Pixel;
 #define AdvPickCoord    7
 
 
+#define MSG_MAX 256
 void WriteChar( int );
 void WriteString( char* );
+void WriteMsg( char* );
 void RasMolFatalExit( char* );
 void AdviseUpdate( int );
 void RefreshScreen( void );

@@ -619,6 +619,13 @@ void WriteChar( int ch )
 }
 
 
+void WriteMsg( char *ptr )
+{
+    WriteString(ptr);
+    WriteChar ('\n');
+}
+
+
 void WriteString( char *ptr )
 {
     while( *ptr )

@@ -400,6 +400,12 @@ static int LexState;
 static int HandleEvents( int );
 extern int ProcessCommand( void );
 
+void WriteMsg( char *ptr )
+{
+    WriteString(ptr);
+    WriteChar('\n');
+}
+
 #ifndef GTKWIN
 void WriteChar( int ch )
 {
