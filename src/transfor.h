@@ -158,6 +158,8 @@
 
  */
 
+#include "CVector_3D.h"
+
 #define GroupAttr       0x00
 #define ChainAttr       0x01
 #define TempAttr	    0x02
@@ -277,6 +279,7 @@ int DrawBonds,MaxBondRadius;
 int DrawStars;
 int DrawSurf;
 int DrawRibbon;
+int DrawField,MaxVectorField;
 int ZoneBoth;
 int ModelInclude;
 
@@ -331,6 +334,7 @@ extern int DrawBonds,MaxBondRadius;
 extern int DrawStars;
 extern int DrawSurf;
 extern int DrawRibbon;
+extern int DrawField,MaxVectorField;
 extern int ZoneBoth;
 extern int ModelInclude;
 
@@ -350,11 +354,14 @@ extern size_t record_frame[2], play_frame[2];
 
 #endif
 
+void SetOneFieldValue(long field[3], RAtom __far *aptr, int wait);
+void SetFieldValue(long field[3]);
 
 void SetRadiusValue( int, int  );
 void SetRadiusTemperature( int );
 void SetVanWaalRadius( int );
 void DisableSpacefill( void );
+void DisableField( void );
 void SetHBondStatus( int, int, int, int );
 void SetRibbonStatus( int, int, int );
 void SetRibbonCartoons( void );
@@ -425,3 +432,11 @@ void CentreTransform( int, int, int, int );
 void ResetTransform( void );
 
 void SetLutEntry( int, int, int, int );
+void TestKabsch( const CVectorHandle /*CV3Vector */ v1, const CVectorHandle /*CV3Vector */ v2 );
+void GatherSelected(CVectorHandle /* RAtom * */ selAtoms, CVectorHandle /* Group * */ selGroups  );
+int AlignToMolecule(int molnum, double * rmsd, 
+                    CQRQuaternionHandle qRotToMolecule, 
+                    CV3VectorHandle vTransToMolecule,
+                    int seqrange, double mindist, 
+                    double maxdist, int kabsch,
+                    int byatom, int bybond);

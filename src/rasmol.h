@@ -1,5 +1,5 @@
 /***************************************************************************
- *                              RasMol 2.7.5                               *
+ *                              RasMol 2.7.6                               *
  *                                                                         *
  *                                 RasMol                                  *
  *                 Molecular Graphics Visualisation Tool                   *
@@ -186,9 +186,9 @@
 /*==============================*/
 
 #define MAIN_COPYRIGHT "Copyright (C) Roger Sayle 1992-1999"
-#define VERSION "2.7.5"
-#define VER_COPYRIGHT "Copyright (C) Herbert J. Bernstein 1998-2008"
-#define VER_DATE "June 2009"
+#define VERSION "2.7.6"
+#define VER_COPYRIGHT "Copyright (C) Herbert J. Bernstein 1998-2010"
+#define VER_DATE "May 2010"
 
 #ifndef True
 #define True  1

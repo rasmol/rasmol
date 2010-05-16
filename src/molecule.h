@@ -228,6 +228,7 @@
 #define TouchFlag       0x100    /* Touch by probe                 */
 #define ExpandFlag      0x200    /* Expand by probe radius         */
 #define SurfBondFlag    0x400    /* Atom is part of a surface bond */
+#define FieldFlag       0x800    /* Atom has an auxilliary field   */
 
 
 /* Bond Flags */
@@ -274,6 +275,13 @@ typedef struct _Atom {
         Long   fxorg, fyorg, fzorg;       /* Offsets for rotations */
         Long   x, y, z;                   /* Image Co-ordinates    */
                                           /* also used as scratch  */
+        /* auxillary coordinates are field vectors based on
+           the current atom.  The world coordinates are relative
+           to the atom.  The Image coordinates are absolute */ 
+           
+        Long   auxxorg, auxyorg, auxzorg; /* World aux coords      */
+        Long   auxx, auxy, auxz;          /* Image aux coords      */
+        
         short  xtrl, ytrl, ztrl;          /* Trailing Bits         */
         short  radius;                    /* World Radius          */
         short  temp;                      /* Temperature Factor    */

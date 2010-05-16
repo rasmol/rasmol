@@ -1,8 +1,3 @@
-#define NEARTREE_LOCAL
-#define CQRLIB_LOCAL
-#define CVECTOR_LOCAL
-#define XFORMSLIB_LOCAL
-#define CBFLIB_LOCAL
 ###########################################################################
 #                               RasMol 2.7.5                              #
 #                                                                         #
@@ -206,7 +201,7 @@ CBFLIB_OBJDEP =
 # Definitions for CQRLIB
 #
 #ifdef CQRLIB_LOCAL
-CQRLIB_VERSION = 1.0.3
+CQRLIB_VERSION = 1.0.5
 CQRLIB_TARBALL = CQRlib-$(CQRLIB_VERSION).tar.gz
 CQRLIB_TARBALLDIR = $(EXTPKGDIR)
 CQRLIB_TARBALL_URL = http://downloads.sf.net/cqrlib/$(CQRLIB_TARBALL)
@@ -252,7 +247,7 @@ CVECTOR_OBJDEP =
 # Definitions for NEARTREE
 #
 #ifdef NEARTREE_LOCAL
-NEARTREE_VERSION = 2.1.3
+NEARTREE_VERSION = 2.1.5
 NEARTREE_TARBALL = NearTree-$(NEARTREE_VERSION).tar.gz
 NEARTREE_TARBALLDIR = $(EXTPKGDIR)
 NEARTREE_TARBALL_URL = http://downloads.sf.net/neartree/$(NEARTREE_TARBALL)
@@ -303,13 +298,16 @@ SRCS = rasmol.c rasmol.h molecule.c molecule.h abstree.c abstree.h \
        cif.h cif_ctonum.c cif_ctonum.h cif_stx.c \
        multiple.h multiple.c vector.h vector.c \
        wbrotate.c wbrotate.c langsel.h langsel_unix.c maps.h maps.c $(GUISRC) \
+       CVector_3D.h CVector_3D.c rmsd.h rmsd.c\
        $(CQRLIB_SRC) $(CVECTOR_SRC) $(NEARTREE_SRC)
 
 
 OBJS = rasmol.o molecule.o abstree.o cmndline.o command.o transfor.o \
        render.o repres.o  pixutils.o outfile.o script.o \
        infile.o tokens.o  cif_fract.o cif.o cif_ctonum.o cif_stx.o \
-       multiple.o vector.o wbrotate.o langsel_unix.o maps.o $(GUIOBJ)
+       multiple.o vector.o wbrotate.o langsel_unix.o maps.o \
+       CVector_3D.o rmsd.o \
+       $(GUIOBJ)
 
 # Previous Risc/Os definition
 # LDLIBS = -lm -lXinput $(XLIB)

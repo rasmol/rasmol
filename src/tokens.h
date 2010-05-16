@@ -196,16 +196,17 @@
 /* Command Tokens */
 #define AddTok         260
 #define AdviseTok      261
-#define AnimateTok     262
-#define APSTok         263
-#define BackboneTok    264
-#define CartoonTok     265
-#define CentreTok      266
-#define ClipboardTok   267
-#define ColourTok      268
-#define ColourModeTok  269
-#define ConnectTok     270
-#define DashTok        271
+#define AlignTok       262
+#define AnimateTok     263
+#define APSTok         264
+#define BackboneTok    265
+#define CartoonTok     266
+#define CentreTok      267
+#define ClipboardTok   268
+#define ColourTok      269
+#define ColourModeTok  270
+#define ConnectTok     271
+#define DashTok        272
 
 #define DeferTok       281
 #define DefineTok      282
@@ -218,56 +219,56 @@
 #define ExitTok        289
 #define ExecuteTok     290
 
-#define FPSTok         291
-#define GenerateTok    292
-#define HelpTok        293
-#define LabelTok       294
-#define LoadTok        295
-#define LoopTok        296
-#define MapTok         297
-#define MaskTok        298
-#define MoleculeTok    299
-#define MolSurfTok     300 
+#define FieldTok       291
+#define FPSTok         292
+#define GenerateTok    293
+#define HelpTok        294
+#define LabelTok       295
+#define LoadTok        296
+#define LoopTok        297
+#define MapTok         298
+#define MaskTok        299
+#define MoleculeTok    300
+#define MolSurfTok     301
+#define MonitorTok     302
+#define MoveTok        303
+#define MoveToTok      304
+#define NoToggleTok    305
+#define PlayTok        306
+#define PrintTok       307
+#define QuitTok        308
+#define RecordTok      309
+#define RefreshTok     310
+#define RenumTok       311
 
-#define MonitorTok     301
-#define MoveTok        302
-#define MoveToTok      303
-#define NoToggleTok    304
-#define PlayTok        305
-#define PrintTok       306
-#define QuitTok        307
-#define RecordTok      308
-#define RefreshTok     309
-#define RenumTok       310
+#define ResetTok       312
+#define ResizeTok      313
+#define RestoreTok     314
+#define RestrictTok    315
+#define RotateTok      316
+#define SaveTok        317
+#define ScriptTok      318
+#define SelectTok      319
+#define SetTok         320
+#define ShowTok        321
 
-#define ResetTok       311
-#define ResizeTok      312
-#define RestoreTok     313
-#define RestrictTok    314
-#define RotateTok      315
-#define SaveTok        316
-#define ScriptTok      317
-#define SelectTok      318
-#define SetTok         319
-#define ShowTok        320
+#define SlabTok        322
+#define SourceTok      323
+#define SpacefillTok   324
+#define StarTok        325
+#define StructureTok   326
+#define SurfaceTok     327
+#define SymmetryTok    328
+#define TitleTok       329
+#define TraceTok       330
+#define TranslateTok   331
 
-#define SlabTok        321
-#define SourceTok      322
-#define SpacefillTok   323
-#define StarTok        324
-#define StructureTok   325
-#define SurfaceTok     326
-#define SymmetryTok    327
-#define TitleTok       328
-#define TraceTok       329
-#define TranslateTok   330
-
-#define ViewTok        331
-#define WaitTok        332
-#define WireframeTok   333
-#define WriteTok       334
-#define ZapTok         335
-#define ZoomTok        336
+#define ViewTok        332
+#define WaitTok        333
+#define WireframeTok   334
+#define WriteTok       335
+#define ZapTok         336
+#define ZoomTok        337
 
 /* Predicate Tokens */
 #define IsPredTok(x)   (((x)>=AlphaTok) && ((x)<=SmallTok))
@@ -529,6 +530,7 @@
 #define CIFDataTok     763
 #define FSTok          764
 #define ScaleTok       765
+#define KabschTok      766
 
 #define PSTok          EPSFTok
 

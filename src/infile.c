@@ -876,6 +876,12 @@ static void ProcessPDBAtom( int heta, double pdb_version )
     ptr->xtrl =  (short) (10*(dx-4*ptr->xorg));
     ptr->ytrl =  (short) (10*(dy-4*ptr->yorg));
     ptr->ztrl =  (short) (10*(-dz-4*ptr->zorg));
+    ptr->auxxorg = 0;
+    ptr->auxyorg = 0;
+    ptr->auxzorg = 0;
+    ptr->auxx = 0;
+    ptr->auxy = 0;
+    ptr->auxz = 0;
  
     if( heta ) ptr->flag |= HeteroFlag;
     if (pdb_version < 3.)
@@ -1277,6 +1283,12 @@ int LoadMDLMolecule( FILE *fp )
         ptr->xtrl  = (short)(dx-40*ptr->xorg);
         ptr->ytrl  = (short)(dy-40*ptr->yorg);
         ptr->ztrl  = (short)(-dz-40*ptr->zorg);
+        ptr->auxxorg = 0;
+        ptr->auxyorg = 0;
+        ptr->auxzorg = 0;
+        ptr->auxx = 0;
+        ptr->auxy = 0;
+        ptr->auxz = 0;
         ProcessAtom( ptr );
     }
  
@@ -1381,6 +1393,13 @@ int LoadXYZMolecule( FILE *fp )
             ptr->xtrl = (short)(10000.0*xpos-40.*(double)ptr->xorg);
             ptr->ytrl = (short)(10000.0*ypos-40.*(double)ptr->yorg);
             ptr->ztrl = (short)(-10000.0*zpos-40.*(double)ptr->zorg);
+            ptr->auxxorg = 0;
+            ptr->auxyorg = 0;
+            ptr->auxzorg = 0;
+            ptr->auxx = 0;
+            ptr->auxy = 0;
+            ptr->auxz = 0;
+
  
             if( (count==5) || (count==8) )
             {   ptr->temp = (short)(100.0*charge);
@@ -1487,6 +1506,12 @@ int LoadMol2Molecule( FILE *fp )
                  ptr->xtrl = (short)(10000.0*xpos-40.*(double)ptr->xorg);
                  ptr->ytrl = (short)(10000.0*ypos-40.*(double)ptr->yorg);
                  ptr->ztrl = (short)(-10000.0*zpos-40.*(double)ptr->zorg);
+                 ptr->auxxorg = 0;
+                 ptr->auxyorg = 0;
+                 ptr->auxzorg = 0;
+                 ptr->auxx = 0;
+                 ptr->auxy = 0;
+                 ptr->auxz = 0;
                  ProcessAtom( ptr );
             }
  
@@ -1572,7 +1597,12 @@ int LoadAlchemyMolecule( FILE *fp )
         ptr->xtrl =  (short)(10*(dx-4*ptr->xorg));
         ptr->ytrl =  (short)(10*(dy-4*ptr->yorg));
         ptr->ztrl =  (short)(10*(-dz-4*ptr->zorg));
-
+        ptr->auxxorg = 0;
+        ptr->auxyorg = 0;
+        ptr->auxzorg = 0;
+        ptr->auxx = 0;
+        ptr->auxy = 0;
+        ptr->auxz = 0;
         ProcessAtom( ptr );
     }
  
@@ -1660,6 +1690,12 @@ int LoadCharmmMolecule( FILE *fp )
         ptr->xtrl =  (short)(10*(dx-4*ptr->xorg));
         ptr->ytrl =  (short)(10*(dy-4*ptr->yorg));
         ptr->ztrl =  (short)(10*(-dz-4*ptr->zorg));
+        ptr->auxxorg = 0;
+        ptr->auxyorg = 0;
+        ptr->auxzorg = 0;
+        ptr->auxx = 0;
+        ptr->auxy = 0;
+        ptr->auxz = 0;
         ProcessAtom( ptr );
     }
     return True;
@@ -1773,7 +1809,12 @@ static int ReadMOPACOutputFile( void )
                 atm->xtrl  = (short)(dx-40*atm->xorg);
                 atm->ytrl  = (short)(dy-40*atm->yorg);
                 atm->ztrl  = (short)(-dz-40*atm->zorg);
-
+                atm->auxxorg = 0;
+                atm->auxyorg = 0;
+                atm->auxzorg = 0;
+                atm->auxx = 0;
+                atm->auxy = 0;
+                atm->auxz = 0;
                 ProcessAtom(atm);
                 atm = atm->anext;
             }
@@ -1940,6 +1981,16 @@ int LoadMOPACMolecule( FILE *fp )
             aptr->xorg =  (Long)(250.0*coord->dist);
             aptr->yorg =  (Long)(250.0*coord->angle);
             aptr->zorg = -(Long)(250.0*coord->dihed);
+            aptr->fxorg = 0;
+            aptr->fyorg = 0;
+            aptr->fzorg = 0;
+            aptr->auxxorg = 0;
+            aptr->auxyorg = 0;
+            aptr->auxzorg = 0;
+            aptr->auxx = 0;
+            aptr->auxy = 0;
+            aptr->auxz = 0;
+
             ProcessAtom(aptr);
         } else count++;
  
@@ -2587,7 +2638,12 @@ int LoadCIFMolecule( FILE *fp )
         ptr->xtrl = (short)(10000.0*cartn_x-40.0*(double)ptr->xorg);
         ptr->ytrl = (short)(10000.0*cartn_y-40.0*(double)ptr->yorg);
         ptr->ztrl = (short)(-10000.0*cartn_z-40.0*(double)ptr->zorg);
-
+        ptr->auxxorg = 0;
+        ptr->auxyorg = 0;
+        ptr->auxzorg = 0;
+        ptr->auxx = 0;
+        ptr->auxy = 0;
+        ptr->auxz = 0;
         if (label_atom_id[0]=='\0')  strncpy(label_atom_id,oidstr,4);
 	{
           int i, laid, lat;
@@ -3407,7 +3463,12 @@ int LoadCIFMolecule( FILE *fp )
                 ptr->xtrl = (short)(10000.0*cartn_x-40.0*(double)ptr->xorg);
                 ptr->ytrl = (short)(10000.0*cartn_y-40.0*(double)ptr->yorg);
                 ptr->ztrl = (short)(-10000.0*cartn_z-40.0*(double)ptr->zorg);
-                
+                ptr->auxxorg = 0;
+                ptr->auxyorg = 0;
+                ptr->auxzorg = 0;
+                ptr->auxx = 0;
+                ptr->auxy = 0;
+                ptr->auxz = 0;          
                 if (label_atom_id[0]=='\0')  strncpy(label_atom_id,idstr,4);
                 {
                     int i, laid, lat;

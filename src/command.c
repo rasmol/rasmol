@@ -143,6 +143,7 @@
 #include "maps.h"
 
 #include <math.h>
+#include <cqrlib.h>
 #include <CVector.h>
 #ifndef CVECTOR_FAR
 #define CVECTOR_FAR
@@ -669,11 +670,11 @@ static int FetchFileOne( int format, int info, char *name )
         
         if( done == 0x9d )
         {   /* Should #include <signal.h> and trap "" SIGPIPE */
-            sprintf(buffer,"trap \"\" 13; uncompress -c '%s' 2> /dev/null\n",
+            sprintf(buffer,"trap \"\" 13; uncompress -c %s 2> /dev/null\n",
                     DataFileName);
         } else if( done == 0x8b )
         {   /* Should #include <signal.h> and trap "" SIGPIPE */
-            sprintf(buffer,"trap \"\" 13; gzip -cdq '%s' 2> /dev/null\n",
+            sprintf(buffer,"trap \"\" 13; gzip -cdq %s 2> /dev/null\n",
                     DataFileName);
         } else /* bad magic number! */
         {   InvalidateCmndLine();
@@ -2461,29 +2462,6 @@ static void ExecuteCentreCommand( void )
     if ( CurToken == '[' )
     {   Long CenV[3];
         
-        
-        /*      int icen, negcen;
-         
-         for (icen = 0; icen < 3; icen++)
-         { FetchToken();
-         CenV[icen] = 0;
-         if( CurToken == '-' )
-         {  FetchToken();
-         negcen = True;
-         } else negcen = False;
-         if( CurToken == NumberTok )
-         {  if (negcen )
-	     { CenV[icen] = -TokenValue;
-         } else CenV[icen] = TokenValue;
-         FetchToken();
-         } 
-         if( !(CurToken == ',' && icen < 2) && 
-         !(CurToken == ']' && icen == 2 ))
-         {   CommandError(MsgStrs[ErrSyntax]);
-         return;
-         }
-         }
-         */
         
         FetchBracketedTriple(CenV);
         
@@ -5887,6 +5865,40 @@ int ExecuteCommandOne( int * restore )
             
         case(RefreshTok):    RefreshScreen();
                              ReDrawFlag = NextReDrawFlag; break;
+                             
+        case(AlignTok):
+            FetchToken();
+            if (CurToken != NumberTok) {
+                CommandError(MsgStrs[ErrBadArg]);
+                break;
+            }
+            if (TokenValue < 1 || TokenValue > NumMolecules
+                || TokenValue-1 == MoleculeIndex) {
+                CommandError(MsgStrs[ErrBadArg]);
+                break;
+            }
+        {
+            double rmsd;
+            CQRQuaternion q;
+            CV3Vector trans;
+            int seqrange;
+            double mindist, maxdist;
+            int kabsch;
+            int byatom;
+            int bybond;
+            
+            seqrange = 5;
+            mindist = 0.5;
+            maxdist = 7.5;
+            kabsch = 1;
+            byatom = 1;
+            bybond = 1;
+            
+            AlignToMolecule(TokenValue-1,&rmsd,&q, &trans, seqrange, mindist, maxdist, kabsch, byatom, bybond);
+            fprintf(stderr," rmsd %g\n",rmsd);
+        }
+            break;
+            
             
             
         case(ZapTok):        FetchToken();
@@ -6874,6 +6886,28 @@ int ExecuteCommandOne( int * restore )
                 ReDrawFlag |= RFRefresh;
                 SetVanWaalRadius( SphereFlag );
             } else CommandError(MsgStrs[ErrBadArg]);
+            break;
+            
+        case(FieldTok):
+            FetchToken();
+            if( CurToken==FalseTok )
+            {   ReDrawFlag |= RFRefresh;
+                DisableField();
+            } else if( CurToken=='[' )
+            {
+            	Long Field[3];
+            	FetchBracketedTriple(Field);
+#ifdef INVERT
+                Field[1] = -Field[1];
+#endif
+                Field[2] = -Field[2];
+                SetFieldValue(Field);
+                ReDrawFlag |= RFRefresh;
+            } else if( (CurToken==TrueTok) || !CurToken )
+            {   ReDrawFlag |= RFRefresh;
+                SetOneFieldValue(NULL,NULL,False);
+            } else CommandError(MsgStrs[ErrBadArg]);
+            RefreshScreen();
             break;
             
         case(StarTok):

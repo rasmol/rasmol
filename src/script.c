@@ -813,7 +813,8 @@ static void WriteScriptAtoms( void )
     register int same,init;
     register int cpk=0,cpknew=0,vdw=0;
     register int col=0,rad=0;
-    register int prevflag,staron,sphereon;
+    register int prevflag,staron,sphereon,fieldon;
+    long     auxorg[3];
 
     fputs("\n# Atoms\n",OutFile);
 
@@ -962,6 +963,76 @@ static void WriteScriptAtoms( void )
     } else
     {   WriteScriptAll();
         fputs("spacefill off\n",OutFile);
+    }
+     
+     
+    fieldon = False;
+    if( FieldFlag )
+    {   same = True;
+        init = False;
+        prevflag = 0;
+        ForEachAtom
+	    {
+            if( !init )
+            {   auxorg[0] = auxorg[1]= auxorg[2] = 0;
+                if (aptr->flag&(FieldFlag)) {
+                    auxorg[0] = aptr->auxxorg;
+                    auxorg[1] = aptr->auxyorg;
+                    auxorg[2] = aptr->auxzorg;
+                    init = True;
+                    prevflag = aptr->flag&(FieldFlag);
+                } else {
+                  if ( (prevflag == (aptr->flag&(FieldFlag)))
+                      && (prevflag && auxorg[0] == aptr->auxxorg &&
+                    auxorg[1] == aptr->auxyorg &&
+                    auxorg[2] == aptr->auxzorg )) {
+                      last = aptr->serno;
+                  } else {
+                    if ( prevflag ) {
+                    	WriteScriptBetween(first,last);
+                        if (auxorg[0] !=0 || auxorg[1] !=0 || auxorg[2] !=0) {
+                          fieldon = True;
+#ifdef INVERT
+                          fprintf(OutFile,"field [%ldm%ld,%ld]\n", auxorg[0], -auxorg[1], -auxorg[2]);
+#else
+                          fprintf(OutFile,"field [%ldm%ld,%ld]\n", auxorg[0], auxorg[1], -auxorg[2]);
+#endif
+                        } else {
+                          if (fieldon) {
+                              fieldon = False;
+                              fputs("field off\n",OutFile);
+                          	
+                          }
+                        	
+                        }
+                    }
+                  	
+                  }
+                	
+                }
+                prevflag = aptr->flag&(FieldFlag);
+                auxorg[0] = auxorg[1]= auxorg[2] = 0;
+                if (prevflag) {
+                    auxorg[0] = aptr->auxxorg;
+                    auxorg[1] = aptr->auxyorg;
+                    auxorg[2] = aptr->auxzorg;
+                }
+                first = last = aptr->serno;
+                same = False;
+            }
+            
+          }
+        }
+
+        if( !same )
+        {   WriteScriptBetween(first,last);
+        } else WriteScriptAll();
+
+        if( auxorg[0] !=0 || auxorg[1] !=0 || auxorg[2] !=0 ) {
+            if( prevflag&FieldFlag )
+              fprintf(OutFile,"field [%ld,%ld,%ld]\n", auxorg[0], auxorg[1], auxorg[2]);
+        } else {
+          if (fieldon) fputs("field off\n",OutFile); 
     }
         
 }

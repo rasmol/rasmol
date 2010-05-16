@@ -994,6 +994,25 @@ static void DisplaySpaceFill( void )
 }
 
 
+static void DisplayField( void )
+{
+    register Chain __far *chain;
+    register Group __far *group;
+    register RAtom __far *aptr;
+
+    if( UseClipping )
+    {   ForEachAtom
+	    if( aptr->flag&FieldFlag )
+	    ClipTwinVector(aptr->x,aptr->y,aptr->z,aptr->auxx,aptr->auxy,aptr->auxz,aptr->col,aptr->col,
+                        ' ');
+    } else 
+	ForEachAtom
+	    if( aptr->flag&FieldFlag )
+		DrawTwinVector(aptr->x,aptr->y,aptr->z,aptr->auxx,aptr->auxy,aptr->auxz,aptr->col,aptr->col,
+                        ' ');
+}
+
+
 static void DisplayStars( void )
 {
     register Chain __far *chain;
@@ -1611,6 +1630,8 @@ static void RenderFrame( void )
         }
         if( DrawStars )
             DisplayStars();
+        if( DrawField )
+            DisplayField();
 
 	if( !UseSlabPlane || (SlabMode != SlabSection) )
 	{   if( DrawBonds ) 
@@ -2366,6 +2387,7 @@ void ResetRenderer( void )
     DrawStars = False;
     DrawRibbon = False;
     DrawSurf = False;
+    DrawField = False;  MaxVectorField = 0;
 
     SlabMode = SlabClose;
     UseSlabPlane = False;

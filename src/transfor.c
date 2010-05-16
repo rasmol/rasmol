@@ -213,8 +213,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <CVector.h>
 #include <CNearTree.h>
 #include <cqrlib.h>
+
+
 
 #define TRANSFORM
 #include "molecule.h"
@@ -380,9 +383,10 @@ void DetermineClipping( void )
     register int max;
 
     max = 0;
-    if( (DrawAtoms || DrawStars || DrawSurf) && (MaxAtomRadius>max) )
+    if( (DrawAtoms || DrawStars || DrawSurf ) && (MaxAtomRadius>max) )
       max = MaxAtomRadius;
     if( DrawBonds && (MaxBondRadius>max) )  max = MaxBondRadius;
+    if( DrawField && (MaxVectorField>max) ) max = MaxVectorField;
        
     temp = ImageRadius + max;
     if( (YOffset>=temp) && (XOffset>=temp) && (YOffset+temp<YRange) )
@@ -392,6 +396,129 @@ void DetermineClipping( void )
     } else UseScreenClip = True;
 }
 
+void SetOneFieldValue(long field[3], RAtom __far *aptr, int wait) {
+
+    register Chain __far *chain;
+    register Group __far *group;
+    register RAtom __far *ptr;
+    double normsq, maxnormsq;
+    
+    double onormsq = 0;
+    DrawField = True;
+    
+    maxnormsq = ((double)MaxVectorField)*((double)MaxVectorField);
+    
+    if (aptr && field) {
+
+        onormsq = ((double)aptr->auxxorg)*((double)aptr->auxxorg)
+             + ((double)aptr->auxyorg)*((double)aptr->auxyorg)
+             + ((double)aptr->auxzorg)*((double)aptr->auxzorg);
+    	
+        aptr->auxxorg = field[0];
+        aptr->auxyorg = field[1];
+        aptr->auxzorg = field[2];
+        aptr->flag |= FieldFlag;
+
+        normsq = ((double)field[0])*((double)field[0])
+             + ((double)field[1])*((double)field[1])
+             + ((double)field[2])*((double)field[2]);
+    } else {
+    	
+    	onormsq = 0.;
+    	normsq = 0.;
+    }
+    
+             
+             
+    
+    if (normsq >= maxnormsq) {
+    
+        MaxVectorField = (long)rint(sqrt(normsq));
+    	
+    } else {
+    
+        /* If the new value is not the max and the
+           old value could have been the max, we
+           have not been told to wait, we need
+           to recompute */
+    
+        if (!wait && (onormsq >= maxnormsq)) {
+        
+          maxnormsq = normsq;
+        
+          ForEachAtom
+          {  if(ptr != aptr) {
+          	
+            normsq = ((double) ptr->auxxorg)*((double)ptr->auxxorg)
+             + ((double)ptr->auxyorg)*((double)ptr->auxyorg)
+             + ((double)ptr->auxzorg)*((double)ptr->auxzorg);
+            if( normsq>maxnormsq )
+                maxnormsq = normsq;
+            
+              }
+          }
+          
+          MaxVectorField = (long)rint(sqrt(maxnormsq));
+        	
+        }
+ 	
+    }
+         
+    return;
+
+}
+
+
+void SetFieldValue(long field[3]) {
+
+    register Chain __far *chain;
+    register Group __far *group;
+    register RAtom __far *ptr;
+    register int change;
+    double normsq, maxnormsq;
+
+    if( !Database )
+        return;
+    
+    change = False;
+    MaxVectorField = 0;
+    maxnormsq = 0;
+    DrawField = False;
+
+    ForEachAtom
+    {  
+        if( ptr->flag & SelectFlag ) {
+            change = True;
+            ptr->auxxorg = field[0];
+            ptr->auxyorg = field[1];
+            ptr->auxzorg = field[2];
+            ptr->flag |= FieldFlag;
+        } else  {
+            if (ptr->flag & FieldFlag) {
+                normsq = ((double) ptr->auxxorg)*((double)ptr->auxxorg)
+                  + ((double)ptr->auxyorg)*((double)ptr->auxyorg)
+                  + ((double)ptr->auxzorg)*((double)ptr->auxzorg);
+                DrawField = True;
+                if( normsq>maxnormsq ) maxnormsq = normsq;
+            }             
+        }
+    }
+    
+    if (change)  {
+        normsq = ((double)field[0])*((double)field[0])
+             + ((double)field[1])*((double)field[1])
+             + ((double)field[2])*((double)field[2]);
+        if (normsq > maxnormsq) maxnormsq = normsq;
+     }
+
+     if (maxnormsq > 0.) {
+        MaxVectorField = (long)rint(sqrt(maxnormsq));
+        DrawField = True;
+}
+
+     return;
+	
+}
 
 void SetRadiusValue( int rad , int flag)
 {
@@ -414,32 +541,32 @@ void SetRadiusValue( int rad , int flag)
 
     ForEachAtom
         {  incr = (ptr->flag&ExpandFlag)?iProbeRad:0;
-        if( ptr->flag & SelectFlag )
-            {   if( (irad+incr)>MaxAtomRadius )
+        if( ptr->flag & SelectFlag ) {
+            if( (irad+incr)>MaxAtomRadius )
                 MaxAtomRadius = irad+incr;
-		if (flag & SphereFlag )
-		{  ptr->flag |= SphereFlag|(flag&ExpandFlag);
+		    if (flag & SphereFlag ) {
+		        ptr->flag |= SphereFlag|(flag&ExpandFlag);
 		   ptr->flag &= ~(StarFlag|TouchFlag);
-		} else if (flag & StarFlag)
-		{  ptr->flag |= StarFlag|(flag&ExpandFlag);
+		    } else if (flag & StarFlag) {
+		        ptr->flag |= StarFlag|(flag&ExpandFlag);
                    ptr->flag &= ~(SphereFlag|TouchFlag);
-                } else if (flag & TouchFlag)
-                {  ptr->flag |= TouchFlag|(flag&ExpandFlag);
+            } else if (flag & TouchFlag) {
+                ptr->flag |= TouchFlag|(flag&ExpandFlag);
                    ptr->flag &= ~(SphereFlag|StarFlag);
 			}
             ptr->radius = rad;
             ptr->irad = irad;
             change = True;
-        } else if( ptr->flag & SphereFlag )
-        {	DrawAtoms = True;
+        } else if( ptr->flag & SphereFlag ) {
+        	DrawAtoms = True;
             if( (ptr->irad+incr)>MaxAtomRadius )
                 MaxAtomRadius = ptr->irad+incr;
-        } else if( ptr->flag & StarFlag )
-		{	DrawStars = True;
+        } else if( ptr->flag & StarFlag ) {
+        	DrawStars = True;
             if( (ptr->irad+incr)>MaxAtomRadius )
                 MaxAtomRadius = ptr->irad+incr;
-        } else if( ptr->flag & TouchFlag )
-              {       DrawSurf = True;
+        } else if( ptr->flag & TouchFlag ) {
+            DrawSurf = True;
             if( (ptr->irad+incr)>MaxAtomRadius )
                 MaxAtomRadius = ptr->irad+incr;
         }
@@ -550,8 +677,8 @@ void SetVanWaalRadius( int flag )
 			} else if ( flag&StarFlag )
 			{	ptr->flag |= StarFlag;
 				ptr->flag &= ~(SphereFlag|TouchFlag);
-			} else 
-                          {       ptr->flag |= TouchFlag;
+			} else {  
+		        ptr->flag |= TouchFlag;
                                   ptr->flag &= ~(SphereFlag | StarFlag);
 			}
             if (flag&ExpandFlag)
@@ -596,6 +723,43 @@ void SetVanWaalRadius( int flag )
         VoxelsClean = False;
         BucketFlag = False;
     }
+}
+
+
+void DisableField( void ) {
+    register Chain __far *chain;
+    register Group __far *group;
+    register RAtom __far *ptr;
+    double maxnormsq;
+    double normsq;
+    int odf;
+
+    if( !Database )
+        return;
+
+    MaxVectorField = 0;
+    odf = DrawField;
+    DrawField = False;
+    maxnormsq = 0.;
+    
+    ForEachAtom
+        {  
+            if( !(ptr->flag&SelectFlag) ) {
+                if( ptr->flag&FieldFlag) {
+                    normsq = ((double)(ptr->auxxorg))*((double)(ptr->auxxorg))
+                         + ((double)(ptr->auxyorg))*((double)(ptr->auxyorg))
+                         + ((double)(ptr->auxzorg))*((double)(ptr->auxzorg));
+                if (normsq > maxnormsq) maxnormsq = normsq;
+                if (odf) DrawField = True;
+                } 
+            } else if( ptr->flag&FieldFlag ) {
+                ptr->flag &= ~FieldFlag;
+            }
+        }
+
+    DetermineClipping();
+    VoxelsClean = False;
+    BucketFlag = False;
 }
 
 
@@ -3248,6 +3412,12 @@ void InitialTransform( void )
         ptr->fxorg = 0;
         ptr->fyorg = 0;
         ptr->fzorg = 0;
+        ptr->auxxorg = 0;
+        ptr->auxyorg = 0;
+        ptr->auxzorg = 0;
+        ptr->auxx = 0;
+        ptr->auxy = 0;
+        ptr->auxz = 0;
     }
 
     if( Offset > 37836 )
@@ -3867,6 +4037,13 @@ static void ApplyTransformOne( void )
                 z = ptr->zorg + ptr->fzorg - CenZ;
                 ptr->y = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
                 ptr->z = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                if (ptr->flag & FieldFlag) {
+                	x+= ptr->auxxorg;
+                	y+= ptr->auxyorg;
+                	z+= ptr->auxzorg;
+                	ptr->auxy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
+                	ptr->auxz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatY[2])+ZOffset;
+                }
             }
             break;
 
@@ -3877,6 +4054,13 @@ static void ApplyTransformOne( void )
                 z = ptr->zorg + ptr->fzorg - CenZ;
                 ptr->x = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
                 ptr->z = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                if (ptr->flag & FieldFlag) {
+                	x+= ptr->auxxorg;
+                	y+= ptr->auxyorg;
+                	z+= ptr->auxzorg;
+                	ptr->auxx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
+                	ptr->auxz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                }
             }
             break;
 
@@ -3887,6 +4071,13 @@ static void ApplyTransformOne( void )
                 z = ptr->zorg + ptr->fzorg - CenZ;
                 ptr->x = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
                 ptr->y = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
+                if (ptr->flag & FieldFlag) {
+                	x+= ptr->auxxorg;
+                	y+= ptr->auxyorg;
+                	z+= ptr->auxzorg;
+                	ptr->auxx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
+                	ptr->auxy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
+                }
             }
             break;
 
@@ -3901,6 +4092,14 @@ static void ApplyTransformOne( void )
                     ptr->x = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
                     ptr->y = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
                     ptr->z = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                    if (ptr->flag & FieldFlag) {
+                	    x+= ptr->auxxorg;
+                	    y+= ptr->auxyorg;
+                	    z+= ptr->auxzorg;
+                	    ptr->auxx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
+                	    ptr->auxy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
+                	    ptr->auxz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                    }
                     if( ptr->flag&(SphereFlag|StarFlag|TouchFlag|ExpandFlag) )
                     {   ptr->irad = (int)(Scale*(Real)(ptr->radius));
                         if( ptr->irad>MaxAtomRadius )
@@ -3920,6 +4119,14 @@ static void ApplyTransformOne( void )
                     ptr->x = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
                     ptr->y = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
                     ptr->z = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                    if (ptr->flag & FieldFlag) {
+                	    x+= ptr->auxxorg;
+                	    y+= ptr->auxyorg;
+                	    z+= ptr->auxzorg;
+                	    ptr->auxx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
+                	    ptr->auxy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
+                	    ptr->auxz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                    }
                 }
 
             if( ReDrawFlag & ( RFMagnify | RFZoom ) )
@@ -4095,3 +4302,458 @@ void InitialiseTransform( void )
     MarkAtoms = 0;
 }
 
+/*  Functions to process alignments */
+
+void TestKabsch( const CVectorHandle /*CV3Vector */ v1, const CVectorHandle /*CV3Vector */ v2 )
+{
+    CV3Matrix mrot;
+    CQRQuaternion qrot;
+    CVectorHandle /* double[3] */ x1, x2;
+    int i, imax;
+    double mov[3], ref[3], U[3][3];
+    double rmsd;
+    double anormsq;
+    double costh;
+    double sinth;
+
+    CVectorCreate(&x1,sizeof(double[3]),1);
+    CVectorCreate(&x2,sizeof(double[3]),1);
+    
+    for ( i=0; i<CVectorSize(v1) && i<CVectorSize(v2); ++i )
+    {
+        CV3VectorHandle vt1,vt2;
+        vt1 = (CV3VectorHandle)(CVectorElementAt(v1,i));
+        vt2 = (CV3VectorHandle)(CVectorElementAt(v2,i));
+        CVectorAddElement(x1,&(vt1->vec));
+        CVectorAddElement(x2,&(vt2->vec));
+    }
+    
+    imax = i;
+    
+    for (i=0; i<CVectorSize(v1) && i < 5; i++) {
+        fprintf( stdout," atoms %d, [%g,%g,%g] [%g,%g,%g]\n",i,
+         ((double *) CVectorElementAt(x1,i))[0],  ((double *) CVectorElementAt(x1,i))[1], ((double *) CVectorElementAt(x1,i))[2],
+         ((double *) CVectorElementAt(x2,i))[0],  ((double *) CVectorElementAt(x2,i))[1], ((double *) CVectorElementAt(x2,i))[2]
+          /* x1[i][0],x1[i][1],x1[i][2],x2[i][0],x2[i][1],x2[i][2] */);
+    }
+    /* calculate_rotation_rmsd( x1,x2, imax, mov, ref, U, &rmsd )*/;
+    calculate_rotation_rmsd( ((double *)(x1->array)),((double *)(x2->array)), imax, mov, ref, U, &rmsd );
+    fprintf( stdout, "rmsd from Kabsch %f\n", rmsd );
+    fprintf( stdout, "rotation matrix:\n [[%g %g %g]\n  [%g %g %g]\n  [%g %g %g]]\n",
+            U[0][0],U[0][1],U[0][2],
+            U[1][0],U[1][1],U[1][2],
+            U[2][0],U[2][1],U[2][2]);
+    CV3M_msssssssssSet(mrot,U[0][0],U[0][1],U[0][2],
+                       U[1][0],U[1][1],U[1][2],
+                       U[2][0],U[2][1],U[2][2]);
+    fprintf( stdout, "rot CV3Matrix:\n %g %g %g %g %g %g %g %g %g\n",
+            mrot.mat[0], mrot.mat[1], mrot.mat[2], mrot.mat[3], mrot.mat[4], mrot.mat[5], mrot.mat[6], mrot.mat[7], mrot.mat[8]);  
+    CV3Matrix2Quaternion(&qrot,&mrot);
+    fprintf( stdout, "rotation quaternion:\n [%g %g %g %g]\n",qrot.w,qrot.x,qrot.y,qrot.z);
+    anormsq=qrot.x*qrot.x+qrot.y*qrot.y+qrot.z*qrot.z;
+    sinth = sqrt(anormsq);
+    costh = qrot.w;
+    if (sinth>0.) {
+        if (qrot.x+qrot.y+qrot.z < 0.) {
+            fprintf( stdout, "axis:\n [%g %g %g]\n",-qrot.x/sinth,-qrot.y/sinth,-qrot.z/sinth);
+            fprintf( stdout, "angle: %g\n", -2.*atan2(sinth,costh)*45./atan2(1.,1.));            
+        } else { 
+            fprintf( stdout, "axis:\n [%g %g %g]\n",qrot.x/sinth,qrot.y/sinth,qrot.z/sinth);
+            fprintf( stdout, "angle: %g\n", 2.*atan2(sinth,costh)*45./atan2(1.,1.));
+        }
+    } else {
+        fprintf( stdout, "axis:\n [0 0 0]\n");
+        fprintf( stdout, "angle: 0\n");
+    }
+    CVectorFree(&x1);
+    CVectorFree(&x2);
+}
+
+
+/*  Gather the selected atoms and groups from the current molecule */
+
+void GatherSelected(CVectorHandle /* RAtom * */ selAtoms, CVectorHandle /* Group * */ selGroups ) {
+    register Chain __far *chain;
+    Group __far *group;
+    RAtom __far *ptr;
+
+    ForEachAtom {
+        if (ptr->flag & SelectFlag && selAtoms) {
+            CVectorAddElement(selAtoms,&ptr);
+        }
+        if (ptr->flag & SelectFlag && selGroups) {
+            CVectorAddElement(selGroups,&group);
+        }
+        
+    }
+    return;
+}
+
+    /* Apply a translation and a rotation around a given center to the current molecule */
+    
+void ApplyQTXform (CQRQuaternionHandle qRotToMolecule, 
+                       CV3VectorHandle vTransToMolecule,
+                       CV3VectorHandle vCenter) {
+    register Chain __far *chain;
+    register Group __far *group;
+    register RAtom __far *ptr;
+    CV3Vector curpos;
+    CV3Vector vtemp;
+    CV3Vector vshift;
+    CV3Matrix rotmat;
+    
+    CV3M_mqQuaternion2Matrix(rotmat,*qRotToMolecule);
+    CV3M_vvvAdd(vshift,*vCenter,*vTransToMolecule);
+    
+    ForEachAtom {
+        curpos.vec[0] = (double)(ptr->xorg + ptr->fxorg + OrigCX)/250.0
+        +(double)(ptr->xtrl)/10000.0;
+#ifdef INVERT
+        curpos.vec[1] = -((double)(ptr->yorg + ptr->fyorg + OrigCY)/250.0
+                          -(double)(ptr->ytrl)/10000.0);
+#else
+        curpos.vec[1] = (double)(ptr->yorg + ptr->fyorg + OrigCY)/250.0
+                          +(double)(ptr->ytrl)/10000.0;
+#endif
+        curpos.vec[2] = -((double)(ptr->zorg + ptr->fzorg + OrigCZ)/250.0
+                          -(double)(ptr->ztrl)/10000.0);
+        CV3M_vvvSubtract(curpos,curpos,*vCenter);
+        CV3M_vmvMultiply(vtemp,rotmat,curpos);
+        CV3M_vvvAdd(vtemp,vtemp,vshift);
+        ptr->fxorg = rint(vtemp.vec[0]*250.)-OrigCX-ptr->xorg;
+#ifdef INVERT
+        ptr->fyorg = -rint(vtemp.vec[1]*250.)-OrigCY-ptr->yorg;
+#else
+        ptr->fyorg = rint(vtemp.vec[1]*250.)-OrigCY-ptr->yorg;
+#endif
+        ptr->fzorg = -rint(vtemp.vec[2]*250.)-OrigCZ-ptr->zorg;
+    }
+    return;
+}
+    
+/* Get the transform to align the current molecule to the given
+   molecule.  Works on the world coordinates with bond rotations
+   but without screen rotations */
+
+int AlignToMolecule(int molnum, double * rmsd, 
+                    CQRQuaternionHandle qRotToMolecule, 
+                    CV3VectorHandle vTransToMolecule,
+                    int seqrange, double mindist, 
+                    double maxdist, int kabsch,
+                    int byatom, int bybond ) {
+    
+    CVectorHandle /* RAtom * */ selAtomsLocal;
+    CVectorHandle /* RAtom * */ selAtomsRemote;
+    CVectorHandle /* Group * */ selGroupsLocal;
+    CVectorHandle /* Group * */ selGroupsRemote;
+    CVectorHandle /* CV3Vector */ vlistLocal, vlistRemote, vlistRot; /* coordinate lists to align */
+    CVectorHandle /* short */     glistLocal, glistRemote;           /* matching residue numbers */
+    CVectorHandle /* CV3Plane */ planeList; /* list of planes */
+    CVectorHandle /* CQRQuaternion */ quatList; /* list of quaternions */
+    CV3Vector origc1, origc2;
+    CV3Vector shiftLocal;
+    CV3Vector comLocal, comRemote;
+    CV3VectorHandle tvec;
+    CQRQuaternion qsum;
+    CV3Matrix rotmat;
+    CV3Vector rotaxis;
+    int MoleculeIndexSave;
+    int ii;
+    int count;
+    
+    int chainCountLocal;
+    int chainCountRemote;
+    int chainCountCommon;
+    
+    double sum=0.0;
+    double cosTerm = 0.0;
+    double sinTerm = 0.0;
+    double angle;
+    double angleDegrees;
+    
+    
+    double qnorm,qnormsq;
+    double vnormsq, vnormsqmax;
+    
+    if (seqrange < 0) seqrange=0;
+    
+    qRotToMolecule->w=0.; qRotToMolecule->x=0.; qRotToMolecule->y=0.; qRotToMolecule->z=0.; 
+    if (molnum < 0 || molnum >=NumMolecules) return -1;
+    if (molnum == MoleculeIndex) return 1;
+    
+    CVectorCreate( &selAtomsLocal, sizeof (RAtom *), 1);
+    CVectorCreate( &selAtomsRemote, sizeof (RAtom *), 1);
+    CVectorCreate( &selGroupsLocal, sizeof (Group *), 1);
+    CVectorCreate( &selGroupsRemote, sizeof (Group *), 1);
+    GatherSelected( selAtomsLocal, selGroupsLocal );
+    CV3M_vsssSet(origc1,OrigCX,OrigCY,OrigCZ);
+    MoleculeIndexSave = MoleculeIndex;
+    SwitchMolecule(molnum);
+    GatherSelected( selAtomsRemote, selGroupsRemote );
+    CV3M_vsssSet(origc2,OrigCX,OrigCY,OrigCZ);
+    
+    SwitchMolecule( MoleculeIndexSave );
+    
+    /* Now transfer the current coordinate information to vlist1 and vlist2 */
+    
+    CVectorCreate(&vlistLocal,sizeof(CV3Vector),1);
+    CVectorCreate(&vlistRemote,sizeof(CV3Vector),1);
+    CVectorCreate(&glistLocal,sizeof(short),1);
+    CVectorCreate(&glistRemote,sizeof(short),1);
+    CVectorCreate(&vlistRot,sizeof(CV3Vector),1);
+    
+    for (ii=0; ii<CVectorSize(selAtomsLocal);ii++) {
+        CV3Vector vtemp;
+        RAtom * ptemp;
+        ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
+        vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origc1.vec[0])/250.0
+                         +(double)(ptemp->xtrl)/10000.0;
+#ifdef INVERT
+        vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origc1.vec[1])/250.0
+                         -(double)(ptemp->ytrl)/10000.0);
+#else
+        vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origc1.vec[1])/250.0
+                         +(double)(ptemp->ytrl)/10000.0;
+#endif
+        vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origc1.vec[2])/250.0
+                         -(double)(ptemp->ztrl)/10000.0);
+        CVectorAddElement(vlistLocal,&vtemp);
+        CVectorAddElement(glistLocal,&((*(Group * *)CVectorElementAt(selGroupsLocal,ii))->serno));
+    }
+    for (ii=0; ii<CVectorSize(selAtomsRemote);ii++) {
+        CV3Vector vtemp;
+        RAtom * ptemp;
+        ptemp = *(RAtom * *)CVectorElementAt(selAtomsRemote,ii);
+        vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origc2.vec[0])/250.0
+        +(double)(ptemp->xtrl)/10000.0;
+#ifdef INVERT
+        vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origc2.vec[1])/250.0
+                         +(double)(ptemp->ytrl)/10000.0);
+#else
+        vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origc2.vec[1])/250.0
+        +(double)(ptemp->ytrl)/10000.0;
+#endif
+        vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origc2.vec[2])/250.0
+                         +(double)(ptemp->ztrl)/10000.0);
+        CVectorAddElement(vlistRemote,&vtemp);
+        CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,ii))->serno));
+    }
+    
+    CV3GetCenterOfMass(&comLocal,vlistLocal); /* get center of mass local */
+    CV3GetCenterOfMass(&comRemote,vlistRemote); /* get center of mass remote */
+    CV3M_vvvSubtract(*vTransToMolecule,comRemote,comLocal);
+    
+    chainCountLocal = CVectorSize(vlistLocal);
+    chainCountRemote = CVectorSize(vlistRemote);
+    chainCountCommon = chainCountLocal<chainCountRemote?chainCountLocal:chainCountRemote;
+    
+ 
+    if (kabsch) TestKabsch(vlistRemote,vlistLocal);
+    
+    /* Shift each list to its center of mass and find the
+     maximal radius vector */
+    
+    CV3M_vsssSet(shiftLocal,0.0,0.0,0.0);
+    vnormsqmax =0.;
+    
+    for (ii=0; ii < chainCountLocal; ii++) {
+        tvec = (CV3VectorHandle)CVectorElementAt(vlistLocal,ii);
+        CV3M_vvvSubtract(*tvec,*tvec,comLocal);
+        CV3M_svNormsq(vnormsq,*tvec);
+        if (vnormsq > vnormsqmax) {
+            CV3M_vvCopy(shiftLocal,*tvec);
+            vnormsqmax = vnormsq;
+        }
+    }
+    
+    for (ii=0; ii < chainCountRemote; ii++) {
+        tvec = (CV3VectorHandle)CVectorElementAt(vlistRemote,ii);
+        CV3M_vvvSubtract(*tvec,*tvec,comRemote);
+        CV3M_svNormsq(vnormsq,*tvec);
+        if (vnormsq > vnormsqmax) {
+            CV3M_vvCopy(shiftLocal,*tvec);
+            vnormsqmax = vnormsq;
+        }
+    }
+    
+    CVectorCreate(&quatList,sizeof(CQRQuaternion),1);
+    CQRMSet(qsum,1.,0.,0.,0.);
+    count = 0;
+    
+    /* If byatom is specified, compute rotation by atom */
+    
+    /* Get a small fraction of the radius vector to use to
+       separate overlapping atoms */
+    
+    CV3M_vvsMultiply(shiftLocal,shiftLocal,1.e-9);       
+    
+    /* compute the plane between each atom and its match in the
+     remote molecule */
+    
+    CVectorCreate(&planeList,sizeof(CV3Plane),1);
+    
+    for (ii=0; ii < chainCountCommon; ii++) {
+    	CV3Plane ptemp;
+        CV3Vector vtemp1,vtemp2;
+        CV3VectorHandle vl1, vl2;
+        vl1 = (CV3VectorHandle)CVectorElementAt(vlistLocal,ii);
+        vl2 = (CV3VectorHandle)CVectorElementAt(vlistRemote,ii);
+        CV3VectorSubtract(&vtemp1,vl1,vl2);
+        if (CV3dNormsq(&vtemp1)< 1.e-10) {
+            CV3M_vvvAdd(vtemp1,vtemp1,shiftLocal);
+        }
+        CV3VectorAdd(&vtemp2,vl1,vl2);
+        CV3VectorScalarDivide(&vtemp2,&vtemp2,2.);
+        CV3PlaneFrom2Vectors(&ptemp, &vtemp1, &vtemp2);
+        CVectorAddElement(planeList,&ptemp);
+    }
+    
+    /* compute the quaternions for atoms within a reasonable distance
+     of each atom */
+    
+    
+    for (ii=0; ii < chainCountCommon-1; ii++) {
+        int jj;
+        double dist1;
+        double dist2;
+        double lnorm;
+        short resnumLocal, resnumRemote;
+        CV3Vector vtemp1,vtemp2;
+        CV3VectorHandle vh1, vh2;
+        CV3VectorHandle v1Local, v2Local, v1Remote, v2Remote;
+        CV3Vector vmidLocal, vmidRemote, vmidaxis;
+        CV3PlaneHandle ph1, ph2;
+        CV3Line l;
+        
+        CV3Vector vt1,vt2;
+        int jcount;
+        CQRQuaternion q;
+        v1Local = (CV3VectorHandle)CVectorElementAt(vlistLocal,ii);
+        v1Remote = (CV3VectorHandle)CVectorElementAt(vlistRemote,ii);
+        resnumLocal = *(short *)CVectorElementAt(glistLocal,ii);
+        resnumRemote = *(short *)CVectorElementAt(glistRemote,ii);
+        
+        jcount = 0;
+        for (jj=ii+1; jj < chainCountCommon; jj++) {
+            
+            if (resnumLocal - (*(short *)CVectorElementAt(glistLocal,jj)) > seqrange
+                || resnumLocal - (*(short *)CVectorElementAt(glistLocal,jj)) < -seqrange) break; 
+            if (resnumRemote - (*(short *)CVectorElementAt(glistRemote,jj)) > seqrange
+                || resnumRemote - (*(short *)CVectorElementAt(glistRemote,jj)) < -seqrange) break; 
+            v2Local = (CV3VectorHandle)CVectorElementAt(vlistLocal,jj);
+            v2Remote = (CV3VectorHandle)CVectorElementAt(vlistRemote,jj);
+            CV3M_vvvSubtract(vtemp1,*v1Local,*v2Local);
+            CV3M_svNorm(dist1,vtemp1);
+            CV3M_vvvSubtract(vtemp2,*v1Remote,*v2Remote);
+            CV3M_svNorm(dist2,vtemp2);
+            if (dist1 < CV3MINNORM || dist2 < CV3MINNORM) continue;
+            if (dist1/dist2 < .90 || dist2/dist1 < .90) continue;
+            if (dist1 < mindist || dist1 > maxdist ) continue;
+            
+            ph1 = (CV3PlaneHandle)CVectorElementAt(planeList,ii);
+            ph2 = (CV3PlaneHandle)CVectorElementAt(planeList,jj);
+            CV3M_vvvAdd(vmidLocal,*v1Local,*v2Local);
+            CV3VectorScalarDivide(&vmidLocal,&vmidLocal,2.0);
+            CV3M_vvvAdd(vmidRemote,*v1Remote,*v2Remote);
+            CV3VectorScalarDivide(&vmidRemote,&vmidRemote,2.0);
+            CV3M_vvvCross(vmidaxis,vmidRemote,vmidLocal);
+            
+            jcount++;
+            if (jcount > 3) break;
+            CV3M_lppIntersect(l,*ph1,*ph2);
+            
+            CV3M_svNorm(lnorm,l.m_lineAxis);
+            if (lnorm == 0.0) continue;
+            if (CV3dNormsq(&vmidaxis)==0.0) continue;
+            vh1 = (CV3VectorHandle)CVectorElementAt(vlistLocal,ii);
+            vh2 = (CV3VectorHandle)CVectorElementAt(vlistRemote,ii);
+
+            if (CV3dDot(&l.m_lineAxis,&vmidaxis)<0.){
+                CV3M_vvNegate(l.m_lineAxis,l.m_lineAxis);
+            }
+            CV3M_vvvCross(vt1,l.m_lineAxis,vmidLocal);
+            CV3M_vvvCross(vt2,l.m_lineAxis,vmidRemote);
+            CV3M_svvAngle(angle,vt1,vt2);
+            
+            CQRMSet(q,cos(angle/2.0),
+                    sin(-angle/2.0) * l.m_lineAxis.vec[0],
+                    sin(-angle/2.0) * l.m_lineAxis.vec[1],
+                    sin(-angle/2.0) * l.m_lineAxis.vec[2]);
+            
+            fprintf(stderr," q = [%g, %g, %g, %g], angle %g \n", q.w,q.x,q.y,q.z,angle*45./atan2(1.,1.));
+            
+            if ( fabs(q.x)+fabs(q.y)+fabs(q.z) != 0 ) {
+                
+                CQRNormsq(&qnormsq,&q);
+                CQRMScalarMultiply(q,q,1./sqrt(qnormsq));
+            }
+            CQRHLERP (&qsum, &qsum, &q,(double)count,1.);
+            CQRNormsq(&qnormsq,&qsum);
+            CQRMScalarMultiply(qsum,qsum,1./sqrt(qnormsq))
+            CVectorAddElement(quatList,&q);
+            count++;
+        }
+    	
+    }
+    
+    CQRMNormsq(qnormsq,qsum);
+    
+    if ( qnormsq == 0.0  )
+    {
+        CQRMSet (qsum, 0.0, 0.0, 0.0, 0.0 );
+        *rmsd = DBL_MAX;
+        qnorm = 0.;
+    }
+    else
+    {
+        qnorm = sqrt( qnormsq );
+        CQRMScalarMultiply(qsum,qsum,1/qnorm);
+}
+
+    /* Calculate the standard deviation of the atom fits */
+    sum = 0.0;
+    cosTerm = qsum.w;
+    sinTerm = sqrt( qsum.x*qsum.x+qsum.y*qsum.y+qsum.z*qsum.z );
+    CV3M_vsssSet(rotaxis,0.,0.,0.);
+    if (sinTerm > 0.) {
+        CV3M_vsssSet(rotaxis,-qsum.x/sinTerm,-qsum.y/sinTerm,-qsum.z/sinTerm);
+    }
+    angleDegrees = -2.0*atan2( sinTerm, cosTerm ) * 45.0 / atan2(1.0,1.0);
+    if (qsum.x+qsum.y+qsum.z > 0.0) {
+        angleDegrees = -angleDegrees;
+        CV3M_vsssSet(rotaxis,qsum.x/sinTerm,qsum.y/sinTerm,qsum.z/sinTerm);
+    }
+    fprintf( stdout, "angleDegrees %g\n", angleDegrees );
+    fprintf( stdout, "axis [%g, %g, %g]\n",  rotaxis.vec[0], rotaxis.vec[1], rotaxis.vec[2] );
+    
+    
+    fprintf( stdout, "qsum %f %f %f %f\n", qsum.w, qsum.x, qsum.y, qsum.z );
+    
+    CV3M_mqQuaternion2Matrix(rotmat,qsum);
+    
+    for( ii=0; ii<chainCountCommon; ++ii )
+    {
+        CV3Vector vtemp;
+        CV3M_vmvMultiply(vtemp,rotmat,*((CV3VectorHandle)CVectorElementAt(vlistLocal,ii)));
+        CVectorSetElement(vlistRot,&vtemp,ii);
+        CV3M_vvvSubtract(vtemp,*((CV3VectorHandle)CVectorElementAt(vlistRemote,ii)),*((CV3VectorHandle)CVectorElementAt(vlistRot,ii)));
+        CV3M_svNormsq(vnormsq,vtemp);
+        sum += vnormsq;
+    }
+    *rmsd = sqrt(sum/chainCountCommon); /* RETURN PARAMETER */
+    
+    CQRMCopy(*qRotToMolecule,qsum);
+    
+    ApplyQTXform (qRotToMolecule, 
+                  vTransToMolecule,
+                  &comLocal);
+    
+    CVectorFree(&planeList);
+    CVectorFree(&vlistRot);
+    CVectorFree(&vlistLocal);
+    CVectorFree(&vlistRemote);
+    CVectorFree(&selAtomsLocal);
+    CVectorFree(&selAtomsRemote);
+    
+    return 0;
+}

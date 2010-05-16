@@ -989,6 +989,13 @@ RAtom __far *CreateAtom( void )
     ptr->fxorg = 0;
     ptr->fyorg = 0;
     ptr->fzorg = 0;
+    ptr->auxxorg = 0;
+    ptr->auxyorg = 0;
+    ptr->auxzorg = 0;
+    ptr->auxx = 0;
+    ptr->auxy = 0;
+    ptr->auxz = 0;
+
     return ptr;
 }
 
