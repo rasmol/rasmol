@@ -94,7 +94,7 @@ extern "C" {
     typedef struct { CV3Vector m_planeNormal; CV3Vector m_basePoint; CV3Vector m_centerOfMass; } CV3Plane;
     typedef CV3Plane CV3_FAR * CV3PlaneHandle;
     
-#define CV3MINNORM  1.e-12
+#define CV3MINNORM  1.e-15
 #ifdef CV3_DATA_DEFS
     CV3Vector CV3XAxis = {{1.0,0.0,0.0}};
     CV3Vector CV3YAxis = {{0.0,1.0,0.0}};
@@ -490,7 +490,7 @@ extern "C" {
                                      double vtn; \
                                      CV3M_vvvCross(vtest,(p1).m_planeNormal,(p2).m_planeNormal); \
                                      CV3M_svNormsq(vtn,vtest); \
-                                     if (vtn < 0.005*0.005 ) { \
+                                     if (vtn < 0.0005*0.0005 ) { \
                                        CV3M_lvvSet(lresult,CV3ZeroVector,CV3ZeroVector); \
                                      } else { \
                                        double n11, n12, n13, n21, n22, n23; \

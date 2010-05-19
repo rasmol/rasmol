@@ -531,6 +531,7 @@
 #define FSTok          764
 #define ScaleTok       765
 #define KabschTok      766
+#define LocalTok       767
 
 #define PSTok          EPSFTok
 

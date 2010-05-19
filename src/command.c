@@ -5866,6 +5866,8 @@ int ExecuteCommandOne( int * restore )
         case(RefreshTok):    RefreshScreen();
                              ReDrawFlag = NextReDrawFlag; break;
                              
+        /* align <molnum> {kabsch|local} {none|angles|distance} {translate|centre}*/
+                             
         case(AlignTok):
             FetchToken();
             if (CurToken != NumberTok) {
@@ -5883,19 +5885,80 @@ int ExecuteCommandOne( int * restore )
             CV3Vector trans;
             int seqrange;
             double mindist, maxdist;
-            int kabsch;
-            int byatom;
-            int bybond;
+            int kabsch_local;
+            int none_ang_dist;
+            int molnum;
+            int xlatecen;
             
+            molnum = TokenValue-1;
             seqrange = 5;
             mindist = 0.5;
             maxdist = 7.5;
-            kabsch = 1;
-            byatom = 1;
-            bybond = 1;
+            kabsch_local = 0;
+            none_ang_dist = 0;
+            xlatecen = 0;
             
-            AlignToMolecule(TokenValue-1,&rmsd,&q, &trans, seqrange, mindist, maxdist, kabsch, byatom, bybond);
+            FetchToken();
+            while (CurToken) {
+                 if (CurToken==CentreTok || CurToken==TranslateTok) {
+                    if (!xlatecen) {
+              	  	  xlatecen = CurToken;
+                    } else {
+                      CommandError(MsgStrs[ErrBadArg]);
+              	      break;
+                    }
+                 } else if (CurToken==KabschTok) {
+                    if (!kabsch_local) {
+              	  	  kabsch_local = ALIGN_KABSCH;
+                    } else {
+                      CommandError(MsgStrs[ErrBadArg]);
+              	      break;
+                    }
+              	  } else if (CurToken==LocalTok){
+              	    if (!kabsch_local) {
+              	  	  kabsch_local = ALIGN_LOCAL;
+                    } else {
+                      CommandError(MsgStrs[ErrBadArg]);
+              	      break;
+                    }
+              	  } else if (CurToken==NoneTok){
+              	    if (!none_ang_dist) {
+              	  	  none_ang_dist = ALIGN_NONE;
+                    } else {
+                      CommandError(MsgStrs[ErrBadArg]);
+              	      break;
+                    }
+              	  } else if (CurToken==AngleTok){
+              	    if (!none_ang_dist) {
+              	  	  none_ang_dist = ALIGN_ANGLE;
+                    } else {
+                      CommandError(MsgStrs[ErrBadArg]);
+              	      break;
+                    }
+              	  } else if (CurToken==DistanceTok){
+              	    if (!none_ang_dist) {
+              	  	  none_ang_dist = ALIGN_DISTANCE;
+                    } else {
+                      CommandError(MsgStrs[ErrBadArg]);
+              	      break;
+                    }
+              	  }
+              	  else break;
+                  FetchToken();
+              }
+              if (CurToken) break;
+            if (!kabsch_local) kabsch_local = ALIGN_LOCAL;
+            if (!none_ang_dist) none_ang_dist = ALIGN_DISTANCE;
+            if (xlatecen)  {
+            	XlateCen = (xlatecen==TranslateTok)?True:False;
+            }
+            
+            
+            AlignToMolecule(TokenValue-1,&rmsd,&q, 
+            &trans, seqrange, mindist, maxdist, 
+            kabsch_local,none_ang_dist, XlateCen);
             fprintf(stderr," rmsd %g\n",rmsd);
+            ReDrawFlag |= RFInitial;
         }
             break;
             

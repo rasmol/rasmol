@@ -240,6 +240,12 @@ typedef struct {
 #define Colour2Shade(x)  ((int)((x)-FirstCol)/ColourDepth)
 #define Shade2Colour(x)  ((x)*ColourDepth+FirstCol)
 
+#define ALIGN_KABSCH   1
+#define ALIGN_LOCAL    2
+#define ALIGN_NONE     1
+#define ALIGN_ANGLE    2
+#define ALIGN_DISTANCE 3
+
 
 #ifdef TRANSFORM
 ShadeDesc Shade[LastShade];
@@ -432,11 +438,12 @@ void CentreTransform( int, int, int, int );
 void ResetTransform( void );
 
 void SetLutEntry( int, int, int, int );
-void TestKabsch( const CVectorHandle /*CV3Vector */ v1, const CVectorHandle /*CV3Vector */ v2 );
+void TestKabsch( const CVectorHandle /*CV3Vector */ v1, const CVectorHandle /*CV3Vector */ v2,
+                 CQRQuaternionHandle q );
 void GatherSelected(CVectorHandle /* RAtom * */ selAtoms, CVectorHandle /* Group * */ selGroups  );
 int AlignToMolecule(int molnum, double * rmsd, 
                     CQRQuaternionHandle qRotToMolecule, 
                     CV3VectorHandle vTransToMolecule,
                     int seqrange, double mindist, 
-                    double maxdist, int kabsch,
-                    int byatom, int bybond);
+                    double maxdist, int kabsch_local,
+                    int none_ang_dist, int xlatecen);

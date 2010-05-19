@@ -1071,6 +1071,7 @@ int LookUpKeyword( char *ptr )
              LIGAND               LigandTok
              LIGANDS              LigandTok
              LOAD                 LoadTok
+             LOCAL                LocalTok
              LRSURF               MolSurfTok
              */
             
@@ -1114,7 +1115,10 @@ int LookUpKeyword( char *ptr )
                 case('O'):
                     if( !strcmp(ptr,"AD") ) {
                         return( LoadTok );
+                    } else if( !strcmp(ptr,"CAL") ) {
+                        return( LocalTok );
                     }
+
                     break;
                     
                 case('R'):
