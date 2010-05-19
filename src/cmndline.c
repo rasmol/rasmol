@@ -722,162 +722,162 @@ static void PerformMouseFunc( int func, int delta, int max )
     
     switch( func )
     {   case(MM_ROTX):  dvalue = ((Real)(2*delta))/((Real)(max));
-                        if ( (RotMode == RotBond) && BondSelected) {
-                          WrapDial( DialBRot, dvalue );
+            if ( (RotMode == RotBond) && BondSelected) {
+                WrapDial( DialBRot, dvalue );
                 BondSelected->BRotValue = DialValue[DialBRot];
                 ReDrawFlag |= RFRotBond;
-                        } else if (MouseMode==MMRasOld) {
-                          dist = PointX-XRange/2;
-                          if (dist < -XRange/8) {
-                            dist += XRange/8;
-                            dist *= 2;
-                            if (dist < -XRange/2) dist=-XRange/2;
-                          } else {
-                            dist -= XRange/8;
-                            if (dist < 0 ) dist = 0;
-                            dist *=2;
-                            if (dist > XRange/2) dist = XRange/2;
-                          }
-                          xcomp = dvalue*(Real)((XRange/2-AbsFun(dist)))/((Real)(XRange/2));
-                          zcomp = dvalue*(Real)(dist)/((Real)(XRange/2));
-                          WrapDial( DialRX, xcomp );
-                          WrapDial( DialRZ, zcomp);
-                          ReDrawFlag |= RFRotateX|RFRotateZ;
-                        } else if (MouseMode==MMRasMol) {
-                            xcomp = ((Real)(2*PointX-XRange))/((Real)(XRange));
-                            ycomp = ((Real)(2*PointY-YRange))/((Real)(YRange));
-                            zcomp = xcomp*xcomp+ycomp*ycomp;
-                            if (zcomp > 1.) {
-                                zcomp = 0.;
-                            } else {
-                                zcomp = sqrt(1.-zcomp);
-                            }
-                            CQRMSet(q3,0.,zcomp,0,xcomp)
-                            CQRMNormsq(nvalue,q3);
-                            if (DialQRot.w==0. && DialQRot.x==0. && DialQRot.y==0 &&DialQRot.z==0) {
-                              if (nvalue==0.) {
-                                  CQRMSet(DialQRot,cos(PI*dvalue/2.),0.,0.,sin(PI*dvalue/2.));
-                              } else {
-                                  nvalue = sqrt(nvalue);
-                                  CQRMSet(DialQRot,cos(PI*dvalue/2.),
-                                          sin(PI*dvalue/2.)*q3.x/nvalue,
-                                          sin(PI*dvalue/2.)*q3.y/nvalue,
-                                          sin(PI*dvalue/2.)*q3.z/nvalue);
-                              }
-                            } else {
-                                if (nvalue==0.) {
-                                    CQRMSet(lrot,cos(PI*dvalue),0.,0.,sin(PI*dvalue));
-                                } else {
-                                    nvalue = sqrt(nvalue);
-                                    CQRMSet(lrot,cos(PI*dvalue/2.),
-                                            sin(PI*dvalue/2.)*q3.x/nvalue,
-                                            sin(PI*dvalue/2.)*q3.y/nvalue,
-                                            sin(PI*dvalue/2.)*q3.z/nvalue);
-                                }
-                                CQRMMultiply(trot,lrot,DialQRot);
-                         	    CQRMCopy(DialQRot,trot);
-                            }
-                            ReDrawFlag |= RFRotateX|RFRotateY|RFRotateZ;
-                        } else {
-                          WrapDial( DialRX, (Real)(2*delta)/max );
-                          ReDrawFlag |= RFRotateX;
-                        }
-                        break;
-                        
-                        case(MM_ROTY):
-                          dvalue = ((Real)(2*delta))/((Real)(max));
-                          if ( (RotMode == RotBond) && BondSelected) {
-                          WrapDial( DialBRot, dvalue );
+            } else if (MouseMode==MMRasOld) {
+                dist = PointX-XRange/2;
+                if (dist < -XRange/8) {
+                    dist += XRange/8;
+                    dist *= 2;
+                    if (dist < -XRange/2) dist=-XRange/2;
+                } else {
+                    dist -= XRange/8;
+                    if (dist < 0 ) dist = 0;
+                    dist *=2;
+                    if (dist > XRange/2) dist = XRange/2;
+                }
+                xcomp = dvalue*(Real)((XRange/2-AbsFun(dist)))/((Real)(XRange/2));
+                zcomp = dvalue*(Real)(dist)/((Real)(XRange/2));
+                WrapDial( DialRX, xcomp );
+                WrapDial( DialRZ, zcomp);
+                ReDrawFlag |= RFRotateX|RFRotateZ;
+            } else if (MouseMode==MMRasMol) {
+                xcomp = ((Real)(2*PointX-XRange))/((Real)(XRange));
+                ycomp = ((Real)(2*PointY-YRange))/((Real)(YRange));
+                zcomp = xcomp*xcomp+ycomp*ycomp;
+                if (zcomp > 1.) {
+                    zcomp = 0.;
+                } else {
+                    zcomp = sqrt(1.-zcomp);
+                }
+                CQRMSet(q3,0.,zcomp,0,xcomp)
+                CQRMNormsq(nvalue,q3);
+                if (DialQRot.w==0. && DialQRot.x==0. && DialQRot.y==0 &&DialQRot.z==0) {
+                    if (nvalue==0.) {
+                        CQRMSet(DialQRot,cos(PI*dvalue/2.),0.,0.,sin(PI*dvalue/2.));
+                    } else {
+                        nvalue = sqrt(nvalue);
+                        CQRMSet(DialQRot,cos(PI*dvalue/2.),
+                                sin(PI*dvalue/2.)*q3.x/nvalue,
+                                sin(PI*dvalue/2.)*q3.y/nvalue,
+                                sin(PI*dvalue/2.)*q3.z/nvalue);
+                    }
+                } else {
+                    if (nvalue==0.) {
+                        CQRMSet(lrot,cos(PI*dvalue),0.,0.,sin(PI*dvalue));
+                    } else {
+                        nvalue = sqrt(nvalue);
+                        CQRMSet(lrot,cos(PI*dvalue/2.),
+                                sin(PI*dvalue/2.)*q3.x/nvalue,
+                                sin(PI*dvalue/2.)*q3.y/nvalue,
+                                sin(PI*dvalue/2.)*q3.z/nvalue);
+                    }
+                    CQRMMultiply(trot,lrot,DialQRot);
+                    CQRMCopy(DialQRot,trot);
+                }
+                ReDrawFlag |= RFRotateX|RFRotateY|RFRotateZ;
+            } else {
+                WrapDial( DialRX, (Real)(2*delta)/max );
+                ReDrawFlag |= RFRotateX;
+            }
+            break;
+            
+        case(MM_ROTY):
+            dvalue = ((Real)(2*delta))/((Real)(max));
+            if ( (RotMode == RotBond) && BondSelected) {
+                WrapDial( DialBRot, dvalue );
                 BondSelected->BRotValue = DialValue[DialBRot];
                 ReDrawFlag |= RFRotBond;
-                        } else if (MouseMode==MMRasOld) {
-                          dist = PointY-YRange/2;
-                          if (dist < -YRange/8) {
-                            dist += YRange/8;
-                            dist *= 2;
-                            if (dist < -YRange/2) dist=-YRange/2;
-                          } else {
-                            dist -= YRange/8;
-                            if (dist < 0 ) dist = 0;
-                            dist *=2;
-                            if (dist > YRange/2) dist = YRange/2;
-                          }
-                          ycomp = dvalue*(Real)((YRange/2-AbsFun(dist)))/((Real)(YRange/2));
+            } else if (MouseMode==MMRasOld) {
+                dist = PointY-YRange/2;
+                if (dist < -YRange/8) {
+                    dist += YRange/8;
+                    dist *= 2;
+                    if (dist < -YRange/2) dist=-YRange/2;
+                } else {
+                    dist -= YRange/8;
+                    if (dist < 0 ) dist = 0;
+                    dist *=2;
+                    if (dist > YRange/2) dist = YRange/2;
+                }
+                ycomp = dvalue*(Real)((YRange/2-AbsFun(dist)))/((Real)(YRange/2));
 #ifdef INVERT
-                          zcomp = dvalue*(Real)(dist)/((Real)(YRange/2));
+                zcomp = dvalue*(Real)(dist)/((Real)(YRange/2));
 #else
-                          zcomp = dvalue*(Real)(-dist)/((Real)(YRange/2));
+                zcomp = dvalue*(Real)(-dist)/((Real)(YRange/2));
 #endif
-                          WrapDial( DialRY, ycomp );
-                          WrapDial( DialRZ, zcomp );
-                          ReDrawFlag |= RFRotateY|RFRotateZ;
-                        } else if (MouseMode==MMRasMol) {
-                            xcomp = ((Real)(2*PointX-XRange))/((Real)(XRange));
-                            ycomp = ((Real)(2*PointY-YRange))/((Real)(YRange));
-                            zcomp = xcomp*xcomp+ycomp*ycomp;
-                            if (zcomp > 1.) {
-                                zcomp = 0.;
-                            } else {
-                                zcomp = sqrt(1.-zcomp);
-                            }
-                            CQRMSet(q3,0.,0.,zcomp,-ycomp);
-                            CQRMNormsq(nvalue,q3);
-                            if (DialQRot.w==0. && DialQRot.x==0. && DialQRot.y==0 &&DialQRot.z==0) {
-                                if (nvalue==0.) {
-                                    CQRMSet(DialQRot,cos(PI*dvalue),0.,0.,sin(PI*dvalue/2.));
-                                } else {
-                                    nvalue = sqrt(nvalue);
-                                    CQRMSet(DialQRot,cos(PI*dvalue/2.),
-                                            sin(PI*dvalue/2.)*q3.x/nvalue,
-                                            sin(PI*dvalue/2.)*q3.y/nvalue,
-                                            sin(PI*dvalue/2.)*q3.z/nvalue);
-                                }
-                            } else {
-                                if (nvalue==0.) {
-                                    CQRMSet(lrot,cos(PI*dvalue/2.),0.,0.,sin(PI*dvalue/2.));
-                                } else {
-                                    nvalue = sqrt(nvalue);
-                                    CQRMSet(lrot,cos(PI*dvalue/2.),
-                                            sin(PI*dvalue/2.)*q3.x/nvalue,
-                                            sin(PI*dvalue/2.)*q3.y/nvalue,
-                                            sin(PI*dvalue/2.)*q3.z/nvalue);
-                                }
-                                CQRMMultiply(trot,lrot,DialQRot);
-                         	    CQRMCopy(DialQRot,trot);
-                            }
-                            ReDrawFlag |= RFRotateX|RFRotateY|RFRotateZ;
-                        }else {
-                          WrapDial( DialRY, (Real)(2*delta)/max );
-                          ReDrawFlag |= RFRotateY;
-                        }
-                        break;
-                        
+                WrapDial( DialRY, ycomp );
+                WrapDial( DialRZ, zcomp );
+                ReDrawFlag |= RFRotateY|RFRotateZ;
+            } else if (MouseMode==MMRasMol) {
+                xcomp = ((Real)(2*PointX-XRange))/((Real)(XRange));
+                ycomp = ((Real)(2*PointY-YRange))/((Real)(YRange));
+                zcomp = xcomp*xcomp+ycomp*ycomp;
+                if (zcomp > 1.) {
+                    zcomp = 0.;
+                } else {
+                    zcomp = sqrt(1.-zcomp);
+                }
+                CQRMSet(q3,0.,0.,zcomp,-ycomp);
+                CQRMNormsq(nvalue,q3);
+                if (DialQRot.w==0. && DialQRot.x==0. && DialQRot.y==0 &&DialQRot.z==0) {
+                    if (nvalue==0.) {
+                        CQRMSet(DialQRot,cos(PI*dvalue),0.,0.,sin(PI*dvalue/2.));
+                    } else {
+                        nvalue = sqrt(nvalue);
+                        CQRMSet(DialQRot,cos(PI*dvalue/2.),
+                                sin(PI*dvalue/2.)*q3.x/nvalue,
+                                sin(PI*dvalue/2.)*q3.y/nvalue,
+                                sin(PI*dvalue/2.)*q3.z/nvalue);
+                    }
+                } else {
+                    if (nvalue==0.) {
+                        CQRMSet(lrot,cos(PI*dvalue/2.),0.,0.,sin(PI*dvalue/2.));
+                    } else {
+                        nvalue = sqrt(nvalue);
+                        CQRMSet(lrot,cos(PI*dvalue/2.),
+                                sin(PI*dvalue/2.)*q3.x/nvalue,
+                                sin(PI*dvalue/2.)*q3.y/nvalue,
+                                sin(PI*dvalue/2.)*q3.z/nvalue);
+                    }
+                    CQRMMultiply(trot,lrot,DialQRot);
+                    CQRMCopy(DialQRot,trot);
+                }
+                ReDrawFlag |= RFRotateX|RFRotateY|RFRotateZ;
+            }else {
+                WrapDial( DialRY, (Real)(2*delta)/max );
+                ReDrawFlag |= RFRotateY;
+            }
+            break;
+            
         case(MM_ROTZ):  WrapDial( DialRZ, (Real)(2*delta)/max );
-                        ReDrawFlag |= RFRotateZ;
-                        break;
-                        
+            ReDrawFlag |= RFRotateZ;
+            break;
+            
         case(MM_ZOOM):  ClampDial( DialZoom, (Real)(2*delta)/max );
-                        ReDrawFlag |= RFZoom;
-                        break;
-                        
+            ReDrawFlag |= RFZoom;
+            break;
+            
         case(MM_TRNX):  ClampDial( DialTX, (Real)delta/max );
-                        ReDrawFlag |= RFTransX|RFTransZ;
-                        break;
-
+            ReDrawFlag |= RFTransX|RFTransZ;
+            break;
+            
         case(MM_TRNY):  ClampDial( DialTY, (Real)delta/max );
-                        ReDrawFlag |= RFTransY|RFTransZ;
-                        break;
-
+            ReDrawFlag |= RFTransY|RFTransZ;
+            break;
+            
         case(MM_CLIP):  ClampDial( DialSlab, (Real)delta/max );
-                        ReDrawFlag |= RFSlab;
-                        UseSlabPlane = True;
-                        UseShadow = False;
-                        break;
-
+            ReDrawFlag |= RFSlab;
+            UseSlabPlane = True;
+            UseShadow = False;
+            break;
+            
         case(MM_DEPT):  ClampDial( DialBClip, (Real)delta/max );
-                        ReDrawFlag |= RFRotate;
-                        UseDepthPlane = True;
-                        break;
+            ReDrawFlag |= RFRotate;
+            UseDepthPlane = True;
+            break;
     }     
 }
 
@@ -921,7 +921,7 @@ void ProcessMouseMove( int x, int y, int stat )
     double SaveValue[10];
     CQRQuaternion SaveQuat;
     int index;
-
+    
     SaveQuat.w =  SaveQuat.x =  SaveQuat.y =  SaveQuat.z =  0;
 
 

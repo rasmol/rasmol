@@ -4790,8 +4790,8 @@ static void ApplyMapAtomSelection(int dontadd, int searchwithin, int SearchRadiu
                 }
      }
 
-        if (CreateAtomTree()) {
-            RasMolFatalExit(MsgStrs[StrMalloc]);
+    if (CreateAtomTree()) {
+        RasMolFatalExit(MsgStrs[StrMalloc]);
     }
     
     
@@ -5960,8 +5960,8 @@ int ExecuteCommandOne( int * restore )
             fprintf(stderr," rmsd %g\n",rmsd);
             ReDrawFlag |= RFInitial;
         }
-            break;
-            
+        break;
+
             
             
         case(ZapTok):        FetchToken();
@@ -6972,7 +6972,7 @@ int ExecuteCommandOne( int * restore )
             } else CommandError(MsgStrs[ErrBadArg]);
             RefreshScreen();
             break;
-            
+
         case(StarTok):
             FetchToken();
             if( CurToken==FalseTok )

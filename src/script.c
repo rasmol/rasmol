@@ -1033,7 +1033,7 @@ static void WriteScriptAtoms( void )
               fprintf(OutFile,"field [%ld,%ld,%ld]\n", auxorg[0], auxorg[1], auxorg[2]);
         } else {
           if (fieldon) fputs("field off\n",OutFile); 
-    }
+        }
         
 }
 

@@ -514,8 +514,8 @@ void SetFieldValue(long field[3]) {
      if (maxnormsq > 0.) {
         MaxVectorField = (long)rint(sqrt(maxnormsq));
         DrawField = True;
-}
-
+     }
+     
      return;
 	
 }
@@ -543,16 +543,16 @@ void SetRadiusValue( int rad , int flag)
         {  incr = (ptr->flag&ExpandFlag)?iProbeRad:0;
         if( ptr->flag & SelectFlag ) {
             if( (irad+incr)>MaxAtomRadius )
-                MaxAtomRadius = irad+incr;
+            MaxAtomRadius = irad+incr;
 		    if (flag & SphereFlag ) {
 		        ptr->flag |= SphereFlag|(flag&ExpandFlag);
-		   ptr->flag &= ~(StarFlag|TouchFlag);
+		        ptr->flag &= ~(StarFlag|TouchFlag);
 		    } else if (flag & StarFlag) {
 		        ptr->flag |= StarFlag|(flag&ExpandFlag);
-                   ptr->flag &= ~(SphereFlag|TouchFlag);
+                ptr->flag &= ~(SphereFlag|TouchFlag);
             } else if (flag & TouchFlag) {
                 ptr->flag |= TouchFlag|(flag&ExpandFlag);
-                   ptr->flag &= ~(SphereFlag|StarFlag);
+                ptr->flag &= ~(SphereFlag|StarFlag);
 			}
             ptr->radius = rad;
             ptr->irad = irad;
@@ -569,8 +569,8 @@ void SetRadiusValue( int rad , int flag)
             DrawSurf = True;
             if( (ptr->irad+incr)>MaxAtomRadius )
                 MaxAtomRadius = ptr->irad+incr;
-        }
-        }
+        }                
+    }
 
     if( change )
     {   if ((flag&SphereFlag) == SphereFlag )
@@ -679,7 +679,7 @@ void SetVanWaalRadius( int flag )
 				ptr->flag &= ~(SphereFlag|TouchFlag);
 			} else {  
 		        ptr->flag |= TouchFlag;
-                                  ptr->flag &= ~(SphereFlag | StarFlag);
+                ptr->flag &= ~(SphereFlag | StarFlag);
 			}
             if (flag&ExpandFlag)
             {
@@ -4180,9 +4180,9 @@ void CentreTransform( int xo, int yo, int zo, int xlatecen )
 		   WorldDialValue[DialTZ] += (x*MatZ[0]+y*MatZ[1]+z*MatZ[2])/ZRange;	
 	   } else  {
 		   DialValue[DialTX] += (x*MatX[0]+y*MatX[1]+z*MatX[2])/XRange;
-		DialValue[DialTY] += (x*MatY[0]+y*MatY[1]+z*MatY[2])/YRange;
-		DialValue[DialTZ] += (x*MatZ[0]+y*MatZ[1]+z*MatZ[2])/ZRange;
-	}
+		   DialValue[DialTY] += (x*MatY[0]+y*MatY[1]+z*MatY[2])/YRange;
+		   DialValue[DialTZ] += (x*MatZ[0]+y*MatZ[1]+z*MatZ[2])/ZRange;
+	   }
 	}
 
 	if( UseSlabPlane )
@@ -4247,7 +4247,7 @@ void ResetTransform( void )
     LRotX[0] = 1.0;  LRotX[1] = 0.0;  LRotX[2] = 0.0;
     LRotY[0] = 0.0;  LRotY[1] = 1.0;  LRotY[2] = 0.0;
     LRotZ[0] = 0.0;  LRotZ[1] = 0.0;  LRotZ[2] = 1.0;
-    
+
     LastDialValue[DialRX] = LastDialValue[DialRY] = LastDialValue[DialRZ] = 0.0;
     LastDialValue[DialTX] = LastDialValue[DialTY] = LastDialValue[DialTZ] = 0.0;
     
@@ -4576,13 +4576,13 @@ int AlignToMolecule(int molnum, double * rmsd,
       -(long)rint(comRemote.vec[2]*250.-origc2.vec[2]),xlatecen);
 #endif
 
-    
+
     chainCountLocal = CVectorSize(vlistLocal);
     chainCountRemote = CVectorSize(vlistRemote);
     chainCountCommon = chainCountLocal<chainCountRemote?chainCountLocal:chainCountRemote;
     
  
-    
+    	    
     /* Shift each list to its center of mass and find the
      maximal radius vector */
     
@@ -4612,7 +4612,7 @@ int AlignToMolecule(int molnum, double * rmsd,
     if (kabsch_local==ALIGN_KABSCH) {
     	TestKabsch(vlistRemote,vlistLocal,&qsum);
     } else {
-    
+
     CVectorCreate(&quatList,sizeof(CQRQuaternion),1);
     CQRMSet(qsum,1.,0.,0.,0.);
     count = 0;
@@ -4745,8 +4745,8 @@ int AlignToMolecule(int molnum, double * rmsd,
     {
         qnorm = sqrt( qnormsq );
         CQRMScalarMultiply(qsum,qsum,1/qnorm);
-}
-
+    }
+    
     }
     /* Calculate the standard deviation of the atom fits */
     sum = 0.0;

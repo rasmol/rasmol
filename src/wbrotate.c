@@ -716,7 +716,7 @@ void WorldRotate( void )
     Real WorldDialValueOffset[11], WorldDialValueBalance[11];
     Real VecIn[3], VecOut[3];
     
-
+    
     int i, ii;
     
     for (ii=DialTX; ii<DialTZ+1; ii++) {
@@ -740,7 +740,7 @@ void WorldRotate( void )
         WorldDialValueOffset[DialRZ] != 0. || 
         WorldDialQRot.w != 0. || WorldDialQRot.x != 0. ||
         WorldDialQRot.y != 0. || WorldDialQRot.z != 0. ||
-      WRotStereo != WLastRS   ||
+        WRotStereo != WLastRS   ||
         WorldDialValueOffset[DialTX] != 0. ||
         WorldDialValueOffset[DialTY] != 0. ||
         WorldDialValueOffset[DialTZ] != 0.  ) {
@@ -804,8 +804,8 @@ void WorldRotate( void )
             WorldDialValueOffset[DialRZ] != 0. ||
             WorldDialQRot.w != 0. || WorldDialQRot.x != 0. ||
             WorldDialQRot.y != 0. || WorldDialQRot.z != 0. ||
-        ( WRotStereo != WLastRS  ) ) {
-        
+            ( WRotStereo != WLastRS  ) ) {
+            
             /* *** redo the balance *** */
             if (record_on[0] && record_aps > 0. && record_fps > 0. && !RecordPause) {
                 Real slimit;
@@ -932,22 +932,22 @@ void WorldRotate( void )
             
             RV2RMat(WorldDialValueOffset[DialRX], WorldDialValueOffset[DialRY], 
                     WorldDialValueOffset[DialRZ],
-          NRotX, NRotY, NRotZ);
-
-        RV2RMat(LastWorldDialValue[DialRX], LastWorldDialValue[DialRY], LastWorldDialValue[DialRZ],
-          RMat[0], RMat[1], RMat[2]);
-
-        WLRotX[0] = NRotX[0]*RMat[0][0]+NRotX[1]*RMat[1][0]+NRotX[2]*RMat[2][0];
-        WLRotX[1] = NRotX[0]*RMat[0][1]+NRotX[1]*RMat[1][1]+NRotX[2]*RMat[2][1];
-        WLRotX[2] = NRotX[0]*RMat[0][2]+NRotX[1]*RMat[1][2]+NRotX[2]*RMat[2][2];
-
-        WLRotY[0] = NRotY[0]*RMat[0][0]+NRotY[1]*RMat[1][0]+NRotY[2]*RMat[2][0];
-        WLRotY[1] = NRotY[0]*RMat[0][1]+NRotY[1]*RMat[1][1]+NRotY[2]*RMat[2][1];
-        WLRotY[2] = NRotY[0]*RMat[0][2]+NRotY[1]*RMat[1][2]+NRotY[2]*RMat[2][2];
-
-        WLRotZ[0] = NRotZ[0]*RMat[0][0]+NRotZ[1]*RMat[1][0]+NRotZ[2]*RMat[2][0];
-        WLRotZ[1] = NRotZ[0]*RMat[0][1]+NRotZ[1]*RMat[1][1]+NRotZ[2]*RMat[2][1];
-        WLRotZ[2] = NRotZ[0]*RMat[0][2]+NRotZ[1]*RMat[1][2]+NRotZ[2]*RMat[2][2];
+                    NRotX, NRotY, NRotZ);
+            
+            RV2RMat(LastWorldDialValue[DialRX], LastWorldDialValue[DialRY], LastWorldDialValue[DialRZ],
+                    RMat[0], RMat[1], RMat[2]);
+            
+            WLRotX[0] = NRotX[0]*RMat[0][0]+NRotX[1]*RMat[1][0]+NRotX[2]*RMat[2][0];
+            WLRotX[1] = NRotX[0]*RMat[0][1]+NRotX[1]*RMat[1][1]+NRotX[2]*RMat[2][1];
+            WLRotX[2] = NRotX[0]*RMat[0][2]+NRotX[1]*RMat[1][2]+NRotX[2]*RMat[2][2];
+            
+            WLRotY[0] = NRotY[0]*RMat[0][0]+NRotY[1]*RMat[1][0]+NRotY[2]*RMat[2][0];
+            WLRotY[1] = NRotY[0]*RMat[0][1]+NRotY[1]*RMat[1][1]+NRotY[2]*RMat[2][1];
+            WLRotY[2] = NRotY[0]*RMat[0][2]+NRotY[1]*RMat[1][2]+NRotY[2]*RMat[2][2];
+            
+            WLRotZ[0] = NRotZ[0]*RMat[0][0]+NRotZ[1]*RMat[1][0]+NRotZ[2]*RMat[2][0];
+            WLRotZ[1] = NRotZ[0]*RMat[0][1]+NRotZ[1]*RMat[1][1]+NRotZ[2]*RMat[2][1];
+            WLRotZ[2] = NRotZ[0]*RMat[0][2]+NRotZ[1]*RMat[1][2]+NRotZ[2]*RMat[2][2];
             
             WorldDialValue[DialRX] = LastWorldDialValue[DialRX]+WorldDialValueBalance[DialRX];
             WorldDialValue[DialRY] = LastWorldDialValue[DialRY]+WorldDialValueBalance[DialRY];
@@ -961,82 +961,82 @@ void WorldRotate( void )
                 if (WorldDialValue[ii] < -1.) WorldDialValue[ii] +=2.;
             }
             
-      
-        RMat2RV(&(WorldDialValue[DialRX]), 
-          &(WorldDialValue[DialRY]), 
-          &(WorldDialValue[DialRZ]), 
-          WLRotX, WLRotY, WLRotZ);
-
-        if (WRotStereo != 0.) {
-          RV2RMat(0.,  WRotStereo, 0.,
-            SRotX, SRotY, SRotZ);       	
-          NRotX[0] = SRotX[0]*WLRotX[0]+SRotX[1]*WLRotY[0]+SRotX[2]*WLRotZ[0];
-          NRotX[1] = SRotX[0]*WLRotX[1]+SRotX[1]*WLRotY[1]+SRotX[2]*WLRotZ[1];
-          NRotX[2] = SRotX[0]*WLRotX[2]+SRotX[1]*WLRotY[2]+SRotX[2]*WLRotZ[2];
-
-          NRotY[0] = SRotY[0]*WLRotX[0]+SRotY[1]*WLRotY[0]+SRotY[2]*WLRotZ[0];
-          NRotY[1] = SRotY[0]*WLRotX[1]+SRotY[1]*WLRotY[1]+SRotY[2]*WLRotZ[1];
-          NRotY[2] = SRotY[0]*WLRotX[2]+SRotY[1]*WLRotY[2]+SRotY[2]*WLRotZ[2];
-
-          NRotZ[0] = SRotZ[0]*WLRotX[0]+SRotZ[1]*WLRotY[0]+SRotZ[2]*WLRotZ[0];
-          NRotZ[1] = SRotZ[0]*WLRotX[1]+SRotZ[1]*WLRotY[1]+SRotZ[2]*WLRotZ[1];
-          NRotZ[2] = SRotZ[0]*WLRotX[2]+SRotZ[1]*WLRotY[2]+SRotZ[2]*WLRotZ[2];
-          
-          for (i=0;i<3;i++) {
-            WLRotX[i]=NRotX[i];
-            WLRotY[i]=NRotY[i];
-            WLRotZ[i]=NRotZ[i];          	
-          }
+            
+            RMat2RV(&(WorldDialValue[DialRX]), 
+                    &(WorldDialValue[DialRY]), 
+                    &(WorldDialValue[DialRZ]), 
+                    WLRotX, WLRotY, WLRotZ);
+            
+            if (WRotStereo != 0.) {
+                RV2RMat(0.,  WRotStereo, 0.,
+                        SRotX, SRotY, SRotZ);       	
+                NRotX[0] = SRotX[0]*WLRotX[0]+SRotX[1]*WLRotY[0]+SRotX[2]*WLRotZ[0];
+                NRotX[1] = SRotX[0]*WLRotX[1]+SRotX[1]*WLRotY[1]+SRotX[2]*WLRotZ[1];
+                NRotX[2] = SRotX[0]*WLRotX[2]+SRotX[1]*WLRotY[2]+SRotX[2]*WLRotZ[2];
+                
+                NRotY[0] = SRotY[0]*WLRotX[0]+SRotY[1]*WLRotY[0]+SRotY[2]*WLRotZ[0];
+                NRotY[1] = SRotY[0]*WLRotX[1]+SRotY[1]*WLRotY[1]+SRotY[2]*WLRotZ[1];
+                NRotY[2] = SRotY[0]*WLRotX[2]+SRotY[1]*WLRotY[2]+SRotY[2]*WLRotZ[2];
+                
+                NRotZ[0] = SRotZ[0]*WLRotX[0]+SRotZ[1]*WLRotY[0]+SRotZ[2]*WLRotZ[0];
+                NRotZ[1] = SRotZ[0]*WLRotX[1]+SRotZ[1]*WLRotY[1]+SRotZ[2]*WLRotZ[1];
+                NRotZ[2] = SRotZ[0]*WLRotX[2]+SRotZ[1]*WLRotY[2]+SRotZ[2]*WLRotZ[2];
+                
+                for (i=0;i<3;i++) {
+                    WLRotX[i]=NRotX[i];
+                    WLRotY[i]=NRotY[i];
+                    WLRotZ[i]=NRotZ[i];          	
+                }
+            }
+            
+            RMatInv( WLRotX, WLRotY, WLRotZ, WIRotX, WIRotY, WIRotZ);
+            
+            LastWorldDialValue[DialRX] = WorldDialValue[DialRX];
+            LastWorldDialValue[DialRY] = WorldDialValue[DialRY];
+            LastWorldDialValue[DialRZ] = WorldDialValue[DialRZ];
         }
-          
-        RMatInv( WLRotX, WLRotY, WLRotZ, WIRotX, WIRotY, WIRotZ);
-
-        LastWorldDialValue[DialRX] = WorldDialValue[DialRX];
-        LastWorldDialValue[DialRY] = WorldDialValue[DialRY];
-        LastWorldDialValue[DialRZ] = WorldDialValue[DialRZ];
-      }
-    
-    IdentityMatrix(A);
-    for (i=0; i<3; i++) {
-	  A[0][i] = Scale*LRotX[i];
-	  A[1][i] = Scale*LRotY[i];
-	  A[2][i] = Scale*LRotZ[i];
-      A[i][3] = (double)LOffset[i];
-    }
-    A[0][3] -= (Real)WRange;
-    A[1][3] -= (Real)HRange;
-    A[2][3] -= (Real)10000;
         
-    /* Fill out a matrix representing the rotation we wish to do */
-    IdentityMatrix(R);
-    for (i=0; i<3; i++) {
-      R[0][i]=WLRotX[i];
-      R[1][i]=WLRotY[i];
-      R[2][i]=WLRotZ[i];      
-    }
-
-    MultMatrix(R, A, B);
-    
-    /* Get the new values for RotX,Y,Z and X,Y,ZOffset */
-    for (i=0; i<3; i++) {
-	  RotX[i] = B[0][i]/Scale;
-	  RotY[i] = B[1][i]/Scale;
-	  RotZ[i] = B[2][i]/Scale;
-    }
+        IdentityMatrix(A);
+        for (i=0; i<3; i++) {
+            A[0][i] = Scale*LRotX[i];
+            A[1][i] = Scale*LRotY[i];
+            A[2][i] = Scale*LRotZ[i];
+            A[i][3] = (double)LOffset[i];
+        }
+        A[0][3] -= (Real)WRange;
+        A[1][3] -= (Real)HRange;
+        A[2][3] -= (Real)10000;
+        
+        /* Fill out a matrix representing the rotation we wish to do */
+        IdentityMatrix(R);
+        for (i=0; i<3; i++) {
+            R[0][i]=WLRotX[i];
+            R[1][i]=WLRotY[i];
+            R[2][i]=WLRotZ[i];      
+        }
+        
+        MultMatrix(R, A, B);
+        
+        /* Get the new values for RotX,Y,Z and X,Y,ZOffset */
+        for (i=0; i<3; i++) {
+            RotX[i] = B[0][i]/Scale;
+            RotY[i] = B[1][i]/Scale;
+            RotZ[i] = B[2][i]/Scale;
+        }
         XOffset = B[0][3]+WRange+LastWorldDialValue[DialTX]*Zoom*XRange;
         YOffset = B[1][3]+HRange+LastWorldDialValue[DialTY]*Zoom*YRange;
         ZOffset = B[2][3]+10000+LastWorldDialValue[DialTZ]*Zoom*ZRange;
-    
-    
-    if (UseStereo) {
-      XOffset -= XRange/4;
-    }
-    
-    WLastRS = WRotStereo;
-    
-    /* Make transfor.c recalculate everything */
-    ReDrawFlag |= (RFRefresh|RFRotate|RFTrans);
-
+        
+        
+        if (UseStereo) {
+            XOffset -= XRange/4;
+        }
+        
+        WLastRS = WRotStereo;
+        
+        /* Make transfor.c recalculate everything */
+        ReDrawFlag |= (RFRefresh|RFRotate|RFTrans);
+        
     } 
     
 }
