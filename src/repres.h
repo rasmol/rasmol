@@ -170,6 +170,20 @@ typedef struct {
         short vsize;         /* Vertical Vector Length     */
         short wide;          /* Ribbon Width               */
     } Knot;
+    typedef struct {
+        long px, py, pz;     /* Spline Control Co-ordinate */
+        long tx, ty, tz;     /* Spline Direction Vector    */
+        long hnx, hny, hnz;  /* Horizontal Normal Vector   */
+        long vnx, vny, vnz;  /* Vertical Normal Vector     */
+        long dx, dy, dz;     /* Ribbon Height Vector       */
+        long wx, wy, wz;     /* Ribbon Width Vector        */
+        char hinten;         /* Horizontal Intensity       */
+        char vinten;         /* Vertical Intensity         */
+        short hsize;         /* Horizontal Vector Length   */
+        short vsize;         /* Vertical Vector Length     */
+        short wide;          /* Ribbon Width               */
+    } LongKnot;
+
 #define KNOT_DEFINED
 #endif
 

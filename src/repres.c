@@ -1608,6 +1608,7 @@ void DisplayRibbon( Chain  __far *chain )
     register RAtom __far *o1ptr;
     register RAtom __far *o2ptr;
     register RAtom __far *next;
+    RAtom dummy;
  
     register int prev,wide;
     register int col1,col2;
@@ -1618,6 +1619,8 @@ void DisplayRibbon( Chain  __far *chain )
  
     static Knot mid1, mid2, mid3;
     static Knot knot1, knot2;
+    static LongKnot lknot1,lknot2;
+    register long lbx,lby,lbz,ldx,ldy,ldz;
  
     prev = False;
     group = chain->glist;
@@ -1634,6 +1637,27 @@ void DisplayRibbon( Chain  __far *chain )
             o1ptr = FindGroupAtom(group->gnext,10);
         }
  
+        if (captr && next && !o1ptr) {
+          register Long dxorg, dyorg,dzorg;
+          dxorg = next->xorg+next->fxorg-captr->xorg-captr->fxorg;
+          dyorg = next->yorg+next->fyorg-captr->yorg-captr->fyorg;
+          dzorg = next->zorg+next->fzorg-captr->zorg-captr->fzorg;
+          if (dxorg*dxorg+dyorg*dyorg+dzorg*dzorg < (Long)1750*1750
+              && dxorg*dxorg+dyorg*dyorg+dzorg*dzorg > (Long)500*500) {
+            dummy.x = (captr->x+next->x)>>1;
+            dummy.y = (captr->y+next->y)>>1;
+            dummy.z = (captr->z+next->z)>>1;
+            dummy.xorg = (captr->xorg+next->xorg)>>1;
+            dummy.yorg = (captr->yorg+next->yorg)>>1;
+            dummy.zorg = (captr->zorg+next->zorg)>>1;
+            dummy.fxorg = (captr->fxorg+next->fxorg)>>1;
+            dummy.fyorg = (captr->fyorg+next->fyorg)>>1;
+            dummy.fzorg = (captr->fzorg+next->fzorg)>>1;
+            o1ptr = &dummy;	
+          }
+        	
+        }
+ 
         /* When not to have a control point! */
         if( !next || !captr || !o1ptr || (next->flag&BreakFlag) ||
             !((group->flag|group->gnext->flag)&DrawKnotFlag) )
@@ -1643,6 +1667,58 @@ void DisplayRibbon( Chain  __far *chain )
             continue;
         }
  
+
+#ifndef OLDKNOT
+        lknot2.tx = next->xorg + next->fxorg - captr->xorg - captr->fxorg;
+        lknot2.ty = next->yorg + next->fyorg - captr->yorg - captr->fyorg;
+        lknot2.tz = next->zorg + next->fzorg - captr->zorg - captr->fzorg;
+ 
+        if( IsProtein(group->refno) )
+        {   lbx = o1ptr->xorg + o1ptr->fxorg - captr->xorg - captr->fxorg;
+            lby = o1ptr->yorg + o1ptr->fyorg - captr->yorg - captr->fyorg;
+            lbz = o1ptr->zorg + o1ptr->fzorg - captr->zorg - captr->fzorg;
+ 
+        } else /* Nucleic Acid */
+        {   o2ptr = FindGroupAtom(group,8);
+            if( o2ptr && !FindGroupAtom(group,17) )
+            {   /* Deoxyribonucleic Acid */
+                lbx = (o1ptr->xorg + o1ptr->fxorg + o2ptr->xorg + o2ptr->fxorg)/2 - captr->xorg - captr->fxorg;
+                lby = (o1ptr->yorg + o1ptr->fyorg + o2ptr->yorg + o2ptr->fyorg)/2 - captr->yorg - captr->fyorg;
+                lbz = (o1ptr->zorg + o1ptr->fzorg + o2ptr->zorg + o2ptr->fzorg)/2 - captr->zorg - captr->fzorg;
+            } else /* Ribonucleic Acid */
+            {   lbx = o1ptr->xorg + o1ptr->fxorg - captr->xorg - captr->fxorg;
+                lby = o1ptr->yorg + o1ptr->fyorg - captr->yorg - captr->fyorg;
+                lbz = o1ptr->zorg + o1ptr->fzorg - captr->zorg - captr->fzorg;
+            }
+        }
+ 
+        lknot2.px = (captr->xorg + captr->fxorg + next->xorg + next->fxorg)/2-CenX;
+        lknot2.py = (captr->yorg + captr->fyorg + next->yorg + next->fyorg)/2-CenY;
+        lknot2.pz = (captr->zorg + captr->fzorg + next->zorg + next->fzorg)/2-CenZ;
+ 
+        /* c := a x b */
+        lknot2.vnx = lknot2.ty*lbz - lknot2.tz*lby;
+        lknot2.vny = lknot2.tz*lbx - lknot2.tx*lbz;
+        lknot2.vnz = lknot2.tx*lby - lknot2.ty*lbx;
+        
+        knot2.tx = (int)rint(lknot2.tx*MatX[0]+lknot2.ty*MatX[1]+lknot2.tz*MatX[2]);
+        knot2.ty = (int)rint(lknot2.tx*MatY[0]+lknot2.ty*MatY[1]+lknot2.tz*MatY[2]);
+        knot2.tz = (int)rint(lknot2.tx*MatZ[0]+lknot2.ty*MatZ[1]+lknot2.tz*MatZ[2]);
+        
+        bx = (int)rint(lbx*MatX[0]+lby*MatX[1]+lbz*MatX[2]);
+        by = (int)rint(lbx*MatY[0]+lby*MatX[1]+lbz*MatY[2]);
+        bz = (int)rint(lbx*MatZ[0]+lby*MatX[1]+lbz*MatZ[2]);
+        
+        knot2.px = (int)rint(lknot2.px*MatX[0]+lknot2.py*MatX[1]+lknot2.pz*MatX[2]) + XOffset;
+        knot2.py = (int)rint(lknot2.px*MatY[0]+lknot2.py*MatY[1]+lknot2.pz*MatY[2]) + YOffset;
+        knot2.pz = (int)rint(lknot2.px*MatZ[0]+lknot2.py*MatZ[1]+lknot2.pz*MatZ[2]) + ZOffset;
+
+        knot2.vnx = (int)rint(lknot2.vnx*MatX[0]+lknot2.vny*MatX[1]+lknot2.vnz*MatX[2]);
+        knot2.vny = (int)rint(lknot2.vnx*MatY[0]+lknot2.vny*MatY[1]+lknot2.vnz*MatY[2]);
+        knot2.vnz = (int)rint(lknot2.vnx*MatZ[0]+lknot2.vny*MatZ[1]+lknot2.vnz*MatZ[2]);
+
+
+#else
         knot2.tx = next->x - captr->x;
         knot2.ty = next->y - captr->y;
         knot2.tz = next->z - captr->z;
@@ -1674,6 +1750,7 @@ void DisplayRibbon( Chain  __far *chain )
         knot2.vnx = knot2.ty*bz - knot2.tz*by;
         knot2.vny = knot2.tz*bx - knot2.tx*bz;
         knot2.vnz = knot2.tx*by - knot2.ty*bx;
+#endif
  
         if( (group->struc&group->gnext->struc) & HelixFlag )
         {   /* Compensate for narrowing of helices! */

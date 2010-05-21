@@ -410,13 +410,13 @@ void SetOneFieldValue(long field[3], RAtom __far *aptr, int wait) {
     
     if (aptr && field) {
 
-        onormsq = ((double)aptr->auxxorg)*((double)aptr->auxxorg)
-             + ((double)aptr->auxyorg)*((double)aptr->auxyorg)
-             + ((double)aptr->auxzorg)*((double)aptr->auxzorg);
+        onormsq = ((double)aptr->fieldxorg)*((double)aptr->fieldxorg)
+             + ((double)aptr->fieldyorg)*((double)aptr->fieldyorg)
+             + ((double)aptr->fieldzorg)*((double)aptr->fieldzorg);
     	
-        aptr->auxxorg = field[0];
-        aptr->auxyorg = field[1];
-        aptr->auxzorg = field[2];
+        aptr->fieldxorg = field[0];
+        aptr->fieldyorg = field[1];
+        aptr->fieldzorg = field[2];
         aptr->flag |= FieldFlag;
 
         normsq = ((double)field[0])*((double)field[0])
@@ -449,9 +449,9 @@ void SetOneFieldValue(long field[3], RAtom __far *aptr, int wait) {
           ForEachAtom
           {  if(ptr != aptr) {
           	
-            normsq = ((double) ptr->auxxorg)*((double)ptr->auxxorg)
-             + ((double)ptr->auxyorg)*((double)ptr->auxyorg)
-             + ((double)ptr->auxzorg)*((double)ptr->auxzorg);
+            normsq = ((double) ptr->fieldxorg)*((double)ptr->fieldxorg)
+             + ((double)ptr->fieldyorg)*((double)ptr->fieldyorg)
+             + ((double)ptr->fieldzorg)*((double)ptr->fieldzorg);
             if( normsq>maxnormsq )
                 maxnormsq = normsq;
             
@@ -489,15 +489,15 @@ void SetFieldValue(long field[3]) {
     {  
         if( ptr->flag & SelectFlag ) {
             change = True;
-            ptr->auxxorg = field[0];
-            ptr->auxyorg = field[1];
-            ptr->auxzorg = field[2];
+            ptr->fieldxorg = field[0];
+            ptr->fieldyorg = field[1];
+            ptr->fieldzorg = field[2];
             ptr->flag |= FieldFlag;
         } else  {
             if (ptr->flag & FieldFlag) {
-                normsq = ((double) ptr->auxxorg)*((double)ptr->auxxorg)
-                  + ((double)ptr->auxyorg)*((double)ptr->auxyorg)
-                  + ((double)ptr->auxzorg)*((double)ptr->auxzorg);
+                normsq = ((double) ptr->fieldxorg)*((double)ptr->fieldxorg)
+                  + ((double)ptr->fieldyorg)*((double)ptr->fieldyorg)
+                  + ((double)ptr->fieldzorg)*((double)ptr->fieldzorg);
                 DrawField = True;
                 if( normsq>maxnormsq ) maxnormsq = normsq;
             }             
@@ -746,9 +746,9 @@ void DisableField( void ) {
         {  
             if( !(ptr->flag&SelectFlag) ) {
                 if( ptr->flag&FieldFlag) {
-                    normsq = ((double)(ptr->auxxorg))*((double)(ptr->auxxorg))
-                         + ((double)(ptr->auxyorg))*((double)(ptr->auxyorg))
-                         + ((double)(ptr->auxzorg))*((double)(ptr->auxzorg));
+                    normsq = ((double)(ptr->fieldxorg))*((double)(ptr->fieldxorg))
+                         + ((double)(ptr->fieldyorg))*((double)(ptr->fieldyorg))
+                         + ((double)(ptr->fieldzorg))*((double)(ptr->fieldzorg));
                 if (normsq > maxnormsq) maxnormsq = normsq;
                 if (odf) DrawField = True;
                 } 
@@ -3412,12 +3412,9 @@ void InitialTransform( void )
         ptr->fxorg = 0;
         ptr->fyorg = 0;
         ptr->fzorg = 0;
-        ptr->auxxorg = 0;
-        ptr->auxyorg = 0;
-        ptr->auxzorg = 0;
-        ptr->auxx = 0;
-        ptr->auxy = 0;
-        ptr->auxz = 0;
+        ptr->fieldxorg = 0; ptr->fieldyorg = 0; ptr->fieldzorg = 0; ptr->fieldworg = 0;
+        ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+        ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
     }
 
     if( Offset > 37836 )
@@ -3930,8 +3927,8 @@ void PrepareTransform( void )
         DialValue[DialRY] = LastDialValue[DialRY]+DialValueBalance[DialRY];
         DialValue[DialRZ] = LastDialValue[DialRZ]+DialValueBalance[DialRZ];
         if (DialValueBalance[DialRX]) NextReDrawFlag |= RFRotateX;
-        if (DialValueBalance[DialRX]) NextReDrawFlag |= RFRotateY;
-        if (DialValueBalance[DialRX]) NextReDrawFlag |= RFRotateZ;
+        if (DialValueBalance[DialRY]) NextReDrawFlag |= RFRotateY;
+        if (DialValueBalance[DialRZ]) NextReDrawFlag |= RFRotateZ;
         
         for (ii=DialRX; ii <=DialRZ; ii++) {
             if (DialValue[ii] > 1.) DialValue[ii] -=2.;
@@ -4038,11 +4035,11 @@ static void ApplyTransformOne( void )
                 ptr->y = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
                 ptr->z = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
                 if (ptr->flag & FieldFlag) {
-                	x+= ptr->auxxorg;
-                	y+= ptr->auxyorg;
-                	z+= ptr->auxzorg;
-                	ptr->auxy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
-                	ptr->auxz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatY[2])+ZOffset;
+                	x+= ptr->fieldxorg;
+                	y+= ptr->fieldyorg;
+                	z+= ptr->fieldzorg;
+                	ptr->fieldy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
+                	ptr->fieldz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatY[2])+ZOffset;
                 }
             }
             break;
@@ -4055,11 +4052,11 @@ static void ApplyTransformOne( void )
                 ptr->x = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
                 ptr->z = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
                 if (ptr->flag & FieldFlag) {
-                	x+= ptr->auxxorg;
-                	y+= ptr->auxyorg;
-                	z+= ptr->auxzorg;
-                	ptr->auxx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
-                	ptr->auxz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                	x+= ptr->fieldxorg;
+                	y+= ptr->fieldyorg;
+                	z+= ptr->fieldzorg;
+                	ptr->fieldx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
+                	ptr->fieldz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
                 }
             }
             break;
@@ -4072,11 +4069,11 @@ static void ApplyTransformOne( void )
                 ptr->x = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
                 ptr->y = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
                 if (ptr->flag & FieldFlag) {
-                	x+= ptr->auxxorg;
-                	y+= ptr->auxyorg;
-                	z+= ptr->auxzorg;
-                	ptr->auxx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
-                	ptr->auxy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
+                	x+= ptr->fieldxorg;
+                	y+= ptr->fieldyorg;
+                	z+= ptr->fieldzorg;
+                	ptr->fieldx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
+                	ptr->fieldy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
                 }
             }
             break;
@@ -4093,12 +4090,14 @@ static void ApplyTransformOne( void )
                     ptr->y = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
                     ptr->z = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
                     if (ptr->flag & FieldFlag) {
-                	    x+= ptr->auxxorg;
-                	    y+= ptr->auxyorg;
-                	    z+= ptr->auxzorg;
-                	    ptr->auxx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
-                	    ptr->auxy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
-                	    ptr->auxz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                	    x+= ptr->fieldxorg;
+                	    y+= ptr->fieldyorg;
+                	    z+= ptr->fieldzorg;
+                	    ptr->fieldx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
+                	    ptr->fieldy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
+                	    ptr->fieldz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                	    ptr->fieldw = (int)(Scale*(Real)(ptr->fieldworg));
+                	    ptr->fieldirad =(int)(Scale*(Real)(ptr->fieldradius));
                     }
                     if( ptr->flag&(SphereFlag|StarFlag|TouchFlag|ExpandFlag) )
                     {   ptr->irad = (int)(Scale*(Real)(ptr->radius));
@@ -4120,12 +4119,15 @@ static void ApplyTransformOne( void )
                     ptr->y = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
                     ptr->z = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
                     if (ptr->flag & FieldFlag) {
-                	    x+= ptr->auxxorg;
-                	    y+= ptr->auxyorg;
-                	    z+= ptr->auxzorg;
-                	    ptr->auxx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
-                	    ptr->auxy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
-                	    ptr->auxz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                	    x+= ptr->fieldxorg;
+                	    y+= ptr->fieldyorg;
+                	    z+= ptr->fieldzorg;
+                	    ptr->fieldx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
+                	    ptr->fieldy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
+                	    ptr->fieldz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                	    ptr->fieldw = (int)(Scale*(Real)(ptr->fieldworg));
+                	    ptr->fieldirad =(int)(Scale*(Real)(ptr->fieldradius));
+
                     }
                 }
 
@@ -4458,6 +4460,8 @@ int AlignToMolecule(int molnum, double * rmsd,
     CVectorHandle /* short */     glistLocal, glistRemote;           /* matching residue numbers */
     CVectorHandle /* CV3Plane */ planeList; /* list of planes */
     CVectorHandle /* CQRQuaternion */ quatList; /* list of quaternions */
+    CVectorHandle /* CQRQuaternion */ quatLocalList; /* list of local quaternions by atom */
+    CVectorHandle /* int */ quatLocalCountList; /* list of local quaternion counts */
     CV3Vector origc1, origc2;
     CV3Vector shiftLocal;
     CV3Vector comLocal, comRemote;
@@ -4614,6 +4618,8 @@ int AlignToMolecule(int molnum, double * rmsd,
     } else {
 
     CVectorCreate(&quatList,sizeof(CQRQuaternion),1);
+    CVectorCreate(&quatLocalList,sizeof(CQRQuaternion),1);
+    CVectorCreate(&quatLocalCountList,sizeof(int),1);
     CQRMSet(qsum,1.,0.,0.,0.);
     count = 0;
     
@@ -4630,6 +4636,7 @@ int AlignToMolecule(int molnum, double * rmsd,
     CVectorCreate(&planeList,sizeof(CV3Plane),1);
     
     for (ii=0; ii < chainCountCommon; ii++) {
+        int izero = 0;
     	CV3Plane ptemp;
         CV3Vector vtemp1,vtemp2;
         CV3VectorHandle vl1, vl2;
@@ -4643,6 +4650,8 @@ int AlignToMolecule(int molnum, double * rmsd,
         CV3VectorScalarDivide(&vtemp2,&vtemp2,2.);
         CV3PlaneFrom2Vectors(&ptemp, &vtemp1, &vtemp2);
         CVectorAddElement(planeList,&ptemp);
+        CVectorAddElement(quatLocalList,&qsum);
+        CVectorAddElement(quatLocalCountList,&izero);
     }
     
     /* compute the quaternions for atoms within a reasonable distance
@@ -4672,6 +4681,9 @@ int AlignToMolecule(int molnum, double * rmsd,
         
         jcount = 0;
         for (jj=ii+1; jj < chainCountCommon; jj++) {
+            int localcount;
+            CQRQuaternionHandle localq; 
+            CQRQuaternion localqtemp;
             
             if (resnumLocal - (*(short *)CVectorElementAt(glistLocal,jj)) > seqrange
                 || resnumLocal - (*(short *)CVectorElementAt(glistLocal,jj)) < -seqrange) break; 
@@ -4729,6 +4741,20 @@ int AlignToMolecule(int molnum, double * rmsd,
             CQRMScalarMultiply(qsum,qsum,1./sqrt(qnormsq))
             CVectorAddElement(quatList,&q);
             count++;
+            if (none_ang_dist == ALIGN_ANGLE) {
+              localcount = *(int *)CVectorElementAt(quatLocalCountList,ii);
+              localq = (CQRQuaternionHandle)CVectorElementAt(quatLocalList,ii);
+              CQRHLERP (&localqtemp,localq,&q,(double)localcount,1.);
+              CQRMCopy (*localq,localqtemp);
+              localcount++;
+              CVectorSetElement(quatLocalCountList,&localcount,ii);
+              localcount = *(int *)CVectorElementAt(quatLocalCountList,jj);
+              localq = (CQRQuaternionHandle)CVectorElementAt(quatLocalList,jj);
+              CQRHLERP (&localqtemp,localq,&q,(double)localcount,1.);
+              CQRMCopy (*localq,localqtemp);
+              localcount++;
+              CVectorSetElement(quatLocalCountList,&localcount,jj);
+            }
         }
     	
     }
@@ -4858,6 +4884,49 @@ int AlignToMolecule(int molnum, double * rmsd,
                 
         }
 
+    } else if (none_ang_dist == ALIGN_ANGLE) {
+    
+        for (ii=0; ii < chainCountCommon; ii++) {
+            CQRQuaternionHandle qlocal;
+            CQRQuaternion qtemp1, qtemp2 ;
+            double localcos, localsin, localangle;
+            RAtom * pLocal;
+            long field[3];
+            pLocal = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
+            qlocal = (CQRQuaternionHandle)CVectorElementAt(quatLocalList,ii);
+            CQRMConjugate(qtemp1,qsum);
+            CQRMMultiply(qtemp2,*qlocal,qtemp1)
+            fprintf(stderr,"qlocal, qtemp1, qtemp2 [%g,%g,%g,%g] [%g,%g,%g,%g] [%g,%g,%g,%g]\n",
+                    qlocal->w,qlocal->x,qlocal->y,qlocal->z, qtemp1.w,qtemp1.x,qtemp1.y,qtemp1.z, qtemp2.w,qtemp2.x,qtemp2.y,qtemp2.z);
+            localcos = qtemp2.w;
+            if (fabs(localcos)< 1.) {
+                CV3Vector localaxis;
+                CV3M_vsssSet(localaxis,qtemp2.x,qtemp2.y,qtemp2.z);
+                localsin = CV3dNorm(&localaxis);
+                if (localsin != 0.){
+                    localangle = 2.*atan2(localsin,localcos);
+                    CV3M_vvsDivide(localaxis,localaxis,localsin);
+                    if (localangle > 0.) {
+                        CV3M_vvsMultiply(localaxis,localaxis,sqrt(localangle));
+                    } else {
+                        CV3M_vvsMultiply(localaxis,localaxis,-sqrt(-localangle));
+                    }
+                    field[0] = rint(localaxis.vec[0]*1500.);
+#ifdef INVERT
+                    field[1] = -rint(localaxis.vec[1]*1500.);
+#else
+                    field[1] = rint(localaxis.vec[1]*1500.);
+#endif
+                    field[2] = -rint(localaxis.vec[2]*1500.);
+                
+                SetOneFieldValue(field, pLocal, 0);
+                
+                DrawField = True;
+                
+        }
+
+            }
+        }
     }
     
     CVectorFree(&planeList);

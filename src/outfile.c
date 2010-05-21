@@ -1436,8 +1436,8 @@ static int FindDepth( PSItemPtr item,  int type )
 
     	case(PSField):   atom = (RAtom __far*)item;
     	                 result = atom->z;
-    	                 if (result < atom->auxz) {
-    	                     result = atom->auxz;
+    	                 if (result < atom->fieldz) {
+    	                     result = atom->fieldz;
     	                 }
     	                 return result;
 
@@ -1520,10 +1520,10 @@ static int ClipVectSphere( RAtom __far *ptr )
 static int ClipVectField( RAtom __far *src)
 {
     if( !src)  return True;
-    if( (src->x<0) && (src->auxx<0) )  return True;
-    if( (src->y<0) && (src->auxy<0) )  return True;
-    if( (src->x>=XRange) && (src->auxx>=XRange) )  return True;
-    if( (src->y>=YRange) && (src->auxy>=YRange) )  return True;
+    if( (src->x<0) && (src->fieldx<0) )  return True;
+    if( (src->y<0) && (src->fieldy<0) )  return True;
+    if( (src->x>=XRange) && (src->fieldx>=XRange) )  return True;
+    if( (src->y>=YRange) && (src->fieldy>=YRange) )  return True;
     return False;
 }
 
@@ -1759,13 +1759,16 @@ static void WriteVectSphere( PSItemPtr __far *data, char __far *type,
 }
 
 
-static void WriteVectField( RAtom __far *src,
-                           int col, int dash )
+static void WriteVectField( PSItemPtr __far *data, char __far *type, 
+                             int index)
 {
     register RAtom __far *tmp;
     register Real radius=0.0;
     register Real temp;
     register Real dist;
+    register RAtom __far * src;
+    register int col;
+    register int dash;
 
     register Real midx, midy;
     register Real endx, endy;
@@ -1777,7 +1780,10 @@ static void WriteVectField( RAtom __far *src,
     
     swap = False;
 
-    if( src->z > src->auxz )
+    src = (RAtom __far*)data[index];
+    col = src->fieldcol;
+
+    if( src->z > src->fieldz )
     {   
         swap = True;
     }
@@ -1785,23 +1791,23 @@ static void WriteVectField( RAtom __far *src,
     if( !col ) col = src->col;
 
     if( UseBackFade )
-    {   dz = (src->z+src->auxz)>>1;
+    {   dz = (src->z+src->fieldz)>>1;
         inten = (ColourDepth*(dz+ImageRadius-ZOffset))/ImageSize;
     } else inten = ColourMask;
 
     if (swap)  {
-        dx = - src->x + src->auxx;  
-        dy = - src->y + src->auxy;
+        dx = - src->x + src->fieldx;  
+        dy = - src->y + src->fieldy;
     } else  {
-        dx = src->x - src->auxx;  
-        dy = src->y - src->auxy;
+        dx = src->x - src->fieldx;  
+        dy = src->y - src->fieldy;
     }
     dist2 = dx*dx + dy*dy;
     dist = sqrt( (double)dist2 );
 
     WriteVectColour( col + inten );
 
-    dz = (src->z+src->auxz)>>1;
+    dz = (src->z+src->fieldz)>>1;
     temp = (double)(dz-ZOffset)/ImageSize + 1.0;
     if( temp != LineWidth )
     {   fprintf(OutFile,"%g setlinewidth\n",temp);
@@ -1822,7 +1828,7 @@ static void WriteVectField( RAtom __far *src,
     if (!swap) {
     	
         if( src->flag & SphereFlag ) {
-            dz = src->auxz - src->z;
+            dz = src->fieldz - src->z;
             dist = sqrt( (double)(dist2 + dz*dz) );
             endx = src->x + (radius*dx)/dist;
             endy = src->y + (radius*dy)/dist;
@@ -1830,13 +1836,13 @@ static void WriteVectField( RAtom __far *src,
         } else
             fprintf(OutFile,"%ld %ld ",src->x,src->y);
     
-        fprintf(OutFile,"%ld %ld Wire\n",src->auxx,src->auxy);
+        fprintf(OutFile,"%ld %ld Wire\n",src->fieldx,src->fieldy);
         
     } else { 
     
-        fprintf(OutFile,"%ld %ld Wire\n",src->auxx,src->auxy);
+        fprintf(OutFile,"%ld %ld Wire\n",src->fieldx,src->fieldy);
         if( src->flag & SphereFlag )
-        {   dz = -src->auxz + src->z;
+        {   dz = -src->fieldz + src->z;
             dist = sqrt( (double)(dist2 + dz*dz) );
             endx = src->x + (radius*dx)/dist;
             endy = src->y + (radius*dy)/dist;

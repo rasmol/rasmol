@@ -814,7 +814,7 @@ static void WriteScriptAtoms( void )
     register int cpk=0,cpknew=0,vdw=0;
     register int col=0,rad=0;
     register int prevflag,staron,sphereon,fieldon;
-    long     auxorg[3];
+    long     fieldorg[4];
 
     fputs("\n# Atoms\n",OutFile);
 
@@ -974,29 +974,32 @@ static void WriteScriptAtoms( void )
         ForEachAtom
 	    {
             if( !init )
-            {   auxorg[0] = auxorg[1]= auxorg[2] = 0;
+            {   fieldorg[0] = fieldorg[1]= fieldorg[2] = fieldorg[3] = 0;
                 if (aptr->flag&(FieldFlag)) {
-                    auxorg[0] = aptr->auxxorg;
-                    auxorg[1] = aptr->auxyorg;
-                    auxorg[2] = aptr->auxzorg;
+                    fieldorg[0] = aptr->fieldxorg;
+                    fieldorg[1] = aptr->fieldyorg;
+                    fieldorg[2] = aptr->fieldzorg;
+                    fieldorg[3] = aptr->fieldworg;
                     init = True;
                     prevflag = aptr->flag&(FieldFlag);
                 } else {
                   if ( (prevflag == (aptr->flag&(FieldFlag)))
-                      && (prevflag && auxorg[0] == aptr->auxxorg &&
-                    auxorg[1] == aptr->auxyorg &&
-                    auxorg[2] == aptr->auxzorg )) {
+                      && (prevflag && fieldorg[0] == aptr->fieldxorg &&
+                    fieldorg[1] == aptr->fieldyorg &&
+                    fieldorg[2] == aptr->fieldzorg &&
+                    fieldorg[3] == aptr->fieldworg )) {
                       last = aptr->serno;
                   } else {
                     if ( prevflag ) {
                     	WriteScriptBetween(first,last);
-                        if (auxorg[0] !=0 || auxorg[1] !=0 || auxorg[2] !=0) {
+                        if (fieldorg[0] !=0 || fieldorg[1] !=0 || fieldorg[2] !=0 || fieldorg[3] !=0) {
                           fieldon = True;
 #ifdef INVERT
-                          fprintf(OutFile,"field [%ldm%ld,%ld]\n", auxorg[0], -auxorg[1], -auxorg[2]);
+                          fprintf(OutFile,"field [%ld,%ld,%ld]\n", fieldorg[0], -fieldorg[1], -fieldorg[2]);
 #else
-                          fprintf(OutFile,"field [%ldm%ld,%ld]\n", auxorg[0], auxorg[1], -auxorg[2]);
+                          fprintf(OutFile,"field [%ld,%ld,%ld]\n", fieldorg[0], fieldorg[1], -fieldorg[2]);
 #endif
+                          if (fieldorg[3] != 0) fprintf(OutFile,"field w %ld\n", fieldorg[3]);
                         } else {
                           if (fieldon) {
                               fieldon = False;
@@ -1011,11 +1014,11 @@ static void WriteScriptAtoms( void )
                 	
                 }
                 prevflag = aptr->flag&(FieldFlag);
-                auxorg[0] = auxorg[1]= auxorg[2] = 0;
+                fieldorg[0] = fieldorg[1]= fieldorg[2] = 0;
                 if (prevflag) {
-                    auxorg[0] = aptr->auxxorg;
-                    auxorg[1] = aptr->auxyorg;
-                    auxorg[2] = aptr->auxzorg;
+                    fieldorg[0] = aptr->fieldxorg;
+                    fieldorg[1] = aptr->fieldyorg;
+                    fieldorg[2] = aptr->fieldzorg;
                 }
                 first = last = aptr->serno;
                 same = False;
@@ -1028,9 +1031,9 @@ static void WriteScriptAtoms( void )
         {   WriteScriptBetween(first,last);
         } else WriteScriptAll();
 
-        if( auxorg[0] !=0 || auxorg[1] !=0 || auxorg[2] !=0 ) {
+        if( fieldorg[0] !=0 || fieldorg[1] !=0 || fieldorg[2] !=0 ) {
             if( prevflag&FieldFlag )
-              fprintf(OutFile,"field [%ld,%ld,%ld]\n", auxorg[0], auxorg[1], auxorg[2]);
+              fprintf(OutFile,"field [%ld,%ld,%ld]\n", fieldorg[0], fieldorg[1], fieldorg[2]);
         } else {
           if (fieldon) fputs("field off\n",OutFile); 
         }

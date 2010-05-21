@@ -1000,16 +1000,51 @@ static void DisplayField( void )
     register Group __far *group;
     register RAtom __far *aptr;
 
-    if( UseClipping )
-    {   ForEachAtom
-	    if( aptr->flag&FieldFlag )
-	    ClipTwinVector(aptr->x,aptr->y,aptr->z,aptr->auxx,aptr->auxy,aptr->auxz,aptr->col,aptr->col,
-                        ' ');
-    } else 
+    if( UseClipping ) { 
+        ForEachAtom
+	    if( aptr->flag&FieldFlag ) { 
+	      if (aptr->fieldirad < 1)  {
+	        ClipTwinVector(aptr->x,aptr->y,aptr->z,
+	        aptr->fieldx,aptr->fieldy,aptr->fieldz,
+	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);	
+	      } else {
+	        ClipCylinder(aptr->x,aptr->y,aptr->z,
+	        aptr->fieldx,aptr->fieldy,aptr->fieldz,
+	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+	        aptr->fieldirad,aptr->altl,aptr->fieldirad);
+	      }
+	      if (aptr->fieldw) {
+	      	ClipSphere(aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                    aptr->fieldw,
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col));
+	      }
+	    }
+    } else {
 	ForEachAtom
-	    if( aptr->flag&FieldFlag )
-		DrawTwinVector(aptr->x,aptr->y,aptr->z,aptr->auxx,aptr->auxy,aptr->auxz,aptr->col,aptr->col,
-                        ' ');
+	    if( aptr->flag&FieldFlag ) { 
+	      if (aptr->fieldirad < 1)  {
+	        DrawTwinVector(aptr->x,aptr->y,aptr->z,
+	        aptr->fieldx,aptr->fieldy,aptr->fieldz,
+	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);	
+	    } else {
+	        DrawCylinder(aptr->x,aptr->y,aptr->z,
+	        aptr->fieldx,aptr->fieldy,aptr->fieldz,
+	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+	        aptr->fieldirad,aptr->altl,aptr->fieldirad);
+	    }
+	    if (aptr->fieldw) {
+	      	ClipSphere(aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                    aptr->fieldw,
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col));
+	      }
+	    }
+	    	
+    }
+
 }
 
 

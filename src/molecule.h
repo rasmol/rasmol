@@ -279,8 +279,12 @@ typedef struct _Atom {
            the current atom.  The world coordinates are relative
            to the atom.  The Image coordinates are absolute */ 
            
-        Long   auxxorg, auxyorg, auxzorg; /* World aux coords      */
-        Long   auxx, auxy, auxz;          /* Image aux coords      */
+        Long   fieldworg, fieldxorg, fieldyorg, fieldzorg;
+                                          /* World aux coords      */
+        Long   fieldw, fieldx, fieldy, fieldz;    /* Image aux coords      */
+        short  fieldcol;                  /* Field Colour          */
+        short  fieldradius;               /* Field vector radius   */
+        short  fieldirad;                 /* Field image radius    */
         
         short  xtrl, ytrl, ztrl;          /* Trailing Bits         */
         short  radius;                    /* World Radius          */
