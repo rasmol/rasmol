@@ -880,14 +880,20 @@ static void ProcessPDBAtom( int heta, double pdb_version )
     ptr->fieldyorg = 0;
     ptr->fieldzorg = 0;
     ptr->fieldworg = 0;
+    ptr->basexorg = 0;
+    ptr->baseyorg = 0;
+    ptr->basezorg = 0;
     ptr->fieldx = 0;
     ptr->fieldy = 0;
     ptr->fieldz = 0;
     ptr->fieldw = 0;
+    ptr->basex = 0;
+    ptr->basey = 0;
+    ptr->basez = 0;
     ptr->fieldradius = 60;
     ptr->fieldirad = 0;
     ptr->fieldcol = 0;
- 
+
     if( heta ) ptr->flag |= HeteroFlag;
     if (pdb_version < 3.)
       ProcessAtomType( ptr, "  ");
@@ -1292,10 +1298,16 @@ int LoadMDLMolecule( FILE *fp )
         ptr->fieldyorg = 0;
         ptr->fieldzorg = 0;
         ptr->fieldworg = 0;
+        ptr->basexorg = 0;
+        ptr->baseyorg = 0;
+        ptr->basezorg = 0;
         ptr->fieldx = 0;
         ptr->fieldy = 0;
         ptr->fieldz = 0;
         ptr->fieldw = 0;
+        ptr->basex = 0;
+        ptr->basey = 0;
+        ptr->basez = 0;
         ptr->fieldradius = 60;
         ptr->irad = 0;
         ptr->fieldcol = 0;
@@ -1407,10 +1419,16 @@ int LoadXYZMolecule( FILE *fp )
             ptr->fieldyorg = 0;
             ptr->fieldzorg = 0;
             ptr->fieldworg = 0;
+            ptr->basexorg = 0;
+            ptr->baseyorg = 0;
+            ptr->basezorg = 0;
             ptr->fieldx = 0;
             ptr->fieldy = 0;
             ptr->fieldz = 0;
             ptr->fieldw = 0;
+            ptr->basex = 0;
+            ptr->basey = 0;
+            ptr->basez = 0;
             ptr->fieldradius = 60;
             ptr->fieldirad = 0;
             ptr->fieldcol = 0;
@@ -1522,7 +1540,9 @@ int LoadMol2Molecule( FILE *fp )
                  ptr->ytrl = (short)(10000.0*ypos-40.*(double)ptr->yorg);
                  ptr->ztrl = (short)(-10000.0*zpos-40.*(double)ptr->zorg);
                  ptr->fieldxorg = 0; ptr->fieldyorg = 0; ptr->fieldzorg = 0; ptr->fieldworg = 0;
+                 ptr->basexorg = 0; ptr->baseyorg = 0; ptr->basezorg = 0;
                  ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+                 ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
                  ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
                  ProcessAtom( ptr );
             }
@@ -1610,7 +1630,11 @@ int LoadAlchemyMolecule( FILE *fp )
         ptr->ytrl =  (short)(10*(dy-4*ptr->yorg));
         ptr->ztrl =  (short)(10*(-dz-4*ptr->zorg));
         ptr->fieldxorg = 0; ptr->fieldyorg = 0; ptr->fieldzorg = 0; ptr->fieldworg = 0;
+        ptr->basexorg = 0; ptr->baseyorg = 0; ptr->basezorg = 0;
         ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+        ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
+        ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+        ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
         ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
         ProcessAtom( ptr );
     }
@@ -1700,7 +1724,9 @@ int LoadCharmmMolecule( FILE *fp )
         ptr->ytrl =  (short)(10*(dy-4*ptr->yorg));
         ptr->ztrl =  (short)(10*(-dz-4*ptr->zorg));
         ptr->fieldxorg = 0; ptr->fieldyorg = 0; ptr->fieldzorg = 0; ptr->fieldworg = 0;
+        ptr->basexorg = 0; ptr->baseyorg = 0; ptr->basezorg = 0;
         ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+        ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
         ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
         ProcessAtom( ptr );
     }
@@ -1816,7 +1842,9 @@ static int ReadMOPACOutputFile( void )
                 atm->ytrl  = (short)(dy-40*atm->yorg);
                 atm->ztrl  = (short)(-dz-40*atm->zorg);
                 atm->fieldxorg = 0; atm->fieldyorg = 0; atm->fieldzorg = 0; atm->fieldworg = 0;
+                atm->basexorg = 0; atm->baseyorg = 0; atm->basezorg = 0;
                 atm->fieldx = 0; atm->fieldy = 0; atm->fieldz = 0; atm->fieldw = 0;
+                atm->basex = 0; atm->basey = 0; atm->basez = 0;
                 atm->fieldradius = 60; atm->fieldirad = 0; atm->fieldcol = 0;
                 ProcessAtom(atm);
                 atm = atm->anext;
@@ -1988,7 +2016,9 @@ int LoadMOPACMolecule( FILE *fp )
             aptr->fyorg = 0;
             aptr->fzorg = 0;
             aptr->fieldxorg = 0; aptr->fieldyorg = 0; aptr->fieldzorg = 0; aptr->fieldworg = 0;
+            aptr->basexorg = 0; aptr->baseyorg = 0; aptr->basezorg = 0;
             aptr->fieldx = 0; aptr->fieldy = 0; aptr->fieldz = 0; aptr->fieldw = 0;
+            aptr->basex = 0; aptr->basey = 0; aptr->basez = 0;
             aptr->fieldradius = 60; aptr->fieldirad = 0; aptr->fieldcol = 0;
 
             ProcessAtom(aptr);
@@ -2639,7 +2669,9 @@ int LoadCIFMolecule( FILE *fp )
         ptr->ytrl = (short)(10000.0*cartn_y-40.0*(double)ptr->yorg);
         ptr->ztrl = (short)(-10000.0*cartn_z-40.0*(double)ptr->zorg);
         ptr->fieldxorg = 0; ptr->fieldyorg = 0; ptr->fieldzorg = 0; ptr->fieldworg = 0;
+        ptr->basexorg = 0; ptr->baseyorg = 0; ptr->basezorg = 0;
         ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+        ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
         ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
         if (label_atom_id[0]=='\0')  strncpy(label_atom_id,oidstr,4);
 	{
@@ -3461,7 +3493,9 @@ int LoadCIFMolecule( FILE *fp )
                 ptr->ytrl = (short)(10000.0*cartn_y-40.0*(double)ptr->yorg);
                 ptr->ztrl = (short)(-10000.0*cartn_z-40.0*(double)ptr->zorg);
                 ptr->fieldxorg = 0; ptr->fieldyorg = 0; ptr->fieldzorg = 0; ptr->fieldworg = 0;
+                ptr->basexorg = 0; ptr->baseyorg = 0; ptr->basezorg = 0;
                 ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+                ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
                 ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
                 if (label_atom_id[0]=='\0')  strncpy(label_atom_id,idstr,4);
                 {

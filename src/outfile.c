@@ -1433,7 +1433,7 @@ static int FindDepth( PSItemPtr item,  int type )
     switch( type )
     {   case(PSAtom):    atom = (RAtom __far*)item;
                          return atom->z;
-
+                         
     	case(PSField):   atom = (RAtom __far*)item;
     	                 result = atom->z;
     	                 if (result < atom->fieldz) {
@@ -1779,7 +1779,7 @@ static void WriteVectField( PSItemPtr __far *data, char __far *type,
     register int swap;
     
     swap = False;
-
+    
     src = (RAtom __far*)data[index];
     col = src->fieldcol;
 
@@ -2646,8 +2646,8 @@ static void WritePSItems( PSItemPtr __far *data, char __far *type, int count )
                             break;
 
         	case(PSField):  WriteVectField(data,type,i);
-                            break;
-
+        	                break;
+        	                
             case(PSBond):   bond = (Bond __far*)data[i];
                             src = bond->srcatom;
                             dst = bond->dstatom;
@@ -3966,7 +3966,7 @@ void WriteR3DRibbon( Chain  __far *chain, Real scale )
             }
         } else if( group == chain->glist )
         {   knot1 = knot2;
-            knot1.px = captr->xorg + captr->fxorg- CenX;
+            knot1.px = captr->xorg + captr->fxorg - CenX;
             knot1.py = captr->yorg + captr->fyorg - CenY;
             knot1.pz = captr->zorg + captr->fzorg - CenZ;
  

@@ -360,8 +360,8 @@ extern size_t record_frame[2], play_frame[2];
 
 #endif
 
-void SetOneFieldValue(long field[3], RAtom __far *aptr, int wait);
-void SetFieldValue(long field[3]);
+void SetOneFieldValue(long field[4], RAtom __far *aptr, int wait);
+void SetFieldValue(long field[4]);
 
 void SetRadiusValue( int, int  );
 void SetRadiusTemperature( int );

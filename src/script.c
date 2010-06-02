@@ -999,7 +999,7 @@ static void WriteScriptAtoms( void )
 #else
                           fprintf(OutFile,"field [%ld,%ld,%ld]\n", fieldorg[0], fieldorg[1], -fieldorg[2]);
 #endif
-                          if (fieldorg[3] != 0) fprintf(OutFile,"field w %ld\n", fieldorg[3]);
+                          if (fieldorg[3] != 0) fprintf(OutFile,"field radius %ld\n", fieldorg[3]);
                         } else {
                           if (fieldon) {
                               fieldon = False;

@@ -179,12 +179,14 @@ typedef struct {
         int offmax;
     } ViewStruct;
 
+/* surface bond struct */
 
 typedef struct {
-  int rad;
-  Long x1, y1, z1, x2, y2, z2; 
-  Long U[3]; 
-  int  c1, c2;
+  int rad;             /* max of src, dst and probe radii */
+  Long x1, y1, z1, x2, y2, z2;
+                       /* src and dst coords */
+  Long U[3];           /* vector from src to dst */
+  int  c1, c2;         /* src and dst colors */
   char altl;
   Long u1, u2, wp, w1, w2, t1, t2;
   Long sxyz, syz, sxz;

@@ -396,13 +396,13 @@ void DetermineClipping( void )
     } else UseScreenClip = True;
 }
 
-void SetOneFieldValue(long field[3], RAtom __far *aptr, int wait) {
+void SetOneFieldValue(long field[4], RAtom __far *aptr, int wait) {
 
     register Chain __far *chain;
     register Group __far *group;
     register RAtom __far *ptr;
     double normsq, maxnormsq;
-    
+    Long basenormsq;
     double onormsq = 0;
     DrawField = True;
     
@@ -417,7 +417,54 @@ void SetOneFieldValue(long field[3], RAtom __far *aptr, int wait) {
         aptr->fieldxorg = field[0];
         aptr->fieldyorg = field[1];
         aptr->fieldzorg = field[2];
+        aptr->fieldworg = field[3];
         aptr->flag |= FieldFlag;
+        if (AbsFun(field[0]) >= AbsFun(field[1]) && AbsFun(field[0]) >= AbsFun(field[2])) {
+              if (AbsFun(field[1]) >= AbsFun(field[2])) {
+                aptr->basexorg = field[1];
+                aptr->baseyorg = -field[0];
+                aptr->basezorg = 0;
+              } else  {
+                aptr->basexorg = field[2];
+                aptr->baseyorg = 0;
+                aptr->basezorg = -field[0];
+              }
+            	
+            } else if (AbsFun(field[1]) >= AbsFun(field[0]) && AbsFun(field[1]) >= AbsFun(field[2])) {
+              if (AbsFun(field[0]) >= AbsFun(field[2])) {
+                aptr->basexorg = field[1];
+                aptr->baseyorg = -field[0];
+                aptr->basezorg = 0;
+              } else  {
+                aptr->basexorg = 0;
+                aptr->baseyorg = field[2];
+                aptr->basezorg = -field[1];
+              }
+    	
+            } else {
+              if (AbsFun(field[0]) >= AbsFun(field[1])) {
+                aptr->basexorg = -field[2];
+                aptr->baseyorg = 0;
+                aptr->basezorg = field[0];
+              } else  {
+                aptr->basexorg = 0;
+                aptr->baseyorg = -field[2];
+                aptr->basezorg = field[1];
+              }
+            }
+            basenormsq = (ptr->basexorg)*(ptr->basexorg) + (ptr->baseyorg)*(ptr->baseyorg) + (ptr->basezorg)*(ptr->basezorg);
+            if (basenormsq > 0) {
+              int basenorm;
+              basenorm = isqrt(basenormsq);
+              aptr->basexorg *= 250;
+              aptr->baseyorg *= 250;
+              aptr->basezorg *= 250;
+
+              aptr->basexorg /= basenorm;
+              aptr->baseyorg /= basenorm;
+              aptr->basezorg /= basenorm;
+            }
+
 
         normsq = ((double)field[0])*((double)field[0])
              + ((double)field[1])*((double)field[1])
@@ -469,13 +516,14 @@ void SetOneFieldValue(long field[3], RAtom __far *aptr, int wait) {
 }
 
 
-void SetFieldValue(long field[3]) {
+void SetFieldValue(long field[4]) {
 
     register Chain __far *chain;
     register Group __far *group;
     register RAtom __far *ptr;
     register int change;
     double normsq, maxnormsq;
+    long basenormsq;
 
     if( !Database )
         return;
@@ -492,7 +540,56 @@ void SetFieldValue(long field[3]) {
             ptr->fieldxorg = field[0];
             ptr->fieldyorg = field[1];
             ptr->fieldzorg = field[2];
+            ptr->fieldworg = field[3];
             ptr->flag |= FieldFlag;
+            if (AbsFun(field[0]) >= AbsFun(field[1]) && AbsFun(field[0]) >= AbsFun(field[2])) {
+              if (AbsFun(field[1]) >= AbsFun(field[2])) {
+                ptr->basexorg = field[1];
+                ptr->baseyorg = -field[0];
+                ptr->basezorg = 0;
+              } else  {
+                ptr->basexorg = field[2];
+                ptr->baseyorg = 0;
+                ptr->basezorg = -field[0];
+              }
+            	
+            } else if (AbsFun(field[1]) >= AbsFun(field[0]) && AbsFun(field[1]) >= AbsFun(field[2])) {
+              if (AbsFun(field[0]) >= AbsFun(field[2])) {
+                ptr->basexorg = field[1];
+                ptr->baseyorg = -field[0];
+                ptr->basezorg = 0;
+              } else  {
+                ptr->basexorg = 0;
+                ptr->baseyorg = field[2];
+                ptr->basezorg = -field[1];
+              }
+    	
+            } else {
+              if (AbsFun(field[0]) >= AbsFun(field[1])) {
+                ptr->basexorg = -field[2];
+                ptr->baseyorg = 0;
+                ptr->basezorg = field[0];
+              } else  {
+                ptr->basexorg = 0;
+                ptr->baseyorg = -field[2];
+                ptr->basezorg = field[1];
+              }
+            }
+            basenormsq = (ptr->basexorg)*(ptr->basexorg) + (ptr->baseyorg)*(ptr->baseyorg) + (ptr->basezorg)*(ptr->basezorg);
+            if (basenormsq > 0) {
+              int basenorm;
+              basenorm = isqrt(basenormsq);
+              ptr->basexorg *= 250;
+              ptr->baseyorg *= 250;
+              ptr->basezorg *= 250;
+
+              ptr->basexorg /= basenorm;
+              ptr->baseyorg /= basenorm;
+              ptr->basezorg /= basenorm;
+            }
+
+            
+             
         } else  {
             if (ptr->flag & FieldFlag) {
                 normsq = ((double) ptr->fieldxorg)*((double)ptr->fieldxorg)
@@ -513,6 +610,7 @@ void SetFieldValue(long field[3]) {
 
      if (maxnormsq > 0.) {
         MaxVectorField = (long)rint(sqrt(maxnormsq));
+        ReDrawFlag |= RFRefresh|RFRotate;
         DrawField = True;
      }
      
@@ -553,6 +651,13 @@ void SetRadiusValue( int rad , int flag)
             } else if (flag & TouchFlag) {
                 ptr->flag |= TouchFlag|(flag&ExpandFlag);
                 ptr->flag &= ~(SphereFlag|StarFlag);
+			} else if (flag & FieldFlag) {
+				ptr->flag |= FieldFlag;
+			    ptr->fieldradius = rad;
+			    ptr->fieldirad = irad;
+			    DrawField = True;
+			    change = True;
+			    continue;
 			}
             ptr->radius = rad;
             ptr->irad = irad;
@@ -569,7 +674,11 @@ void SetRadiusValue( int rad , int flag)
             DrawSurf = True;
             if( (ptr->irad+incr)>MaxAtomRadius )
                 MaxAtomRadius = ptr->irad+incr;
-        }                
+        } else if (ptr->flag & FieldFlag) {
+            DrawField = True;
+            if( (ptr->fieldirad)>MaxAtomRadius )
+                MaxAtomRadius = ptr->fieldirad;
+        }
     }
 
     if( change )
@@ -1430,8 +1539,12 @@ void RestrictZone( int mask )
             {  if( (ptr->irad)+iProbeRad > MaxAtomRadius )
                    MaxAtomRadius = (ptr->irad)+iProbeRad;
             }
+            if( ptr->flag & FieldFlag )
+            {  if( (ptr->fieldirad) > MaxAtomRadius )
+                   MaxAtomRadius = (ptr->fieldirad);
+            }
         } else 
-        {   ptr->flag &= ~(SelectFlag|SphereFlag|StarFlag|TouchFlag|ExpandFlag);
+        {   ptr->flag &= ~(SelectFlag|SphereFlag|StarFlag|TouchFlag|ExpandFlag|FieldFlag);
             if( ptr->label )
             {   DeleteLabel( (Label*)ptr->label );
                 ptr->label = (void*)0;
@@ -1594,10 +1707,14 @@ void RestrictZoneExpr( Expr *expr )
                     {   if( (QAtom->irad)+iProbeRad>MaxAtomRadius )
                             MaxAtomRadius = (QAtom->irad)+iProbeRad;
                     }
+                    if( QAtom->flag & FieldFlag )
+                    {   if( (QAtom->fieldirad)>MaxAtomRadius )
+                            MaxAtomRadius = QAtom->fieldirad;
+                    }
 
                 }  else 
                 {   QAtom->flag &=
-                        ~(SelectFlag|SphereFlag|StarFlag|ExpandFlag);
+                        ~(SelectFlag|SphereFlag|StarFlag|ExpandFlag|FieldFlag);
                     if( QAtom->label )
                     {   DeleteLabel( (Label*)QAtom->label );
                         QAtom->label = (void*)0;
@@ -2993,6 +3110,13 @@ void UserMaskAttrib( int fields )
           if( (ptr->irad)+iProbeRad>MaxAtomRadius )
             MaxAtomRadius = (ptr->irad)+iProbeRad;
         }
+        if( ptr->flag & FieldFlag )
+        {
+          if( (ptr->fieldirad)>MaxAtomRadius )
+            MaxAtomRadius = (ptr->fieldirad);
+            DrawField = True;
+        }
+
      }
 
     if( change )
@@ -3414,6 +3538,8 @@ void InitialTransform( void )
         ptr->fzorg = 0;
         ptr->fieldxorg = 0; ptr->fieldyorg = 0; ptr->fieldzorg = 0; ptr->fieldworg = 0;
         ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+        ptr->basexorg = 0; ptr->baseyorg = 0; ptr->basezorg = 0;
+        ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
         ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
     }
 
@@ -4040,6 +4166,8 @@ static void ApplyTransformOne( void )
                 	z+= ptr->fieldzorg;
                 	ptr->fieldy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
                 	ptr->fieldz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatY[2])+ZOffset;
+                	ptr->basey = (int)rint(ptr->basexorg*MatY[0]+ptr->baseyorg*MatY[1]+ptr->basezorg*MatY[2]);
+                	ptr->basez = (int)rint(ptr->basexorg*MatZ[0]+ptr->baseyorg*MatZ[1]+ptr->basezorg*MatZ[2]);
                 }
             }
             break;
@@ -4057,6 +4185,8 @@ static void ApplyTransformOne( void )
                 	z+= ptr->fieldzorg;
                 	ptr->fieldx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
                 	ptr->fieldz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                	ptr->basex = (int)rint(ptr->basexorg*MatX[0]+ptr->baseyorg*MatX[1]+ptr->basezorg*MatX[2]);
+                	ptr->basez = (int)rint(ptr->basexorg*MatZ[0]+ptr->baseyorg*MatZ[1]+ptr->basezorg*MatZ[2]);
                 }
             }
             break;
@@ -4074,6 +4204,9 @@ static void ApplyTransformOne( void )
                 	z+= ptr->fieldzorg;
                 	ptr->fieldx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
                 	ptr->fieldy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
+                	ptr->basex = (int)rint(ptr->basexorg*MatX[0]+ptr->baseyorg*MatX[1]+ptr->basezorg*MatX[2]);
+                	ptr->basey = (int)rint(ptr->basexorg*MatY[0]+ptr->baseyorg*MatY[1]+ptr->basezorg*MatY[2]);
+
                 }
             }
             break;
@@ -4098,6 +4231,9 @@ static void ApplyTransformOne( void )
                 	    ptr->fieldz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
                 	    ptr->fieldw = (int)(Scale*(Real)(ptr->fieldworg));
                 	    ptr->fieldirad =(int)(Scale*(Real)(ptr->fieldradius));
+                	    ptr->basex = (int)rint(ptr->basexorg*MatX[0]+ptr->baseyorg*MatX[1]+ptr->basezorg*MatX[2]);
+                	    ptr->basey = (int)rint(ptr->basexorg*MatY[0]+ptr->baseyorg*MatY[1]+ptr->basezorg*MatY[2]);
+                	    ptr->basez = (int)rint(ptr->basexorg*MatZ[0]+ptr->baseyorg*MatZ[1]+ptr->basezorg*MatZ[2]);
                     }
                     if( ptr->flag&(SphereFlag|StarFlag|TouchFlag|ExpandFlag) )
                     {   ptr->irad = (int)(Scale*(Real)(ptr->radius));
@@ -4127,6 +4263,10 @@ static void ApplyTransformOne( void )
                 	    ptr->fieldz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
                 	    ptr->fieldw = (int)(Scale*(Real)(ptr->fieldworg));
                 	    ptr->fieldirad =(int)(Scale*(Real)(ptr->fieldradius));
+                	    ptr->basex = (int)rint(ptr->basexorg*MatX[0]+ptr->baseyorg*MatX[1]+ptr->basezorg*MatX[2]);
+                	    ptr->basey = (int)rint(ptr->basexorg*MatY[0]+ptr->baseyorg*MatY[1]+ptr->basezorg*MatY[2]);
+                	    ptr->basez = (int)rint(ptr->basexorg*MatZ[0]+ptr->baseyorg*MatZ[1]+ptr->basezorg*MatZ[2]);
+
 
                     }
                 }
@@ -4462,7 +4602,8 @@ int AlignToMolecule(int molnum, double * rmsd,
     CVectorHandle /* CQRQuaternion */ quatList; /* list of quaternions */
     CVectorHandle /* CQRQuaternion */ quatLocalList; /* list of local quaternions by atom */
     CVectorHandle /* int */ quatLocalCountList; /* list of local quaternion counts */
-    CV3Vector origc1, origc2;
+    CV3Vector origcLocal, origcRemote;
+    CV3Vector cenLocal, cenRemote;
     CV3Vector shiftLocal;
     CV3Vector comLocal, comRemote;
     CV3VectorHandle tvec;
@@ -4499,11 +4640,13 @@ int AlignToMolecule(int molnum, double * rmsd,
     CVectorCreate( &selGroupsLocal, sizeof (Group *), 1);
     CVectorCreate( &selGroupsRemote, sizeof (Group *), 1);
     GatherSelected( selAtomsLocal, selGroupsLocal );
-    CV3M_vsssSet(origc1,(double)OrigCX,(double)OrigCY,(double)OrigCZ);
+    CV3M_vsssSet(origcLocal,(double)OrigCX,(double)OrigCY,(double)OrigCZ);
+    CV3M_vsssSet(cenLocal,(double)CenX,(double)CenY,(double)CenZ);
     MoleculeIndexSave = MoleculeIndex;
     SwitchMolecule(molnum);
     GatherSelected( selAtomsRemote, selGroupsRemote );
-    CV3M_vsssSet(origc2,(double)OrigCX,(double)OrigCY,(double)OrigCZ);
+    CV3M_vsssSet(origcRemote,(double)OrigCX,(double)OrigCY,(double)OrigCZ);
+    CV3M_vsssSet(cenRemote,(double)CenX,(double)CenY,(double)CenZ);
     
     
     /* Now transfer the current coordinate information to vlist1 and vlist2 */
@@ -4518,16 +4661,16 @@ int AlignToMolecule(int molnum, double * rmsd,
         CV3Vector vtemp;
         RAtom * ptemp;
         ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
-        vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origc1.vec[0])/250.0
+        vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
                          +(double)(ptemp->xtrl)/10000.0;
 #ifdef INVERT
-        vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origc1.vec[1])/250.0
+        vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
                          -(double)(ptemp->ytrl)/10000.0);
 #else
-        vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origc1.vec[1])/250.0
+        vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
                          +(double)(ptemp->ytrl)/10000.0;
 #endif
-        vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origc1.vec[2])/250.0
+        vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcLocal.vec[2])/250.0
                          -(double)(ptemp->ztrl)/10000.0);
         CVectorAddElement(vlistLocal,&vtemp);
         CVectorAddElement(glistLocal,&((*(Group * *)CVectorElementAt(selGroupsLocal,ii))->serno));
@@ -4536,16 +4679,16 @@ int AlignToMolecule(int molnum, double * rmsd,
         CV3Vector vtemp;
         RAtom * ptemp;
         ptemp = *(RAtom * *)CVectorElementAt(selAtomsRemote,ii);
-        vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origc2.vec[0])/250.0
+        vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcRemote.vec[0])/250.0
         +(double)(ptemp->xtrl)/10000.0;
 #ifdef INVERT
-        vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origc2.vec[1])/250.0
+        vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcRemote.vec[1])/250.0
                          +(double)(ptemp->ytrl)/10000.0);
 #else
-        vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origc2.vec[1])/250.0
+        vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcRemote.vec[1])/250.0
         +(double)(ptemp->ytrl)/10000.0;
 #endif
-        vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origc2.vec[2])/250.0
+        vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcRemote.vec[2])/250.0
                          +(double)(ptemp->ztrl)/10000.0);
         CVectorAddElement(vlistRemote,&vtemp);
         CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,ii))->serno));
@@ -4558,26 +4701,26 @@ int AlignToMolecule(int molnum, double * rmsd,
 /* recenter both molecules on the remote target center of mass */
 
 #ifdef INVERT
-    CentreTransform((long)rint(comRemote.vec[0]*250.-origc2.vec[0]),
-      -(long)rint(comRemote.vec[1]*250.-origc2.vec[1]),
-      -(long)rint(comRemote.vec[2]*250.-origc2.vec[2]),xlatecen);   
+    CentreTransform((long)rint(comRemote.vec[0]*250.-origcRemote.vec[0]),
+      -(long)rint(comRemote.vec[1]*250.-origcRemote.vec[1]),
+      -(long)rint(comRemote.vec[2]*250.-origcRemote.vec[2]),xlatecen);   
 #else 
-    CentreTransform((long)rint(comRemote.vec[0]*250.-origc2.vec[0]),
-       (long)rint(comRemote.vec[1]*250.-origc2.vec[1]),
-      -(long)rint(comRemote.vec[2]*250.-origc2.vec[2]),xlatecen);
+    CentreTransform((long)rint(comRemote.vec[0]*250.-origcRemote.vec[0]),
+       (long)rint(comRemote.vec[1]*250.-origcRemote.vec[1]),
+      -(long)rint(comRemote.vec[2]*250.-origcRemote.vec[2]),xlatecen);
 #endif
 
     SwitchMolecule( MoleculeIndexSave );
     
     
 #ifdef INVERT
-    CentreTransform((long)rint(comRemote.vec[0]*250.-origc2.vec[0]),
-      -(long)rint(comRemote.vec[1]*250.-origc2.vec[1]),
-      -(long)rint(comRemote.vec[2]*250.-origc2.vec[2]),xlatecen);   
+    CentreTransform((long)rint(comRemote.vec[0]*250.-origcRemote.vec[0]),
+      -(long)rint(comRemote.vec[1]*250.-origcRemote.vec[1]),
+      -(long)rint(comRemote.vec[2]*250.-origcRemote.vec[2]),xlatecen);   
 #else 
-    CentreTransform((long)rint(comRemote.vec[0]*250.-origc2.vec[0]),
-       (long)rint(comRemote.vec[1]*250.-origc2.vec[1]),
-      -(long)rint(comRemote.vec[2]*250.-origc2.vec[2]),xlatecen);
+    CentreTransform((long)rint(comRemote.vec[0]*250.-origcRemote.vec[0]),
+       (long)rint(comRemote.vec[1]*250.-origcRemote.vec[1]),
+      -(long)rint(comRemote.vec[2]*250.-origcRemote.vec[2]),xlatecen);
 #endif
 
 
@@ -4742,6 +4885,7 @@ int AlignToMolecule(int molnum, double * rmsd,
             CVectorAddElement(quatList,&q);
             count++;
             if (none_ang_dist == ALIGN_ANGLE) {
+              double hlerpnormsq;
               localcount = *(int *)CVectorElementAt(quatLocalCountList,ii);
               localq = (CQRQuaternionHandle)CVectorElementAt(quatLocalList,ii);
               CQRHLERP (&localqtemp,localq,&q,(double)localcount,1.);
@@ -4751,6 +4895,10 @@ int AlignToMolecule(int molnum, double * rmsd,
               localcount = *(int *)CVectorElementAt(quatLocalCountList,jj);
               localq = (CQRQuaternionHandle)CVectorElementAt(quatLocalList,jj);
               CQRHLERP (&localqtemp,localq,&q,(double)localcount,1.);
+              CQRMNormsq(hlerpnormsq,localqtemp);
+              if (fabs(hlerpnormsq-1.) > .00001 && hlerpnormsq !=0.) {
+                CQRMScalarMultiply(localqtemp,localqtemp,1./sqrt(hlerpnormsq))
+              }
               CQRMCopy (*localq,localqtemp);
               localcount++;
               CVectorSetElement(quatLocalCountList,&localcount,jj);
@@ -4811,7 +4959,7 @@ int AlignToMolecule(int molnum, double * rmsd,
     
     /* convert the origin shift back to real world coordinates */
     
-    CV3M_vvvSubtract(origshift, origc1, origc2);
+    CV3M_vvvSubtract(origshift, origcLocal, origcRemote);
     CV3M_vvsDivide(origshift,origshift,250.);
     origshift.vec[2] = -origshift.vec[2];
 #ifdef INVERT
@@ -4824,9 +4972,12 @@ int AlignToMolecule(int molnum, double * rmsd,
                   vTransToMolecule,
                   &comLocal);
                   
-    OrigCX = (long)origc2.vec[0];
-    OrigCY = (long)origc2.vec[1];
-    OrigCZ = (long)origc2.vec[2];
+    OrigCX = (long)origcRemote.vec[0];
+    OrigCY = (long)origcRemote.vec[1];
+    OrigCZ = (long)origcRemote.vec[2];
+    CenX = (long)cenRemote.vec[0];
+    CenY = (long)cenRemote.vec[1];
+    CenZ = (long)cenRemote.vec[2];
     
     
     if (none_ang_dist==ALIGN_DISTANCE) {
@@ -4837,32 +4988,32 @@ int AlignToMolecule(int molnum, double * rmsd,
                 CV3Vector vLocal,vRemote,vDiff;
                 RAtom * pLocal;
                 RAtom * pRemote;
-                long field[3];
+                long field[4];
                 pLocal = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
-                vLocal.vec[0] = (double)(pLocal->xorg + pLocal->fxorg + origc2.vec[0])/250.0
+                vLocal.vec[0] = (double)(pLocal->xorg + pLocal->fxorg + origcRemote.vec[0])/250.0
                                  +(double)(pLocal->xtrl)/10000.0;
 #ifdef INVERT
-                vLocal.vec[1] = -((double)(pLocal->yorg + pLocal->fyorg + origc2.vec[1])/250.0
+                vLocal.vec[1] = -((double)(pLocal->yorg + pLocal->fyorg + origcRemote.vec[1])/250.0
                                  -(double)(pLocal->ytrl)/10000.0);
 #else
-                vLocal.vec[1] = (double)(pLocal->yorg + pLocal->fyorg + origc2.vec[1])/250.0
+                vLocal.vec[1] = (double)(pLocal->yorg + pLocal->fyorg + origcRemote.vec[1])/250.0
                                  +(double)(pLocal->ytrl)/10000.0;
 #endif
-                vLocal.vec[2] = -((double)(pLocal->zorg + pLocal->fzorg + origc2.vec[2])/250.0
+                vLocal.vec[2] = -((double)(pLocal->zorg + pLocal->fzorg + origcRemote.vec[2])/250.0
                                  -(double)(pLocal->ztrl)/10000.0);
                                  
                                  
                 pRemote = *(RAtom * *)CVectorElementAt(selAtomsRemote,ii);
-                vRemote.vec[0] = (double)(pRemote->xorg + pRemote->fxorg + origc2.vec[0])/250.0
+                vRemote.vec[0] = (double)(pRemote->xorg + pRemote->fxorg + origcRemote.vec[0])/250.0
                 +(double)(pRemote->xtrl)/10000.0;
 #ifdef INVERT
-                vRemote.vec[1] = -((double)(pRemote->yorg + pRemote->fyorg + origc2.vec[1])/250.0
+                vRemote.vec[1] = -((double)(pRemote->yorg + pRemote->fyorg + origcRemote.vec[1])/250.0
                                  +(double)(pRemote->ytrl)/10000.0);
 #else
-                vRemote.vec[1] = (double)(pRemote->yorg + pRemote->fyorg + origc2.vec[1])/250.0
+                vRemote.vec[1] = (double)(pRemote->yorg + pRemote->fyorg + origcRemote.vec[1])/250.0
                 +(double)(pRemote->ytrl)/10000.0;
 #endif
-                vRemote.vec[2] = -((double)(pRemote->zorg + pRemote->fzorg + origc2.vec[2])/250.0
+                vRemote.vec[2] = -((double)(pRemote->zorg + pRemote->fzorg + origcRemote.vec[2])/250.0
                                  +(double)(pRemote->ztrl)/10000.0);
                 
                 CV3M_vvvSubtract(vDiff,vRemote,vLocal);
@@ -4877,6 +5028,7 @@ int AlignToMolecule(int molnum, double * rmsd,
                 field[1] = rint(vDiff.vec[1]*250.);
 #endif
                 field[2] = -rint(vDiff.vec[2]*250.);
+                field[3] = 0;
                 
                 SetOneFieldValue(field, pLocal, 0);
                 
@@ -4918,13 +5070,15 @@ int AlignToMolecule(int molnum, double * rmsd,
                     field[1] = rint(localaxis.vec[1]*1500.);
 #endif
                     field[2] = -rint(localaxis.vec[2]*1500.);
-                
-                SetOneFieldValue(field, pLocal, 0);
-                
-                DrawField = True;
-                
-        }
-
+                    
+                    field[3] = rint(-fabs(localangle)*1000);
+                    
+                    SetOneFieldValue(field, pLocal, 0);
+                    
+                    DrawField = True;
+                    
+                }
+            	
             }
         }
     }

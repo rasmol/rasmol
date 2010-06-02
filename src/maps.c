@@ -3732,9 +3732,9 @@ int generate_map(MapStruct **map,
       
         
         Long rad;
-        
+          
         Long sigcut;
-        
+                
         double sig;
         
         radius = ptr->radius;
@@ -3769,7 +3769,7 @@ int generate_map(MapStruct **map,
         ypos = ptr->yorg+ptr->fyorg+OrigCY;
 #endif
         zpos = -(ptr->zorg+ptr->fzorg+OrigCZ);
-        
+
         if (xpos-sigcut < xsellow) xsellow = xpos-sigcut;
         if (ypos-sigcut < ysellow) ysellow = ypos-sigcut;
         if (zpos-sigcut < zsellow) zsellow = zpos-sigcut;
@@ -3836,7 +3836,7 @@ int generate_map(MapStruct **map,
         Long xpos, ypos, zpos;
         
         Long rad;
-        
+          
         Long sigcut;
         
         double sig, coeff;
@@ -3858,7 +3858,7 @@ int generate_map(MapStruct **map,
          /*  sig = sqrt((pr*rad)/log(2.)); */
 
         }
-        
+
 #ifdef HIPREC
         sigcut = (Long)(6* sig);
 #else

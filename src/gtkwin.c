@@ -1464,16 +1464,16 @@ gboolean button_release_cb(GtkWidget *canvas, GdkEventButton *event, gpointer us
 
     if (!dragging && event->button == 3 && event->type == GDK_BUTTON_RELEASE
         && !(event->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK))) {
-        do_popup_menu (canvas, event);
+		do_popup_menu (canvas, event);
     } else {
-        stat = GetStatus(event->state);
-        ProcessMouseUp(event->x,event->y,stat);
-    }
+    	stat = GetStatus(event->state);
+    	ProcessMouseUp(event->x,event->y,stat);
+	}
     if( ReDrawFlag ) {
         RefreshScreen();
     }
-    dragging = FALSE;
-
+	dragging = FALSE;
+	
     return TRUE;
 }
 
@@ -1685,12 +1685,12 @@ int CreateImage( void )
     long size;
 
     if(FBuffer) {
-        _ffree(FBuffer);
+		_ffree(FBuffer);
     }
-    size = (long)XRange*YRange*sizeof(Pixel);
-    FBuffer = (Pixel*)_fmalloc( size+32 );
-
-    return((FBuffer!=(Pixel*)NULL)?True : False);
+	size = (long)XRange*YRange*sizeof(Pixel);
+	FBuffer = (Pixel*)_fmalloc( size+32 );
+	
+	return((FBuffer!=(Pixel*)NULL)?True : False);
 }
 
 

@@ -1666,7 +1666,7 @@ void DisplayRibbon( Chain  __far *chain )
             prev = False;
             continue;
         }
- 
+
 
 #ifndef OLDKNOT
         lknot2.tx = next->xorg + next->fxorg - captr->xorg - captr->fxorg;

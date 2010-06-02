@@ -998,12 +998,22 @@ static void DisplayField( void )
 {
     register Chain __far *chain;
     register Group __far *group;
-    register RAtom __far *aptr;
+    register RAtom __far *aptr;	
+    
+    CV3Vector mark[73];
+    CV3Vector base;
+    CV3Vector axis;
+    CV3Vector other;
+    CV3Vector temp;
+    double bnorm,anorm,onorm,angle,ca,sa,ang;
+    int nang,iang;
+    Long cvec[3], dvec[3];
+
 
     if( UseClipping ) { 
         ForEachAtom
 	    if( aptr->flag&FieldFlag ) { 
-	      if (aptr->fieldirad < 1)  {
+	      if (aptr->fieldirad <= 1 || aptr->fieldworg < 0)  {
 	        ClipTwinVector(aptr->x,aptr->y,aptr->z,
 	        aptr->fieldx,aptr->fieldy,aptr->fieldz,
 	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
@@ -1016,9 +1026,104 @@ static void DisplayField( void )
 	        aptr->fieldirad,aptr->altl,aptr->fieldirad);
 	      }
 	      if (aptr->fieldw) {
+	        if (aptr->fieldworg > 0) {
 	      	ClipSphere(aptr->fieldx,aptr->fieldy,aptr->fieldz,
                     aptr->fieldw,
                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col));
+	        } else {
+	          axis.vec[0] = (double)(aptr->fieldxorg)/250.;
+	          axis.vec[1] = (double)(aptr->fieldyorg)/250.;
+	          axis.vec[2] = (double)(aptr->fieldzorg)/250.;
+	          base.vec[0] = (double)(aptr->basexorg)/250.;
+	          base.vec[1] = (double)(aptr->baseyorg)/250.;
+	          base.vec[2] = (double)(aptr->basezorg)/250.;
+	          CV3M_vvvCross(other,axis,base);
+	          CV3M_svNorm(anorm,axis);
+	          CV3M_svNorm(bnorm,base);
+	          CV3M_svNorm(onorm,other);
+	          if (anorm != 0.) {
+                CV3M_vvsDivide(axis,axis,anorm);
+	          }
+	          if (bnorm != 0.) {
+                CV3M_vvsDivide(base,base,bnorm);
+	          }
+	          if (onorm != 0.) {
+                CV3M_vvsDivide(other,other,anorm);
+	          }
+	          angle = (double)(-(aptr->fieldworg))/1000.;
+	          nang = (rint)(angle*72./PI);
+	          if (nang > 72) nang = 72;
+	          ca = cos(angle);
+	          sa = sin(angle);
+	          CV3M_vvsMultiply(mark[nang],other,((double)(aptr->fieldradius))*sa);
+	          CV3M_vvsMultiply(temp,base,((double)(aptr->fieldradius))*ca);
+	          CV3M_vvvAdd(mark[nang],mark[nang],temp);
+	          CV3M_vvsMultiply(mark[0],base,(double)(aptr->fieldradius));
+	          cvec[0] = (long)rint((mark[0].vec[0]*MatX[0]+mark[0].vec[1]*MatX[1]+mark[0].vec[2]*MatX[2]));
+	          cvec[1] = (long)rint((mark[0].vec[0]*MatY[0]+mark[0].vec[1]*MatY[1]+mark[0].vec[2]*MatY[2]));
+	          cvec[2] = (long)rint((mark[0].vec[0]*MatZ[0]+mark[0].vec[1]*MatZ[1]+mark[0].vec[2]*MatZ[2]));
+	          ClipTwinVector(aptr->fieldx-cvec[0],
+	            aptr->fieldy-cvec[1],
+	            aptr->fieldz-cvec[2],
+	            aptr->fieldx+cvec[0],
+	            aptr->fieldy+cvec[1],
+	            aptr->fieldz+cvec[2],
+	            (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+	            (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+	          if (nang > 1) {
+	            for (iang = 1; iang < nang; iang++ ) {
+	              ang = angle*((double)iang)/((double)nang);
+	              ca = cos(ang);
+	              sa = sin(ang);
+	              CV3M_vvsMultiply(mark[iang],other,((double)(aptr->fieldradius))*sa);
+	              CV3M_vvsMultiply(temp,mark[0],ca);
+	              CV3M_vvvAdd(mark[iang],mark[iang],temp);
+	            }
+	          }
+	          if (nang > 0) {
+	            for (iang =1; iang < nang+1; iang++)  {
+	              cvec[0] = (long)rint((mark[iang-1].vec[0]*MatX[0]+mark[iang-1].vec[1]*MatX[1]+mark[iang-1].vec[2]*MatX[2]));
+	              cvec[1] = (long)rint((mark[iang-1].vec[0]*MatY[0]+mark[iang-1].vec[1]*MatY[1]+mark[iang-1].vec[2]*MatY[2]));
+	              cvec[2] = (long)rint((mark[iang-1].vec[0]*MatZ[0]+mark[iang-1].vec[1]*MatZ[1]+mark[iang-1].vec[2]*MatZ[2]));
+	              dvec[0] = (long)rint((mark[iang].vec[0]*MatX[0]+mark[iang].vec[1]*MatX[1]+mark[iang].vec[2]*MatX[2]));
+	              dvec[1] = (long)rint((mark[iang].vec[0]*MatY[0]+mark[iang].vec[1]*MatY[1]+mark[iang].vec[2]*MatY[2]));
+	              dvec[2] = (long)rint((mark[iang].vec[0]*MatZ[0]+mark[iang].vec[1]*MatZ[1]+mark[iang].vec[2]*MatZ[2]));
+	              ClipTwinVector(aptr->fieldx-cvec[0],
+	                aptr->fieldy-cvec[1],
+	                aptr->fieldz-cvec[2],
+	                aptr->fieldx-dvec[0],
+	                aptr->fieldy-dvec[1],
+	                aptr->fieldz-dvec[2],
+	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+	              ClipTwinVector(aptr->fieldx+cvec[0],
+	                aptr->fieldy+cvec[1],
+	                aptr->fieldz+cvec[2],
+	                aptr->fieldx+dvec[0],
+	                aptr->fieldy+dvec[1],
+	                aptr->fieldz+dvec[2],
+	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+	          	}
+	            ClipTwinVector(aptr->fieldx-dvec[0],
+	                aptr->fieldy-dvec[1],
+	                aptr->fieldz-dvec[2],
+	                aptr->fieldx-3*dvec[0]/4,
+	                aptr->fieldy-3*dvec[1]/4,
+	                aptr->fieldz-3*dvec[2]/4,
+	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+	              ClipTwinVector(aptr->fieldx+dvec[0],
+	                aptr->fieldy+dvec[1],
+	                aptr->fieldz+dvec[2],
+	                aptr->fieldx+3*dvec[0]/4,
+	                aptr->fieldy+3*dvec[1]/4,
+	                aptr->fieldz+3*dvec[2]/4,
+	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+
+	          }
+	        }
 	      }
 	    }
     } else {
@@ -1037,9 +1142,15 @@ static void DisplayField( void )
 	        aptr->fieldirad,aptr->altl,aptr->fieldirad);
 	    }
 	    if (aptr->fieldw) {
+	    	if (aptr->fieldworg > 0) {
+
 	      	ClipSphere(aptr->fieldx,aptr->fieldy,aptr->fieldz,
                     aptr->fieldw,
                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col));
+	    	} else 
+	    	{
+	    		
+	    	}
 	      }
 	    }
 	    	
@@ -2078,7 +2189,7 @@ static int DescribeAtom(char *dest, AtomRef *ptr, int flag )
     cur = dest;
     str = Residue[ptr->grp->refno];
     for( i=0; i<3; i++ )
-        if( str[i]!=' ' )
+        if( str[i]!=' ' ) 
             *(cur++) = str[i];
 
     cur += sprintf(cur,"%d",ptr->grp->serno);
@@ -2093,7 +2204,7 @@ static int DescribeAtom(char *dest, AtomRef *ptr, int flag )
     *(cur++) = '.';
     str = ElemDesc[ptr->atm->refno];
     for( i=0; str[i] && i<12; i++ )
-        if( str[i]!=' ' )
+        if( str[i]!=' ' ) 
             *(cur++) = str[i];
 
     if (ptr->atm->model) {
@@ -2132,18 +2243,18 @@ int PickAtoms( int shift, int xpos, int ypos )
     if( !QAtom )
         return False;
 
-    if( PickMode==PickCentr && shift )
-        SetPickMode(PickOrign);
+ 	if( PickMode==PickCentr && shift )
+		SetPickMode(PickOrign);
 
     if( PickMode==PickAtom ) {
         SelectAtom( shift, QAtom, QGroup );
-        return True;
+		return True;
     } else if( PickMode == PickGroup ) {
         SelectGroup( shift, QGroup );
-        return True;
+		return True;
     } else if( PickMode == PickChain ) {
         SelectChain( shift, QChain );
-        return True;
+		return True;
     } else if( PickMode == PickIdent || PickMode == PickCoord ) {
         InvalidateCmndLine();
         MsgString("Atom: ");
@@ -2153,10 +2264,10 @@ int PickAtoms( int shift, int xpos, int ypos )
         MsgChar(str[1]);
         MsgChar(str[2]);
         { int iii;
-            for (iii = 3; str[iii] && iii < 12; iii++) {
+          for (iii = 3; str[iii] && iii < 12; iii++) {
                 if( str[iii]!=' ' )
                     MsgChar(str[iii]);
-            }
+          }
         }
 
         if( !(QAtom->altl == ' ')) {
@@ -2167,7 +2278,7 @@ int PickAtoms( int shift, int xpos, int ypos )
         cur += sprintf(cur, " %ld  ", QAtom->serno);
 
         if (!(QGroup->serno == -9999)) {
-            str = Residue[QGroup->refno];
+          str = Residue[QGroup->refno];
             if( QAtom->flag&HeteroFlag ) {
                 MsgString("Hetero: ");
             } else
@@ -2179,7 +2290,7 @@ int PickAtoms( int shift, int xpos, int ypos )
             MsgChar(str[2]);
 
             cur += sprintf(cur, " %d", QGroup->serno);
-            if (!(QGroup->insert == ' ') && !(QGroup->insert=='\0'))
+          if (!(QGroup->insert == ' ') && !(QGroup->insert=='\0'))
                 MsgChar(QGroup->insert);
         }
 
@@ -2193,14 +2304,14 @@ int PickAtoms( int shift, int xpos, int ypos )
         }
         if (PickMode == PickCoord || shift != 0 ) {
             MsgChar('\n');
-            register double x, y, z;
+           register double x, y, z;
 
-            x = (double)(QAtom->xorg + QAtom->fxorg + OrigCX)/250.0
-                +(double)(QAtom->xtrl)/10000.0;
-            y = (double)(QAtom->yorg + QAtom->fyorg + OrigCY)/250.0
-                +(double)(QAtom->ytrl)/10000.0;
-            z = (double)(QAtom->zorg + QAtom->fzorg + OrigCZ)/250.0
-                +(double)(QAtom->ztrl)/10000.0;
+           x = (double)(QAtom->xorg + QAtom->fxorg + OrigCX)/250.0
+               +(double)(QAtom->xtrl)/10000.0;
+           y = (double)(QAtom->yorg + QAtom->fyorg + OrigCY)/250.0
+               +(double)(QAtom->ytrl)/10000.0;
+           z = (double)(QAtom->zorg + QAtom->fzorg + OrigCZ)/250.0
+               +(double)(QAtom->ztrl)/10000.0;
 #ifdef INVERT
             cur += sprintf(cur, "  Coordinates: %9.3f %9.3f %9.3f",x,-y,-z);
 #else
@@ -2212,7 +2323,7 @@ int PickAtoms( int shift, int xpos, int ypos )
         if( !QAtom->label ) {
             if( *LabelFormat!='\0' ) {
                 len = strlen(LabelFormat);
-                label = CreateLabel(LabelFormat,len);
+				label = CreateLabel(LabelFormat,len);					
             } else if( MainGroupCount > 1 ) {
                 strcpy(buffer,"%n%r");
                 str = buffer+4;
@@ -2228,31 +2339,31 @@ int PickAtoms( int shift, int xpos, int ypos )
                 label = CreateLabel(buffer,(int)len);
             } else
                 label = CreateLabel("%e%i%A",6);
-            QAtom->label = label;
-            label->refcount++;
+                QAtom->label = label;
+                label->refcount++;
         } else {
             DeleteLabel( (Label*)QAtom->label );
-            QAtom->label = (void*)0;
-        }
-        ReDrawFlag |= RFRefresh;
+                QAtom->label = (void*)0;
+            }
+            ReDrawFlag |= RFRefresh;
 
     } else if( PickMode == PickCentr ) {
         CentreTransform(QAtom->xorg + QAtom->fxorg,
-                QAtom->yorg + QAtom->fyorg,
-                QAtom->zorg + QAtom->fzorg, XlateCen);
+            QAtom->yorg + QAtom->fyorg,
+            QAtom->zorg + QAtom->fzorg, XlateCen);
 
-        ref.chn = QChain;
-        ref.grp = QGroup;
-        ref.atm = QAtom;
+            ref.chn = QChain;
+            ref.grp = QGroup;
+            ref.atm = QAtom;
 
-        InvalidateCmndLine();
+            InvalidateCmndLine();
         MsgString("Rotating about ");
         cur += DescribeAtom(cur, &ref,True);
 
     } else if( PickMode == PickOrign ) {
         CentreTransform(QAtom->xorg + QAtom->fxorg,
-                QAtom->yorg + QAtom->fyorg,
-                QAtom->zorg + QAtom->fzorg, False);
+        QAtom->yorg + QAtom->fyorg,
+        QAtom->zorg + QAtom->fzorg, False);
 
         ref.chn = QChain;
         ref.grp = QGroup;
@@ -2273,8 +2384,8 @@ int PickAtoms( int shift, int xpos, int ypos )
                 if( PickHist[0].atm != QAtom ) {
                     AddMonitors(PickHist[0].atm,QAtom);
                     ReDrawFlag |= RFRefresh;
-                }
-                PickCount = 2;
+                 }
+                 PickCount = 2;
             } else
                 PickHist[0].atm = QAtom;
         } else /* PickCount == 2 */
@@ -2289,19 +2400,19 @@ int PickAtoms( int shift, int xpos, int ypos )
         if( PickCount ) {
             if( shift ) {
                 PickCount--;
-            } else if( PickCount == 2 )
-                PickCount = 0;
-        }
+                } else if( PickCount == 2 )
+                    PickCount = 0;
+            }
 
-        ptr = PickHist+PickCount;
-        ptr->chn = QChain;
-        ptr->grp = QGroup;
-        ptr->atm = QAtom;
-        PickCount++;
+            ptr = PickHist+PickCount;
+            ptr->chn = QChain;
+            ptr->grp = QGroup;
+            ptr->atm = QAtom;
+            PickCount++;
 
-        if( CommandActive )
-            WriteChar('\n');
-        CommandActive = False;
+            if( CommandActive )
+	        WriteChar('\n');
+            CommandActive = False;
 
         MsgString("Atom #");
         MsgChar(PickCount+'0');
@@ -2312,8 +2423,8 @@ int PickAtoms( int shift, int xpos, int ypos )
         WriteMsg(msg);
         cur = msg;
 
-        if( PickCount == 2 )
-            SetBondAxis(PickHist[0].atm, PickHist[1].atm);
+            if( PickCount == 2 )
+		SetBondAxis(PickHist[0].atm, PickHist[1].atm);
     } else { /* Distance, Angle or Torsion! */
         if( PickCount ) {
             if( shift ) {
@@ -2336,8 +2447,8 @@ int PickAtoms( int shift, int xpos, int ypos )
 
         if( PickCount == PickMode ) {
             /* [GSG 11/29/95] */
-            if ( PickMode != PickMonit )
-                DeleteMonitors();
+	    if ( PickMode != PickMonit )
+	        DeleteMonitors();
             if( PickMode == PickDist ) {
                 temp = (double)CalcDistance(PickHist[0].atm, PickHist[1].atm);
 
@@ -2347,14 +2458,14 @@ int PickAtoms( int shift, int xpos, int ypos )
                 MsgChar('-');
                 cur += DescribeAtom(cur, PickHist+1, False);
                 cur += sprintf(cur, ": %.2f", temp);
-                /* [GSG 11/21/95] */
-                AddMonitors(PickHist[0].atm, QAtom);
-                ReDrawFlag |= RFRefresh;
+		/* [GSG 11/21/95] */
+		AddMonitors(PickHist[0].atm, QAtom);
+	        ReDrawFlag |= RFRefresh;
 
             } else if( PickMode == PickAngle ) {
                 temp = (double)CalcAngle(PickHist[0].atm,
-                                         PickHist[1].atm,
-                                         PickHist[2].atm);
+                                        PickHist[1].atm,
+                                        PickHist[2].atm);
 
                 MsgChar('\n');
                 MsgString("Angle ");
@@ -2365,16 +2476,16 @@ int PickAtoms( int shift, int xpos, int ypos )
                 cur += DescribeAtom(cur, PickHist+2, False);
                 cur += sprintf(cur, ": %.2f", temp);
 
-                /* [GSG 11/21/95] */
-                AddMonitors2(PickHist[0].atm, PickHist[2].atm,
-                             PickHist[1].atm, (RAtom __far *)NULL,
-                             (Long) (rint(temp*100)), 128, PickAngle);
-                ReDrawFlag |= RFRefresh;
+		/* [GSG 11/21/95] */
+		AddMonitors2(PickHist[0].atm, PickHist[2].atm,
+                  PickHist[1].atm, (RAtom __far *)NULL,
+		  (Long) (rint(temp*100)), 128, PickAngle);
+		ReDrawFlag |= RFRefresh;
             } else { /* PickMode == PickTorsn */
                 temp = (double)CalcTorsion(PickHist[0].atm,
-                                           PickHist[1].atm,
-                                           PickHist[2].atm,
-                                           PickHist[3].atm);
+                                          PickHist[1].atm,
+                                          PickHist[2].atm,
+                                          PickHist[3].atm);
 
                 MsgChar('\n');
                 MsgString("Torsion ");
@@ -2387,11 +2498,11 @@ int PickAtoms( int shift, int xpos, int ypos )
                 cur += DescribeAtom(cur, PickHist+3, False);
                 cur += sprintf(cur, ": %.2f", temp);
 
-                /* [GSG 11/21/95] */
-                AddMonitors2(PickHist[0].atm, PickHist[3].atm,
-                             PickHist[1].atm, PickHist[2].atm,
-                             (Long) (rint(temp*100)), 128, PickTorsn);
-                ReDrawFlag |= RFRefresh;
+		/* [GSG 11/21/95] */
+	        AddMonitors2(PickHist[0].atm, PickHist[3].atm,
+                  PickHist[1].atm, PickHist[2].atm,
+		     (Long) (rint(temp*100)), 128, PickTorsn);
+		ReDrawFlag |= RFRefresh;
             }
         }
     }

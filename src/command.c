@@ -2035,6 +2035,42 @@ static void FetchBracketedTriple(Long Triple[3]) {
 	return;
 }
 
+static void FetchBracketedArray(Long * Array, int arraydim, int * arrayfound ) {
+	int index, neg;
+	*arrayfound = 0;
+	for (index = 0; index < arraydim; index++) {
+		FetchToken();
+		Array[index] = 0;
+		if (CurToken == '-') {
+			FetchToken();
+			neg = True;
+		} else {
+			neg = False;
+		}
+		if (CurToken == NumberTok)  {
+		    if (*TokenPtr=='.')  {
+		    	TokenPtr++;
+                FetchFloat(TokenValue,250);
+		    }
+		} else if( CurToken=='.' ) {
+		    FetchFloat(0,250);
+        } else CommandError(MsgStrs[ErrNotNum]);
+	    Array[index] = neg?(-TokenValue):TokenValue;
+	    FetchToken();
+	    if( CurToken == ']') {
+	        *arrayfound = index+1;
+	        return;
+	    }
+	    if( !(CurToken == ',' && index < arraydim-1)) {   
+            CommandError(MsgStrs[ErrSyntax]);
+            return;
+        }
+	}
+	*arrayfound = index;
+	return;
+}
+
+
 
 static int ParseColour( void )
 {
@@ -6953,24 +6989,97 @@ int ExecuteCommandOne( int * restore )
             
         case(FieldTok):
             FetchToken();
-            if( CurToken==FalseTok )
-            {   ReDrawFlag |= RFRefresh;
-                DisableField();
-            } else if( CurToken=='[' )
-            {
-            	Long Field[3];
-            	FetchBracketedTriple(Field);
+            { Long Field[4];
+              int neg;
+              int fieldtowrite;
+              fieldtowrite = False;
+              while (CurToken) { 
+                if( CurToken==FalseTok ) {
+                  ReDrawFlag |= RFRefresh;
+                  DisableField();
+                } else if( CurToken=='[' ) {
+              	  int ifound;
+            	  FetchBracketedArray(Field,4, &ifound);
+            	  if (ifound<3) {
+            	    CommandError(MsgStrs[ErrBadArg]);
+            	    break;
+            	  }
 #ifdef INVERT
-                Field[1] = -Field[1];
+                  Field[1] = -Field[1];
 #endif
-                Field[2] = -Field[2];
+                  Field[2] = -Field[2];
+                  if (ifound < 4) {
+                    Field[3] = 0;
+                  }
+                  fieldtowrite = True;
+                } else if (CurToken == AngleTok && fieldtowrite == True)  {
+                  FetchToken();
+                  neg=False;
+                  if (CurToken == '-') {
+			        FetchToken();
+			        neg = True;
+                  }
+                  if( CurToken==NumberTok ) {
+                    if( *TokenPtr=='.' ) {
+                      TokenPtr++;
+                      FetchFloat(TokenValue,1000);
+                    }
+                    if( TokenValue<=360000 ) {
+                      Field[3] = TokenValue;
+                    } else CommandError(MsgStrs[ErrBigNum]);
+                  } else if( CurToken=='.' ) {
+                    FetchFloat(0,1000);
+                    if( TokenValue<=360000 ) {
+                      Field[3] = TokenValue;
+                    } else CommandError(MsgStrs[ErrBigNum]);
+                  }
+                  if (Field[3] > 180000) {
+                    Field[3] = 360000 - Field[3];
+                    neg = !neg;
+                  }
+                  if (neg) {
+                     Field[0] = -Field[0];
+                     Field[1] = -Field[1];
+                     Field[2] = -Field[2];                     
+                  }
+                  Field[3] = -Field[3];
+                } else if( (CurToken==TrueTok) || !CurToken ) {
+                  ReDrawFlag |= RFRefresh;
+                  SetOneFieldValue(NULL,NULL,False);
+                } else if (CurToken==RadiusTok) {
+                  FetchToken();
+                  if( CurToken==NumberTok ) {
+                    if( *TokenPtr=='.' ) {
+                      TokenPtr++;
+                      FetchFloat(TokenValue,250);
+                    }
+                    if( TokenValue<=3000 ) {
+                      SetRadiusValue(MaxFun((int)TokenValue,1),
+                                   FieldFlag);
+                      DrawField = True;
+                      ReDrawFlag |= RFRefresh;
+                    } else CommandError(MsgStrs[ErrBigNum]);
+                  } else if( CurToken=='.' ) {
+                    FetchFloat(0,250);
+                    if( TokenValue<=3000 ) {
+                      SetRadiusValue(MaxFun((int)TokenValue,1),
+                                   FieldFlag);
+                      DrawField = True;
+                      ReDrawFlag |= RFRefresh;
+                    } else CommandError(MsgStrs[ErrBigNum]);
+                  }
+                } else  {
+            	  CommandError(MsgStrs[ErrBadArg]);
+            	  break;
+                }
+                FetchToken();
+              }
+              if (fieldtowrite) {
                 SetFieldValue(Field);
-                ReDrawFlag |= RFRefresh;
-            } else if( (CurToken==TrueTok) || !CurToken )
-            {   ReDrawFlag |= RFRefresh;
-                SetOneFieldValue(NULL,NULL,False);
-            } else CommandError(MsgStrs[ErrBadArg]);
-            RefreshScreen();
+                ReDrawFlag |= RFRefresh|RFRotate;
+              }
+              RefreshScreen();
+            }
             break;
 
         case(StarTok):

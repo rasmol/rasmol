@@ -278,10 +278,15 @@ typedef struct _Atom {
         /* auxillary coordinates are field vectors based on
            the current atom.  The world coordinates are relative
            to the atom.  The Image coordinates are absolute */ 
-           
+                    
         Long   fieldworg, fieldxorg, fieldyorg, fieldzorg;
                                           /* World aux coords      */
-        Long   fieldw, fieldx, fieldy, fieldz;    /* Image aux coords      */
+        Long   basexorg, baseyorg, basezorg;
+                                          /* base perp to field    */
+        Long   fieldw, fieldx, fieldy, fieldz;
+                                          /* Image aux coords      */
+        Long   basex, basey, basez;
+                                          /* image base per coords */
         short  fieldcol;                  /* Field Colour          */
         short  fieldradius;               /* Field vector radius   */
         short  fieldirad;                 /* Field image radius    */

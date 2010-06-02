@@ -990,7 +990,9 @@ RAtom __far *CreateAtom( void )
     ptr->fyorg = 0;
     ptr->fzorg = 0;
     ptr->fieldxorg = 0; ptr->fieldyorg = 0; ptr->fieldzorg = 0; ptr->fieldworg = 0;
+    ptr->basexorg = 0; ptr->baseyorg = 0; ptr->basezorg = 0;
     ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+    ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
     ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
 
     return ptr;
@@ -1762,8 +1764,8 @@ static void TestSurface(  RAtom __far *sptr,  RAtom __far *dptr )
 
 /*
     TestBuriedSurface
-	    aprt -- pointer to one atom of the pair being checked
-		dprt -- pointer to the other atom of the par being checked
+	    aptr -- pointer to one atom of the pair being checked
+		dptr -- pointer to the other atom of the par being checked
 		eptr -- an atom that might bury the surface bond
 		C    -- the center of the circle at the neck of the surface bond
 		crad -- the radius of the orbit of the probe center around C
