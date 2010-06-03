@@ -1013,118 +1013,172 @@ static void DisplayField( void )
     if( UseClipping ) { 
         ForEachAtom
 	    if( aptr->flag&FieldFlag ) { 
-	      if (aptr->fieldirad <= 1 || aptr->fieldworg < 0)  {
-	        ClipTwinVector(aptr->x,aptr->y,aptr->z,
-	        aptr->fieldx,aptr->fieldy,aptr->fieldz,
-	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);	
-	      } else {
-	        ClipCylinder(aptr->x,aptr->y,aptr->z,
-	        aptr->fieldx,aptr->fieldy,aptr->fieldz,
-	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-	        aptr->fieldirad,aptr->altl,aptr->fieldirad);
-	      }
-	      if (aptr->fieldw) {
-	        if (aptr->fieldworg > 0) {
-	      	ClipSphere(aptr->fieldx,aptr->fieldy,aptr->fieldz,
-                    aptr->fieldw,
-                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col));
-	        } else {
-	          axis.vec[0] = (double)(aptr->fieldxorg)/250.;
-	          axis.vec[1] = (double)(aptr->fieldyorg)/250.;
-	          axis.vec[2] = (double)(aptr->fieldzorg)/250.;
-	          base.vec[0] = (double)(aptr->basexorg)/250.;
-	          base.vec[1] = (double)(aptr->baseyorg)/250.;
-	          base.vec[2] = (double)(aptr->basezorg)/250.;
-	          CV3M_vvvCross(other,axis,base);
-	          CV3M_svNorm(anorm,axis);
-	          CV3M_svNorm(bnorm,base);
-	          CV3M_svNorm(onorm,other);
-	          if (anorm != 0.) {
-                CV3M_vvsDivide(axis,axis,anorm);
-	          }
-	          if (bnorm != 0.) {
-                CV3M_vvsDivide(base,base,bnorm);
-	          }
-	          if (onorm != 0.) {
-                CV3M_vvsDivide(other,other,anorm);
-	          }
-	          angle = (double)(-(aptr->fieldworg))/1000.;
-	          nang = (rint)(angle*72./PI);
-	          if (nang > 72) nang = 72;
-	          ca = cos(angle);
-	          sa = sin(angle);
-	          CV3M_vvsMultiply(mark[nang],other,((double)(aptr->fieldradius))*sa);
-	          CV3M_vvsMultiply(temp,base,((double)(aptr->fieldradius))*ca);
-	          CV3M_vvvAdd(mark[nang],mark[nang],temp);
-	          CV3M_vvsMultiply(mark[0],base,(double)(aptr->fieldradius));
-	          cvec[0] = (long)rint((mark[0].vec[0]*MatX[0]+mark[0].vec[1]*MatX[1]+mark[0].vec[2]*MatX[2]));
-	          cvec[1] = (long)rint((mark[0].vec[0]*MatY[0]+mark[0].vec[1]*MatY[1]+mark[0].vec[2]*MatY[2]));
-	          cvec[2] = (long)rint((mark[0].vec[0]*MatZ[0]+mark[0].vec[1]*MatZ[1]+mark[0].vec[2]*MatZ[2]));
-	          ClipTwinVector(aptr->fieldx-cvec[0],
-	            aptr->fieldy-cvec[1],
-	            aptr->fieldz-cvec[2],
-	            aptr->fieldx+cvec[0],
-	            aptr->fieldy+cvec[1],
-	            aptr->fieldz+cvec[2],
-	            (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-	            (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
-	          if (nang > 1) {
-	            for (iang = 1; iang < nang; iang++ ) {
-	              ang = angle*((double)iang)/((double)nang);
-	              ca = cos(ang);
-	              sa = sin(ang);
-	              CV3M_vvsMultiply(mark[iang],other,((double)(aptr->fieldradius))*sa);
-	              CV3M_vvsMultiply(temp,mark[0],ca);
-	              CV3M_vvvAdd(mark[iang],mark[iang],temp);
-	            }
-	          }
-	          if (nang > 0) {
-	            for (iang =1; iang < nang+1; iang++)  {
-	              cvec[0] = (long)rint((mark[iang-1].vec[0]*MatX[0]+mark[iang-1].vec[1]*MatX[1]+mark[iang-1].vec[2]*MatX[2]));
-	              cvec[1] = (long)rint((mark[iang-1].vec[0]*MatY[0]+mark[iang-1].vec[1]*MatY[1]+mark[iang-1].vec[2]*MatY[2]));
-	              cvec[2] = (long)rint((mark[iang-1].vec[0]*MatZ[0]+mark[iang-1].vec[1]*MatZ[1]+mark[iang-1].vec[2]*MatZ[2]));
-	              dvec[0] = (long)rint((mark[iang].vec[0]*MatX[0]+mark[iang].vec[1]*MatX[1]+mark[iang].vec[2]*MatX[2]));
-	              dvec[1] = (long)rint((mark[iang].vec[0]*MatY[0]+mark[iang].vec[1]*MatY[1]+mark[iang].vec[2]*MatY[2]));
-	              dvec[2] = (long)rint((mark[iang].vec[0]*MatZ[0]+mark[iang].vec[1]*MatZ[1]+mark[iang].vec[2]*MatZ[2]));
-	              ClipTwinVector(aptr->fieldx-cvec[0],
-	                aptr->fieldy-cvec[1],
-	                aptr->fieldz-cvec[2],
-	                aptr->fieldx-dvec[0],
-	                aptr->fieldy-dvec[1],
-	                aptr->fieldz-dvec[2],
-	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
-	              ClipTwinVector(aptr->fieldx+cvec[0],
-	                aptr->fieldy+cvec[1],
-	                aptr->fieldz+cvec[2],
-	                aptr->fieldx+dvec[0],
-	                aptr->fieldy+dvec[1],
-	                aptr->fieldz+dvec[2],
-	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
-	          	}
-	            ClipTwinVector(aptr->fieldx-dvec[0],
-	                aptr->fieldy-dvec[1],
-	                aptr->fieldz-dvec[2],
-	                aptr->fieldx-3*dvec[0]/4,
-	                aptr->fieldy-3*dvec[1]/4,
-	                aptr->fieldz-3*dvec[2]/4,
-	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
-	              ClipTwinVector(aptr->fieldx+dvec[0],
-	                aptr->fieldy+dvec[1],
-	                aptr->fieldz+dvec[2],
-	                aptr->fieldx+3*dvec[0]/4,
-	                aptr->fieldy+3*dvec[1]/4,
-	                aptr->fieldz+3*dvec[2]/4,
-	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-	                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
-
-	          }
-	        }
-	      }
+            if (aptr->fieldirad <= 1 || aptr->fieldworg < 0)  {
+                if (aptr->fieldworg < 0 ) {
+                    ClipDashVector(aptr->x,aptr->y,aptr->z,
+                                   aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);	
+                } else {
+                    ClipTwinVector(aptr->x,aptr->y,aptr->z,
+                                   aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);	
+                }
+            } else {
+                ClipCylinder(aptr->x,aptr->y,aptr->z,
+                             aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                             aptr->fieldirad,aptr->altl,aptr->fieldirad);
+            }
+            if (aptr->fieldw) {
+                if (aptr->fieldworg > 0) {
+                    ClipSphere(aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                               aptr->fieldw,
+                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col));
+                } else {
+                    axis.vec[0] = (double)(aptr->fieldxorg)/250.;
+                    axis.vec[1] = (double)(aptr->fieldyorg)/250.;
+                    axis.vec[2] = (double)(aptr->fieldzorg)/250.;
+                    base.vec[0] = (double)(aptr->basexorg)/250.;
+                    base.vec[1] = (double)(aptr->baseyorg)/250.;
+                    base.vec[2] = (double)(aptr->basezorg)/250.;
+                    CV3M_vvvCross(other,base,axis);
+                    CV3M_svNorm(anorm,axis);
+                    CV3M_svNorm(bnorm,base);
+                    CV3M_svNorm(onorm,other);
+                    if (anorm != 0.) {
+                        CV3M_vvsDivide(axis,axis,anorm);
+                    }
+                    if (bnorm != 0.) {
+                        CV3M_vvsDivide(base,base,bnorm);
+                    }
+                    if (onorm != 0.) {
+                        CV3M_vvsDivide(other,other,onorm);
+                    }
+                    angle = (double)(-(aptr->fieldworg))/1000.;
+                    nang = (rint)(angle*72./PI);
+                    if (nang > 72) nang = 72;
+                    ca = cos(angle);
+                    sa = sin(angle);
+                    CV3M_vvsMultiply(mark[nang],other,((double)(aptr->fieldradius))*sa);
+                    CV3M_vvsMultiply(temp,base,((double)(aptr->fieldradius))*ca);
+                    CV3M_vvvAdd(mark[nang],mark[nang],temp);
+                    CV3M_vvsMultiply(mark[0],base,(double)(aptr->fieldradius));
+                    cvec[0] = (long)rint((mark[0].vec[0]*MatX[0]+mark[0].vec[1]*MatX[1]+mark[0].vec[2]*MatX[2]));
+                    cvec[1] = (long)rint((mark[0].vec[0]*MatY[0]+mark[0].vec[1]*MatY[1]+mark[0].vec[2]*MatY[2]));
+                    cvec[2] = (long)rint((mark[0].vec[0]*MatZ[0]+mark[0].vec[1]*MatZ[1]+mark[0].vec[2]*MatZ[2]));
+                    /*
+                     ClipTwinVector(aptr->fieldx-cvec[0],
+                     aptr->fieldy-cvec[1],
+                     aptr->fieldz-cvec[2],
+                     aptr->fieldx+cvec[0],
+                     aptr->fieldy+cvec[1],
+                     aptr->fieldz+cvec[2],
+                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                     */
+                    ClipTwinVector(aptr->x-cvec[0],
+                                   aptr->y-cvec[1],
+                                   aptr->z-cvec[2],
+                                   aptr->x+cvec[0],
+                                   aptr->y+cvec[1],
+                                   aptr->z+cvec[2],
+                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                    if (nang > 1) {
+                        for (iang = 1; iang < nang; iang++ ) {
+                            ang = angle*((double)iang)/((double)nang);
+                            ca = cos(ang);
+                            sa = sin(ang);
+                            CV3M_vvsMultiply(mark[iang],other,((double)(aptr->fieldradius))*sa);
+                            CV3M_vvsMultiply(temp,mark[0],ca);
+                            CV3M_vvvAdd(mark[iang],mark[iang],temp);
+                        }
+                    }
+                    if (nang > 0) {
+                        for (iang =1; iang < nang+1; iang++)  {
+                            cvec[0] = (long)rint((mark[iang-1].vec[0]*MatX[0]+mark[iang-1].vec[1]*MatX[1]+mark[iang-1].vec[2]*MatX[2]));
+                            cvec[1] = (long)rint((mark[iang-1].vec[0]*MatY[0]+mark[iang-1].vec[1]*MatY[1]+mark[iang-1].vec[2]*MatY[2]));
+                            cvec[2] = (long)rint((mark[iang-1].vec[0]*MatZ[0]+mark[iang-1].vec[1]*MatZ[1]+mark[iang-1].vec[2]*MatZ[2]));
+                            dvec[0] = (long)rint((mark[iang].vec[0]*MatX[0]+mark[iang].vec[1]*MatX[1]+mark[iang].vec[2]*MatX[2]));
+                            dvec[1] = (long)rint((mark[iang].vec[0]*MatY[0]+mark[iang].vec[1]*MatY[1]+mark[iang].vec[2]*MatY[2]));
+                            dvec[2] = (long)rint((mark[iang].vec[0]*MatZ[0]+mark[iang].vec[1]*MatZ[1]+mark[iang].vec[2]*MatZ[2]));
+                            /*
+                             ClipTwinVector(aptr->fieldx-cvec[0],
+                             aptr->fieldy-cvec[1],
+                             aptr->fieldz-cvec[2],
+                             aptr->fieldx-dvec[0],
+                             aptr->fieldy-dvec[1],
+                             aptr->fieldz-dvec[2],
+                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                             ClipTwinVector(aptr->fieldx+cvec[0],
+                             aptr->fieldy+cvec[1],
+                             aptr->fieldz+cvec[2],
+                             aptr->fieldx+dvec[0],
+                             aptr->fieldy+dvec[1],
+                             aptr->fieldz+dvec[2],
+                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                             */
+                            ClipTwinVector(aptr->x-cvec[0],
+                                           aptr->y-cvec[1],
+                                           aptr->z-cvec[2],
+                                           aptr->x-dvec[0],
+                                           aptr->y-dvec[1],
+                                           aptr->z-dvec[2],
+                                           (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                           (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                            ClipTwinVector(aptr->x+cvec[0],
+                                           aptr->y+cvec[1],
+                                           aptr->z+cvec[2],
+                                           aptr->x+dvec[0],
+                                           aptr->y+dvec[1],
+                                           aptr->z+dvec[2],
+                                           (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                           (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                            
+                        }
+                        /*
+                         ClipTwinVector(aptr->fieldx-dvec[0],
+                         aptr->fieldy-dvec[1],
+                         aptr->fieldz-dvec[2],
+                         aptr->fieldx-3*dvec[0]/4,
+                         aptr->fieldy-3*dvec[1]/4,
+                         aptr->fieldz-3*dvec[2]/4,
+                         (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                         (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                         ClipTwinVector(aptr->fieldx+dvec[0],
+                         aptr->fieldy+dvec[1],
+                         aptr->fieldz+dvec[2],
+                         aptr->fieldx+3*dvec[0]/4,
+                         aptr->fieldy+3*dvec[1]/4,
+                         aptr->fieldz+3*dvec[2]/4,
+                         (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                         (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                         */
+                        ClipTwinVector(aptr->x-dvec[0],
+                                       aptr->y-dvec[1],
+                                       aptr->z-dvec[2],
+                                       aptr->x-3*dvec[0]/4,
+                                       aptr->y-3*dvec[1]/4,
+                                       aptr->z-3*dvec[2]/4,
+                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                        ClipTwinVector(aptr->x+dvec[0],
+                                       aptr->y+dvec[1],
+                                       aptr->z+dvec[2],
+                                       aptr->x+3*dvec[0]/4,
+                                       aptr->y+3*dvec[1]/4,
+                                       aptr->z+3*dvec[2]/4,
+                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                        
+                    }
+                }
+            }
 	    }
     } else {
 	ForEachAtom

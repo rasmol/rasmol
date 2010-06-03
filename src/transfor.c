@@ -4223,13 +4223,23 @@ static void ApplyTransformOne( void )
                     ptr->y = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
                     ptr->z = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
                     if (ptr->flag & FieldFlag) {
-                	    x+= ptr->fieldxorg;
-                	    y+= ptr->fieldyorg;
-                	    z+= ptr->fieldzorg;
-                	    ptr->fieldx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
-                	    ptr->fieldy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
-                	    ptr->fieldz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
-                	    ptr->fieldw = (int)(Scale*(Real)(ptr->fieldworg));
+                        if (ptr->fieldworg < 0) {
+                            x+= ((ptr->fieldradius)*(ptr->fieldxorg))/250;
+                            y+= ((ptr->fieldradius)*(ptr->fieldyorg))/250;
+                            z+= ((ptr->fieldradius)*(ptr->fieldzorg))/250;                            
+                            ptr->fieldx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
+                            ptr->fieldy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
+                            ptr->fieldz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                            ptr->fieldw = -1;
+                        } else {
+                            x+= ptr->fieldxorg;
+                            y+= ptr->fieldyorg;
+                            z+= ptr->fieldzorg;                            
+                            ptr->fieldx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
+                	        ptr->fieldy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
+                	        ptr->fieldz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                	        ptr->fieldw = (int)(Scale*(Real)(ptr->fieldworg));
+                        }
                 	    ptr->fieldirad =(int)(Scale*(Real)(ptr->fieldradius));
                 	    ptr->basex = (int)rint(ptr->basexorg*MatX[0]+ptr->baseyorg*MatX[1]+ptr->basezorg*MatX[2]);
                 	    ptr->basey = (int)rint(ptr->basexorg*MatY[0]+ptr->baseyorg*MatY[1]+ptr->basezorg*MatY[2]);
@@ -4255,13 +4265,23 @@ static void ApplyTransformOne( void )
                     ptr->y = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
                     ptr->z = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
                     if (ptr->flag & FieldFlag) {
-                	    x+= ptr->fieldxorg;
-                	    y+= ptr->fieldyorg;
-                	    z+= ptr->fieldzorg;
-                	    ptr->fieldx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
-                	    ptr->fieldy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
-                	    ptr->fieldz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
-                	    ptr->fieldw = (int)(Scale*(Real)(ptr->fieldworg));
+                        if (ptr->fieldworg < 0) {
+                            x+= ((ptr->fieldradius)*(ptr->fieldxorg))/250;
+                            y+= ((ptr->fieldradius)*(ptr->fieldyorg))/250;
+                            z+= ((ptr->fieldradius)*(ptr->fieldzorg))/250;                            
+                            ptr->fieldx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
+                            ptr->fieldy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
+                            ptr->fieldz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                            ptr->fieldw = -1;
+                        } else {
+                            x+= ptr->fieldxorg;
+                            y+= ptr->fieldyorg;
+                            z+= ptr->fieldzorg;                            
+                            ptr->fieldx = (int)rint(x*MatX[0]+y*MatX[1]+z*MatX[2])+XOffset;
+                	        ptr->fieldy = (int)rint(x*MatY[0]+y*MatY[1]+z*MatY[2])+YOffset;
+                	        ptr->fieldz = (int)rint(x*MatZ[0]+y*MatZ[1]+z*MatZ[2])+ZOffset;
+                	        ptr->fieldw = (int)(Scale*(Real)(ptr->fieldworg));
+                        }
                 	    ptr->fieldirad =(int)(Scale*(Real)(ptr->fieldradius));
                 	    ptr->basex = (int)rint(ptr->basexorg*MatX[0]+ptr->baseyorg*MatX[1]+ptr->basezorg*MatX[2]);
                 	    ptr->basey = (int)rint(ptr->basexorg*MatY[0]+ptr->baseyorg*MatY[1]+ptr->basezorg*MatY[2]);
@@ -5057,19 +5077,19 @@ int AlignToMolecule(int molnum, double * rmsd,
                 localsin = CV3dNorm(&localaxis);
                 if (localsin != 0.){
                     localangle = 2.*atan2(localsin,localcos);
-                    CV3M_vvsDivide(localaxis,localaxis,localsin);
+                    /* CV3M_vvsDivide(localaxis,localaxis,localsin); */
                     if (localangle > 0.) {
-                        CV3M_vvsMultiply(localaxis,localaxis,sqrt(localangle));
+                        CV3M_vvsMultiply(localaxis,localaxis,-1000.);
                     } else {
-                        CV3M_vvsMultiply(localaxis,localaxis,-sqrt(-localangle));
+                        CV3M_vvsMultiply(localaxis,localaxis,1000.);
                     }
-                    field[0] = rint(localaxis.vec[0]*1500.);
+                    field[0] = rint(localaxis.vec[0]);
 #ifdef INVERT
-                    field[1] = -rint(localaxis.vec[1]*1500.);
+                    field[1] = -rint(localaxis.vec[1]);
 #else
-                    field[1] = rint(localaxis.vec[1]*1500.);
+                    field[1] = rint(localaxis.vec[1]);
 #endif
-                    field[2] = -rint(localaxis.vec[2]*1500.);
+                    field[2] = -rint(localaxis.vec[2]);
                     
                     field[3] = rint(-fabs(localangle)*1000);
                     
