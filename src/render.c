@@ -1007,13 +1007,14 @@ static void DisplayField( void )
     CV3Vector temp;
     double bnorm,anorm,onorm,angle,ca,sa,ang;
     int nang,iang;
+    int iarrrad;
     Long cvec[3], dvec[3];
-
-
+    
+    
     if( UseClipping ) { 
         ForEachAtom
 	    if( aptr->flag&FieldFlag ) { 
-            if (aptr->fieldirad <= 1 || aptr->fieldworg < 0)  {
+            if (aptr->fieldirad <= 1)  {
                 if (aptr->fieldworg < 0 ) {
                     ClipDashVector(aptr->x,aptr->y,aptr->z,
                                    aptr->fieldx,aptr->fieldy,aptr->fieldz,
@@ -1026,11 +1027,57 @@ static void DisplayField( void )
                                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);	
                 }
             } else {
-                ClipCylinder(aptr->x,aptr->y,aptr->z,
+                if (aptr->fieldworg < 0) {
+                    if (aptr->fieldirad <= 31) {
+                        ClipDashVector(aptr->x,aptr->y,aptr->z,
+                                       aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);	
+                        
+                    } else {
+                        iarrrad = (aptr->fieldirad+31)>>5;
+                        ClipCylinder(aptr->x,aptr->y,aptr->z,
+                                     (7*aptr->x+aptr->fieldx)>>3,
+                                     (7*aptr->y+aptr->fieldy)>>3,
+                                     (7*aptr->z+aptr->fieldz)>>3,
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     iarrrad,aptr->altl,iarrrad);
+                        ClipCylinder((3*aptr->x+aptr->fieldx)>>2,
+                                     (3*aptr->y+aptr->fieldy)>>2,
+                                     (3*aptr->z+aptr->fieldz)>>2,
+                                     (5*aptr->x+3*aptr->fieldx)>>3,
+                                     (5*aptr->y+3*aptr->fieldy)>>3,
+                                     (5*aptr->z+3*aptr->fieldz)>>3,
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     iarrrad,aptr->altl,iarrrad);
+                        ClipCylinder((aptr->x+aptr->fieldx)>>1,
+                                     (aptr->y+aptr->fieldy)>>1,
+                                     (aptr->z+aptr->fieldz)>>1,
+                                     (3*aptr->x+5*aptr->fieldx)>>3,
+                                     (3*aptr->y+5*aptr->fieldy)>>3,
+                                     (3*aptr->z+5*aptr->fieldz)>>3,
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     iarrrad,aptr->altl,iarrrad);
+                        ClipCylinder((aptr->x+3*aptr->fieldx)>>2,
+                                     (aptr->y+3*aptr->fieldy)>>2,
+                                     (aptr->z+3*aptr->fieldz)>>2,
+                                     (1*aptr->x+7*aptr->fieldx)>>3,
+                                     (1*aptr->y+7*aptr->fieldy)>>3,
+                                     (1*aptr->z+7*aptr->fieldz)>>3,
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     iarrrad,aptr->altl,iarrrad);
+                    }
+                } else {
+                  ClipCylinder(aptr->x,aptr->y,aptr->z,
                              aptr->fieldx,aptr->fieldy,aptr->fieldz,
                              (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                              (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                              aptr->fieldirad,aptr->altl,aptr->fieldirad);
+                }
             }
             if (aptr->fieldw) {
                 if (aptr->fieldworg > 0) {
@@ -1038,6 +1085,8 @@ static void DisplayField( void )
                                aptr->fieldw,
                                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col));
                 } else {
+                    iarrrad = (aptr->fieldirad+31)>>5;
+                    if (iarrrad < 1) iarrrad = 1;
                     axis.vec[0] = (double)(aptr->fieldxorg)/250.;
                     axis.vec[1] = (double)(aptr->fieldyorg)/250.;
                     axis.vec[2] = (double)(aptr->fieldzorg)/250.;
@@ -1079,14 +1128,27 @@ static void DisplayField( void )
                      (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                      (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
                      */
-                    ClipTwinVector(aptr->x-cvec[0],
-                                   aptr->y-cvec[1],
-                                   aptr->z-cvec[2],
-                                   aptr->x+cvec[0],
-                                   aptr->y+cvec[1],
-                                   aptr->z+cvec[2],
-                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                    if (iarrrad > 1 ) {
+                        ClipCylinder(aptr->x-cvec[0],
+                                     aptr->y-cvec[1],
+                                     aptr->z-cvec[2],
+                                     aptr->x+cvec[0],
+                                     aptr->y+cvec[1],
+                                     aptr->z+cvec[2],
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     iarrrad/2,aptr->altl,iarrrad/2);
+                        
+                    } else {
+                        ClipTwinVector(aptr->x-cvec[0],
+                                     aptr->y-cvec[1],
+                                     aptr->z-cvec[2],
+                                     aptr->x+cvec[0],
+                                     aptr->y+cvec[1],
+                                     aptr->z+cvec[2],
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                    }
                     if (nang > 1) {
                         for (iang = 1; iang < nang; iang++ ) {
                             ang = angle*((double)iang)/((double)nang);
@@ -1123,22 +1185,78 @@ static void DisplayField( void )
                              (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                              (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
                              */
-                            ClipTwinVector(aptr->x-cvec[0],
-                                           aptr->y-cvec[1],
-                                           aptr->z-cvec[2],
-                                           aptr->x-dvec[0],
-                                           aptr->y-dvec[1],
-                                           aptr->z-dvec[2],
-                                           (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                           (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
-                            ClipTwinVector(aptr->x+cvec[0],
-                                           aptr->y+cvec[1],
-                                           aptr->z+cvec[2],
-                                           aptr->x+dvec[0],
-                                           aptr->y+dvec[1],
-                                           aptr->z+dvec[2],
-                                           (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                           (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                            if (iarrrad > 1 ) {
+                                ClipCylinder(aptr->x-cvec[0],
+                                             aptr->y-cvec[1],
+                                             aptr->z-cvec[2],
+                                             aptr->x-dvec[0],
+                                             aptr->y-dvec[1],
+                                             aptr->z-dvec[2],
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             iarrrad,aptr->altl,iarrrad);
+                                ClipCylinder(aptr->x+cvec[0],
+                                             aptr->y+cvec[1],
+                                             aptr->z+cvec[2],
+                                             aptr->x+dvec[0],
+                                             aptr->y+dvec[1],
+                                             aptr->z+dvec[2],
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             iarrrad,aptr->altl,iarrrad);
+                                ClipCylinder(aptr->x-15*cvec[0]/16,
+                                             aptr->y-15*cvec[1]/16,
+                                             aptr->z-15*cvec[2]/16,
+                                             aptr->x-15*dvec[0]/16,
+                                             aptr->y-15*dvec[1]/16,
+                                             aptr->z-15*dvec[2]/16,
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             iarrrad,aptr->altl,iarrrad);
+                                ClipCylinder(aptr->x+15*cvec[0]/16,
+                                             aptr->y+15*cvec[1]/16,
+                                             aptr->z+15*cvec[2]/16,
+                                             aptr->x+15*dvec[0]/16,
+                                             aptr->y+15*dvec[1]/16,
+                                             aptr->z+15*dvec[2]/16,
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             iarrrad,aptr->altl,iarrrad);
+                                
+                            } else {
+                                ClipTwinVector(aptr->x-cvec[0],
+                                               aptr->y-cvec[1],
+                                               aptr->z-cvec[2],
+                                               aptr->x-dvec[0],
+                                               aptr->y-dvec[1],
+                                               aptr->z-dvec[2],
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                                ClipTwinVector(aptr->x+cvec[0],
+                                               aptr->y+cvec[1],
+                                               aptr->z+cvec[2],
+                                               aptr->x+dvec[0],
+                                               aptr->y+dvec[1],
+                                               aptr->z+dvec[2],
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                                ClipTwinVector(aptr->x-15*cvec[0]/16,
+                                               aptr->y-15*cvec[1]/16,
+                                               aptr->z-15*cvec[2]/16,
+                                               aptr->x-15*dvec[0]/16,
+                                               aptr->y-15*dvec[1]/16,
+                                               aptr->z-15*dvec[2]/16,
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                                ClipTwinVector(aptr->x+15*cvec[0]/16,
+                                               aptr->y+15*cvec[1]/16,
+                                               aptr->z+15*cvec[2]/16,
+                                               aptr->x+15*dvec[0]/16,
+                                               aptr->y+15*dvec[1]/16,
+                                               aptr->z+15*dvec[2]/16,
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                            }
                             
                         }
                         /*
@@ -1181,35 +1299,35 @@ static void DisplayField( void )
             }
 	    }
     } else {
-	ForEachAtom
+        ForEachAtom
 	    if( aptr->flag&FieldFlag ) { 
-	      if (aptr->fieldirad < 1)  {
-	        DrawTwinVector(aptr->x,aptr->y,aptr->z,
-	        aptr->fieldx,aptr->fieldy,aptr->fieldz,
-	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);	
-	    } else {
-	        DrawCylinder(aptr->x,aptr->y,aptr->z,
-	        aptr->fieldx,aptr->fieldy,aptr->fieldz,
-	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-	        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-	        aptr->fieldirad,aptr->altl,aptr->fieldirad);
+            if (aptr->fieldirad < 1)  {
+                DrawTwinVector(aptr->x,aptr->y,aptr->z,
+                               aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);	
+            } else {
+                DrawCylinder(aptr->x,aptr->y,aptr->z,
+                             aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                             aptr->fieldirad,aptr->altl,aptr->fieldirad);
+            }
+            if (aptr->fieldw) {
+                if (aptr->fieldworg > 0) {
+                    
+                    ClipSphere(aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                               aptr->fieldw,
+                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col));
+                } else 
+                {
+                    
+                }
+            }
 	    }
-	    if (aptr->fieldw) {
-	    	if (aptr->fieldworg > 0) {
-
-	      	ClipSphere(aptr->fieldx,aptr->fieldy,aptr->fieldz,
-                    aptr->fieldw,
-                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col));
-	    	} else 
-	    	{
-	    		
-	    	}
-	      }
-	    }
-	    	
+        
     }
-
+    
 }
 
 

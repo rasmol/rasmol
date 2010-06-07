@@ -4559,7 +4559,11 @@ void GatherSelected(CVectorHandle /* RAtom * */ selAtoms, CVectorHandle /* Group
     return;
 }
 
-    /* Apply a translation and a rotation around a given center to the current molecule */
+    /* Apply a translation and a rotation around a given center to the current molecule
+       vTransToMolecule is the vector from the current (local) center-of-mass to
+       the target (remote) center-of-mass.
+       vCenter is the local center-of-mass.
+       */
     
 void ApplyQTXform (CQRQuaternionHandle qRotToMolecule, 
                        CV3VectorHandle vTransToMolecule,
@@ -4587,9 +4591,9 @@ void ApplyQTXform (CQRQuaternionHandle qRotToMolecule,
 #endif
         curpos.vec[2] = -((double)(ptr->zorg + ptr->fzorg + OrigCZ)/250.0
                           -(double)(ptr->ztrl)/10000.0);
-        CV3M_vvvSubtract(curpos,curpos,*vCenter);
-        CV3M_vmvMultiply(vtemp,rotmat,curpos);
-        CV3M_vvvAdd(vtemp,vtemp,vshift);
+        CV3M_vvvSubtract(curpos,curpos,*vCenter);  /* put the current object on its own COM */
+        CV3M_vmvMultiply(vtemp,rotmat,curpos);     /* rotate around its own COM */
+        CV3M_vvvAdd(vtemp,vtemp,vshift);           /* shift back to COM and then to target */
         ptr->fxorg = rint(vtemp.vec[0]*250.)-OrigCX-ptr->xorg;
 #ifdef INVERT
         ptr->fyorg = -rint(vtemp.vec[1]*250.)-OrigCY-ptr->yorg;
@@ -4677,6 +4681,8 @@ int AlignToMolecule(int molnum, double * rmsd,
     CVectorCreate(&glistRemote,sizeof(short),1);
     CVectorCreate(&vlistRot,sizeof(CV3Vector),1);
     
+    /* Compute the actual coordinates in rasmol units */
+    
     for (ii=0; ii<CVectorSize(selAtomsLocal);ii++) {
         CV3Vector vtemp;
         RAtom * ptemp;
@@ -4718,29 +4724,35 @@ int AlignToMolecule(int molnum, double * rmsd,
     CV3GetCenterOfMass(&comRemote,vlistRemote); /* get center of mass remote */
     CV3M_vvvSubtract(*vTransToMolecule,comRemote,comLocal);
     
-/* recenter both molecules on the remote target center of mass */
+    /* If we add vTransToMolecule to each atom on Local, the new
+       center-of-mass will be aligned to the Remote center-of-mass 
+     */
+    
+    /* recenter display of each molecule on its own center of mass of the selection 
+       making (CenX, CenY, CenZ) agree with the new center of mass
+     */
 
 #ifdef INVERT
     CentreTransform((long)rint(comRemote.vec[0]*250.-origcRemote.vec[0]),
-      -(long)rint(comRemote.vec[1]*250.-origcRemote.vec[1]),
-      -(long)rint(comRemote.vec[2]*250.-origcRemote.vec[2]),xlatecen);   
+      -(long)rint(comRemote.vec[1]*250.+origcRemote.vec[1]),
+      -(long)rint(comRemote.vec[2]*250.+origcRemote.vec[2]),xlatecen);   
 #else 
     CentreTransform((long)rint(comRemote.vec[0]*250.-origcRemote.vec[0]),
        (long)rint(comRemote.vec[1]*250.-origcRemote.vec[1]),
-      -(long)rint(comRemote.vec[2]*250.-origcRemote.vec[2]),xlatecen);
+      -(long)rint(comRemote.vec[2]*250.+origcRemote.vec[2]),xlatecen);
 #endif
 
     SwitchMolecule( MoleculeIndexSave );
     
     
 #ifdef INVERT
-    CentreTransform((long)rint(comRemote.vec[0]*250.-origcRemote.vec[0]),
-      -(long)rint(comRemote.vec[1]*250.-origcRemote.vec[1]),
-      -(long)rint(comRemote.vec[2]*250.-origcRemote.vec[2]),xlatecen);   
+    CentreTransform((long)rint(comLocal.vec[0]*250.-origcLocal.vec[0]),
+      -(long)rint(comLocal.vec[1]*250.+origcLocal.vec[1]),
+      -(long)rint(comLocal.vec[2]*250.+origcLocal.vec[2]),xlatecen);   
 #else 
-    CentreTransform((long)rint(comRemote.vec[0]*250.-origcRemote.vec[0]),
-       (long)rint(comRemote.vec[1]*250.-origcRemote.vec[1]),
-      -(long)rint(comRemote.vec[2]*250.-origcRemote.vec[2]),xlatecen);
+    CentreTransform((long)rint(comLocal.vec[0]*250.-origcLocal.vec[0]),
+       (long)rint(comLocal.vec[1]*250.-origcLocal.vec[1]),
+      -(long)rint(comLocal.vec[2]*250.+origcLocal.vec[2]),xlatecen);
 #endif
 
 
@@ -4785,8 +4797,6 @@ int AlignToMolecule(int molnum, double * rmsd,
     CVectorCreate(&quatLocalCountList,sizeof(int),1);
     CQRMSet(qsum,1.,0.,0.,0.);
     count = 0;
-    
-    /* If byatom is specified, compute rotation by atom */
     
     /* Get a small fraction of the radius vector to use to
        separate overlapping atoms */
@@ -4983,7 +4993,7 @@ int AlignToMolecule(int molnum, double * rmsd,
     CV3M_vvsDivide(origshift,origshift,250.);
     origshift.vec[2] = -origshift.vec[2];
 #ifdef INVERT
-    origshift.vec[2] = -origshift.vec[2];
+    origshift.vec[1] = -origshift.vec[1];
 #endif
 
     CV3M_vvvAdd(origshift,*vTransToMolecule,origshift);
@@ -4992,12 +5002,14 @@ int AlignToMolecule(int molnum, double * rmsd,
                   vTransToMolecule,
                   &comLocal);
                   
-    OrigCX = (long)origcRemote.vec[0];
+/*    OrigCX = (long)origcRemote.vec[0];
     OrigCY = (long)origcRemote.vec[1];
     OrigCZ = (long)origcRemote.vec[2];
+
     CenX = (long)cenRemote.vec[0];
     CenY = (long)cenRemote.vec[1];
     CenZ = (long)cenRemote.vec[2];
+ */
     
     
     if (none_ang_dist==ALIGN_DISTANCE) {
@@ -5010,16 +5022,16 @@ int AlignToMolecule(int molnum, double * rmsd,
                 RAtom * pRemote;
                 long field[4];
                 pLocal = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
-                vLocal.vec[0] = (double)(pLocal->xorg + pLocal->fxorg + origcRemote.vec[0])/250.0
+                vLocal.vec[0] = (double)(pLocal->xorg + pLocal->fxorg + origcLocal.vec[0])/250.0
                                  +(double)(pLocal->xtrl)/10000.0;
 #ifdef INVERT
-                vLocal.vec[1] = -((double)(pLocal->yorg + pLocal->fyorg + origcRemote.vec[1])/250.0
+                vLocal.vec[1] = -((double)(pLocal->yorg + pLocal->fyorg + origcLocal.vec[1])/250.0
                                  -(double)(pLocal->ytrl)/10000.0);
 #else
-                vLocal.vec[1] = (double)(pLocal->yorg + pLocal->fyorg + origcRemote.vec[1])/250.0
+                vLocal.vec[1] = (double)(pLocal->yorg + pLocal->fyorg + origcLocal.vec[1])/250.0
                                  +(double)(pLocal->ytrl)/10000.0;
 #endif
-                vLocal.vec[2] = -((double)(pLocal->zorg + pLocal->fzorg + origcRemote.vec[2])/250.0
+                vLocal.vec[2] = -((double)(pLocal->zorg + pLocal->fzorg + origcLocal.vec[2])/250.0
                                  -(double)(pLocal->ztrl)/10000.0);
                                  
                                  

@@ -1521,7 +1521,7 @@ back and forth within a single command line statement. Hitting
 the current, <I>e.g.</I> selected or edited, command line contents.
 <P>
 <A NAME="go_dimensions"></A>
-<H3>Dimensions within RasMol</H3>
+<H3>Dimensions and Coordinates within RasMol</H3>
 All dimensions in RasMol, such as radii and distances, may be
 specified in either 'RasMol units' or &Aring;ngstroms (&Aring;). The
 RasMol units were first introduced to allow reasonably sized
@@ -1538,6 +1538,51 @@ However, dimensions within RasMol can also be specified in
 example, 'spacefill 1.2' specifies a sphere radius of 1.2 &Aring;.
 This is particularly useful for the cut-off distance parameter in
 <B><TT>within</B></TT> expressions.
+The coordinate frame most commonly used if structural biology
+is a right-handed coordinate system (X, Y, Z)  in &Aring;ngstroms (&Aring;)
+(10<sup>(-10)</sup> metres) with an arbitrary origin.
+Computer screens are organized in terms of &quot;pixels&quot;
+(picture elements), typically 1/72<sup>nd</sup> of inch with
+an origin at the top left, with the screen Y-axis running down,
+or, on some systems, with the origin at the bottom left, with the screen Y-axis running up.
+Rasmol converts from the original coordinate in several steps. <br />
+<br />
+The first coordinate transformation is from (X,Y,Z) in
+&Aring;ngstroms (&Aring;) to (xorg,yorg,zorg) in RasMol
+units with both the Y-axis and the Z-axis inverted
+if the C-preprocessor symbol INVERT is defined in
+rasmol.h (the most common case):  <br />
+<br />
+xorg = X*250; yorg = -Y*250; zorg = -Z*250;<br />
+<br />
+If the C-preprocessor symbol INVERT is <b>not</b> defined,
+then the Y-axis is not inverted, but the Z-axis is: <br />
+<br />
+xorg = X*250; yorg = Y*250; zorg = -Z*250;<br />
+<br />
+The origin is then shifted to the center of mass, by
+computing (OrigCX, OrigCY, OrigCZ) as the average of
+the atom coordinates in rasmol units (after the axis
+inversions), and subtracting that origin vector
+from all coordinates.  Note that each loaded molecule
+is assigned its own center-of-mass origin. <br />
+<br />
+In order to actually display the molecule on the screen
+the recentered rasmol unit coordinates need to be
+converted to pixels coordinates.<br />
+<br />
+RasMol uses a second centering vector (CenX,CenY,CenZ)
+in rasmol units (initially set to zero) which it
+subtracts from the recentered rasmol unit coordinates
+before the display transform, effectively translating
+the origin from the center of mass by that amount
+before any rotations and scaling.  Rotations and scaling
+to pixels are held in three vectors, MatX, MatY and MatZ
+which act as the rows of the final rotation matix.  Finally
+a vector in pixels (XOffset,YOffset,ZOffset) is added to
+conform to the requirements of the indexing of the pixel
+buffer.  Each molecule has its own centering vector a
+and display transform.
 <P>
 <A NAME="go_ini"></A>
 <H3>Start-up Initialisation Files</H3>
