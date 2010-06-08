@@ -1015,35 +1015,59 @@ static void DisplayField( void )
         ForEachAtom
 	    if( aptr->flag&FieldFlag ) { 
             if (aptr->fieldirad <= 1)  {
+                iarrrad=2;
                 if (aptr->fieldworg < 0 ) {
-                    ClipDashVector(aptr->x,aptr->y,aptr->z,
+                    /* ClipDashVector(aptr->x,aptr->y,aptr->z,
                                    aptr->fieldx,aptr->fieldy,aptr->fieldz,
                                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);	
+                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);	*/
+                    ClipDashCylinder(aptr->x,aptr->y,aptr->z,
+                                     aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     iarrrad,aptr->altl,iarrrad);
                 } else {
-                    ClipTwinVector(aptr->x,aptr->y,aptr->z,
+                    /*ClipTwinVector(aptr->x,aptr->y,aptr->z,
                                    aptr->fieldx,aptr->fieldy,aptr->fieldz,
                                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);	
+                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);*/
+                    ClipDashCylinder(aptr->x,aptr->y,aptr->z,
+                                     aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     iarrrad,aptr->altl,iarrrad);
+                    
                 }
             } else {
                 if (aptr->fieldworg < 0) {
                     if (aptr->fieldirad <= 31) {
-                        ClipDashVector(aptr->x,aptr->y,aptr->z,
+                        /*ClipDashVector(aptr->x,aptr->y,aptr->z,
                                        aptr->fieldx,aptr->fieldy,aptr->fieldz,
                                        (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);	
+                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);*/
+                        iarrrad=2;
+                        ClipDashCylinder(aptr->x,aptr->y,aptr->z,
+                                         aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                                         (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                         (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                         iarrrad,aptr->altl,iarrrad);
+                        
                         
                     } else {
                         iarrrad = (aptr->fieldirad+31)>>5;
-                        ClipCylinder(aptr->x,aptr->y,aptr->z,
+                        ClipDashCylinder(aptr->x,aptr->y,aptr->z,
+                                     aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     iarrrad,aptr->altl,iarrrad);
+                        /* ClipDashCylinder(aptr->x,aptr->y,aptr->z,
                                      (7*aptr->x+aptr->fieldx)>>3,
                                      (7*aptr->y+aptr->fieldy)>>3,
                                      (7*aptr->z+aptr->fieldz)>>3,
                                      (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                                      (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                                      iarrrad,aptr->altl,iarrrad);
-                        ClipCylinder((3*aptr->x+aptr->fieldx)>>2,
+                        ClipDashCylinder((3*aptr->x+aptr->fieldx)>>2,
                                      (3*aptr->y+aptr->fieldy)>>2,
                                      (3*aptr->z+aptr->fieldz)>>2,
                                      (5*aptr->x+3*aptr->fieldx)>>3,
@@ -1052,7 +1076,7 @@ static void DisplayField( void )
                                      (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                                      (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                                      iarrrad,aptr->altl,iarrrad);
-                        ClipCylinder((aptr->x+aptr->fieldx)>>1,
+                        ClipDashCylinder((aptr->x+aptr->fieldx)>>1,
                                      (aptr->y+aptr->fieldy)>>1,
                                      (aptr->z+aptr->fieldz)>>1,
                                      (3*aptr->x+5*aptr->fieldx)>>3,
@@ -1061,7 +1085,7 @@ static void DisplayField( void )
                                      (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                                      (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                                      iarrrad,aptr->altl,iarrrad);
-                        ClipCylinder((aptr->x+3*aptr->fieldx)>>2,
+                        ClipDashCylinder((aptr->x+3*aptr->fieldx)>>2,
                                      (aptr->y+3*aptr->fieldy)>>2,
                                      (aptr->z+3*aptr->fieldz)>>2,
                                      (1*aptr->x+7*aptr->fieldx)>>3,
@@ -1070,9 +1094,10 @@ static void DisplayField( void )
                                      (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                                      (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                                      iarrrad,aptr->altl,iarrrad);
+                         */
                     }
                 } else {
-                  ClipCylinder(aptr->x,aptr->y,aptr->z,
+                  ClipDashCylinder(aptr->x,aptr->y,aptr->z,
                              aptr->fieldx,aptr->fieldy,aptr->fieldz,
                              (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                              (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),

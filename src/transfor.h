@@ -396,12 +396,14 @@ int DefineShade( int, int, int );
 void DefineColourMap( void );
 void ResetColourMap( void );
 
+void ColourFieldNone( void );
 void ColourBackNone( void );
 void ColourBondNone( void );
 void ColourHBondType( void );
 void ColourHBondNone( int );
 void ColourRibbonNone( int );
 void ColourMonitNone( void );
+void ColourFieldAttrib( int, int, int );
 void ColourBackAttrib( int, int, int );
 void ColourBondAttrib( int, int, int );
 void ColourHBondAttrib( int, int, int, int );

@@ -1115,7 +1115,7 @@ void ClipDashVector( int x1, int y1, int z1,
         {   if( XValid(x1) && YValid(y1) && ZBValid(x1,z1)  )
             {   if( count<2 )
                 {   col = (x1<mid)? col1 : col2;
-	   	    cola = (x1<mid)? col2 : col1;
+	   	            cola = (x1<mid)? col2 : col1;
                     p =  altc&&(abs(x1-mid)<abs(dx)/4);
                     SETPIXELP(dptr,fptr,z1,Lut[col+c1], Lut[cola],p);
                     count++;
@@ -3485,6 +3485,166 @@ void ClipCylinder( int x1, int y1, int z1,
 
         ClipCappedCyl(x1, y1, z1, x1a, y1a, z1a, c1, c1, rad);
         ClipCappedCyl(x2a, y2a, z2a, x2, y2, z2, c2, c2, rad);
+
+      } else {
+
+        ClipSphere(x1,y1,z1,rad,c1);
+        ClipSphere(x2,y2,z2,rad,c2);
+
+      }
+    }
+
+}
+
+void DrawDashCappedCyl( int x1, int y1, int z1,
+                   int x2, int y2, int z2,
+                   int c1, int c2, int rad )
+{
+    register int tmp;
+    register int xlo,xhi,ylo,yhi,zlo,zhi;
+    double flen, frad;
+    int idash,kdash;
+    
+
+
+    /* Trivial Case */
+    if( (x1==x2) && (y1==y2) )
+    {   if( z1>z2 )
+        {      DrawSphere(x1,y1,z1,rad,c1);
+        } else {
+          DrawSphere(x2,y2,z2,rad,c2);
+        }
+        return;
+    }
+
+    if( z1<z2 )
+    {   tmp=x1; x1=x2; x2=tmp;
+        tmp=y1; y1=y2; y2=tmp;
+        tmp=z1; z1=z2; z2=tmp;
+        tmp=c1; c1=c2; c2=tmp;
+    }
+
+    flen = rint(sqrt((double)((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1))));
+    frad = (double)rad;
+    
+    kdash = rint(flen/(16*frad));
+    if (kdash < 1) kdash = 1;
+    
+    for (idash=0; idash< kdash; idash++) {
+      xlo = (x1*(kdash-idash)+x2*(idash))/kdash;
+      xhi = (x1*(kdash-1-idash)+x2*(idash+1))/kdash;
+      xhi = (xlo+xhi*3)/4;
+      ylo = (y1*(kdash-idash)+y2*(idash))/kdash;
+      yhi = (y1*(kdash-1-idash)+y2*(idash+1))/kdash;
+      yhi = (ylo+yhi*3)/4;
+      zlo = (z1*(kdash-idash)+z2*(idash))/kdash;
+      zhi = (z1*(kdash-1-idash)+z2*(idash+1))/kdash;
+      zhi = (zlo+zhi*3)/4;
+      DrawCappedCyl(xlo,ylo,zlo,xhi,yhi,zhi,c1,c2,rad);	
+    }
+
+}
+
+
+static void ClipDashCappedCyl( int x1, int y1, int z1,
+                   int x2, int y2, int z2,
+                   int c1, int c2, int rad )
+{
+    register int tmp;
+    register int xlo,xhi,ylo,yhi,zlo,zhi;
+    double flen, frad;
+    int idash,kdash;
+    
+
+    /* Visibility Tests */
+    if( !TestCylinder(x1,y1,z1,x2,y2,z2,rad) )
+        return;
+
+    if( !ClipStatus )
+    {   DrawDashCappedCyl(x1,y1,z1,x2,y2,z2,c1,c2,rad);
+        return;
+    }
+
+    /* Trivial Case */
+    if( (x1==x2) && (y1==y2) )
+    {   if( z1>z2 )
+        {      ClipSphere(x1,y1,z1,rad,c1);
+        } else {
+          ClipSphere(x2,y2,z2,rad,c2);
+        }
+        return;
+    }
+
+
+    flen = rint(sqrt((double)((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1))));
+    frad = (double)rad;
+    
+    kdash = rint(flen/(16*frad));
+    if (kdash < 1) kdash = 1;
+    
+    for (idash=0; idash< kdash; idash++) {
+      xlo = (x1*(kdash-idash)+x2*(idash))/kdash;
+      xhi = (x1*(kdash-1-idash)+x2*(idash+1))/kdash;
+      xhi = (xlo+xhi*3)/4;
+      ylo = (y1*(kdash-idash)+y2*(idash))/kdash;
+      yhi = (y1*(kdash-1-idash)+y2*(idash+1))/kdash;
+      yhi = (ylo+yhi*3)/4;
+      zlo = (z1*(kdash-idash)+z2*(idash))/kdash;
+      zhi = (z1*(kdash-1-idash)+z2*(idash+1))/kdash;
+      zhi = (zlo+zhi*3)/4;
+      ClipCappedCyl(xlo,ylo,zlo,xhi,yhi,zhi,c1,c2,rad);	
+    }
+
+}
+
+void ClipDashCylinder( int x1, int y1, int z1,
+                   int x2, int y2, int z2,
+                   int c1, int c2, int rad,
+                   char altl, int arad)
+{   int  altc;
+    int x1a, y1a, z1a, x2a, y2a, z2a, rada;
+    double flen, xd, yd, zd;
+
+    altc = 0;
+    if ( altl != '\0' && altl != ' ')
+      altc = AltlColours[((int)altl)&(AltlDepth-1)];
+
+    if (!altc) {
+      ClipDashCappedCyl(x1, y1, z1, x2, y2, z2, c1, c2, rad);
+    } else {
+
+      xd = x1-x2;
+      yd = y1-y2;
+      zd = z1-z2;
+
+      flen = .001+sqrt(xd*xd+yd*yd+zd*zd);
+
+      rada = arad;
+      if ( rada > rad ) {
+        rada = rad;
+      }
+
+      x1a = (int)((double)x1+(rad-rada+2.)*xd/flen);
+      y1a = (int)((double)y1+(rad-rada+2.)*yd/flen);
+      z1a = (int)((double)z1+(rad-rada+2.)*zd/flen);
+  
+      x2a = (int)((double)x2-(rad-rada+2.)*xd/flen);
+      y2a = (int)((double)y2-(rad-rada+2.)*yd/flen);
+      z2a = (int)((double)z2-(rad-rada+2.)*zd/flen);
+
+      ClipDashCappedCyl(x1a, y1a, z1a, x2a, y2a, z2a, altc, altc, rada);
+
+      if (9*((int)flen) >  20*rad) {
+        x1a = x1-(int)((.45-((double)rad)/flen)*xd);
+        y1a = y1-(int)((.45-((double)rad)/flen)*yd);
+        z1a = z1-(int)((.45-((double)rad)/flen)*zd);
+
+        x2a = x2+(int)((.45-((double)rad)/flen)*xd);
+        y2a = y2+(int)((.45-((double)rad)/flen)*yd);
+        z2a = z2+(int)((.45-((double)rad)/flen)*zd);
+
+        ClipDashCappedCyl(x1, y1, z1, x1a, y1a, z1a, c1, c1, rad);
+        ClipDashCappedCyl(x2a, y2a, z2a, x2, y2, z2, c2, c2, rad);
 
       } else {
 

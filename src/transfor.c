@@ -2145,6 +2145,47 @@ void ResetColourMap( void )
 }
 
 
+void ColourFieldNone( void )
+{
+    register Chain __far *chain;
+    register Group __far *group;
+    register RAtom __far *ptr;
+
+
+    if( Database )
+        ForEachAtom
+            if( (ptr->flag&SelectFlag) && ptr->fieldcol )
+            {   Shade[Colour2Shade(ptr->fieldcol)].refcount--;
+                ptr->fieldcol = 0;
+            }
+}
+
+void ColourFieldAttrib( int r, int g, int b )
+{
+    register Chain __far *chain;
+    register Group __far *group;
+    register RAtom __far *ptr;
+    register int shade,col;
+
+    if( Database )
+    {   ForEachAtom
+            if( (ptr->flag&SelectFlag) && ptr->fieldcol )
+                Shade[Colour2Shade(ptr->fieldcol)].refcount--;
+
+        shade = DefineShade(r,g,b);
+        col = Shade2Colour(shade);
+
+        ForEachAtom
+            if( ptr->flag&SelectFlag )
+            {   Shade[shade].refcount++;
+                ptr->fieldcol = col;
+            }
+    }
+}
+
+
+
+
 void ColourBondNone( void )
 {
     register Bond __far *bptr;

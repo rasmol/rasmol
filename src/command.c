@@ -3752,6 +3752,20 @@ static void ExecuteColourCommand( void )
             {      CommandError(MsgStrs[ErrColour]);
             } else CommandError(MsgStrs[ErrNoCol]);
             break;
+
+        case(FieldTok):
+            FetchToken();
+            if( CurToken==NoneTok )
+            {   ColourFieldNone();
+                ReDrawFlag |= RFColour;
+            } else if( ParseColour() )
+            {   ColourFieldAttrib(RVal,GVal,BVal);
+                ReDrawFlag |= RFColour;
+            } else if( CurToken )
+            {      CommandError(MsgStrs[ErrColour]);
+            } else CommandError(MsgStrs[ErrNoCol]);
+            break;
+
             
         case(SSBondTok):
             FetchToken();

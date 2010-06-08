@@ -250,6 +250,7 @@ extern int FontStroke;
 extern SBDstruct SBD;
 #endif
 
+void ClipDashCylinder( int, int, int, int, int, int, int, int, int, char, int );
 void ClipCylinder( int, int, int, int, int, int, int, int, int, char, int );
 void ClipDashLine( int, int, int, int, int, int, int, int, char );
 void ClipDeepPoint( int, int, int, int );
