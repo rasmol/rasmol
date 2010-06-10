@@ -814,7 +814,7 @@ static void WriteScriptAtoms( void )
     register int cpk=0,cpknew=0,vdw=0;
     register int col=0,rad=0;
     register int prevflag,staron,sphereon,fieldon;
-    long     fieldorg[4];
+    long     fieldorg[5];
 
     fputs("\n# Atoms\n",OutFile);
 
@@ -974,12 +974,13 @@ static void WriteScriptAtoms( void )
         ForEachAtom
 	    {
             if( !init )
-            {   fieldorg[0] = fieldorg[1]= fieldorg[2] = fieldorg[3] = 0;
+            {   fieldorg[0] = fieldorg[1]= fieldorg[2] = fieldorg[3] = fieldorg[4] = 0;
                 if (aptr->flag&(FieldFlag)) {
                     fieldorg[0] = aptr->fieldxorg;
                     fieldorg[1] = aptr->fieldyorg;
                     fieldorg[2] = aptr->fieldzorg;
                     fieldorg[3] = aptr->fieldworg;
+                    fieldorg[4] = aptr->fieldradius;
                     init = True;
                     prevflag = aptr->flag&(FieldFlag);
                 } else {
@@ -987,19 +988,40 @@ static void WriteScriptAtoms( void )
                       && (prevflag && fieldorg[0] == aptr->fieldxorg &&
                     fieldorg[1] == aptr->fieldyorg &&
                     fieldorg[2] == aptr->fieldzorg &&
-                    fieldorg[3] == aptr->fieldworg )) {
+                    fieldorg[3] == aptr->fieldworg &&
+                    fieldorg[4] == aptr->fieldradius)) {
                       last = aptr->serno;
                   } else {
                     if ( prevflag ) {
                     	WriteScriptBetween(first,last);
-                        if (fieldorg[0] !=0 || fieldorg[1] !=0 || fieldorg[2] !=0 || fieldorg[3] !=0) {
+                        if (fieldorg[0] !=0 || fieldorg[1] !=0 || fieldorg[2] !=0 || fieldorg[3] !=0 || fieldorg[4] !=0) {
                           fieldon = True;
+                            if (fieldorg[3] == 0) {
 #ifdef INVERT
-                          fprintf(OutFile,"field [%ld,%ld,%ld]\n", fieldorg[0], -fieldorg[1], -fieldorg[2]);
+                                fprintf(OutFile,"field [%ld,%ld,%ld]\n", fieldorg[0], -fieldorg[1], -fieldorg[2]);
 #else
-                          fprintf(OutFile,"field [%ld,%ld,%ld]\n", fieldorg[0], fieldorg[1], -fieldorg[2]);
+                                fprintf(OutFile,"field [%ld,%ld,%ld]\n", fieldorg[0], fieldorg[1], -fieldorg[2]);
 #endif
-                          if (fieldorg[3] != 0) fprintf(OutFile,"field radius %ld\n", fieldorg[3]);
+                            } else if (fieldorg[3] > 0) {
+#ifdef INVERT
+                                fprintf(OutFile,"field [%ld,%ld,%ld,%ld]\n", fieldorg[0], -fieldorg[1], -fieldorg[2], fieldorg[3]);
+#else
+                                fprintf(OutFile,"field [%ld,%ld,%ld,%ld]\n", fieldorg[0], fieldorg[1], -fieldorg[2], fieldorg[3]);
+#endif
+                            } else {
+#ifdef INVERT
+                                fprintf(OutFile,"field [%ld,%ld,%ld] angle %g\n", 
+                                        fieldorg[0], -fieldorg[1], -fieldorg[2],
+                                        ((double)-fieldorg[3])*.180/PI);
+#else
+                                fprintf(OutFile,"field [%ld,%ld,%ld] angle %g\n", 
+                                        fieldorg[0], fieldorg[1], -fieldorg[2],
+                                        ((double)-fieldorg[3])*.180/PI);
+#endif
+                                
+                            }
+                            fprintf(OutFile,"field radius %ld\n", fieldorg[4]);
+                            
                         } else {
                           if (fieldon) {
                               fieldon = False;
@@ -1019,6 +1041,8 @@ static void WriteScriptAtoms( void )
                     fieldorg[0] = aptr->fieldxorg;
                     fieldorg[1] = aptr->fieldyorg;
                     fieldorg[2] = aptr->fieldzorg;
+                    fieldorg[3] = aptr->fieldworg;
+                    fieldorg[4] = aptr->fieldradius;
                 }
                 first = last = aptr->serno;
                 same = False;
@@ -1031,10 +1055,37 @@ static void WriteScriptAtoms( void )
         {   WriteScriptBetween(first,last);
         } else WriteScriptAll();
 
-        if( fieldorg[0] !=0 || fieldorg[1] !=0 || fieldorg[2] !=0 ) {
-            if( prevflag&FieldFlag )
-              fprintf(OutFile,"field [%ld,%ld,%ld]\n", fieldorg[0], fieldorg[1], fieldorg[2]);
-        } else {
+    if( fieldorg[0] !=0 || fieldorg[1] !=0 || fieldorg[2] !=0 ) {
+        if( prevflag&FieldFlag ){  
+            if (fieldorg[3] == 0) {
+#ifdef INVERT
+                fprintf(OutFile,"field [%ld,%ld,%ld]\n", fieldorg[0], -fieldorg[1], -fieldorg[2]);
+#else
+                fprintf(OutFile,"field [%ld,%ld,%ld]\n", fieldorg[0], fieldorg[1], -fieldorg[2]);
+#endif
+            } else if (fieldorg[3] > 0) {
+#ifdef INVERT
+                fprintf(OutFile,"field [%ld,%ld,%ld,%ld]\n", fieldorg[0], -fieldorg[1], -fieldorg[2], fieldorg[3]);
+#else
+                fprintf(OutFile,"field [%ld,%ld,%ld,%ld]\n", fieldorg[0], fieldorg[1], -fieldorg[2], fieldorg[3]);
+#endif
+            } else {
+#ifdef INVERT
+                fprintf(OutFile,"field [%ld,%ld,%ld] angle %g\n", 
+                        fieldorg[0], -fieldorg[1], -fieldorg[2],
+                        ((double)-fieldorg[3])*.180/PI);
+#else
+                fprintf(OutFile,"field [%ld,%ld,%ld] angle %g\n", 
+                        fieldorg[0], fieldorg[1], -fieldorg[2],
+                        ((double)-fieldorg[3])*.180/PI);
+#endif
+                
+            }
+            fprintf(OutFile,"field radius %ld\n", fieldorg[4]);
+            
+            
+        }
+    } else {
           if (fieldon) fputs("field off\n",OutFile); 
         }
         

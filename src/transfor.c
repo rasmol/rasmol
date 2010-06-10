@@ -618,6 +618,102 @@ void SetFieldValue(long field[4]) {
 	
 }
 
+void ScaleFieldValue(long fscale) {
+    
+    register Chain __far *chain;
+    register Group __far *group;
+    register RAtom __far *ptr;
+    register int change;
+    double normsq, maxnormsq;
+    long basenormsq;
+    
+    if( !Database )
+        return;
+    
+    MaxVectorField = 0;
+    maxnormsq = 0;
+    DrawField = False;
+    
+    ForEachAtom
+    {  
+        if( ptr->flag & SelectFlag ) {
+            ptr->fieldxorg = (ptr->fieldxorg*fscale)/1000;
+            ptr->fieldyorg = (ptr->fieldyorg*fscale)/1000;
+            ptr->fieldzorg = (ptr->fieldzorg*fscale)/1000;
+            normsq=ptr->fieldxorg*ptr->fieldxorg + ptr->fieldyorg*ptr->fieldyorg + ptr->fieldzorg*ptr->fieldzorg;
+            if( normsq>maxnormsq ) maxnormsq = normsq;
+            
+            ptr->flag |= FieldFlag;
+            if (AbsFun(ptr->fieldxorg) >= AbsFun(ptr->fieldyorg) && AbsFun(ptr->fieldxorg) >= AbsFun(ptr->fieldzorg)) {
+                if (AbsFun(ptr->fieldyorg) >= AbsFun(ptr->fieldzorg)) {
+                    ptr->basexorg = ptr->fieldyorg;
+                    ptr->baseyorg = -ptr->fieldxorg;
+                    ptr->basezorg = 0;
+                } else  {
+                    ptr->basexorg = ptr->fieldzorg;
+                    ptr->baseyorg = 0;
+                    ptr->basezorg = -ptr->fieldxorg;
+                }
+            	
+            } else if (AbsFun(ptr->fieldyorg) >= AbsFun(ptr->fieldxorg) && AbsFun(ptr->fieldyorg) >= AbsFun(ptr->fieldzorg)) {
+                if (AbsFun(ptr->fieldxorg) >= AbsFun(ptr->fieldzorg)) {
+                    ptr->basexorg = ptr->fieldyorg;
+                    ptr->baseyorg = -ptr->fieldxorg;
+                    ptr->basezorg = 0;
+                } else  {
+                    ptr->basexorg = 0;
+                    ptr->baseyorg = ptr->fieldzorg;
+                    ptr->basezorg = -ptr->fieldyorg;
+                }
+                
+            } else {
+                if (AbsFun(ptr->fieldxorg) >= AbsFun(ptr->fieldyorg)) {
+                    ptr->basexorg = -ptr->fieldzorg;
+                    ptr->baseyorg = 0;
+                    ptr->basezorg = ptr->fieldxorg;
+                } else  {
+                    ptr->basexorg = 0;
+                    ptr->baseyorg = -ptr->fieldzorg;
+                    ptr->basezorg = ptr->fieldyorg;
+                }
+            }
+            basenormsq = (ptr->basexorg)*(ptr->basexorg) + (ptr->baseyorg)*(ptr->baseyorg) + (ptr->basezorg)*(ptr->basezorg);
+            if (basenormsq > 0) {
+                int basenorm;
+                basenorm = isqrt(basenormsq);
+                ptr->basexorg *= 250;
+                ptr->baseyorg *= 250;
+                ptr->basezorg *= 250;
+                
+                ptr->basexorg /= basenorm;
+                ptr->baseyorg /= basenorm;
+                ptr->basezorg /= basenorm;
+            }
+            
+            
+            
+        } else  {
+            if (ptr->flag & FieldFlag) {
+                normsq = ((double) ptr->fieldxorg)*((double)ptr->fieldxorg)
+                + ((double)ptr->fieldyorg)*((double)ptr->fieldyorg)
+                + ((double)ptr->fieldzorg)*((double)ptr->fieldzorg);
+                DrawField = True;
+                if( normsq>maxnormsq ) maxnormsq = normsq;
+            }             
+        }
+    }
+        
+    if (maxnormsq > 0.) {
+        MaxVectorField = (long)rint(sqrt(maxnormsq));
+        ReDrawFlag |= RFRefresh|RFRotate;
+        DrawField = True;
+    }
+    
+    return;
+	
+}
+
+
 void SetRadiusValue( int rad , int flag)
 {
     register int irad,change;
@@ -652,7 +748,6 @@ void SetRadiusValue( int rad , int flag)
                 ptr->flag |= TouchFlag|(flag&ExpandFlag);
                 ptr->flag &= ~(SphereFlag|StarFlag);
 			} else if (flag & FieldFlag) {
-				ptr->flag |= FieldFlag;
 			    ptr->fieldradius = rad;
 			    ptr->fieldirad = irad;
 			    DrawField = True;
@@ -4955,7 +5050,7 @@ int AlignToMolecule(int molnum, double * rmsd,
             CQRMScalarMultiply(qsum,qsum,1./sqrt(qnormsq))
             CVectorAddElement(quatList,&q);
             count++;
-            if (none_ang_dist == ALIGN_ANGLE) {
+            if (none_ang_dist == ALIGN_ANGLE || none_ang_dist == ALIGN_ANGLE_SUM) {
               double hlerpnormsq;
               localcount = *(int *)CVectorElementAt(quatLocalCountList,ii);
               localq = (CQRQuaternionHandle)CVectorElementAt(quatLocalList,ii);
@@ -5042,20 +5137,13 @@ int AlignToMolecule(int molnum, double * rmsd,
     ApplyQTXform (qRotToMolecule, 
                   vTransToMolecule,
                   &comLocal);
-                  
-/*    OrigCX = (long)origcRemote.vec[0];
-    OrigCY = (long)origcRemote.vec[1];
-    OrigCZ = (long)origcRemote.vec[2];
-
-    CenX = (long)cenRemote.vec[0];
-    CenY = (long)cenRemote.vec[1];
-    CenZ = (long)cenRemote.vec[2];
- */
+                    
     
-    
-    if (none_ang_dist==ALIGN_DISTANCE) {
+    if (none_ang_dist==ALIGN_DISTANCE || none_ang_dist==ALIGN_DISTANCE_SUM) {
         
-
+        CV3Vector vSum;
+        
+        CV3M_vsssSet(vSum,0.,0.,0.);
         for (ii=0; ii < chainCountCommon; ii++) {
 
                 CV3Vector vLocal,vRemote,vDiff;
@@ -5090,18 +5178,34 @@ int AlignToMolecule(int molnum, double * rmsd,
                                  +(double)(pRemote->ztrl)/10000.0);
                 
                 CV3M_vvvSubtract(vDiff,vRemote,vLocal);
+                CV3M_vvvAdd(vSum,vSum,vDiff);
                 
                 if (ii < 10) fprintf(stderr,"ii %d delta2 [%g,%g,%g]\n", ii, vDiff.vec[0],vDiff.vec[1],vDiff.vec[2]);
+                if (ii < 10) fprintf(stderr,"ii %d delta2 [%g,%g,%g]\n", ii, vSum.vec[0],vSum.vec[1],vSum.vec[2]);
 
+                if (none_ang_dist == ALIGN_DISTANCE_SUM) {
                 
-                field[0] = rint(vDiff.vec[0]*250.);
+                  field[0] = rint(vSum.vec[0]*250.);
 #ifdef INVERT
-                field[1] = -rint(vDiff.vec[1]*250.);
+                  field[1] = -rint(vSum.vec[1]*250.);
 #else
-                field[1] = rint(vDiff.vec[1]*250.);
+                  field[1] = rint(vSum.vec[1]*250.);
 #endif
-                field[2] = -rint(vDiff.vec[2]*250.);
-                field[3] = 0;
+                  field[2] = -rint(vSum.vec[2]*250.);
+                  field[3] = 0;
+                	
+                } else  {
+                	
+                  field[0] = rint(vDiff.vec[0]*250.);
+#ifdef INVERT
+                  field[1] = -rint(vDiff.vec[1]*250.);
+#else
+                  field[1] = rint(vDiff.vec[1]*250.);
+#endif
+                  field[2] = -rint(vDiff.vec[2]*250.);
+                  field[3] = 0;
+                
+                }
                 
                 SetOneFieldValue(field, pLocal, 0);
                 
@@ -5109,11 +5213,14 @@ int AlignToMolecule(int molnum, double * rmsd,
                 
         }
 
-    } else if (none_ang_dist == ALIGN_ANGLE) {
+    } else if (none_ang_dist == ALIGN_ANGLE || none_ang_dist == ALIGN_ANGLE_SUM) {
+    
+        CQRQuaternion angSum, angprod;
+        CQRMSet(angSum,1.,0.,0.,0.);
     
         for (ii=0; ii < chainCountCommon; ii++) {
             CQRQuaternionHandle qlocal;
-            CQRQuaternion qtemp1, qtemp2 ;
+            CQRQuaternion qtemp1, qtemp2, atemp ;
             double localcos, localsin, localangle;
             RAtom * pLocal;
             long field[3];
@@ -5121,6 +5228,15 @@ int AlignToMolecule(int molnum, double * rmsd,
             qlocal = (CQRQuaternionHandle)CVectorElementAt(quatLocalList,ii);
             CQRMConjugate(qtemp1,qsum);
             CQRMMultiply(qtemp2,*qlocal,qtemp1)
+            CQRMMultiply(atemp,qtemp2,angSum);
+            if (none_ang_dist ==  ALIGN_ANGLE_SUM) {
+                if (atemp.w < 0.) {
+                    CQRMScalarMultiply(atemp,atemp,-1.);
+                }
+               CQRMCopy(angSum,atemp);
+               CQRMCopy(qtemp2,angSum);
+            }
+
             fprintf(stderr,"qlocal, qtemp1, qtemp2 [%g,%g,%g,%g] [%g,%g,%g,%g] [%g,%g,%g,%g]\n",
                     qlocal->w,qlocal->x,qlocal->y,qlocal->z, qtemp1.w,qtemp1.x,qtemp1.y,qtemp1.z, qtemp2.w,qtemp2.x,qtemp2.y,qtemp2.z);
             localcos = qtemp2.w;

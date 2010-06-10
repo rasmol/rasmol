@@ -5992,8 +5992,18 @@ int ExecuteCommandOne( int * restore )
                       CommandError(MsgStrs[ErrBadArg]);
               	      break;
                     }
-              	  }
-              	  else break;
+              	  } else if (CurToken=='+' || CurToken == AddTok)  {
+              	    if (!none_ang_dist) {
+              	      none_ang_dist = ALIGN_DISTANCE_SUM;
+              	    } else if (none_ang_dist == ALIGN_ANGLE) {
+              	      none_ang_dist = ALIGN_ANGLE_SUM;
+              	    } else if (none_ang_dist == ALIGN_DISTANCE) {
+              	      none_ang_dist = ALIGN_DISTANCE_SUM;
+              	    } else {
+                      CommandError(MsgStrs[ErrBadArg]);
+              	      break;
+                    }
+              	  } else break;
                   FetchToken();
               }
               if (CurToken) break;
@@ -7009,7 +7019,7 @@ int ExecuteCommandOne( int * restore )
               fieldtowrite = False;
               while (CurToken) { 
                 if( CurToken==FalseTok ) {
-                  ReDrawFlag |= RFRefresh;
+                  ReDrawFlag |= RFRefresh|RFRotate;
                   DisableField();
                 } else if( CurToken=='[' ) {
               	  int ifound;
@@ -7037,6 +7047,8 @@ int ExecuteCommandOne( int * restore )
                     if( *TokenPtr=='.' ) {
                       TokenPtr++;
                       FetchFloat(TokenValue,1000);
+                    } else {
+                        TokenValue *= 1000;
                     }
                     if( TokenValue<=360000 ) {
                       Field[3] = TokenValue;
@@ -7057,8 +7069,9 @@ int ExecuteCommandOne( int * restore )
                      Field[2] = -Field[2];                     
                   }
                   Field[3] = -Field[3];
+                  Field[3] = rint(PI*(double)Field[3]/180.);
                 } else if( (CurToken==TrueTok) || !CurToken ) {
-                  ReDrawFlag |= RFRefresh;
+                  ReDrawFlag |= RFRefresh|RFRotate;
                   SetOneFieldValue(NULL,NULL,False);
                 } else if (CurToken==RadiusTok) {
                   FetchToken();
@@ -7071,7 +7084,7 @@ int ExecuteCommandOne( int * restore )
                       SetRadiusValue(MaxFun((int)TokenValue,1),
                                    FieldFlag);
                       DrawField = True;
-                      ReDrawFlag |= RFRefresh;
+                      ReDrawFlag |= RFRefresh|RFRotate;
                     } else CommandError(MsgStrs[ErrBigNum]);
                   } else if( CurToken=='.' ) {
                     FetchFloat(0,250);
@@ -7079,9 +7092,34 @@ int ExecuteCommandOne( int * restore )
                       SetRadiusValue(MaxFun((int)TokenValue,1),
                                    FieldFlag);
                       DrawField = True;
-                      ReDrawFlag |= RFRefresh;
+                      ReDrawFlag |= RFRefresh|RFRotate;
                     } else CommandError(MsgStrs[ErrBigNum]);
                   }
+                }else if (CurToken=='*' || CurToken == ScaleTok) {
+                    FetchToken();
+                    if( CurToken==NumberTok ) {
+                        if( *TokenPtr=='.' ) {
+                            TokenPtr++;
+                            FetchFloat(TokenValue,1000);
+                            ScaleFieldValue(TokenValue);
+                            DrawField = True;
+                            ReDrawFlag |= RFRefresh|RFRotate;
+                            FetchToken();
+                            continue;
+                        }
+                        if( TokenValue<=3000000 ) {
+                            ScaleFieldValue(TokenValue*1000);
+                            DrawField = True;
+                            ReDrawFlag |= RFRefresh|RFRotate;
+                        } else CommandError(MsgStrs[ErrBigNum]);
+                    } else if( CurToken=='.' ) {
+                        FetchFloat(0,1000);
+                        if( TokenValue<=3000000 ) {
+                            ScaleFieldValue(TokenValue);
+                            DrawField = True;
+                            ReDrawFlag |= RFRefresh|RFRotate;
+                        } else CommandError(MsgStrs[ErrBigNum]);
+                    }
                 } else  {
             	  CommandError(MsgStrs[ErrBadArg]);
             	  break;

@@ -240,11 +240,13 @@ typedef struct {
 #define Colour2Shade(x)  ((int)((x)-FirstCol)/ColourDepth)
 #define Shade2Colour(x)  ((x)*ColourDepth+FirstCol)
 
-#define ALIGN_KABSCH   1
-#define ALIGN_LOCAL    2
-#define ALIGN_NONE     1
-#define ALIGN_ANGLE    2
-#define ALIGN_DISTANCE 3
+#define ALIGN_KABSCH       1
+#define ALIGN_LOCAL        2
+#define ALIGN_NONE         1
+#define ALIGN_ANGLE        2
+#define ALIGN_DISTANCE     3
+#define ALIGN_ANGLE_SUM    4
+#define ALIGN_DISTANCE_SUM 5
 
 
 #ifdef TRANSFORM
@@ -362,6 +364,7 @@ extern size_t record_frame[2], play_frame[2];
 
 void SetOneFieldValue(long field[4], RAtom __far *aptr, int wait);
 void SetFieldValue(long field[4]);
+void ScaleFieldValue(long fscale);
 
 void SetRadiusValue( int, int  );
 void SetRadiusTemperature( int );

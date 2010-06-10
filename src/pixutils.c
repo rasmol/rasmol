@@ -2974,10 +2974,6 @@ static void DrawCylinderCaps( int x1, int y1, int z1,
 {
     register short __huge *dold, __huge *dptr;
     register Pixel __huge *fold;
-#ifdef UNUSED
-    register int ax,ay,ix,iy;
-    register int zrate,lz;
-#endif
     register Long offset,temp,end;
     register int inten,absx;
     register int wide,depth;
@@ -2991,15 +2987,6 @@ static void DrawCylinderCaps( int x1, int y1, int z1,
 
     lx = x2-x1;
     ly = y2-y1;
-
-#ifdef UNUSED
-    lz = z2-z1;
-    if( ly>0 ) { ay = ly; iy = 1; }
-    else { ay = -ly; iy = -1; }
-    if( lx>0 ) { ax = lx; ix = 1; }
-    else { ax = -lx; ix = -1; }
-    zrate = lz/MaxFun(ax,ay);
-#endif
 
     end = (Long)ly*View.yskip+lx;
     temp = (Long)y1*View.yskip+x1;
@@ -3042,27 +3029,12 @@ static void DrawCylinderCaps( int x1, int y1, int z1,
                   Lut[altc+inten],p);
             }
 
-#ifdef UNUSED
-            k1 = AbsFun(dx+ix); 
-            k2 = AbsFun(dx-ix);
-
-            if( ((k1>wide)||(dz>=pythag(wide,k1)-zrate)) &&
-                ((k2>wide)||(dz>pythag(wide,k2)+zrate)) )
-#endif
             if ( (ArcAcPtr-ArcAc)<ARCSIZE ) {
             {   ArcAcPtr->offset = offset; ArcAcPtr->inten = inten;
                 ArcAcPtr->dx=dx; ArcAcPtr->dy=dy; ArcAcPtr->dz=dz;
                 ArcAcPtr++;
             } }
 
-#ifdef UNUSED
-            k1 = AbsFun(dy+iy);
-            k2 = AbsFun(dy-iy);
-
-            high = pythag(rad,absx);
-            if( ((k1>high)||(dz>=pythag(pythag(rad,k1),absx)-zrate)) &&
-                ((k2>high)||(dz>pythag(pythag(rad,k2),absx)+zrate)) )
-#endif
             if ( (ArcDnPtr-ArcDn)<ARCSIZE ) {
             {   ArcDnPtr->offset = offset; ArcDnPtr->inten = inten;
                 ArcDnPtr->dx=dx; ArcDnPtr->dy=dy; ArcDnPtr->dz=dz;
@@ -3294,16 +3266,17 @@ static void ClipArcAc( short __huge *dbase,
     register ArcEntry __far *ptr;
     register short __huge *dptr;
     register short depth;
-    register int temp;
+    register int temp, tempx;
 
     ptr = ArcAc;
+    if (ptr == ArcAcPtr) return;
     while( (temp=y+ptr->dy) < 0 )
         if(++ptr == ArcAcPtr )
             return;
 
-    while( (temp<View.ymax) && (ptr<ArcAcPtr) )
-    {   temp = x+ptr->dx;
-        if( XValid(temp) && OValid(ptr->offset) )
+    while( ptr<ArcAcPtr )
+    {   tempx = x+ptr->dx;
+        if( XValid(tempx) && temp<View.ymax && OValid(ptr->offset) )
         {   dptr = dbase+ptr->offset;  depth = ptr->dz+z;
             SETPIXEL(dptr,fbase+ptr->offset,depth,Lut[ptr->inten+c]);
         }
@@ -3319,7 +3292,7 @@ static void ClipArcDn( short __huge *dbase,
     register ArcEntry __far *ptr;
     register short __huge *dptr;
     register short depth;
-    register int temp;
+    register int temp, tempx;
 
     ptr = ArcDn;
     if (ptr == ArcDnPtr) return;
@@ -3327,9 +3300,9 @@ static void ClipArcDn( short __huge *dbase,
         if(++ptr == ArcDnPtr )
             return;
 
-    while( (temp<View.ymax) && (ptr!=ArcDnPtr) )
-    {   temp = x+ptr->dx;
-        if( XValid(temp) && OValid(ptr->offset) )
+    while( ptr < ArcDnPtr )
+    {   tempx = x+ptr->dx;
+        if( XValid(tempx) && temp<View.ymax && OValid(ptr->offset) )
         {   dptr = dbase+ptr->offset;  depth = ptr->dz+z;
             SETPIXEL(dptr,fbase+ptr->offset,depth,Lut[ptr->inten+c]);
         }
@@ -3502,6 +3475,7 @@ void DrawDashCappedCyl( int x1, int y1, int z1,
 {
     register int tmp;
     register int xlo,xhi,ylo,yhi,zlo,zhi;
+    register int xu,xt,yu,yt,zu,zt;
     double flen, frad;
     int idash,kdash;
     
@@ -3527,20 +3501,37 @@ void DrawDashCappedCyl( int x1, int y1, int z1,
     flen = rint(sqrt((double)((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1))));
     frad = (double)rad;
     
-    kdash = rint(flen/(16*frad));
+    kdash = rint(flen/(10*frad));
     if (kdash < 1) kdash = 1;
     
     for (idash=0; idash< kdash; idash++) {
       xlo = (x1*(kdash-idash)+x2*(idash))/kdash;
       xhi = (x1*(kdash-1-idash)+x2*(idash+1))/kdash;
-      xhi = (xlo+xhi*3)/4;
+      xu = (9*xlo+xhi)/10;
+      xt = (8*xlo+2*xhi)/10;
       ylo = (y1*(kdash-idash)+y2*(idash))/kdash;
       yhi = (y1*(kdash-1-idash)+y2*(idash+1))/kdash;
-      yhi = (ylo+yhi*3)/4;
+      yu = (9*ylo+yhi)/10;
+      yt = (8*ylo+2*yhi)/10;
       zlo = (z1*(kdash-idash)+z2*(idash))/kdash;
       zhi = (z1*(kdash-1-idash)+z2*(idash+1))/kdash;
-      zhi = (zlo+zhi*3)/4;
-      DrawCappedCyl(xlo,ylo,zlo,xhi,yhi,zhi,c1,c2,rad);	
+      zu = (9*zlo+zhi)/10;
+      zt = (8*zlo+2*zhi)/10;
+      DrawCappedCyl(xu,yu,zu,xt,yt,zt,c1,c2,rad);
+      xu = (3*xlo+2*xhi)/5;
+      xt = (2*xlo+3*xhi)/5;
+      yu = (3*ylo+2*yhi)/5;
+      yt = (2*ylo+3*yhi)/5;
+      zu = (3*zlo+2*zhi)/5;
+      zt = (2*zlo+3*zhi)/5;
+      DrawCappedCyl(xu,yu,zu,xt,yt,zt,c1,c2,rad);	
+      xu = (xlo+9*xhi)/10;
+      xt = (2*xlo+8*xhi)/10;
+      yu = (ylo+9*yhi)/10;
+      yt = (2*ylo+8*yhi)/10;
+      zu = (zlo+9*zhi)/10;
+      zt = (2*zlo+8*zhi)/10;
+      DrawCappedCyl(xu,yu,zu,xt,yt,zt,c1,c2,rad);	
     }
 
 }
@@ -3552,6 +3543,7 @@ static void ClipDashCappedCyl( int x1, int y1, int z1,
 {
     register int tmp;
     register int xlo,xhi,ylo,yhi,zlo,zhi;
+    register int xu,xt,yu,yt,zu,zt;
     double flen, frad;
     int idash,kdash;
     
@@ -3579,20 +3571,37 @@ static void ClipDashCappedCyl( int x1, int y1, int z1,
     flen = rint(sqrt((double)((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)+(z2-z1)*(z2-z1))));
     frad = (double)rad;
     
-    kdash = rint(flen/(16*frad));
+    kdash = rint(flen/(10*frad));
     if (kdash < 1) kdash = 1;
     
     for (idash=0; idash< kdash; idash++) {
       xlo = (x1*(kdash-idash)+x2*(idash))/kdash;
       xhi = (x1*(kdash-1-idash)+x2*(idash+1))/kdash;
-      xhi = (xlo+xhi*3)/4;
+      xu = (9*xlo+xhi)/10;
+      xt = (8*xlo+2*xhi)/10;
       ylo = (y1*(kdash-idash)+y2*(idash))/kdash;
       yhi = (y1*(kdash-1-idash)+y2*(idash+1))/kdash;
-      yhi = (ylo+yhi*3)/4;
+      yu = (9*ylo+yhi)/10;
+      yt = (8*ylo+2*yhi)/10;
       zlo = (z1*(kdash-idash)+z2*(idash))/kdash;
       zhi = (z1*(kdash-1-idash)+z2*(idash+1))/kdash;
-      zhi = (zlo+zhi*3)/4;
-      ClipCappedCyl(xlo,ylo,zlo,xhi,yhi,zhi,c1,c2,rad);	
+      zu = (9*zlo+zhi)/10;
+      zt = (8*zlo+2*zhi)/10;
+      ClipCappedCyl(xu,yu,zu,xt,yt,zt,c1,c2,rad);
+      xu = (3*xlo+2*xhi)/5;
+      xt = (2*xlo+3*xhi)/5;
+      yu = (3*ylo+2*yhi)/5;
+      yt = (2*ylo+3*yhi)/5;
+      zu = (3*zlo+2*zhi)/5;
+      zt = (2*zlo+3*zhi)/5;
+      ClipCappedCyl(xu,yu,zu,xt,yt,zt,c1,c2,rad);	
+      xu = (xlo+9*xhi)/10;
+      xt = (2*xlo+8*xhi)/10;
+      yu = (ylo+9*yhi)/10;
+      yt = (2*ylo+8*yhi)/10;
+      zu = (zlo+9*zhi)/10;
+      zt = (2*zlo+8*zhi)/10;
+      ClipCappedCyl(xu,yu,zu,xt,yt,zt,c1,c2,rad);	
     }
 
 }
@@ -3655,6 +3664,66 @@ void ClipDashCylinder( int x1, int y1, int z1,
     }
 
 }
+
+void DrawDashCylinder( int x1, int y1, int z1,
+                   int x2, int y2, int z2,
+                   int c1, int c2, int rad,
+                   char altl, int arad)
+{   int  altc;
+    int x1a, y1a, z1a, x2a, y2a, z2a, rada;
+    double flen, xd, yd, zd;
+
+    altc = 0;
+    if ( altl != '\0' && altl != ' ')
+      altc = AltlColours[((int)altl)&(AltlDepth-1)];
+
+    if (!altc) {
+      DrawDashCappedCyl(x1, y1, z1, x2, y2, z2, c1, c2, rad);
+    } else {
+
+      xd = x1-x2;
+      yd = y1-y2;
+      zd = z1-z2;
+
+      flen = .001+sqrt(xd*xd+yd*yd+zd*zd);
+
+      rada = arad;
+      if ( rada > rad ) {
+        rada = rad;
+      }
+
+      x1a = (int)((double)x1+(rad-rada+2.)*xd/flen);
+      y1a = (int)((double)y1+(rad-rada+2.)*yd/flen);
+      z1a = (int)((double)z1+(rad-rada+2.)*zd/flen);
+  
+      x2a = (int)((double)x2-(rad-rada+2.)*xd/flen);
+      y2a = (int)((double)y2-(rad-rada+2.)*yd/flen);
+      z2a = (int)((double)z2-(rad-rada+2.)*zd/flen);
+
+      DrawDashCappedCyl(x1a, y1a, z1a, x2a, y2a, z2a, altc, altc, rada);
+
+      if (9*((int)flen) >  20*rad) {
+        x1a = x1-(int)((.45-((double)rad)/flen)*xd);
+        y1a = y1-(int)((.45-((double)rad)/flen)*yd);
+        z1a = z1-(int)((.45-((double)rad)/flen)*zd);
+
+        x2a = x2+(int)((.45-((double)rad)/flen)*xd);
+        y2a = y2+(int)((.45-((double)rad)/flen)*yd);
+        z2a = z2+(int)((.45-((double)rad)/flen)*zd);
+
+        DrawDashCappedCyl(x1, y1, z1, x1a, y1a, z1a, c1, c1, rad);
+        DrawDashCappedCyl(x2a, y2a, z2a, x2, y2, z2, c2, c2, rad);
+
+      } else {
+
+        DrawSphere(x1,y1,z1,rad,c1);
+        DrawSphere(x2,y2,z2,rad,c2);
+
+      }
+    }
+
+}
+
 
 
 /*================================*/

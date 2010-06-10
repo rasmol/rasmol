@@ -1004,11 +1004,15 @@ static void DisplayField( void )
     CV3Vector base;
     CV3Vector axis;
     CV3Vector other;
+    CV3Vector ahead1, ahead2, ahead3, ahead4, abase, anormal;
     CV3Vector temp;
-    double bnorm,anorm,onorm,angle,ca,sa,ang;
+    double bnorm,anorm,onorm,nnorm,angle,ca,sa,ang;
+    int inten;
     int nang,iang;
     int iarrrad;
     Long cvec[3], dvec[3];
+    Poly tangle;
+    double normscale = 96.;
     
     
     if( UseClipping ) { 
@@ -1016,86 +1020,21 @@ static void DisplayField( void )
 	    if( aptr->flag&FieldFlag ) { 
             if (aptr->fieldirad <= 1)  {
                 iarrrad=2;
-                if (aptr->fieldworg < 0 ) {
-                    /* ClipDashVector(aptr->x,aptr->y,aptr->z,
-                                   aptr->fieldx,aptr->fieldy,aptr->fieldz,
-                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);	*/
-                    ClipDashCylinder(aptr->x,aptr->y,aptr->z,
+                ClipDashCylinder(aptr->x,aptr->y,aptr->z,
                                      aptr->fieldx,aptr->fieldy,aptr->fieldz,
                                      (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                                      (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                                      iarrrad,aptr->altl,iarrrad);
-                } else {
-                    /*ClipTwinVector(aptr->x,aptr->y,aptr->z,
-                                   aptr->fieldx,aptr->fieldy,aptr->fieldz,
-                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                   (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);*/
-                    ClipDashCylinder(aptr->x,aptr->y,aptr->z,
-                                     aptr->fieldx,aptr->fieldy,aptr->fieldz,
-                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                     iarrrad,aptr->altl,iarrrad);
-                    
-                }
             } else {
                 if (aptr->fieldworg < 0) {
-                    if (aptr->fieldirad <= 31) {
-                        /*ClipDashVector(aptr->x,aptr->y,aptr->z,
-                                       aptr->fieldx,aptr->fieldy,aptr->fieldz,
-                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);*/
-                        iarrrad=2;
-                        ClipDashCylinder(aptr->x,aptr->y,aptr->z,
+                    iarrrad = (aptr->fieldirad+31)>>5;
+                    if (aptr->fieldirad <= 31)  iarrrad=2;
+                    ClipDashCylinder(aptr->x,aptr->y,aptr->z,
                                          aptr->fieldx,aptr->fieldy,aptr->fieldz,
                                          (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                                          (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
                                          iarrrad,aptr->altl,iarrrad);
                         
-                        
-                    } else {
-                        iarrrad = (aptr->fieldirad+31)>>5;
-                        ClipDashCylinder(aptr->x,aptr->y,aptr->z,
-                                     aptr->fieldx,aptr->fieldy,aptr->fieldz,
-                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                     iarrrad,aptr->altl,iarrrad);
-                        /* ClipDashCylinder(aptr->x,aptr->y,aptr->z,
-                                     (7*aptr->x+aptr->fieldx)>>3,
-                                     (7*aptr->y+aptr->fieldy)>>3,
-                                     (7*aptr->z+aptr->fieldz)>>3,
-                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                     iarrrad,aptr->altl,iarrrad);
-                        ClipDashCylinder((3*aptr->x+aptr->fieldx)>>2,
-                                     (3*aptr->y+aptr->fieldy)>>2,
-                                     (3*aptr->z+aptr->fieldz)>>2,
-                                     (5*aptr->x+3*aptr->fieldx)>>3,
-                                     (5*aptr->y+3*aptr->fieldy)>>3,
-                                     (5*aptr->z+3*aptr->fieldz)>>3,
-                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                     iarrrad,aptr->altl,iarrrad);
-                        ClipDashCylinder((aptr->x+aptr->fieldx)>>1,
-                                     (aptr->y+aptr->fieldy)>>1,
-                                     (aptr->z+aptr->fieldz)>>1,
-                                     (3*aptr->x+5*aptr->fieldx)>>3,
-                                     (3*aptr->y+5*aptr->fieldy)>>3,
-                                     (3*aptr->z+5*aptr->fieldz)>>3,
-                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                     iarrrad,aptr->altl,iarrrad);
-                        ClipDashCylinder((aptr->x+3*aptr->fieldx)>>2,
-                                     (aptr->y+3*aptr->fieldy)>>2,
-                                     (aptr->z+3*aptr->fieldz)>>2,
-                                     (1*aptr->x+7*aptr->fieldx)>>3,
-                                     (1*aptr->y+7*aptr->fieldy)>>3,
-                                     (1*aptr->z+7*aptr->fieldz)>>3,
-                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                                     iarrrad,aptr->altl,iarrrad);
-                         */
-                    }
                 } else {
                   ClipDashCylinder(aptr->x,aptr->y,aptr->z,
                              aptr->fieldx,aptr->fieldy,aptr->fieldz,
@@ -1110,6 +1049,11 @@ static void DisplayField( void )
                                aptr->fieldw,
                                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col));
                 } else {
+                    
+                    tangle.v[0].x = aptr->fieldx;
+                    tangle.v[0].y = aptr->fieldy;
+                    tangle.v[0].z = aptr->fieldz;
+                    tangle.count = 3;
                     iarrrad = (aptr->fieldirad+31)>>5;
                     if (iarrrad < 1) iarrrad = 1;
                     axis.vec[0] = (double)(aptr->fieldxorg)/250.;
@@ -1131,6 +1075,209 @@ static void DisplayField( void )
                     if (onorm != 0.) {
                         CV3M_vvsDivide(other,other,onorm);
                     }
+                    /* create abase pointing back down the axis by twice iarrrad
+                       base at right angles of size iarrad
+                       other at right angles to both of size iarrad
+                       */
+                    CV3M_vvsMultiply(abase,axis,-((double)(aptr->fieldradius))/4.);
+                    CV3M_vvsMultiply(ahead1,base,((double)(aptr->fieldradius))/8.);
+                    CV3M_vvsMultiply(ahead2,other,((double)(aptr->fieldradius))/8.);
+                    
+                    /* Compute the nromal at the tip as the axis */
+                    
+                    cvec[0] = ((Long)rint((axis.vec[0]*RotX[0]+axis.vec[1]*RotX[1]+axis.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((axis.vec[0]*RotY[0]+axis.vec[1]*RotY[1]+axis.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((axis.vec[0]*RotZ[0]+axis.vec[1]*RotZ[1]+axis.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[0].inten = ((aptr->fieldcol)?(aptr->fieldcol):(aptr->col))+inten;
+                    
+                    
+                    /* ++ */
+
+                    CV3M_vvvAdd(ahead3,ahead1,abase);
+                    CV3M_vvvAdd(ahead4,ahead2,abase);
+                    tangle.v[1].x = aptr->fieldx+(long)rint((ahead3.vec[0]*MatX[0]+ahead3.vec[1]*MatX[1]+ahead3.vec[2]*MatX[2]));
+                    tangle.v[1].y = aptr->fieldy+(long)rint((ahead3.vec[0]*MatY[0]+ahead3.vec[1]*MatY[1]+ahead3.vec[2]*MatY[2]));
+                    tangle.v[1].z = aptr->fieldz+(long)rint((ahead3.vec[0]*MatZ[0]+ahead3.vec[1]*MatZ[1]+ahead3.vec[2]*MatZ[2]));
+                    tangle.v[2].x = aptr->fieldx+(long)rint((ahead4.vec[0]*MatX[0]+ahead4.vec[1]*MatX[1]+ahead4.vec[2]*MatX[2]));
+                    tangle.v[2].y = aptr->fieldy+(long)rint((ahead4.vec[0]*MatY[0]+ahead4.vec[1]*MatY[1]+ahead4.vec[2]*MatY[2]));
+                    tangle.v[2].z = aptr->fieldz+(long)rint((ahead4.vec[0]*MatZ[0]+ahead4.vec[1]*MatZ[1]+ahead4.vec[2]*MatZ[2]));
+
+                    CV3M_vvvAdd(anormal,axis,base);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[1].inten = 
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+
+                    CV3M_vvvAdd(anormal,axis,other);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[2].inten = 
+                      (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+
+                    
+                    
+                    ClipPolygon(&tangle);
+                    
+                    /* +- */
+                    
+                    CV3M_vvvAdd(ahead3,ahead1,abase);
+                    CV3M_vvvSubtract(ahead4,abase,ahead2);
+                    tangle.v[1].x = aptr->fieldx+(long)rint((ahead3.vec[0]*MatX[0]+ahead3.vec[1]*MatX[1]+ahead3.vec[2]*MatX[2]));
+                    tangle.v[1].y = aptr->fieldy+(long)rint((ahead3.vec[0]*MatY[0]+ahead3.vec[1]*MatY[1]+ahead3.vec[2]*MatY[2]));
+                    tangle.v[1].z = aptr->fieldz+(long)rint((ahead3.vec[0]*MatZ[0]+ahead3.vec[1]*MatZ[1]+ahead3.vec[2]*MatZ[2]));
+                    tangle.v[2].x = aptr->fieldx+(long)rint((ahead4.vec[0]*MatX[0]+ahead4.vec[1]*MatX[1]+ahead4.vec[2]*MatX[2]));
+                    tangle.v[2].y = aptr->fieldy+(long)rint((ahead4.vec[0]*MatY[0]+ahead4.vec[1]*MatY[1]+ahead4.vec[2]*MatY[2]));
+                    tangle.v[2].z = aptr->fieldz+(long)rint((ahead4.vec[0]*MatZ[0]+ahead4.vec[1]*MatZ[1]+ahead4.vec[2]*MatZ[2]));
+                    CV3M_vvvSubtract(anormal,axis,other);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[2].inten = 
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+                    ClipPolygon(&tangle);
+
+                    /* -+ */
+                    
+                    CV3M_vvvSubtract(ahead3,abase,ahead1);
+                    CV3M_vvvAdd(ahead4,abase,ahead2);
+                    tangle.v[1].x = aptr->fieldx+(long)rint((ahead3.vec[0]*MatX[0]+ahead3.vec[1]*MatX[1]+ahead3.vec[2]*MatX[2]));
+                    tangle.v[1].y = aptr->fieldy+(long)rint((ahead3.vec[0]*MatY[0]+ahead3.vec[1]*MatY[1]+ahead3.vec[2]*MatY[2]));
+                    tangle.v[1].z = aptr->fieldz+(long)rint((ahead3.vec[0]*MatZ[0]+ahead3.vec[1]*MatZ[1]+ahead3.vec[2]*MatZ[2]));
+                    tangle.v[2].x = aptr->fieldx+(long)rint((ahead4.vec[0]*MatX[0]+ahead4.vec[1]*MatX[1]+ahead4.vec[2]*MatX[2]));
+                    tangle.v[2].y = aptr->fieldy+(long)rint((ahead4.vec[0]*MatY[0]+ahead4.vec[1]*MatY[1]+ahead4.vec[2]*MatY[2]));
+                    tangle.v[2].z = aptr->fieldz+(long)rint((ahead4.vec[0]*MatZ[0]+ahead4.vec[1]*MatZ[1]+ahead4.vec[2]*MatZ[2]));
+                    CV3M_vvvSubtract(anormal,axis,base);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[1].inten = 
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+                    
+                    CV3M_vvvAdd(anormal,axis,other);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[2].inten = 
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+                    ClipPolygon(&tangle);
+
+                    /* -- */
+                    
+                    CV3M_vvvSubtract(ahead3,abase,ahead1);
+                    CV3M_vvvSubtract(ahead4,abase,ahead2);
+                    tangle.v[1].x = aptr->fieldx+(long)rint((ahead3.vec[0]*MatX[0]+ahead3.vec[1]*MatX[1]+ahead3.vec[2]*MatX[2]));
+                    tangle.v[1].y = aptr->fieldy+(long)rint((ahead3.vec[0]*MatY[0]+ahead3.vec[1]*MatY[1]+ahead3.vec[2]*MatY[2]));
+                    tangle.v[1].z = aptr->fieldz+(long)rint((ahead3.vec[0]*MatZ[0]+ahead3.vec[1]*MatZ[1]+ahead3.vec[2]*MatZ[2]));
+                    tangle.v[2].x = aptr->fieldx+(long)rint((ahead4.vec[0]*MatX[0]+ahead4.vec[1]*MatX[1]+ahead4.vec[2]*MatX[2]));
+                    tangle.v[2].y = aptr->fieldy+(long)rint((ahead4.vec[0]*MatY[0]+ahead4.vec[1]*MatY[1]+ahead4.vec[2]*MatY[2]));
+                    tangle.v[2].z = aptr->fieldz+(long)rint((ahead4.vec[0]*MatZ[0]+ahead4.vec[1]*MatZ[1]+ahead4.vec[2]*MatZ[2]));
+                    CV3M_vvvSubtract(anormal,axis,base);
+                    CV3M_vvvSubtract(anormal,anormal,other);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[0].inten = 
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+                    
+                    CV3M_vvvSubtract(anormal,axis,base);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[1].inten = 
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+ 
+                    CV3M_vvvSubtract(anormal,axis,other);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[2].inten = 
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+
+                    
+                    ClipPolygon(&tangle);
+                    
+                    
                     angle = (double)(-(aptr->fieldworg))/1000.;
                     nang = (rint)(angle*72./PI);
                     if (nang > 72) nang = 72;
@@ -1143,16 +1290,6 @@ static void DisplayField( void )
                     cvec[0] = (long)rint((mark[0].vec[0]*MatX[0]+mark[0].vec[1]*MatX[1]+mark[0].vec[2]*MatX[2]));
                     cvec[1] = (long)rint((mark[0].vec[0]*MatY[0]+mark[0].vec[1]*MatY[1]+mark[0].vec[2]*MatY[2]));
                     cvec[2] = (long)rint((mark[0].vec[0]*MatZ[0]+mark[0].vec[1]*MatZ[1]+mark[0].vec[2]*MatZ[2]));
-                    /*
-                     ClipTwinVector(aptr->fieldx-cvec[0],
-                     aptr->fieldy-cvec[1],
-                     aptr->fieldz-cvec[2],
-                     aptr->fieldx+cvec[0],
-                     aptr->fieldy+cvec[1],
-                     aptr->fieldz+cvec[2],
-                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
-                     */
                     if (iarrrad > 1 ) {
                         ClipCylinder(aptr->x-cvec[0],
                                      aptr->y-cvec[1],
@@ -1192,24 +1329,6 @@ static void DisplayField( void )
                             dvec[0] = (long)rint((mark[iang].vec[0]*MatX[0]+mark[iang].vec[1]*MatX[1]+mark[iang].vec[2]*MatX[2]));
                             dvec[1] = (long)rint((mark[iang].vec[0]*MatY[0]+mark[iang].vec[1]*MatY[1]+mark[iang].vec[2]*MatY[2]));
                             dvec[2] = (long)rint((mark[iang].vec[0]*MatZ[0]+mark[iang].vec[1]*MatZ[1]+mark[iang].vec[2]*MatZ[2]));
-                            /*
-                             ClipTwinVector(aptr->fieldx-cvec[0],
-                             aptr->fieldy-cvec[1],
-                             aptr->fieldz-cvec[2],
-                             aptr->fieldx-dvec[0],
-                             aptr->fieldy-dvec[1],
-                             aptr->fieldz-dvec[2],
-                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
-                             ClipTwinVector(aptr->fieldx+cvec[0],
-                             aptr->fieldy+cvec[1],
-                             aptr->fieldz+cvec[2],
-                             aptr->fieldx+dvec[0],
-                             aptr->fieldy+dvec[1],
-                             aptr->fieldz+dvec[2],
-                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
-                             */
                             if (iarrrad > 1 ) {
                                 ClipCylinder(aptr->x-cvec[0],
                                              aptr->y-cvec[1],
@@ -1284,24 +1403,6 @@ static void DisplayField( void )
                             }
                             
                         }
-                        /*
-                         ClipTwinVector(aptr->fieldx-dvec[0],
-                         aptr->fieldy-dvec[1],
-                         aptr->fieldz-dvec[2],
-                         aptr->fieldx-3*dvec[0]/4,
-                         aptr->fieldy-3*dvec[1]/4,
-                         aptr->fieldz-3*dvec[2]/4,
-                         (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                         (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
-                         ClipTwinVector(aptr->fieldx+dvec[0],
-                         aptr->fieldy+dvec[1],
-                         aptr->fieldz+dvec[2],
-                         aptr->fieldx+3*dvec[0]/4,
-                         aptr->fieldy+3*dvec[1]/4,
-                         aptr->fieldz+3*dvec[2]/4,
-                         (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                         (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
-                         */
                         ClipTwinVector(aptr->x-dvec[0],
                                        aptr->y-dvec[1],
                                        aptr->z-dvec[2],
@@ -1326,27 +1427,409 @@ static void DisplayField( void )
     } else {
         ForEachAtom
 	    if( aptr->flag&FieldFlag ) { 
-            if (aptr->fieldirad < 1)  {
-                DrawTwinVector(aptr->x,aptr->y,aptr->z,
-                               aptr->fieldx,aptr->fieldy,aptr->fieldz,
-                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);	
+            if (aptr->fieldirad <= 1)  {
+                iarrrad=2;
+                DrawDashCylinder(aptr->x,aptr->y,aptr->z,
+                                 aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                                 (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                 (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                 iarrrad,aptr->altl,iarrrad);
             } else {
-                DrawCylinder(aptr->x,aptr->y,aptr->z,
-                             aptr->fieldx,aptr->fieldy,aptr->fieldz,
-                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
-                             aptr->fieldirad,aptr->altl,aptr->fieldirad);
+                if (aptr->fieldworg < 0) {
+                    iarrrad = (aptr->fieldirad+31)>>5;
+                    if (aptr->fieldirad <= 31)  iarrrad=2;
+                    DrawDashCylinder(aptr->x,aptr->y,aptr->z,
+                                     aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     iarrrad,aptr->altl,iarrrad);
+                    
+                } else {
+                    DrawDashCylinder(aptr->x,aptr->y,aptr->z,
+                                     aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     aptr->fieldirad,aptr->altl,aptr->fieldirad);
+                }
             }
             if (aptr->fieldw) {
                 if (aptr->fieldworg > 0) {
-                    
-                    ClipSphere(aptr->fieldx,aptr->fieldy,aptr->fieldz,
+                    DrawSphere(aptr->fieldx,aptr->fieldy,aptr->fieldz,
                                aptr->fieldw,
                                (aptr->fieldcol)?(aptr->fieldcol):(aptr->col));
-                } else 
-                {
+                } else {
                     
+                    tangle.v[0].x = aptr->fieldx;
+                    tangle.v[0].y = aptr->fieldy;
+                    tangle.v[0].z = aptr->fieldz;
+                    tangle.count = 3;
+                    iarrrad = (aptr->fieldirad+31)>>5;
+                    if (iarrrad < 1) iarrrad = 1;
+                    axis.vec[0] = (double)(aptr->fieldxorg)/250.;
+                    axis.vec[1] = (double)(aptr->fieldyorg)/250.;
+                    axis.vec[2] = (double)(aptr->fieldzorg)/250.;
+                    base.vec[0] = (double)(aptr->basexorg)/250.;
+                    base.vec[1] = (double)(aptr->baseyorg)/250.;
+                    base.vec[2] = (double)(aptr->basezorg)/250.;
+                    CV3M_vvvCross(other,base,axis);
+                    CV3M_svNorm(anorm,axis);
+                    CV3M_svNorm(bnorm,base);
+                    CV3M_svNorm(onorm,other);
+                    if (anorm != 0.) {
+                        CV3M_vvsDivide(axis,axis,anorm);
+                    }
+                    if (bnorm != 0.) {
+                        CV3M_vvsDivide(base,base,bnorm);
+                    }
+                    if (onorm != 0.) {
+                        CV3M_vvsDivide(other,other,onorm);
+                    }
+                    /* create abase pointing back down the axis by twice iarrrad
+                     base at right angles of size iarrad
+                     other at right angles to both of size iarrad
+                     */
+                    CV3M_vvsMultiply(abase,axis,-((double)(aptr->fieldradius))/4.);
+                    CV3M_vvsMultiply(ahead1,base,((double)(aptr->fieldradius))/8.);
+                    CV3M_vvsMultiply(ahead2,other,((double)(aptr->fieldradius))/8.);
+                    
+                    /* Compute the nromal at the tip as the axis */
+                    
+                    cvec[0] = ((Long)rint((axis.vec[0]*RotX[0]+axis.vec[1]*RotX[1]+axis.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((axis.vec[0]*RotY[0]+axis.vec[1]*RotY[1]+axis.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((axis.vec[0]*RotZ[0]+axis.vec[1]*RotZ[1]+axis.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[0].inten = ((aptr->fieldcol)?(aptr->fieldcol):(aptr->col))+inten;
+                    
+                    
+                    /* ++ */
+                    
+                    CV3M_vvvAdd(ahead3,ahead1,abase);
+                    CV3M_vvvAdd(ahead4,ahead2,abase);
+                    tangle.v[1].x = aptr->fieldx+(long)rint((ahead3.vec[0]*MatX[0]+ahead3.vec[1]*MatX[1]+ahead3.vec[2]*MatX[2]));
+                    tangle.v[1].y = aptr->fieldy+(long)rint((ahead3.vec[0]*MatY[0]+ahead3.vec[1]*MatY[1]+ahead3.vec[2]*MatY[2]));
+                    tangle.v[1].z = aptr->fieldz+(long)rint((ahead3.vec[0]*MatZ[0]+ahead3.vec[1]*MatZ[1]+ahead3.vec[2]*MatZ[2]));
+                    tangle.v[2].x = aptr->fieldx+(long)rint((ahead4.vec[0]*MatX[0]+ahead4.vec[1]*MatX[1]+ahead4.vec[2]*MatX[2]));
+                    tangle.v[2].y = aptr->fieldy+(long)rint((ahead4.vec[0]*MatY[0]+ahead4.vec[1]*MatY[1]+ahead4.vec[2]*MatY[2]));
+                    tangle.v[2].z = aptr->fieldz+(long)rint((ahead4.vec[0]*MatZ[0]+ahead4.vec[1]*MatZ[1]+ahead4.vec[2]*MatZ[2]));
+                    
+                    CV3M_vvvAdd(anormal,axis,base);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[1].inten = 
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+                    
+                    CV3M_vvvAdd(anormal,axis,other);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[2].inten = 
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+                    
+                    
+                    
+                    ClipPolygon(&tangle);
+                    
+                    /* +- */
+                    
+                    CV3M_vvvAdd(ahead3,ahead1,abase);
+                    CV3M_vvvSubtract(ahead4,abase,ahead2);
+                    tangle.v[1].x = aptr->fieldx+(long)rint((ahead3.vec[0]*MatX[0]+ahead3.vec[1]*MatX[1]+ahead3.vec[2]*MatX[2]));
+                    tangle.v[1].y = aptr->fieldy+(long)rint((ahead3.vec[0]*MatY[0]+ahead3.vec[1]*MatY[1]+ahead3.vec[2]*MatY[2]));
+                    tangle.v[1].z = aptr->fieldz+(long)rint((ahead3.vec[0]*MatZ[0]+ahead3.vec[1]*MatZ[1]+ahead3.vec[2]*MatZ[2]));
+                    tangle.v[2].x = aptr->fieldx+(long)rint((ahead4.vec[0]*MatX[0]+ahead4.vec[1]*MatX[1]+ahead4.vec[2]*MatX[2]));
+                    tangle.v[2].y = aptr->fieldy+(long)rint((ahead4.vec[0]*MatY[0]+ahead4.vec[1]*MatY[1]+ahead4.vec[2]*MatY[2]));
+                    tangle.v[2].z = aptr->fieldz+(long)rint((ahead4.vec[0]*MatZ[0]+ahead4.vec[1]*MatZ[1]+ahead4.vec[2]*MatZ[2]));
+                    CV3M_vvvSubtract(anormal,axis,other);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[2].inten = 
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+                    ClipPolygon(&tangle);
+                    
+                    /* -+ */
+                    
+                    CV3M_vvvSubtract(ahead3,abase,ahead1);
+                    CV3M_vvvAdd(ahead4,abase,ahead2);
+                    tangle.v[1].x = aptr->fieldx+(long)rint((ahead3.vec[0]*MatX[0]+ahead3.vec[1]*MatX[1]+ahead3.vec[2]*MatX[2]));
+                    tangle.v[1].y = aptr->fieldy+(long)rint((ahead3.vec[0]*MatY[0]+ahead3.vec[1]*MatY[1]+ahead3.vec[2]*MatY[2]));
+                    tangle.v[1].z = aptr->fieldz+(long)rint((ahead3.vec[0]*MatZ[0]+ahead3.vec[1]*MatZ[1]+ahead3.vec[2]*MatZ[2]));
+                    tangle.v[2].x = aptr->fieldx+(long)rint((ahead4.vec[0]*MatX[0]+ahead4.vec[1]*MatX[1]+ahead4.vec[2]*MatX[2]));
+                    tangle.v[2].y = aptr->fieldy+(long)rint((ahead4.vec[0]*MatY[0]+ahead4.vec[1]*MatY[1]+ahead4.vec[2]*MatY[2]));
+                    tangle.v[2].z = aptr->fieldz+(long)rint((ahead4.vec[0]*MatZ[0]+ahead4.vec[1]*MatZ[1]+ahead4.vec[2]*MatZ[2]));
+                    CV3M_vvvSubtract(anormal,axis,base);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[1].inten = 
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+                    
+                    CV3M_vvvAdd(anormal,axis,other);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[2].inten = 
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+                    ClipPolygon(&tangle);
+                    
+                    /* -- */
+                    
+                    CV3M_vvvSubtract(ahead3,abase,ahead1);
+                    CV3M_vvvSubtract(ahead4,abase,ahead2);
+                    tangle.v[1].x = aptr->fieldx+(long)rint((ahead3.vec[0]*MatX[0]+ahead3.vec[1]*MatX[1]+ahead3.vec[2]*MatX[2]));
+                    tangle.v[1].y = aptr->fieldy+(long)rint((ahead3.vec[0]*MatY[0]+ahead3.vec[1]*MatY[1]+ahead3.vec[2]*MatY[2]));
+                    tangle.v[1].z = aptr->fieldz+(long)rint((ahead3.vec[0]*MatZ[0]+ahead3.vec[1]*MatZ[1]+ahead3.vec[2]*MatZ[2]));
+                    tangle.v[2].x = aptr->fieldx+(long)rint((ahead4.vec[0]*MatX[0]+ahead4.vec[1]*MatX[1]+ahead4.vec[2]*MatX[2]));
+                    tangle.v[2].y = aptr->fieldy+(long)rint((ahead4.vec[0]*MatY[0]+ahead4.vec[1]*MatY[1]+ahead4.vec[2]*MatY[2]));
+                    tangle.v[2].z = aptr->fieldz+(long)rint((ahead4.vec[0]*MatZ[0]+ahead4.vec[1]*MatZ[1]+ahead4.vec[2]*MatZ[2]));
+                    CV3M_vvvSubtract(anormal,axis,base);
+                    CV3M_vvvSubtract(anormal,anormal,other);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[0].inten = 
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+                    
+                    CV3M_vvvSubtract(anormal,axis,base);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[1].inten = 
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+                    
+                    CV3M_vvvSubtract(anormal,axis,other);
+                    CV3M_svNorm(nnorm,anormal);
+                    CV3M_vvsDivide(anormal,anormal,nnorm);
+                    cvec[0] = ((Long)rint((anormal.vec[0]*RotX[0]+anormal.vec[1]*RotX[1]+anormal.vec[2]*RotX[2]))*normscale);
+                    cvec[1] = ((Long)rint((anormal.vec[0]*RotY[0]+anormal.vec[1]*RotY[1]+anormal.vec[2]*RotY[2]))*normscale);
+                    cvec[2] = ((Long)rint((anormal.vec[0]*RotZ[0]+anormal.vec[1]*RotZ[1]+anormal.vec[2]*RotZ[2]))*normscale);
+                    inten = LightDot(cvec[0],cvec[1],cvec[2]);
+                    if (inten > 0) {
+                        inten = ((inten*colconst(128))>>ColBits);
+                        if (inten > ColourMask) inten = ColourMask;
+                    } else {
+                        inten = 0;
+                    }
+                    tangle.v[2].inten = 
+                    (aptr->fieldcol)?(aptr->fieldcol):(aptr->col)+inten;
+                    
+                    
+                    ClipPolygon(&tangle);
+                    
+                    
+                    angle = (double)(-(aptr->fieldworg))/1000.;
+                    nang = (rint)(angle*72./PI);
+                    if (nang > 72) nang = 72;
+                    ca = cos(angle);
+                    sa = sin(angle);
+                    CV3M_vvsMultiply(mark[nang],other,((double)(aptr->fieldradius))*sa);
+                    CV3M_vvsMultiply(temp,base,((double)(aptr->fieldradius))*ca);
+                    CV3M_vvvAdd(mark[nang],mark[nang],temp);
+                    CV3M_vvsMultiply(mark[0],base,(double)(aptr->fieldradius));
+                    cvec[0] = (long)rint((mark[0].vec[0]*MatX[0]+mark[0].vec[1]*MatX[1]+mark[0].vec[2]*MatX[2]));
+                    cvec[1] = (long)rint((mark[0].vec[0]*MatY[0]+mark[0].vec[1]*MatY[1]+mark[0].vec[2]*MatY[2]));
+                    cvec[2] = (long)rint((mark[0].vec[0]*MatZ[0]+mark[0].vec[1]*MatZ[1]+mark[0].vec[2]*MatZ[2]));
+                    if (iarrrad > 1 ) {
+                        DrawCylinder(aptr->x-cvec[0],
+                                     aptr->y-cvec[1],
+                                     aptr->z-cvec[2],
+                                     aptr->x+cvec[0],
+                                     aptr->y+cvec[1],
+                                     aptr->z+cvec[2],
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                     iarrrad/2,aptr->altl,iarrrad/2);
+                        
+                    } else {
+                        DrawTwinVector(aptr->x-cvec[0],
+                                       aptr->y-cvec[1],
+                                       aptr->z-cvec[2],
+                                       aptr->x+cvec[0],
+                                       aptr->y+cvec[1],
+                                       aptr->z+cvec[2],
+                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                    }
+                    if (nang > 1) {
+                        for (iang = 1; iang < nang; iang++ ) {
+                            ang = angle*((double)iang)/((double)nang);
+                            ca = cos(ang);
+                            sa = sin(ang);
+                            CV3M_vvsMultiply(mark[iang],other,((double)(aptr->fieldradius))*sa);
+                            CV3M_vvsMultiply(temp,mark[0],ca);
+                            CV3M_vvvAdd(mark[iang],mark[iang],temp);
+                        }
+                    }
+                    if (nang > 0) {
+                        for (iang =1; iang < nang+1; iang++)  {
+                            cvec[0] = (long)rint((mark[iang-1].vec[0]*MatX[0]+mark[iang-1].vec[1]*MatX[1]+mark[iang-1].vec[2]*MatX[2]));
+                            cvec[1] = (long)rint((mark[iang-1].vec[0]*MatY[0]+mark[iang-1].vec[1]*MatY[1]+mark[iang-1].vec[2]*MatY[2]));
+                            cvec[2] = (long)rint((mark[iang-1].vec[0]*MatZ[0]+mark[iang-1].vec[1]*MatZ[1]+mark[iang-1].vec[2]*MatZ[2]));
+                            dvec[0] = (long)rint((mark[iang].vec[0]*MatX[0]+mark[iang].vec[1]*MatX[1]+mark[iang].vec[2]*MatX[2]));
+                            dvec[1] = (long)rint((mark[iang].vec[0]*MatY[0]+mark[iang].vec[1]*MatY[1]+mark[iang].vec[2]*MatY[2]));
+                            dvec[2] = (long)rint((mark[iang].vec[0]*MatZ[0]+mark[iang].vec[1]*MatZ[1]+mark[iang].vec[2]*MatZ[2]));
+                            if (iarrrad > 1 ) {
+                                DrawCylinder(aptr->x-cvec[0],
+                                             aptr->y-cvec[1],
+                                             aptr->z-cvec[2],
+                                             aptr->x-dvec[0],
+                                             aptr->y-dvec[1],
+                                             aptr->z-dvec[2],
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             iarrrad,aptr->altl,iarrrad);
+                                DrawCylinder(aptr->x+cvec[0],
+                                             aptr->y+cvec[1],
+                                             aptr->z+cvec[2],
+                                             aptr->x+dvec[0],
+                                             aptr->y+dvec[1],
+                                             aptr->z+dvec[2],
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             iarrrad,aptr->altl,iarrrad);
+                                DrawCylinder(aptr->x-15*cvec[0]/16,
+                                             aptr->y-15*cvec[1]/16,
+                                             aptr->z-15*cvec[2]/16,
+                                             aptr->x-15*dvec[0]/16,
+                                             aptr->y-15*dvec[1]/16,
+                                             aptr->z-15*dvec[2]/16,
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             iarrrad,aptr->altl,iarrrad);
+                                DrawCylinder(aptr->x+15*cvec[0]/16,
+                                             aptr->y+15*cvec[1]/16,
+                                             aptr->z+15*cvec[2]/16,
+                                             aptr->x+15*dvec[0]/16,
+                                             aptr->y+15*dvec[1]/16,
+                                             aptr->z+15*dvec[2]/16,
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                             iarrrad,aptr->altl,iarrrad);
+                                
+                            } else {
+                                DrawTwinVector(aptr->x-cvec[0],
+                                               aptr->y-cvec[1],
+                                               aptr->z-cvec[2],
+                                               aptr->x-dvec[0],
+                                               aptr->y-dvec[1],
+                                               aptr->z-dvec[2],
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                                DrawTwinVector(aptr->x+cvec[0],
+                                               aptr->y+cvec[1],
+                                               aptr->z+cvec[2],
+                                               aptr->x+dvec[0],
+                                               aptr->y+dvec[1],
+                                               aptr->z+dvec[2],
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                                DrawTwinVector(aptr->x-15*cvec[0]/16,
+                                               aptr->y-15*cvec[1]/16,
+                                               aptr->z-15*cvec[2]/16,
+                                               aptr->x-15*dvec[0]/16,
+                                               aptr->y-15*dvec[1]/16,
+                                               aptr->z-15*dvec[2]/16,
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                                DrawTwinVector(aptr->x+15*cvec[0]/16,
+                                               aptr->y+15*cvec[1]/16,
+                                               aptr->z+15*cvec[2]/16,
+                                               aptr->x+15*dvec[0]/16,
+                                               aptr->y+15*dvec[1]/16,
+                                               aptr->z+15*dvec[2]/16,
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                               (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                            }
+                            
+                        }
+                        DrawTwinVector(aptr->x-dvec[0],
+                                       aptr->y-dvec[1],
+                                       aptr->z-dvec[2],
+                                       aptr->x-3*dvec[0]/4,
+                                       aptr->y-3*dvec[1]/4,
+                                       aptr->z-3*dvec[2]/4,
+                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                        DrawTwinVector(aptr->x+dvec[0],
+                                       aptr->y+dvec[1],
+                                       aptr->z+dvec[2],
+                                       aptr->x+3*dvec[0]/4,
+                                       aptr->y+3*dvec[1]/4,
+                                       aptr->z+3*dvec[2]/4,
+                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),
+                                       (aptr->fieldcol)?(aptr->fieldcol):(aptr->col),aptr->altl);
+                        
+                    }
                 }
             }
 	    }
