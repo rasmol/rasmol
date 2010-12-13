@@ -155,7 +155,7 @@ enum {
 	RES_150,
 	RES_300
 };
-int print_resolution = RES_CURRENT;
+uintptr_t print_resolution = RES_CURRENT;
 GtkPrintSettings *print_settings = NULL;
 GtkPageSetup *print_pagesetup = NULL;
 
@@ -457,11 +457,9 @@ gboolean sizespin_cb(GtkSpinButton button, gpointer data)
 
 gboolean sizeradio_cb(GtkButton * button, gpointer data)
 {
-    int radioid;
     GtkLabel *header = NULL;
     char header_str[128];
-
-    radioid = (int) data;
+    uintptr_t radioid = (uintptr_t) data;
 
     export_x = XRange;
     export_y = YRange;
@@ -752,7 +750,7 @@ void print_get_res_cb(GtkPrintOperation * print, GtkWidget * widget,
     while (el != NULL) {
         if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(el->data))) {
             print_resolution =
-                (int) g_object_get_data(G_OBJECT(el->data), "res");
+                (uintptr_t) g_object_get_data(G_OBJECT(el->data), "res");
             return;
         } else
             el = el->next;
