@@ -396,17 +396,13 @@ void save_cb(GtkAction *action, gpointer user_data)
 /* Render the current image to a given memory buffer with a given size */
 void render_buffer(Pixel * buf, int xsize, int ysize)
 {
-    Pixel *old_fbuffer;
     int old_xrange, old_yrange, old_hrange, old_wrange, old_range,
         old_interactive, dx;
 
-    old_fbuffer = FBuffer;
     old_xrange = XRange;
     old_yrange = YRange;
-    FBuffer = buf;
     XRange = xsize;
     YRange = ysize;
-
     if ((dx = XRange % 4))
         XRange += 4 - dx;
 
@@ -420,10 +416,11 @@ void render_buffer(Pixel * buf, int xsize, int ysize)
     ReDrawFlag |= RFReSize;
     old_interactive = Interactive;
     Interactive = False;
-    RefreshScreen();            // *buf now contains the image
+    RefreshScreen();            // FBuffer now contains the image
+    memcpy(buf, FBuffer, sizeof(Pixel) * xsize * ysize);
+
     Interactive = old_interactive;
 
-    FBuffer = old_fbuffer;
     XRange = old_xrange;
     YRange = old_yrange;
     HRange = old_hrange;
@@ -602,7 +599,7 @@ void export_cb(GtkAction * action, gpointer user_data)
         guint format = 0;
         gchar *formatname = NULL;
         GSList *tmplist = NULL;
-        guchar *tmpbuf;
+        Pixel *tmpbuf;
 
         if (gtk_dialog_run(GTK_DIALOG(exportdialog)) != GTK_RESPONSE_ACCEPT) {
             break;
@@ -652,12 +649,13 @@ void export_cb(GtkAction * action, gpointer user_data)
             egg_file_format_chooser_get_format_data(EGG_FILE_FORMAT_CHOOSER
                                                     (format_chooser), format);
 
-        tmpbuf = g_new(guchar, 4 * export_x * export_y);
-        render_buffer((Pixel *) tmpbuf, export_x, export_y);
-        pbuf = gdk_pixbuf_new_from_data(tmpbuf,
+        tmpbuf = g_new(Pixel, export_x * export_y);
+        render_buffer(tmpbuf, export_x, export_y);
+        pbuf = gdk_pixbuf_new_from_data((guchar *) tmpbuf,
                                         GDK_COLORSPACE_RGB,
                                         TRUE, 8,
-                                        export_x, export_y, 4 * export_x,
+                                        export_x, export_y,
+                                        sizeof(Pixel) * export_x,
                                         NULL, NULL);
         // Use TIFF compression 5 = LZW
         success = gdk_pixbuf_save(pbuf, fname, formatname, &err,
