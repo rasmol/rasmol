@@ -454,47 +454,52 @@ gboolean sizespin_cb(GtkSpinButton button, gpointer data)
 	return FALSE;
 }
 
-gboolean sizeradio_cb(GtkButton *button, gpointer data)
+
+gboolean sizeradio_cb(GtkButton * button, gpointer data)
 {
-	int radioid;
-	GtkLabel *header = NULL;
-	char header_str[128];
-	
-	radioid = (int) data;
-	
-	export_x = XRange;
-	export_y = YRange;
-	
-	switch(radioid) {
-		case RADIO_CURRENT:
-			break;
-		case RADIO_640:
-			export_x = 640;
-			export_y = 480;
-			break;
-		case RADIO_1024:
-			export_x = 1024;
-			export_y = 768;
-			break;
-		case RADIO_1600:
-			export_x = 1600;
-			export_y = 1200;
-			break;
-		case RADIO_CUSTOM:
-			export_x = gtk_spin_button_get_value_as_int(
-				GTK_SPIN_BUTTON(gtk_builder_get_object(sizebuilder, "custom_x")));
-			export_y = gtk_spin_button_get_value_as_int(
-				GTK_SPIN_BUTTON(gtk_builder_get_object(sizebuilder, "custom_y")));
-			break;
-		default:
-			;
-	}
-	
-	header = GTK_LABEL(gtk_builder_get_object(sizebuilder, "size_header"));
-	snprintf(header_str, 127, "Size: %d x %d", export_x, export_y);
-	gtk_label_set_text(header, header_str); 
-	
-	return FALSE;
+    int radioid;
+    GtkLabel *header = NULL;
+    char header_str[128];
+
+    radioid = (int) data;
+
+    export_x = XRange;
+    export_y = YRange;
+
+    switch (radioid) {
+    case RADIO_CURRENT:
+        break;
+    case RADIO_640:
+        export_x = 640;
+        export_y = 480;
+        break;
+    case RADIO_1024:
+        export_x = 1024;
+        export_y = 768;
+        break;
+    case RADIO_1600:
+        export_x = 1600;
+        export_y = 1200;
+        break;
+    case RADIO_CUSTOM:
+        export_x =
+            gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON
+                                             (gtk_builder_get_object
+                                              (sizebuilder, "custom_x")));
+        export_y =
+            gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON
+                                             (gtk_builder_get_object
+                                              (sizebuilder, "custom_y")));
+        break;
+    default:
+        ;
+    }
+
+    header = GTK_LABEL(gtk_builder_get_object(sizebuilder, "size_header"));
+    snprintf(header_str, 127, "Size: %d x %d", export_x, export_y);
+    gtk_label_set_text(header, header_str);
+
+    return FALSE;
 }
 
 
@@ -737,20 +742,24 @@ void print_draw(GtkPrintOperation *printop, GtkPrintContext *context,
     g_free(tmpbuf);
 }
 
-void print_get_res_cb(GtkPrintOperation *print, GtkWidget *widget, gpointer rb)
+
+void print_get_res_cb(GtkPrintOperation * print, GtkWidget * widget,
+                      gpointer rb)
 {
-	GSList *el;
-	
-	el = gtk_radio_button_get_group(*((GtkRadioButton **)rb));
-	while(el != NULL) {
-		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(el->data))) {
-			print_resolution = (int) g_object_get_data(G_OBJECT(el->data), "res");
-			return;
-		} else
-			el = el->next;
-	}
-	return;
+    GSList *el;
+
+    el = gtk_radio_button_get_group(*((GtkRadioButton **) rb));
+    while (el != NULL) {
+        if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(el->data))) {
+            print_resolution =
+                (int) g_object_get_data(G_OBJECT(el->data), "res");
+            return;
+        } else
+            el = el->next;
+    }
+    return;
 }
+
 
 GObject *print_build_reswidget_cb(GtkPrintOperation *operation, gpointer radio_p) 
 {
