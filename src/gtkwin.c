@@ -638,7 +638,9 @@ void export_cb(GtkAction *action, gpointer user_data)
 			TRUE, 8,
 			export_x, export_y, 4*export_x,
 			NULL, NULL);
-		success = gdk_pixbuf_save(pbuf, fname, formatname, &err, NULL);
+        // Use TIFF compression 5 = LZW
+        success = gdk_pixbuf_save(pbuf, fname, formatname, &err,
+                                  "compression", "5", NULL);
 	  	
 		if(!success && (err != NULL) ) {
 			question = gtk_message_dialog_new(GTK_WINDOW(exportdialog), 
