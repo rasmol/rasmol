@@ -835,7 +835,7 @@ Roger Sayle 1992-1999\n\
 Herbert J. Bernstein 1998-2008\n\
 ",
 		"license", "GPL",
-		"logo-icon-name", "/usr/share/pixmaps/rasmol.xpm",
+		"logo-icon-name", "rasmol",
 		"version", VERSION,
 		"website", "http://rasmol.org/",
 		NULL);
