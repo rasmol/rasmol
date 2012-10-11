@@ -278,10 +278,10 @@ extern "C" {
 #include "rasmol.h"
 
 #ifdef USE_CBFLIB
+#include <stdio.h>
 #include "cmndline.h"
 #include "cif.h"
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <unistd.h>

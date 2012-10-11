@@ -2311,7 +2311,7 @@ static void WriteVRMLAtoms( void )
                     z = -(double)(aptr->zorg + aptr->fzorg)/250.0
                       - (double)(aptr->ztrl)/10000.;
 
-                    fputs("    Translation { translation ",OutFile);
+                    fputs("    Transform { translation ",OutFile);
 
                     if ( vrml_mirror ) {
                       WriteVRMLTriple(-(x-ox),-(RestoreY(y-oy)),-(z-oz));

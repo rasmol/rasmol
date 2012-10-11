@@ -95,6 +95,7 @@
 #define MMSybyl    0x03
 #define MMRasOld   0x04
 
+#include "maps.h"
 
 #ifdef CMNDLINE
 char CurLine[MAXBUFFLEN];
@@ -103,6 +104,15 @@ int CurState,StateOption;
 int CommandActive;
 int MouseMode;
 int HeldButton;
+char *TkName;
+char *TkNameTo;
+char *LogTo;
+char TkInterp[129];
+int TkResponseDetail;
+CharVec __far *TkResponsePtr;
+int IPCResponseDetail;
+CharVec __far *IPCResponsePtr;
+FILE* termlogfile;
 
 #else
 extern char CurLine[MAXBUFFLEN];
@@ -111,6 +121,16 @@ extern int CurState,StateOption;
 extern int CommandActive;
 extern int MouseMode;
 extern int HeldButton;
+extern char *TkName;
+extern char *TkNameTo;
+extern char *LogTo;
+extern char TkInterp[129];
+extern int TkResponseDetail;
+extern CharVec __far *TkResponsePtr;
+extern int IPCResponseDetail;
+extern CharVec __far *IPCResponsePtr;
+extern FILE* termlogfile;
+
 #endif
 
 int ProcessCharacter( int );

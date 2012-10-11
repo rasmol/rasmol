@@ -244,6 +244,7 @@
 #define CVECTOR_FAR
 #endif
 #include <CNearTree.h>
+#include <time.h>
 
 #define MOLECULE
 #include "molecule.h"
@@ -989,6 +990,7 @@ RAtom __far *CreateAtom( void )
     ptr->fxorg = 0;
     ptr->fyorg = 0;
     ptr->fzorg = 0;
+    NeedAtomTree = 1;
     return ptr;
 }
 
@@ -2101,13 +2103,19 @@ int CreateAtomTree( void ) {
 
     double coord[3];
 
+    clock_t tc1,tc2;
+
     int err;
     
     if (!Database) return 0;
     
     if (AtomTree)CNearTreeClear(AtomTree);
     
-    if (!AtomTree && (err = CNearTreeCreate(&AtomTree,3,CNEARTREE_TYPE_DOUBLE | CNEARTREE_DEFER_ALL ))) return err;
+    fprintf(stderr,"CNTF_FLAGSDEFAULT %x\n",CNTF_FLAGSDEFAULT);
+    
+    tc1 = clock();
+
+    if (!AtomTree && (err = CNearTreeCreate(&AtomTree,3,CNEARTREE_TYPE_DOUBLE | CNTF_FLAGSDEFAULT ))) return err;
     
     /* Load the NearTree with all selected atoms */
     
@@ -2127,6 +2135,14 @@ int CreateAtomTree( void ) {
 		}
     }
     
+    CNearTreeCompleteDelayedInsert(AtomTree);
+    tc2 = clock();
+    fprintf(stderr,"AtomTree created time %g size %ld depth %ld\n",
+            ((double)(tc2-tc1))/CLOCKS_PER_SEC,
+            (long)(AtomTree->m_szsize),(long)(AtomTree->m_szdepth));
+            
+    NeedAtomTree = 0;
+    
     return 0;
     
 }
@@ -2138,6 +2154,7 @@ void CreateSurfaceBonds( void ) {
     register Chain __far *chain;
     register Group __far *group;
 	register SurfBond __far *sbptr;
+    long maxrad;
 	
 	
 	CVectorHandle objInRing;
@@ -2163,7 +2180,7 @@ void CreateSurfaceBonds( void ) {
     /* Load the NearTree with all selected atoms and
 		clear SurfBondFlag */
 	
-    if (!AtomTree) {
+    if (!AtomTree || NeedAtomTree) {
         if (CreateAtomTree()) {
             RasMolFatalExit(MsgStrs[StrMalloc]);
         }
@@ -2176,6 +2193,20 @@ void CreateSurfaceBonds( void ) {
 	  RasMolFatalExit(MsgStrs[StrMalloc]);
 	}
 	
+    /* Max a pass to find the maximum radius */
+    
+    maxrad = 0;
+    
+    for( chain=Database->clist; chain; chain=chain->cnext ) {
+        for( group=chain->glist; group; group=group->gnext ) {
+            for( aptr=group->alist; aptr; aptr=aptr->anext ) {
+				if (aptr->flag&SelectFlag && (!(aptr->flag&ExpandFlag))) {
+				    if (aptr->radius > maxrad) maxrad=aptr->radius;
+                }
+            }
+        }
+    }
+                    
     /* Now run through the atoms again and check each atom
 		against the others using the neartree */
 	
@@ -2192,7 +2223,7 @@ void CreateSurfaceBonds( void ) {
 					probe radii of atom aptr */
 					
 				    if (!CNearTreeFindInAnnulus(AtomTree,125.,
-				    (double)(AbsMaxAtomDiam+ProbeRadius+ProbeRadius),
+				    (double)(aptr->radius+maxrad+ProbeRadius+ProbeRadius),
 				    NULL,objInRing,coord,True))  {
 				    	
 					
@@ -3200,6 +3231,7 @@ static void ResetDatabase( void )
     }
     
     if (AtomTree)CNearTreeFree(&AtomTree);
+    NeedAtomTree = 1;
 
 }
 
@@ -3290,6 +3322,7 @@ void InitialiseDatabase( void )
     FreeAtom = (void __far*)0;
     FreeBond = (void __far*)0;
     AtomTree = (void __far*)0;
+    NeedAtomTree = 1;
     Info.cisbondcount = -1; /* to ititialize it has to be < 0 */   
     CisBondCutOff = CIS;
     MapLevel = 0.;
@@ -3316,6 +3349,7 @@ void LoadAtomSelection ( void )
 	register Group __far *group;
 	register RAtom __far *aptr;
 
+    NeedAtomTree = 1;
 	ForEachAtom
 		if (aptr->flag&SaveFlag)
 		{

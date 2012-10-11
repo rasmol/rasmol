@@ -312,7 +312,7 @@ typedef struct {
         int advise;
     } IPCConv;
 
-#define MaxIPCConvNum     8
+#define MaxIPCConvNum     9
 static IPCConv IPCConvData[MaxIPCConvNum];
 
 static SOCKET SocketNo;
@@ -331,6 +331,7 @@ static int UseSockets;
 #define AMSelectCount  0x04
 #define AMMolName      0x08
 #define AMPickCoord    0x10
+#define AMDetail       0x20
 
 typedef struct {
         int bitmask;
@@ -345,7 +346,8 @@ static AdviseType AdviseMap[ItemCount] = {
     { AMNone,        "Ident"   },  /* AdvIdent       */
     { AMNone,        "Class"   },  /* AdvClass       */
     { AMNone,        "Image"   },  /* AdvImage       */
-    { AMPickCoord,   "PickXYZ" }   /* AdvPickCoord   */
+    { AMPickCoord,   "PickXYZ" },  /* AdvPickCoord   */
+    { AMDetail,      "Detail"  },  /* AdvDetail      */
         };
 
 static char AdviseBuffer[256];
@@ -614,7 +616,11 @@ void WriteChar( int ch )
 			  SetCaretPos(TermXPos*CharWide,
 				      TermYPos*CharHigh);
 		      break;
-		      
+    }
+    if (IPCResponseDetail && IPCResponsePtr) {
+        cc = (char)ch;
+        vector_add_element((GenericVec __far * )IPCResponsePtr,
+            (void __far *)(&ch));
     }
 }
 
@@ -623,6 +629,10 @@ void WriteMsg( char *ptr )
 {
     WriteString(ptr);
     WriteChar ('\n');
+    if (IPCResponseDetail && IPCResponsePtr) {
+        vector_add_elements((GenericVec __far * )IPCResponsePtr,
+                           (void __far *)(ptr),strlen(ptr));
+    }
 }
 
 
@@ -2021,10 +2031,18 @@ LONG FAR PASCAL DDECallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
                     {   GenerateDDEReply((HWND)wArg,hWin,False,hiword);
                         return 0L;
                     }
-
+                    vector_set_elements((GenericVec __far * )IPCResponsePtr,
+                            (void __far *) "1\n", 2,0);
+                    IPCResponsePtr->size=2;
                     stat = ExecuteIPCCommand( cmnd );
                     GlobalUnlock((HANDLE)hiword);
                     GenerateDDEReply((HWND)wArg,hWin,stat,hiword);
+                    (IPCResponsePtr->array)[0]= stat? '1' : '0';
+                    if (!IPCResponseDetail) IPCResponsePtr->size=2;
+                    vector_add_element((GenericVec __far * )IPCResponsePtr,
+                        (void __far *)"\0");
+                    send(IPCConvData[conv].socket,IPCResponsePtr->array,
+                         (int)(IPCResponsePtr->size),0);
 
                     if( (stat==IPC_Quit) || (stat==IPC_Exit) )
                         RasMolExit();

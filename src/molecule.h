@@ -581,6 +581,7 @@ Bond __far *FreeBond;
 Bond __far *NewBond;
 
 CNearTreeHandle AtomTree;
+int NeedAtomTree;
 
 
 #else
@@ -631,6 +632,7 @@ extern Bond __far *FreeBond;
 extern Bond __far *NewBond;
 
 extern CNearTreeHandle AtomTree;
+extern int NeedAtomTree;
 
 #ifndef APPLEMAC
 #define RegisterAlloc(x)

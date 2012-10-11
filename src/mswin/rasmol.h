@@ -115,6 +115,17 @@
 
 #define USE_CBFLIB
 
+#if !defined(IBMPC)
+
+#ifndef CNEARTREE_FAR
+#define CNEARTREE_FAR 
+#endif
+
+#ifndef VECTOR_FAR
+#define VECTOR_FAR 
+#endif
+
+#endif
 
 /*========================*/
 /*  Default User Options! */
@@ -176,9 +187,9 @@
 /*==============================*/
 
 #define MAIN_COPYRIGHT "Copyright (C) Roger Sayle 1992-1999"
-#define VERSION "2.7.5"
-#define VER_COPYRIGHT "Copyright (C) Herbert J. Bernstein 1998-2008"
-#define VER_DATE "June 2009"
+#define VERSION "2.7.5.2"
+#define VER_COPYRIGHT "Copyright (C) Herbert J. Bernstein 1998-2011"
+#define VER_DATE "May 2011"
 
 #ifndef True
 #define True  1
@@ -274,12 +285,17 @@ typedef short Pixel;
 #define AdvPickCoord    7
 
 
+#define MSG_MAX 256
 void WriteChar( int );
 void WriteString( char* );
+void WriteMsg( char* );
 void RasMolFatalExit( char* );
 void AdviseUpdate( int );
 void RefreshScreen( void );
 void RasMolExit( void );
+#if !defined(IBMPC)
+void HandleMenu( int hand );
+#endif
 
 #ifdef APPLEMAC
 #include "rasmac.h"

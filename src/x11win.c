@@ -76,7 +76,10 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* x11win.c
- $Log$
+ $Log: x11win.c,v $
+ Revision 1.1  2012/04/28 02:08:54  yaya
+ Initial revision
+
  Revision 1.13  2008/06/28 14:25:26  yaya
  Make more IPC errors non-fatal.  -- HJB
 
@@ -287,6 +290,7 @@ typedef struct _MenuItem {
             int value;
         } MenuItem;
 
+static int zero = 0;
 
 static MenuItem FilMenu[21] = {
     { &MsgStrs[StrMOpen]   /* "Open..."   */,   0x11,  &MsgAuxl[StrMOpen],
@@ -301,35 +305,35 @@ static MenuItem FilMenu[21] = {
         &MsgLens[StrMExit],     NULL, 0    },
     { &MsgStrs[StrMEmpty]  /*  ""         */,   0x08,  &MsgAuxl[StrMEmpty],
         &MsgLens[StrMEmpty],    NULL, 0    },
-    { &(MolNStr[0]),                            0x01,  0, 
+    { &(MolNStr[0]),                            0x01,  &zero,
         &MolNLen[0],            &MoleculeIndex, 0 },  
-    { &(MolNStr[1]),                            0x01,  0, 
+    { &(MolNStr[1]),                            0x01,  &zero,
         &MolNLen[1],            &MoleculeIndex, 1 },  
-    { &(MolNStr[2]),                            0x01,  0, 
+    { &(MolNStr[2]),                            0x01,  &zero,
         &MolNLen[2],            &MoleculeIndex, 2 },  
-    { &(MolNStr[3]),                            0x01,  0, 
+    { &(MolNStr[3]),                            0x01,  &zero,
         &MolNLen[3],            &MoleculeIndex, 3 },  
-    { &(MolNStr[4]),                            0x01,  0, 
+    { &(MolNStr[4]),                            0x01,  &zero,
         &MolNLen[4],            &MoleculeIndex, 4 },
-    { &(MolNStr[5]),                            0x01,  0, 
+    { &(MolNStr[5]),                            0x01,  &zero,
         &MolNLen[5],            &MoleculeIndex, 5 },  
-    { &(MolNStr[6]),                            0x01,  0, 
+    { &(MolNStr[6]),                            0x01,  &zero,
         &MolNLen[6],            &MoleculeIndex, 6 },  
-    { &(MolNStr[7]),                            0x01,  0, 
+    { &(MolNStr[7]),                            0x01,  &zero,
         &MolNLen[7],            &MoleculeIndex, 7 },  
-    { &(MolNStr[8]),                            0x01,  0, 
+    { &(MolNStr[8]),                            0x01,  &zero,
         &MolNLen[8],            &MoleculeIndex, 8 },  
-    { &(MolNStr[9]),                            0x01,  0, 
+    { &(MolNStr[9]),                            0x01,  &zero,
         &MolNLen[9],            &MoleculeIndex, 9 },
-    { &(MolNStr[10]),                            0x01,  0, 
+    { &(MolNStr[10]),                            0x01,  &zero,
         &MolNLen[10],            &MoleculeIndex, 10 },  
-    { &(MolNStr[11]),                            0x01,  0, 
+    { &(MolNStr[11]),                            0x01,  &zero,
         &MolNLen[11],            &MoleculeIndex, 11 },  
-    { &(MolNStr[12]),                            0x01,  0, 
+    { &(MolNStr[12]),                            0x01,  &zero,
         &MolNLen[12],            &MoleculeIndex, 12 },  
-    { &(MolNStr[13]),                            0x01,  0, 
+    { &(MolNStr[13]),                            0x01,  &zero,
         &MolNLen[13],            &MoleculeIndex, 13 },  
-    { &(MolNStr[14]),                            0x01,  0, 
+    { &(MolNStr[14]),                            0x01,  &zero,
         &MolNLen[14],            &MoleculeIndex, 14 }};
 
 static MenuItem DisMenu[9] = {
@@ -593,7 +597,6 @@ static int ScrlY,NewScrlY;
 
 
 /* WM_PROTOCOLS */
-static char TkInterp[10];
 static Atom AppNameAtom;
 static Atom DelWinXAtom;
 static Atom ProtoXAtom;
@@ -1114,10 +1117,13 @@ static void DeRegisterInterpName( char *name )
 
 static void OpenIPCComms( void )
 {
-    auto char buffer[16];
+    auto char buffer[128];
     register int i;
     register int (*handler)();
+    register size_t lentkname;
+    FILE * TkNameFile;
 
+    /* fprintf(stderr,"TkName %s, TkNameTo %s\n",TkName, TkNameTo); */
     CommAtom = XInternAtom( dpy, "Comm", False );
     InterpAtom = XInternAtom( dpy, "InterpRegistry", False );
     AppNameAtom = XInternAtom(dpy, "TK_APPLICATION", False );
@@ -1133,34 +1139,64 @@ static void OpenIPCComms( void )
     }
     i = 0;
     XSync(dpy,False);
-    if( !RegisterInterpName("rasmol") )
-    {   strcpy(TkInterp,"rasmol #0");
+    if (!TkName) TkName = "rasmol";
+    lentkname = strlen(TkName);
+    if (lentkname > 120) {
+        lentkname = 120;
+    }
+    strncpy(TkInterp,TkName,lentkname);
+    TkInterp[lentkname] = '\0';
+    if( !RegisterInterpName(TkInterp) )
+    {   TkInterp[lentkname] = ' ';
+        TkInterp[lentkname+1] = '#';
+        TkInterp[lentkname+2] = '0';
+        TkInterp[lentkname+3] = '\0';
+
         for( i=1; i<10; i++ )
-        {    TkInterp[8] = i+'0';
+        {    TkInterp[lentkname+2] = i+'0';
              if( RegisterInterpName(TkInterp) )
                  break;
         }
 
         if( i < 10 ) 
         {   /* Tk4.0 and later! */
-            strcpy(buffer,"{rasmol #0}");  buffer[9] = i+'0';
+            sprintf(buffer,"{%s}",TkInterp);
     	    handler = XSetErrorHandler( HandleIPCError );
             XChangeProperty( dpy, MainWin, AppNameAtom, XA_STRING, 
-                             8, PropModeReplace, (Byte*)buffer, 12 );
+                             8, PropModeReplace, (Byte*)buffer, strlen(buffer) );
             XSync(dpy,False);
             XSetErrorHandler(handler);
         } else *TkInterp = 0;
     } else  {  
         handler = XSetErrorHandler( HandleIPCError );
+        sprintf(buffer,"{%s}",TkInterp);
         XChangeProperty( dpy, MainWin, AppNameAtom, XA_STRING,
-                         8, PropModeReplace, (Byte*)"rasmol", 7 );
+                         8, PropModeReplace, (Byte*)buffer, strlen(buffer) );
         XSync(dpy,False);
         XSetErrorHandler(handler);
-        strcpy(TkInterp,"rasmol");
     }
     XUngrabServer( dpy );
+    if (TkNameTo) {
+        ProcessFileName(TkNameTo);
+        if (strcmp(DataFileName,"-")==0) {
+            fprintf(stdout,"RasMol TkName: {");
+            fprintf(stdout,TkInterp);
+            fprintf(stdout,"}\n");
+        } else {
+            TkNameFile = fopen(DataFileName,"w");
+            if (TkNameFile) {
+                fprintf(TkNameFile,"RasMol TKName: {%s}\n",TkInterp);
+                fclose(TkNameFile);
+            } else {
+                fprintf(stderr,"TkNameTo Error: Unable to create file `");
+                fprintf(stderr, TkNameTo );  fprintf(stderr,"'!\n");
+                fprintf(stderr,"RasMol TkName: {");
+                fprintf(stderr,TkInterp);
+                fprintf(stderr,"}\n");
+            }
+        } 
+    }
 }
-
 
 
 static void DrawUpCircle( Drawable wdw, int x1, int y1, int x2, int y2 )
@@ -3151,6 +3187,7 @@ static void HandleIPCCommand( void )
     register int (*handler)();
     register char *cmnd;
     register char *ptr;
+    int ii;
 
     command = NULL;
     result = XGetWindowProperty( dpy, MainWin, CommAtom, 0, 1024, True, 
@@ -3161,10 +3198,30 @@ static void HandleIPCCommand( void )
         return;
     }
 
+    if (!TkResponsePtr) {
+        if (vector_create((GenericVec __far * __far *)&TkResponsePtr,
+                          sizeof(char),32) ){
+            InvalidateCmndLine();
+            RasMolFatalExit(MsgStrs[StrMalloc]);      
+        }
+    }
     result = 0;
     ptr = (char*)command;
     if( !*ptr )
     {   /* Tcl/Tk4.0 and later */
+
+        buffer[0]='\0';
+        buffer[1]='r';
+        buffer[2]='\0';
+        buffer[3]='-';
+        buffer[4]='r';
+        buffer[5]=' ';
+        buffer[6]='1';
+        buffer[7]='\n';
+        
+        vector_set_elements((GenericVec __far * )TkResponsePtr,
+                            (void __far *) buffer, 8,0);
+        TkResponsePtr->size=8;
 
         ptr++;
         while( ptr < (char*)command+len )
@@ -3182,24 +3239,30 @@ static void HandleIPCCommand( void )
                  }
 
                  if( !cmnd ) continue;
+                 
                  result = ExecuteIPCCommand(cmnd);
                  if( !source || !serial ) continue;
 
+                 (TkResponsePtr->array)[6]= result? '1' : '0';
+                 if (!TkResponseDetail) {
+                   (TkResponsePtr->array)[7]='\0';
+                   sprintf((TkResponsePtr->array)+8,"-s %d",serial);
+                   rlen = strlen((TkResponsePtr->array)+8)+9;
+                 } else {
                  buffer[0]='\0';
-                 buffer[1]='r';
-                 buffer[2]='\0';
-                 buffer[3]='-';
-                 buffer[4]='r';
-                 buffer[5]=' ';
-                 buffer[6]= result? '1' : '0';
-                 buffer[7]='\0';
-                 sprintf(buffer+8,"-s %d",serial);
-                 rlen = strlen(buffer+8)+9;
+                    vector_add_element((GenericVec __far * )TkResponsePtr,
+                                       (void __far *)buffer);
+                    sprintf(buffer,"-s %d",serial);
+                    vector_add_elements((GenericVec __far * )TkResponsePtr,
+                                        (void __far *)buffer,strlen(buffer)+1);
+                    rlen = TkResponsePtr->size;
+                 }
 
                  /* Return Tcl/Tk v4.0 result! */
                  handler = XSetErrorHandler( HandleIPCError );
                  XChangeProperty(dpy,source,CommAtom, XA_STRING, 8,
-                                 PropModeAppend,(unsigned char*)buffer,rlen);
+                                 PropModeAppend,
+                                 (unsigned char*)(TkResponsePtr->array),rlen);
                  XSync(dpy,False);
                  XSetErrorHandler(handler);
              } else /* Unrecognised command! */

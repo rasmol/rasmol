@@ -373,6 +373,7 @@ struct {
     { &MarkAtoms,         sizeof (MarkAtoms),      0 },
     { &HBondChainsFlag,   sizeof (HBondChainsFlag), 0 },
     { &AtomTree,          sizeof (AtomTree),       0 },
+    { &NeedAtomTree,      sizeof (NeedAtomTree),   0 },
 
     /* render.h */
     { &VoxelsClean,       sizeof (VoxelsClean),    0 },

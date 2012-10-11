@@ -210,7 +210,6 @@ typedef struct _Symbol{
   size_t         definition_capacity;
 } Symbol;
 
-
 #ifdef COMMAND
 Symbol __far *Defer_Symbols[256];
 Symbol __far *FreeSymbol;
@@ -227,6 +226,7 @@ int Interactive;
 int FileDepth;
 int IsPaused;
 int UseCIF=0;
+double CommandTime=0.;
 
 int CalcBondsFlag;
 int CalcSurfFlag;
@@ -261,6 +261,8 @@ extern int DefaultBackground;
 
 extern int UseOldColorCode;
 extern int NoToggle;
+extern double CommandTime;
+
 #endif
 
 int ProcessCharacter( int );
@@ -280,6 +282,7 @@ void InterruptPauseCommand( void );
 void ApplyMapColour( void );
 void ApplyMapShow( void );
 void WriteMovieFrame( void );
+char *ProcessFileName( char *name );
 
 #endif
 

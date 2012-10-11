@@ -1112,6 +1112,8 @@ void SelectArea( int mode, int count, int xo, int yo, int x, int y )
 		AreaY2 = y2;
 	}
   
+	NeedAtomTree = 1;
+  
 	/*if count, perform a full atom selection and count atoms*/
 	if( count )
 	{	SelectCount = 0;
@@ -2385,7 +2387,7 @@ void ColourPointAtom( int mapno )
     MapInfo mapinfo;
     double coord[3];
     
-    if (!AtomTree) {
+    if (!AtomTree ||NeedAtomTree) {
         if (CreateAtomTree()) {
             RasMolFatalExit(MsgStrs[StrMalloc]);
         }

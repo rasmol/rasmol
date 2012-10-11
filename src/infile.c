@@ -76,7 +76,7 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* infile.c
- $Log: infile.c,v $
+ $Log$
  Revision 1.14  2008/07/18 01:11:01  yaya
  Report a syntax error on rotate all 3 in command.c
  Change const char * to char * for datablock name in infile.c -- HJB
@@ -2222,6 +2222,7 @@ int LoadCIFMolecule( FILE *fp )
 
 
     /* Recover the Space Group */
+    Info.spacegroup[0] = '\0';
     if ((!cif_findtag(cif, "_symmetry.space_group_name_H-M")) ||
       (!cif_findtag(cif, "_symmetry_space_group_name_H-M"))) {
       ReadcurCIFstr(cif,Info.spacegroup,12);
@@ -3577,6 +3578,11 @@ int SavePDBMolecule( char *filename )
     register int model;
     register char ch = '\0';
     register int i;
+    register int models = 0;
+    register int modelcount = 0;
+    register int maxcountpermodel = 0;
+    register int resetmodelcount = 0;
+
     char eltype[2];
  
     if( !Database )
@@ -3608,6 +3614,46 @@ int SavePDBMolecule( char *filename )
     model = 0;
     ch = ' ';
 
+        /* count the total max atoms per model */
+
+    if( SelectCount >= 100000 )
+    {
+       ForEachAtom
+          if( aptr->flag&SelectFlag )
+          {  
+             if( chain->model != model )
+             { 
+                model = chain->model;
+                models++;
+                if( modelcount > maxcountpermodel )
+                {
+                   maxcountpermodel = modelcount;
+                }
+                modelcount = 0;
+             }
+             modelcount++;
+          }
+       if( count >= 100000 )
+       {
+          WriteString("Notice: This PDB file contains more than 99,999 atoms\n" );
+          if ( modelcount )
+          {
+             if ( maxcountpermodel >= 100000 )
+             {
+                WriteString("Notice: Some individual models in this multi-model PDB file contain more than 99,999 atoms\n" );
+                WriteString("Notice: ATOM numbers will be modulo 100,000\n");
+             } else {
+                WriteString("Notice: Each model will restart at ATOM number 1\n");
+                resetmodelcount = 1;
+             }
+          } else {
+             WriteString("Notice: ATOM numbers will be modulo 100,000\n");
+          }
+       }
+    }
+
+    model = 0;
+
     ForEachAtom
         if( aptr->flag&SelectFlag )
         {   if( prev && (chain->ident!=ch) )
@@ -3618,6 +3664,10 @@ int SavePDBMolecule( char *filename )
                     fputs("ENDMDL\n",DataFile);
                 fprintf(DataFile,"MODEL     %4d\n",chain->model);
                 model = chain->model;
+                if( resetmodelcount )
+                {
+                    count = 1;
+                }
             }
  
             if( aptr->flag&HeteroFlag )
@@ -3638,15 +3688,16 @@ int SavePDBMolecule( char *filename )
                 c[4]=0;
                 for (ic=0; ic<4; ic++) if (!c[ic]) c[ic]=' ';
                 fprintf( DataFile, "%5d %-4.4s%c%3.3s %c%4d    ",
-                     count++, c,
+                     1+((count-1)%99999), c,
                      aptr->altl, Residue[group->refno],
                      chain->ident, group->serno );
-            	
+                count++;
             } else {
               fprintf( DataFile, "%5d %-4.4s%c%3.3s %c%4d    ",
-                     count++, ElemDesc[aptr->refno],
+                     1+((count-1)%99999), ElemDesc[aptr->refno],
                      aptr->altl, Residue[group->refno],
                      chain->ident, group->serno );
+                count++;
             }   
  
             x = (double)(aptr->xorg + aptr->fxorg + OrigCX)/250.0
@@ -3706,7 +3757,7 @@ int SaveWPDBMolecule( char *filename )
  
     if( *Info.classification || *Info.identcode )
              /*12345678901234567890123456789012*/
-    {   fputs("HEADER                          ",DataFile);
+    {   fputs("LEADER                          ",DataFile);
  
         ptr = Info.classification;
         for( i=11; i<=60; i++ )
@@ -4109,12 +4160,265 @@ int SaveXYZMolecule( char *filename )
 }
  
  
+char * numnullify( char * buffer, size_t limit, long number) {
+    int limret;
+    if (limit < 2) return (char  *)NULL;
+    buffer[0] = '.';
+    buffer[1] = '\0';
+    if (number == 0) return buffer;
+    limret = snprintf(buffer,limit,"%ld",number);
+    if (limret >= limit) {
+        buffer[0] = '?';
+        buffer[1] = '\0';
+    }
+    return buffer;
+}
+
+char * strnullify( char * buffer, size_t limit, char * str) {
+    int ii;
+    int hasblanks;
+    int hassq;
+    int hasdq;
+    int isnull;
+    int firstnb;
+    int lastnb;
+    size_t lenstr;
+    if (limit < 2) return (char  *)NULL;
+    buffer[0] = '.';
+    buffer[1] = '\0';
+    if (str[0] == '\0') return buffer;
+    lenstr = strlen(str);
+    if (lenstr > limit+2) {
+        buffer[0]='?';
+        return buffer;
+    }
+    hasblanks = hassq = hasdq = isnull =0;
+    firstnb = lenstr;
+    lastnb = 0;
+    if ((str[0]=='.' || str[0]=='?') &&
+        (str[1]=='\0'||isspace(str[1]))) isnull++;
+    for(ii=0; ii<lenstr; ii++) {
+        if (str[ii] == '\'') hassq++;
+        if (str[ii] == '"')  hasdq++;
+        if (ii<firstnb && (!isspace(str[ii]))) firstnb=ii;
+        if (!isspace(str[ii])) lastnb = ii;
+    }
+    if (lastnb < firstnb) return buffer;
+    for (ii=firstnb; ii<=lastnb; ii++) {
+        if (isspace(str[ii])) hasblanks++;
+    }
+    if (!isnull && !hasblanks && !hassq && !hasdq) {
+        sprintf(buffer,"%s",str);
+        return buffer;
+    }
+    if (!hassq) {
+        sprintf(buffer,"'%s'",str+firstnb);
+        return buffer;
+    }
+    if (!hasdq) {
+        sprintf(buffer,"\"%s\"",str+firstnb);
+        return buffer;
+    }
+    sprintf(buffer,"\n;\\\n%s\\\n;\n",str);
+    return buffer;
+}
+
+ 
 int SaveCIFMolecule( char *filename )
 {
-    UnusedArgument(filename);
+    register double x, y, z;
+    register Group __far *prev;
+    register Chain __far *chain;
+    register Group __far *group;
+    register RAtom __far *aptr;
+    register long count;
+    register int model;
+    register char ch = '\0';
+    char eltype[2];
+    char numbuf[20];
+    char resbuf[20];
+    char atombuf[20];
+    char chainx[2];
+    char chainbuf[5];
+    char altbuf[5];
+    char altx[2];
+    char strbuf[1025];
+    char elemx[3];
+    char elembuf[6];
 
     if( !Database )
         return False;
+    DataFile = fopen( filename, "w" );
+    if( !DataFile )
+    {   InvalidateCmndLine();
+        WriteString("Error: Unable to create file!\n\n");
+        return False;
+    }
+    
+    fprintf(DataFile,"data_%-10.10s\n",Info.identcode);
+    fprintf(DataFile,"_entry.id            %s\n",
+            strnullify(strbuf,1025,Info.identcode));
+    fprintf(DataFile,"_struct_biol.details %s\n",
+            strnullify(strbuf,1025, Info.classification));
+    fprintf(DataFile,"_struct.title        %s\n",
+            strnullify(strbuf,1025, Info.moleculename));
+    fprintf(DataFile,"_exptl.method        %s\n",
+            strnullify(strbuf,1025, Info.technique));
+    fprintf(DataFile,"_cell.length_a       %g\n",Info.cell[0]);
+    fprintf(DataFile,"_cell.length_b       %g\n",Info.cell[1]);
+    fprintf(DataFile,"_cell.length_c       %g\n",Info.cell[2]);
+    fprintf(DataFile,"_cell.angle_alpha    %g\n",Info.cell[3]);
+    fprintf(DataFile,"_cell.angle_beta     %g\n",Info.cell[4]);
+    fprintf(DataFile,"_cell.angle_gamma    %g\n",Info.cell[5]);
+    fprintf(DataFile,"_symmetry.space_group_name_H-M\n");
+    fprintf(DataFile,"                     %s\n",strnullify(strbuf,1025,Info.spacegroup));
+    fprintf(DataFile,"loop_\n");
+    fprintf(DataFile,"_atom_site.PDBcode\n");
+    fprintf(DataFile,"_atom_site.label_model_id\n");
+    fprintf(DataFile,"_atom_site.id\n");
+    fprintf(DataFile,"_atom_site.type_symbol\n");
+    fprintf(DataFile,"_atom_site.label_atom_id\n");
+    fprintf(DataFile,"_atom_site.label_alt_id\n");
+    fprintf(DataFile,"_atom_site.label_comp_id\n");
+    fprintf(DataFile,"_atom_site.label_asym_id\n");
+    fprintf(DataFile,"_atom_site.label_seq_id\n");
+    fprintf(DataFile,"_atom_site.cartn_x\n");
+    fprintf(DataFile,"_atom_site.cartn_y\n");
+    fprintf(DataFile,"_atom_site.cartn_z\n");
+    fprintf(DataFile,"_atom_site.occupancy\n");
+    fprintf(DataFile,"_atom_site.B_iso_or_equiv\n");
+     
+    count=1;
+    model = 0;
+    prev = (Group __far *)NULL;
+    ch = ' ';
+    
+    ForEachAtom
+    if( aptr->flag&SelectFlag )
+    {   if( prev && (chain->ident!=ch) ){
+        fprintf( DataFile, "#TER    %s %ld %s %s %s %d . . . . . \n", 
+                numnullify(numbuf,20,chain->model),
+                count++, ". . .",
+                strnullify(resbuf,20,Residue[prev->refno]), 
+                strnullify(chainbuf,5,chainx), prev->serno);
+        }
+        if( chain->model != model )
+        {   
+            model = chain->model;
+        }
+        
+        chainx[0] = chain->ident;
+        chainx[1] = '\0';
+        altx[0] = aptr->altl;
+        altx[1] = '\0';
+        elemx[0] = ((Element[aptr->elemno]).symbol)[0];
+        elemx[1] = ((Element[aptr->elemno]).symbol)[1];
+        elemx[2] = '\0';
+        if( aptr->flag&HeteroFlag )
+        {      fputs("HETATM",DataFile);
+        } else fputs("ATOM  ",DataFile);
+        
+        eltype[0] = ElemDesc[aptr->refno][0];
+        eltype[1] = ElemDesc[aptr->refno][1];
+        if (isdigit(eltype[1])) eltype[1]=' ';
+        if (isdigit(eltype[0])) eltype[0]=' ';
+        if (eltype[0]!=' '
+            && GetElemDescNumber(eltype)!=aptr->elemno )
+        { char c[11];
+            int ic;
+            c[0]=' ';
+            for (ic=0; ic<9; ic++){
+                c[ic+1]=ElemDesc[aptr->refno][ic];
+                if(!c[ic+1])c[ic+1]=' ';
+            }
+            c[10]=0;
+            fprintf( DataFile, "  %s %ld %s %s %s %s %s %d ",
+                    numnullify(numbuf,20,chain->model),
+                    count++, 
+                    strnullify(elembuf,6,elemx),
+                    strnullify(atombuf,20,c),
+                    strnullify(altbuf,5,altx),
+                    strnullify(resbuf,20,Residue[group->refno]),
+                    strnullify(chainbuf,5,chainx), group->serno);
+            
+        } else {
+            
+            fprintf( DataFile, "  %s %ld %s %s %s %s %s %d ",
+                    numnullify(numbuf,20,chain->model),
+                    count++, 
+                    strnullify(elembuf,6,elemx),
+                    strnullify(atombuf,20,ElemDesc[aptr->refno]),
+                    strnullify(altbuf,5,altx),
+                    strnullify(resbuf,20,Residue[group->refno]),
+                    strnullify(chainbuf,5,chainx),
+                    group->serno );
+        }
+        
+        x = (double)(aptr->xorg + aptr->fxorg + OrigCX)/250.0
+        +(double)(aptr->xtrl)/10000.0;
+        y = (double)(aptr->yorg + aptr->fyorg + OrigCY)/250.0
+        +(double)(aptr->ytrl)/10000.0;
+        z = (double)(aptr->zorg + aptr->fzorg + OrigCZ)/250.0
+        +(double)(aptr->ztrl)/10000.0;
+        
+#ifdef INVERT
+        fprintf(DataFile,"%13.3f %13.3f %13.3f",x,-y,-z);
+#else
+        fprintf(DataFile,"%13.3f %13.3f %13.3f",x,y,-z);
+#endif
+        fprintf(DataFile,"  1.00 %6.2f\n",aptr->temp/100.0);
+        
+        ch = chain->ident;
+        prev = group;
+    }
+    
+    if( prev ) {
+        chainx[0] = ch;
+        chainx[1] = '\0';
+        fprintf( DataFile, "#TER    %s %ld %s %s %s %d . . . . . \n", 
+                numnullify(numbuf,20,model),
+                count, ". . .",
+                strnullify(resbuf,20,Residue[prev->refno]), 
+                strnullify(chainbuf,5,chainx), prev->serno);
+
+    }
+    fclose( DataFile );
+#ifdef APPLEMAC
+    SetFileInfo(filename,'RSML','TEXT',131);
+#endif
+
     return True;
 }
 
+
+/*=================================*/
+/* Atom Editing Functions          */
+/*=================================*/
+
+int AtomEdit(Long atomno, int heta,               /* atom serial no and
+                                                   hetatom flag          */
+                          double __far *coords,   /* X, Y, Z coordinates */ 
+                          double __far *offsets,  /* X, Y, Z offsets     */
+                          double __far *radius,   /* atomic radius       */
+                          double __far *temp,     /* temperature factor  */
+                          double __far *occupancy,/* occupancy           */
+                          char   __far *altl,     /* alternate conformer */
+                          Long   __far *colour,   /* RGB color           */ 
+                          Long   __far *atmserno, /* new atom serial no. */
+                          char   __far *resname,  /* new residue name    */
+                          Long   __far *resserno, /* new residue no.     */
+                          char   __far *icode,    /* inserion code       */
+                          char   __far *chainid,  /* new chain identifier*/
+                          Long   __far *model,    /* model number        */
+                          char*  __far *elem,     /* elemno              */
+                          int*   __far charge     /* element charge      */)
+{
+    
+}
+
+int AtomDelete(Long atomno){
+    
+}
+
+                          
+                        

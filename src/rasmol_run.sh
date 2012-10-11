@@ -1,10 +1,10 @@
 #!/bin/sh
 ###########################################################################
-#                             RasMol 2.7.4.2                              #
+#                             RasMol 2.7.5.3                              #
 #                                                                         #
 #                                 RasMol                                  #
 #                 Molecular Graphics Visualisation Tool                   #
-#                            19 November 2007                             #
+#                               4 May 2012                                #
 #                                                                         #
 #                   Based on RasMol 2.6 by Roger Sayle                    #
 # Biomolecular Structures Group, Glaxo Wellcome Research & Development,   #
@@ -92,7 +92,7 @@
 #
 
 
-VERSION=${RASMOL_VERSION-"RasMol_2_7_5"};
+VERSION=${RASMOL_VERSION-"RasMol_2_7_5_3"};
 
 for rasmolarg in "$@" ;
 do
@@ -108,12 +108,17 @@ do
       echo "   RASMOL_LANG         startup language"
       echo "   RASMOLPATH          path to rasmol directory"
       echo "   RASMOL_LIBSFORMPATH path to xforms library directory"
+      echo "   RASMOL_LIBXiPATH    path to Xi library directory
+      echo "   RASMOL_LIBXextPATH  path to Xext library directory
       echo "   RASMOL_LANTIN1FDIR  path to X11 ISO 8859-1 font directory"
       echo "   RASMOL_CP1251FDIR   path to X11 ISO CP 1251 font directory"
       echo "   RASMOL_CHINESEFDIR  path to X11 Intlfonts-1.2.1/Chinese directory"
       echo "   RASMOL_JAPANESEFDIR  path to X11 Intlfonts-1.2.1/Japanese.X directory"
       echo "   RASMOL_DEBUG        if non-empty, report settings"
       echo "   RASMOL_NOSPAWN      if non-empty, do not spawn an intermediary xterm"
+      echo "   RASMOL_SYSTEM_XFORMS if non-empty search for system libxforms"
+      echo "   RASMOL_SYSTEM_LIBXI  if non-empty search for system libXi"
+      echo "   RASMOL_SYSTEM_LIBXEXT  if non-empty search for system libXext"
       exit 0;
     ;;
     '--English'  | '--ENGLISH'  | '--english'  ) RASMOL_LANG="English"  ;; 
@@ -175,14 +180,17 @@ if [ "$RASMOL_DEBUG" ] ; then echo "executing rasmol from $RASMOLPATH" ;
 fi
 
 
-
-#
 if [ "$DISPLAY" ] &&  ( xdpyinfo > /dev/null 2>&1 ) ; then 
 
-
+#
 #  Find libforms
 #
-for RASMOL_LIBFORMSPATH in \
+
+
+if [ "$RASMOL_SYSTEM_XFORMS" ] ; then
+  havelibforms=
+
+  for RASMOL_LIBFORMSPATH in \
   $RASMOL_LIBFORMSPATH \
   . \
   $HOME/lib \
@@ -191,8 +199,10 @@ for RASMOL_LIBFORMSPATH in \
   /usr/local/lib \
   /sw/lib \
   /usr/openwin/lib \
-;
-do
+    ;
+    do
+      if [ "$RASMOL_DEBUG" ] ; then echo "trying $RASMOL_LIBFORMSPATH" ;
+      fi
   if [ -d "$RASMOL_LIBFORMSPATH" ]; then
     if [ -f "$RASMOL_LIBFORMSPATH/libforms.a" ] || \
        [ -f "$RASMOL_LIBFORMSPATH/libforms.so" ] || \
@@ -201,13 +211,13 @@ do
        cd $RASMOL_LIBFORMSPATH;
        RASMOL_LIBFORMSPATH=`pwd`;
        cd $savecurdir;
+        havelibforms=1;
        break 1;
     fi
   fi
-done
+  done
 
-
-if [ "$RASMOL_LIBFORMSPATH" ]; then 
+  if [ "$havelibforms" ]; then 
   if [ "$RASMOL_DEBUG" ] ; then echo "using xforms library in $RASMOL_LIBFORMSPATH" ;
   fi
   # LINUX
@@ -228,22 +238,167 @@ if [ "$RASMOL_LIBFORMSPATH" ]; then
   else
     LIBPATH=$RASMOL_LIBFORMSPATH; export LIBPATH;
   fi
+    # OSX
+    if [ "$DYLD_LIBARY_PATH" ]; then
+      DYLD_LIBARY_PATH=$DYLD_LIBARY_PATH:$RASMOL_LIBFORMSPATH; export DYLD_LIBARY_PATH;
+    else
+      DYLD_LIBARY_PATH=$RASMOL_LIBFORMSPATH; export DYLD_LIBARY_PATH;
+    fi
+  fi
+
+else
+  havelibforms=1
 fi
+
+
+#
+#  Find libXi
+#
+if [ "$RASMOL_SYSTEM_LIBXI" ] ; then
+havelibXi=
+for RASMOL_LIBXIPATH in \
+  $RASMOL_LIBXiPATH \
+  $HOME/lib \
+  /lib \
+  /usr/lib \
+  /opt/X11/lib \
+  /opt/local/lib \
+  /usr/X11/lib \
+  /usr/local/lib \
+  /sw/lib \
+  /usr/openwin/lib \
+  . \
+  ;
+  do
+    if [ "$RASMOL_DEBUG" ] ; then echo "trying $RASMOL_LIBXIPATH" ;
+    fi
+    if [ -d "$RASMOL_LIBXIPATH" ]; then
+    if [ -f "$RASMOL_LIBXIPATH/libXi.a" ] || \
+    [ -f "$RASMOL_LIBXIPATH/libXi.so" ] || \
+    [ -f "$RASMOL_LIBXIPATH/libXi.dylib" ] ; then
+    savecurdir=`pwd`;
+    cd $RASMOL_LIBXIPATH;
+    RASMOL_LIBXIPATH=`pwd`;
+    cd $savecurdir;
+    havelibXi=1;
+    if [ "$RASMOL_DEBUG" ] ; then echo "using Xi library in $RASMOL_LIBXIPATH" ;
+    fi
+    # LINUX
+    if [ "$LD_LIBRARY_PATH" ]; then
+      LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$RASMOL_LIBXIPATH; export LD_LIBRARY_PATH;
+    else
+      LD_LIBRARY_PATH=$RASMOL_LIBXIPATH; export LD_LIBRARY_PATH;
+    fi
+    if [ "$RASMOL_DEBUG" ] ; then echo "using library path $LD_LIBRARY_PATH" ;
+    fi
+    # HPUX
+    if [ "$SHLIB_PATH" ]; then
+      SHLIB_PATH=$SHLIB_PATH:$RASMOL_LIBXIPATH; export SHLIB_PATH;
+    else
+      SHLIB_PATH=$RASMOL_LIBXIPATH; export SHLIB_PATH;
+    fi
+    # AIX
+    if [ "$LIBPATH" ]; then
+      LIBPATH=$LIBPATH:$RASMOL_LIBXIPATH; export LIBPATH;
+    else
+      LIBPATH=$RASMOL_LIBXIPATH; export LIBPATH;
+    fi
+    # OSX
+    if [ "$DYLD_LIBARY_PATH" ]; then
+      DYLD_LIBARY_PATH=$DYLD_LIBARY_PATH:$RASMOL_LIBXIPATH; export DYLD_LIBARY_PATH;
+    else
+      DYLD_LIBARY_PATH=$RASMOL_LIBXIPATH; export DYLD_LIBARY_PATH;
+    fi
+    break 1;
+  fi
+  fi
+  done
+else
+  havelibXi=1
+fi
+
+
+#
+#  Find libXext
+#
+if [ "$RASMOL_SYSTEM_LIBXEXT" ] ; then
+havelibXext=
+for RASMOL_LIBXEXTPATH in \
+  $RASMOL_LIBXextPATH \
+  $HOME/lib \
+  /lib \
+  /usr/lib \
+  /opt/X11/lib \
+  /opt/local/lib \
+  /usr/X11/lib \
+  /usr/local/lib \
+  /sw/lib \
+  /usr/openwin/lib \
+  . \
+  ;
+  do
+    if [ "$RASMOL_DEBUG" ] ; then echo "trying $RASMOL_LIBXEXTPATH" ;
+    fi
+    if [ -d "$RASMOL_LIBXEXTPATH" ]; then
+    if [ -f "$RASMOL_LIBXEXTPATH/libXext.a" ] || \
+    [ -f "$RASMOL_LIBXEXTPATH/libXext.so" ] || \
+    [ -f "$RASMOL_LIBXEXTPATH/libXext.dylib" ] ; then
+    savecurdir=`pwd`;
+    cd $RASMOL_LIBXEXTPATH;
+    RASMOL_LIBXEXTPATH=`pwd`;
+    cd $savecurdir;
+    havelibXext=1;
+    if [ "$RASMOL_DEBUG" ] ; then echo "using Xext library in $RASMOL_LIBXEXTPATH" ;
+    fi
+    # LINUX
+    if [ "$LD_LIBRARY_PATH" ]; then
+      LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$RASMOL_LIBXEXTPATH; export LD_LIBRARY_PATH;
+    else
+      LD_LIBRARY_PATH=$RASMOL_LIBXEXTPATH; export LD_LIBRARY_PATH;
+    fi
+    if [ "$RASMOL_DEBUG" ] ; then echo "using library path $LD_LIBRARY_PATH" ;
+    fi
+    # HPUX
+    if [ "$SHLIB_PATH" ]; then
+      SHLIB_PATH=$SHLIB_PATH:$RASMOL_LIBXEXTPATH; export SHLIB_PATH;
+    else
+      SHLIB_PATH=$RASMOL_LIBXEXTPATH; export SHLIB_PATH;
+    fi
+    # AIX
+    if [ "$LIBPATH" ]; then
+      LIBPATH=$LIBPATH:$RASMOL_LIBXEXTPATH; export LIBPATH;
+    else
+      LIBPATH=$RASMOL_LIBXEXTPATH; export LIBPATH;
+    fi
+    # OSX
+    if [ "$DYLD_LIBRARY_PATH" ]; then
+      DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$RASMOL_LIBXEXTPATH; export DYLD_LIBRARY_PATH;
+    else
+      DYLD_LIBRARY_PATH=$RASMOL_LIBXEXTPATH; export DYLD_LIBRARY_PATH;
+    fi
+    break 1;
+  fi
+  fi
+  done
+else
+  havelibXext=1
+fi
+
 
 
 # Check on the available visuals
 
 if [ -x $RASMOLPATH/rasmol_32BIT ] && (  xdpyinfo | grep "bits_per_pixel 32" > /dev/null 2>&1 );
   then RASMOL_BIN=rasmol_32BIT;
-  if [ -x $RASMOLPATH/rasmol_XFORMS_32BIT ] && [ "$RASMOL_LIBFORMSPATH" ] ; then RASMOL_BIN=rasmol_XFORMS_32BIT;
+  if [ -x $RASMOLPATH/rasmol_XFORMS_32BIT ] && [ "$havelibforms" ] && [ "$havelibXi" ] && [ "$havelibXext" ] ; then RASMOL_BIN=rasmol_XFORMS_32BIT;
   fi
 elif [ -x $RASMOLPATH/rasmol_16BIT ] && (  xdpyinfo | grep "bits_per_pixel 16" > /dev/null  2>&1 );
   then RASMOL_BIN=rasmol_16BIT;
-  if [ -x $RASMOLPATH/rasmol_XFORMS_16BIT ] && [ "$RASMOL_LIBFORMSPATH" ] ; then RASMOL_BIN=rasmol_XFORMS_16BIT;
+  if [ -x $RASMOLPATH/rasmol_XFORMS_16BIT ] && [ "$havelibforms" ] && [ "$havelibXi" ]  && [ "$havelibXext" ] ; then RASMOL_BIN=rasmol_XFORMS_16BIT;
   fi
 elif [ -x $RASMOLPATH/rasmol_8BIT ] && (  xdpyinfo | grep "bits_per_pixel 8"  > /dev/null 2>&1 );
   then RASMOL_BIN=rasmol_8BIT;
-  if [ -x $RASMOLPATH/rasmol_XFORMS_8BIT ] && [ "$RASMOL_LIBFORMSPATH" ] ; then RASMOL_BIN=rasmol_XFORMS_8BIT;
+  if [ -x $RASMOLPATH/rasmol_XFORMS_8BIT ] && [ "$havelibforms" ] && [ "$havelibXi" ]  && [ "$havelibXext" ] ; then RASMOL_BIN=rasmol_XFORMS_8BIT;
   fi
 elif [ -x $RASMOLPATH/rasmol ] ;
   then RASMOL_BIN=rasmol;

@@ -2136,8 +2136,8 @@ int PickAtoms( int shift, int xpos, int ypos )
             cur += sprintf(cur, "  Model: %d", QAtom->model);
         }
         if (PickMode == PickCoord || shift != 0 ) {
-            MsgChar('\n');
             register double x, y, z;
+           MsgChar('\n');
 
             x = (double)(QAtom->xorg + QAtom->fxorg + OrigCX)/250.0
                 +(double)(QAtom->xtrl)/10000.0;

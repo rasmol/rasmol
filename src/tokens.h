@@ -245,29 +245,31 @@
 #define RestoreTok     313
 #define RestrictTok    314
 #define RotateTok      315
-#define SaveTok        316
-#define ScriptTok      317
-#define SelectTok      318
-#define SetTok         319
-#define ShowTok        320
+#define SASurfTok      316
+#define SaveTok        317
+#define ScriptTok      318
+#define SelectTok      319
+#define SetTok         320
+#define ShowTok        321
 
-#define SlabTok        321
-#define SourceTok      322
-#define SpacefillTok   323
-#define StarTok        324
-#define StructureTok   325
-#define SurfaceTok     326
-#define SymmetryTok    327
-#define TitleTok       328
-#define TraceTok       329
-#define TranslateTok   330
+#define SlabTok        322
+#define SourceTok      323
+#define SpacefillTok   324
+#define StarTok        325
+#define StructureTok   326
+#define SurfaceTok     327
+#define SymmetryTok    328
+#define TimeTok        329
+#define TitleTok       330
+#define TraceTok       331
+#define TranslateTok   332
 
-#define ViewTok        331
-#define WaitTok        332
-#define WireframeTok   333
-#define WriteTok       334
-#define ZapTok         335
-#define ZoomTok        336
+#define ViewTok        333
+#define WaitTok        334
+#define WireframeTok   335
+#define WriteTok       336
+#define ZapTok         337
+#define ZoomTok        338
 
 /* Predicate Tokens */
 #define IsPredTok(x)   (((x)>=AlphaTok) && ((x)<=SmallTok))
@@ -375,7 +377,8 @@
 #define MirrorTok      510
 
 /* Feature Tokens */
-#define AtomTok        521
+#define AtomTok        520
+#define HetAtomTok     521
 #define BondTok        522
 #define DotsTok        523
 #define HBondTok       524
@@ -529,6 +532,7 @@
 #define CIFDataTok     763
 #define FSTok          764
 #define ScaleTok       765
+#define IPCDetailTok   766
 
 #define PSTok          EPSFTok
 

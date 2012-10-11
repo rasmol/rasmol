@@ -164,3 +164,23 @@ int SaveXYZMolecule( char* );
 int SaveCIFMolecule( char* );
 int SaveCEXMolecule( char* );
 int SaveWPDBMolecule( char* );
+
+int AtomEdit(Long atomno, int heta,               /* atom serial no and
+                                                   hetatom flag          */
+             double __far *coords,   /* X, Y, Z coordinates */ 
+             double __far *offsets,  /* X, Y, Z offsets     */
+             double __far *radius,   /* atomic radius       */
+             double __far *temp,     /* temperature factor  */
+             double __far *occupancy,/* occupancy           */
+             char   __far *altl,      /* alternate conformer */
+             Long   __far *colour,   /* RGB color           */ 
+             Long   __far *atmserno, /* new atom serial no. */
+             char   __far *resname,  /* new residue name    */
+             Long   __far *resserno, /* new residue no.     */
+             char   __far *icode,    /* inserion code       */
+             char   __far *chainid,  /* new chain identifier*/
+             Long   __far *model,    /* model number        */
+             char*  __far *elem,     /* elemno              */
+             int*   __far charge     /* element charge      */);
+int AtomDelete(Long atomno);
+
