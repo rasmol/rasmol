@@ -3431,7 +3431,7 @@ static void ExecuteSetCommand( void )
              if (errorcode) CommandError(MsgStrs[ErrBadArg]);
             break;
         }
-            
+
         case(IPCDetailTok):
             FetchToken();
             if( !CurToken || (CurToken==TrueTok) )
@@ -3892,31 +3892,56 @@ static void DescribeSelected( Selection type )
     register RAtom __far *ptr   = (RAtom  __far*)NULL;
     AtomRef current;
     int touched    ;
+    int ctouched   ;
     int Aselect    ;
     int Acount     ;
     int Gselect    ;
     int Gcount     ;
+    int Cselect    ;
+    int Ccount     ;
     int model      ;
-    char buffer[40];
+    char buffer[80];
     
     if(!Database)
         return;
     
     model = -1;
     
+    Cselect = Ccount = 0;
+    current.chn = NULL;
+    ctouched = False;
     for(chain=Database->clist;chain;chain=chain->cnext){
+        if (model != chain->model) {
+            if (model !=-1 && type==MDL) {
+                if (Cselect) {
+                sprintf(buffer, "Model: %d\t(%d/%d)\tchains\n",
+                        model,Cselect, Ccount);
+                WriteString(buffer);
+                } else if (ctouched) {
+                sprintf(buffer, "Model: %d\tno chain completely selected\n",
+                        model);
+                WriteString(buffer);
+                }
+            }
+            model = chain->model;
+            Cselect = Ccount = 0;
+            ctouched = False;
+        }
         Gselect =  Gcount = 0;
         touched = False;
+        if (current.chn != chain) {
+            Ccount++;
         current.chn = chain;
+        }
         for(group=chain->glist;group;group=group->gnext){
             Aselect =  Acount = 0;
             current.grp = group;
             for(ptr=group->alist;ptr;ptr=ptr->anext) {
                 current.atm = ptr;
-                if( !(ptr->flag&HeteroFlag) || type != CHN) { 
                     if( ptr->flag&SelectFlag ) {
                         Aselect++;
                         touched = True;
+                        ctouched = True;
                         if( type == ATM || type == CRD){        /* Atom or Coordinates */
                             WriteString(DescribeObj(&current, type));
                             WriteChar('\n');
@@ -3924,26 +3949,21 @@ static void DescribeSelected( Selection type )
                     }
                     Acount++; 
                 }	  	 
-            }     
-            if( Acount == Aselect )
+            if( touched && Acount == Aselect ) {
                 Gselect++;
-            Gcount++;       
-            if( Aselect && (type == GRP || type == CHN)) { 
-                if (!(model == group->model)) {
-                    model = group->model;
-                    if (model) {
-                        sprintf(buffer,"Model: %d\n",model);
-                        WriteString(buffer);
-                    }
-                }
+                ctouched++;
             }
+            Gcount++;       
             if( Aselect && type == GRP) {	              /* Group */
                 WriteString(DescribeObj(&current, GRP));
                 sprintf(buffer, "\t(%d/%d)\tatoms\n",Aselect, Acount); 
                 WriteString(buffer);
             }
         }
-        if( touched && type == CHN ) {                    /* Chain */      
+        if (ctouched && Gcount == Gselect) {
+            Cselect++;
+        }
+        if( ctouched && type == CHN ) {                    /* Chain */      
             WriteString(DescribeObj(&current, CHN));
             if( Gselect > 0 ) {
                 sprintf(buffer,"\t(%d/%d)\tgroups\n",Gselect, Gcount); 	
@@ -3953,6 +3973,27 @@ static void DescribeSelected( Selection type )
                 WriteString("\tno group completely selected\n");	
         }
     } 
+    if (model !=-1 && type==MDL) {
+        if (Cselect) {
+            sprintf(buffer, "Model: %d\t(%d/%d)\tchains\n",
+                    model,Cselect, Ccount);
+            WriteString(buffer);
+        } else if (ctouched) {
+            sprintf(buffer, "Model: %d\tno chain completely selected\n",
+                    model);
+            WriteString(buffer);
+        }
+    } else if (model == -1 && type==MDL) {
+        if (Cselect) {
+            sprintf(buffer, "One Model: \t(%d/%d)\tchains\n",
+                    Cselect, Ccount);
+            WriteString(buffer);
+        } else if (ctouched) {
+            sprintf(buffer, "%s", "One Model: \tno chain completely selected\n");
+            WriteString(buffer);
+        }
+        
+    }
 }  
 
 
@@ -3973,6 +4014,9 @@ static void ExecuteSelectedCommand()
             break;
         case(ChainTok):
             DescribeSelected(CHN);
+            break;
+        case(ModelTok):
+            DescribeSelected(MDL);
             break;
         case(0):
             DescribeSelected(GRP);  /* default option for show selected is 'group' */
@@ -4833,7 +4877,7 @@ static void ApplyMapAtomSelection(int dontadd, int searchwithin, int SearchRadiu
                     }
                 }
      }
-    
+
     tc2 = clock();
     fprintf(stderr,"Map select time %g size %ld depth %ld\n",
             ((double)(tc2-tc1))/CLOCKS_PER_SEC,
@@ -5244,9 +5288,9 @@ static void ApplyMapAtomShow(int SearchRadius) {
     
     
     if (!AtomTree || NeedAtomTree ) {
-        if (CreateAtomTree()) {
-            RasMolFatalExit(MsgStrs[StrMalloc]);
-        }
+    if (CreateAtomTree()) {
+        RasMolFatalExit(MsgStrs[StrMalloc]);
+    }
     }
     
     if (MapInfoPtr)  {
@@ -6252,7 +6296,7 @@ int ExecuteCommandOne( int * restore )
                         if (CurToken==MolSurfTok) {
                             mapflags |= MapLRSurfFlag;
                             FetchToken();
-                        } 
+                        }
                         if (CurToken==SASurfTok) {
                             mapflags |= MapSASurfFlag;
                             FetchToken();
@@ -6269,7 +6313,7 @@ int ExecuteCommandOne( int * restore )
                             mapflags &= ~(MapPointFlag|MapMeshFlag|MapSurfFlag);
                             mapflags |= MapSurfFlag;
                             FetchToken();
-                        }   else if (CurToken) { 
+                        } else if (CurToken) { 
                             CommandError(MsgStrs[ErrBadArg]);
                             break;
                         }
