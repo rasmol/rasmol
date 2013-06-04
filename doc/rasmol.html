@@ -68,7 +68,7 @@ Latest Manual </a><br />&nbsp;<br />
 </center>
 <H3 ALIGN=CENTER>
 Molecular Graphics Visualisation Tool<BR>
-13 June 2009 (rev. 17 July 2009)<br />
+13 June 2009 (rev. 8 May 2012)<br />
 </H3>
 </font><font color="#000000">
 <CENTER>
@@ -179,7 +179,7 @@ version 2.7.1.1, April 2001 for RasMol version 2.7.2.1 and
 February 2005 for RasMol version 2.7.3 and November 2007,
 January 2008 and March 2008 for RasMol version 2.7.4.
 <p>
-<CENTER>Documentation Last Updated 17 July 2009<br>
+<CENTER>Documentation Last Updated 8 May 2012<br>
 Edited by Herbert J. Bernstein and Frances C. Bernstein
 </CENTER>
 
@@ -1930,7 +1930,7 @@ The RasMol
 '<tt><b>clipboard</b></tt>'
 command places a copy of the currently displayed image on the local
 graphics 'clipboard'. Note: this command is not yet supported on
-UNIX or VMS machines. It is intended to make transfering images
+UNIX or VMS machines. It is intended to make transferring images
 between applications easier under Microsoft Windows or on an Apple
 Macintosh.
 <p>
@@ -3110,16 +3110,29 @@ appropriate fonts have been installed.
 <a name="save"><h3>Save</h3></a><p>
 <pre>
 Syntax:  save {pdb} &lt;filename&gt;
+         save wpdb &lt;filename&gt;
+         save cif &lt;filename&gt;
          save mdl &lt;filename&gt;
          save alchemy &lt;filename&gt;
          save xyz &lt;filename&gt;
 </pre><p>
 Save the currently selected set of atoms in a Protein
-Data Bank (PDB), MDL, Alchemy(tm) or XYZ format file.
+Data Bank (PDB), Wide PDB (WPDB), mmCIF (CIF),
+MDL, Alchemy(tm) or XYZ format file.  Some of the
+implementations are are only sufficient for reloading
+in RasMol and may need to be supplemented for use by
+programs other than RasMol.
+<p>
+Atom serial numbers are regenerated.  When this will
+result in more than 99,999 atoms being written in
+PDB format, numbers may be repeated.  If possible
+the repeats are done by using the same numbers
+in different NMR models.
+<p>
 The distinction between this command and the RasMol
 '<a href="#write"><tt><b>write</b></tt></a>'
-command has been dropped. The only difference is that without a format
-specifier the
+command has been dropped. The only difference is that
+without a format specifier the
 '<tt><b>save</b></tt>'
 command generates a
 '<tt><b>PDB</b></tt>'
@@ -3196,7 +3209,7 @@ The RasMol
 command allows the user to alter various internal program parameters
 such as those controlling rendering options. Each parameter has its
 own set or permissible parameter options. Typically, omitting the
-paramter option resets that parameter to its default value. A list of
+parameter option resets that parameter to its default value. A list of
 valid parameter names is given below.
 <p>
 <center><table BORDER CELLPADDING=2>
@@ -3686,7 +3699,7 @@ command.
 
 If the selected bonds involved atoms of alternate conformers then
 the bonds are narrowed in the middle to a radius of .8 of the specified
-radius (or to the radius specifed as the optional second parameter).
+radius (or to the radius specified as the optional second parameter).
 <p>
 Non-bonded atoms, which could become invisible in an
 ordinary
@@ -4496,7 +4509,7 @@ shadows. Enabling shadowing will automatically disable the Z-clipping
 Ray-tracing typically takes about several seconds for a moderately sized protein.
 It is recommended that shadowing be normally disabled whilst the
 molecule is being transformed or manipulated, and only enabled once
-an appropiate viewpoint is selected, to provide a greater impression
+an appropriate viewpoint is selected, to provide a greater impression
 of depth.
 <p><hr>
 <a name="setslabmode"><h3>Set SlabMode</h3></a><p>

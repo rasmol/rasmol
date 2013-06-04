@@ -973,6 +973,8 @@ int LookUpKeyword( char *ptr )
              INFORMATION          InfoTok
              INLINE               InLineTok
              INSIGHT              InsightTok
+             INTERPRETERS         InterpTok
+             INTERPS              InterpTok
              ION                  IonTok
              IONS                 IonTok
              IRIS                 IRISTok
@@ -1005,7 +1007,12 @@ int LookUpKeyword( char *ptr )
                         return( InLineTok );
                     } else if( !strcmp(ptr,"SIGHT") ) {
                         return( InsightTok );
+                    } else if( !strcmp(ptr,"TERPRETERS") ) {
+                        return( InterpTok );
+                    } else if( !strcmp(ptr,"TERPS") ) {
+                        return( InterpTok );
                     }
+
                     break;
                     
                 case('O'):
@@ -1699,6 +1706,7 @@ int LookUpKeyword( char *ptr )
              SELECT               SelectTok
              SELECTED             SelectedTok
              SELECTION            SelectedTok
+             SEND                 SendTok
              SEQUENCE             SequenceTok
              SES                  MolSurfTok
              SESurf               MolSurfTok
@@ -1777,6 +1785,8 @@ int LookUpKeyword( char *ptr )
                         return( SelectedTok );
                     } else if( !strcmp(ptr,"QUENCE") ) {
                         return( SequenceTok );
+                    } else if( !strcmp(ptr,"ND") ) {
+                        return( SendTok );
                     } else if( !strcmp(ptr,"S") ) {
                         return( MolSurfTok );
                     } else if( !strcmp(ptr,"Surf") ) {
@@ -1934,7 +1944,7 @@ int LookUpKeyword( char *ptr )
                         return( TitleTok );
                     }
                     break;
-                    
+
 
                 case('O'):
                     if( !strcmp(ptr,"DO") ) {

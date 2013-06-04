@@ -1,7 +1,19 @@
                                      README
-                                  RasMol 2.7.5
+                                 RasMol 2.7.5.2
+
+  * RasMol Latest Windows                            * RasMol 2.7.5.2 Windows    
+    Installer                                          Installer                 
+                                                                                 
+  * RasMol Latest Source                             * RasMol 2.7.5.2 Source     
+    Tarball                          RasMol            Tarball                   
+                                                                                 
+  * RasMol Latest Manual                             * RasMol 2.7.5 Manual       
+                                                                                 
+  * Donate to Support RasMol                         * Donate to Support RasMol  
+  * Register your RasMol                             * Register your RasMol      
+
                      Molecular Graphics Visualisation Tool
-                        3 June 2009 (rev. 23 July 2009)
+                         3 June 2009 (rev. 13 May 2011)
 
                        Based on RasMol 2.6 by Roger Sayle
 Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
@@ -50,6 +62,8 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 |                   | 2009                 |                                   |
 |                   | RasMol 2.7.5.1 July  |                                   |
 |                   | 2009                 |                                   |
+|                   | RasMol 2.7.5.2 May   |                                   |
+|                   | 2011                 |                                   |
 +------------------------------------------------------------------------------+
 
    RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev
@@ -115,7 +129,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
    2.7.1.1 and April 2001 for RasMol version 2.7.2.1 and February 2005 for
    RasMol version 2.7.3.
 
-                    Documentation Last Updated 19 July 2009
+                     Documentation Last Updated 14 May 2011
             Edited by Herbert J. Bernstein and Frances C. Bernstein
 
                                   Translations
@@ -140,18 +154,14 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
      ----------------------------------------------------------------------
 
-        THIS IS A PRELIMINARY RELEASE INVOLVING EXTENSIVE MODIFICATIONS
-                         ***** USE WITH CAUTION ******
-
-     ----------------------------------------------------------------------
-
                       IMPORTANT - Copying and Distribution
 
-   This version is based directly on RasMol version 2.7.4.2, on RasMol
-   version 2.7.4.1, on RasMol version 2.7.4, on RasMol version 2.7.3.1, on
-   RasMol vesion 2.7.3, on RasMol version 2.7.2.1.1, on RasMol version 2.7.2,
-   on RasMol version 2.7.1, on RasMol version 2.6_CIF.2, on RasMol version
-   2.6x1, on RasMol version 2.6.4, and RasMol 2.5-ucb and 2.6-ucb.
+   This version is based directly on RasMol version 2.7.5.1, on RasMol
+   version 2.7.4.2, on RasMol version 2.7.4.1, on RasMol version 2.7.4, on
+   RasMol version 2.7.3.1, on RasMol version 2.7.3, on RasMol version
+   2.7.2.1.1, on RasMol version 2.7.2, on RasMol version 2.7.1, on RasMol
+   version 2.6_CIF.2, on RasMol version 2.6x1, on RasMol version 2.6.4, and
+   RasMol 2.5-ucb and 2.6-ucb.
 
    Please read the file NOTICE for important notices which apply to this
    package and for license terms (GPL or RASLIC).
@@ -178,9 +188,20 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
                                   Introduction
 
-   This posting is made to announce the release of RasMol version 2.7.5. This
-   release is based on RasMol 2.7.4.2, the final reference release for the
-   2.7.4 series.
+   This posting is made to announce the release of RasMol version 2.7.5.2
+   This release is based on RasMol 2.7.5.1.
+
+   This is a final update to the 2.7.5 series before release of the 2.7.6
+   release candidates, correcting some minor bugs and speeding up surface
+   renderings by use of NearTree 3.1. The version of CBFlib used has also
+   been updated. The changes made between the 2.7.5.1 release of 23 July 2009
+   and the 2.7.5.2 release were:
+
+     * Faster surface rendering by use of NearTree 3.1
+     * Updates to GTK version from T. Ikonen
+     * Use of CBFlib 0.9.2
+     * Use of CQRlib 1.1.2
+     * Minor bug fixes
 
    The changes made between the 2.7.5 release candidate release of 17 July
    2009 and the formal release on 23 July 2009 were:
@@ -274,15 +295,15 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
                             Source Code and Binaries
 
-   The complete source code and user documentation of RasMol 2.7.5 may be
+   The complete source code and user documentation of RasMol 2.7.5.2 may be
    obtained http://www.sourceforge.net/projects/rasmol. and by anonymous FTP
    at:
 
-   ftp://ftp.bernstein-plus-sons.com/software/RasMol_2.7.5.tar.gz
+   ftp://ftp.bernstein-plus-sons.com/software/RasMol_2.7.5.2.tar.gz
 
    or on the web at:
 
-   http://www.bernstein-plus-sons.com/software/RasMol_2.7.5.tar.gz
+   http://www.bernstein-plus-sons.com/software/RasMol_2.7.5.2.tar.gz
 
    http://www.sourceforge.net/projects/rasmol.
 
@@ -297,7 +318,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
      ----------------------------------------------------------------------
 
-                             Updated 23 July 2009.
+                              Updated 14 May 2011.
                               Herbert J. Bernstein
         Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA
                           yaya@bernstein-plus-sons.com

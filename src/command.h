@@ -272,6 +272,10 @@ int ProcessFile( int, int, FILE* );
 void LoadScriptFile( FILE*, char* );
 void ResetCommandLine( int );
 void InitialiseCommand( void );
+int ShowInterpNames ( void );
+int CheckInterpName (char __huge * , unsigned long __huge *);
+int SendInterpCommand( char __huge *, unsigned long,
+                       char __huge *);
 int ExecuteIPCCommand( char __huge * );
 int ExecuteCommand( void );
 void CommandError( char *);

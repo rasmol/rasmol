@@ -2741,6 +2741,63 @@ static void ExecuteUnitCellCommand( void )
 }
 
 
+/*=======================================*/
+/*  IPC Send Command Parsing & Execution */
+/*=======================================*/
+
+static void ExecuteSendCommand( void )
+{
+    char * interptarg;
+    char * command;
+    char buffer[133];
+    unsigned long interpid;
+    
+    FetchToken();
+    if (!CurToken) {
+        CommandError(MsgStrs[ErrSyntax]);
+        return;
+    }
+    if ( CurToken==StringTok ) {
+        interptarg = TokenIdent;
+    } else {
+        interptarg = TokenStart;
+    }
+
+    if (!CheckInterpName(interptarg, &interpid)) {
+        size_t xlen;
+        strcpy(buffer,"'");
+        strncat(buffer,interptarg,131);
+        buffer[132]='\0';
+        xlen = strlen(buffer);
+        if (xlen+strlen(MsgStrs[StrNotFnd])< 132) {
+            strncat(buffer,MsgStrs[StrNotFnd],132);
+            CommandError(buffer);
+            return;
+        }
+        WriteString(buffer);
+        CommandError(MsgStrs[StrNotFnd]);
+        return;
+    }
+    strncpy(buffer,interptarg,132);
+    buffer[132]='\0';
+    
+    FetchToken();
+    if (!CurToken) {
+        CommandError(MsgStrs[ErrSyntax]);
+        return;
+    }
+    if ( CurToken==StringTok ) {
+        command = TokenIdent;
+    } else {
+        command = TokenStart;
+    }
+    
+    SendInterpCommand(buffer,interpid,command);
+    
+    return;
+
+}
+
 
 /*=======================================*/
 /*  Generic Command Parsing & Execution  */
@@ -3431,7 +3488,7 @@ static void ExecuteSetCommand( void )
              if (errorcode) CommandError(MsgStrs[ErrBadArg]);
             break;
         }
-
+            
         case(IPCDetailTok):
             FetchToken();
             if( !CurToken || (CurToken==TrueTok) )
@@ -3931,7 +3988,7 @@ static void DescribeSelected( Selection type )
         touched = False;
         if (current.chn != chain) {
             Ccount++;
-        current.chn = chain;
+            current.chn = chain;
         }
         for(group=chain->glist;group;group=group->gnext){
             Aselect =  Acount = 0;
@@ -3948,7 +4005,7 @@ static void DescribeSelected( Selection type )
                         }
                     }
                     Acount++; 
-                }	  	 
+            }     
             if( touched && Acount == Aselect ) {
                 Gselect++;
                 ctouched++;
@@ -3972,7 +4029,7 @@ static void DescribeSelected( Selection type )
             else
                 WriteString("\tno group completely selected\n");	
         }
-    } 
+    }
     if (model !=-1 && type==MDL) {
         if (Cselect) {
             sprintf(buffer, "Model: %d\t(%d/%d)\tchains\n",
@@ -4237,6 +4294,11 @@ static void ExecuteShowCommand( void )
                     brptr = brptr->brnext;
                 }
             }
+            break;
+            
+        case(InterpTok):
+            InvalidateCmndLine();
+            ShowInterpNames();
             break;
             
         case(TranslateTok):
@@ -4877,7 +4939,7 @@ static void ApplyMapAtomSelection(int dontadd, int searchwithin, int SearchRadiu
                     }
                 }
      }
-
+    
     tc2 = clock();
     fprintf(stderr,"Map select time %g size %ld depth %ld\n",
             ((double)(tc2-tc1))/CLOCKS_PER_SEC,
@@ -5288,9 +5350,9 @@ static void ApplyMapAtomShow(int SearchRadius) {
     
     
     if (!AtomTree || NeedAtomTree ) {
-    if (CreateAtomTree()) {
-        RasMolFatalExit(MsgStrs[StrMalloc]);
-    }
+        if (CreateAtomTree()) {
+            RasMolFatalExit(MsgStrs[StrMalloc]);
+        }
     }
     
     if (MapInfoPtr)  {
@@ -5962,6 +6024,7 @@ int ExecuteCommandOne( int * restore )
         case(PickingTok):    ExecutePickingCommand();    break;
         case(PrintTok):      ExecutePrintCommand();      break;
     	case(RussianTok):    SwitchLang(Russian);        break;
+        case(SendTok):       ExecuteSendCommand();       break;
         case(SetTok):        ExecuteSetCommand();        break;
         case(ShowTok):       ExecuteShowCommand();       break;
         case(SpanishTok):    SwitchLang(Spanish);        break;
@@ -6296,7 +6359,7 @@ int ExecuteCommandOne( int * restore )
                         if (CurToken==MolSurfTok) {
                             mapflags |= MapLRSurfFlag;
                             FetchToken();
-                        }
+                        } 
                         if (CurToken==SASurfTok) {
                             mapflags |= MapSASurfFlag;
                             FetchToken();
@@ -6313,7 +6376,7 @@ int ExecuteCommandOne( int * restore )
                             mapflags &= ~(MapPointFlag|MapMeshFlag|MapSurfFlag);
                             mapflags |= MapSurfFlag;
                             FetchToken();
-                        } else if (CurToken) { 
+                        }   else if (CurToken) { 
                             CommandError(MsgStrs[ErrBadArg]);
                             break;
                         }

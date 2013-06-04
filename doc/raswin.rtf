@@ -66,7 +66,9 @@ ${\footnote RasMol V2.7.5}
 {\fs16 \tab RasMol 2.7.4.1   \tab Jan 08 }\line
 {\fs16 \tab RasMol 2.7.4.2   \tab Mar 08 }\line
 {\fs16 \tab RasMol 2.7.5     \tab Jun 09 }\line
-{\fs16 \tab RasMol 2.7.5.1   \tab Jul 09 }
+{\fs16 \tab RasMol 2.7.5.1   \tab Jul 09 }\line
+{\fs16 \tab RasMol 2.7.5.2   \tab May 11 }\line
+{\fs16 \tab RasMol 2.7.5.3   \tab May 12 }
 {\fs8 \par\par }
 {\fs16 RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev}\line
 {\fs16 and L. Andrews (via the neartree package).  Work on RasMol 2.7.5}\line
@@ -122,7 +124,7 @@ February 2005 for RasMol version 2.7.3 and November 2007, {}
 January 2008 and March 2008 for RasMol version 2.7.4. {}
 }
 \par\par
-{\fs16 Documentation Last Updated 17 July 2009}\line
+{\fs16 Documentation Last Updated 8 May 2012}\line
 {\fs16 Edited by Herbert J. Bernstein and Frances C. Bernstein}
 \par\par
 {\fs16 Please read the file NOTICE for important notices which apply to this}\line
@@ -1210,7 +1212,7 @@ The RasMol {}
 '{\f2\b clipboard}' {}
 command places a copy of the currently displayed image on the local {}
 graphics 'clipboard'. Note: this command is not yet supported on {}
-UNIX or VMS machines. It is intended to make transfering images {}
+UNIX or VMS machines. It is intended to make transferring images {}
 between applications easier under Microsoft Windows or on an Apple {}
 Macintosh. {}
 \par\par
@@ -2589,16 +2591,29 @@ K{\footnote save}
 \tx1200
 {\f2\b Syntax:\tab
 save \{pdb\} <filename>\line\tab
+save wpdd <filename>\line\tab
+save cif <filename>\line\tab
 save mdl <filename>\line\tab
 save alchemy <filename>\line\tab
 save xyz <filename>\par
 }\pard\par
 Save the currently selected set of atoms in a Protein {}
-Data Bank (PDB), MDL, Alchemy(tm) or XYZ format file. {}
+Data Bank (PDB), Wide PDB (WPDB), mmCIF (CIF), {}
+MDL, Alchemy(tm) or XYZ format file.  Some of the {}
+implementations are are only sufficient for reloading {}
+in RasMol and may need to be supplemented for use by {}
+programs other than RasMol. {}
+\par\par
+Atom serial numbers are regenerated.  When this will {}
+result in more than 99,999 atoms being written in {}
+PDB format, numbers may be repeated.  If possible {}
+the repeats are done by using the same numbers {}
+in different NMR models. {}
+\par\par
 The distinction between this command and the RasMol {}
 '{\uldb write}{\v write}' {}
-command has been dropped. The only difference is that without a format {}
-specifier the {}
+command has been dropped. The only difference is that {}
+without a format specifier the {}
 '{\f2\b save}' {}
 command generates a {}
 '{\f2\b PDB}' {}
@@ -2689,7 +2704,7 @@ The RasMol {}
 command allows the user to alter various internal program parameters {}
 such as those controlling rendering options. Each parameter has its {}
 own set or permissible parameter options. Typically, omitting the {}
-paramter option resets that parameter to its default value. A list of {}
+parameter option resets that parameter to its default value. A list of {}
 valid parameter names is given below. {}
 \par\par
 {\cellx1200\cellx2400\cellx3600\cellx4800
@@ -3265,7 +3280,7 @@ command. {}
  {}
 If the selected bonds involved atoms of alternate conformers then {}
 the bonds are narrowed in the middle to a radius of .8 of the specified {}
-radius (or to the radius specifed as the optional second parameter). {}
+radius (or to the radius specified as the optional second parameter). {}
 \par\par
 Non-bonded atoms, which could become invisible in an {}
 ordinary {}
@@ -4261,7 +4276,7 @@ shadows. Enabling shadowing will automatically disable the Z-clipping {}
 Ray-tracing typically takes about several seconds for a moderately sized protein. {}
 It is recommended that shadowing be normally disabled whilst the {}
 molecule is being transformed or manipulated, and only enabled once {}
-an appropiate viewpoint is selected, to provide a greater impression {}
+an appropriate viewpoint is selected, to provide a greater impression {}
 of depth. {}
 \par\page\par
 +{\footnote doc}

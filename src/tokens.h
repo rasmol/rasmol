@@ -249,27 +249,28 @@
 #define SaveTok        317
 #define ScriptTok      318
 #define SelectTok      319
-#define SetTok         320
-#define ShowTok        321
+#define SendTok        320
+#define SetTok         321
+#define ShowTok        322
 
-#define SlabTok        322
-#define SourceTok      323
-#define SpacefillTok   324
-#define StarTok        325
-#define StructureTok   326
-#define SurfaceTok     327
-#define SymmetryTok    328
-#define TimeTok        329
-#define TitleTok       330
-#define TraceTok       331
-#define TranslateTok   332
+#define SlabTok        323
+#define SourceTok      324
+#define SpacefillTok   325
+#define StarTok        326
+#define StructureTok   327
+#define SurfaceTok     328
+#define SymmetryTok    329
+#define TimeTok        330
+#define TitleTok       331
+#define TraceTok       332
+#define TranslateTok   333
 
-#define ViewTok        333
-#define WaitTok        334
-#define WireframeTok   335
-#define WriteTok       336
-#define ZapTok         337
-#define ZoomTok        338
+#define ViewTok        334
+#define WaitTok        335
+#define WireframeTok   336
+#define WriteTok       337
+#define ZapTok         338
+#define ZoomTok        339
 
 /* Predicate Tokens */
 #define IsPredTok(x)   (((x)>=AlphaTok) && ((x)<=SmallTok))
@@ -533,6 +534,7 @@
 #define FSTok          764
 #define ScaleTok       765
 #define IPCDetailTok   766
+#define InterpTok      767
 
 #define PSTok          EPSFTok
 

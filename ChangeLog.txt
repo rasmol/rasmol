@@ -1,72 +1,139 @@
-                                         RasMol 2.7.5
-                             Molecular Graphics Visualisation Tool
-                               13 June 2009 (rev. 17 July 2009)
+                                   ChangeLog
+                                 RasMol 2.7.5.2
 
-                              Based on RasMol 2.6 by Roger Sayle
-Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage, Hertfordshire,
-                                              UK
-                    Version 2.6, August 1995, Version 2.6.4, December 1998
-                              Copyright (c) Roger Sayle 1992-1999
+  * RasMol Latest Windows                            * RasMol 2.7.5.2 Windows    
+    Installer                                          Installer                 
+                                                                                 
+  * RasMol Latest Source                             * RasMol 2.7.5.2 Source     
+    Tarball                          RasMol            Tarball                   
+                                                                                 
+  * RasMol Latest Manual                             * RasMol 2.7.5 Manual       
+                                                                                 
+  * Donate to Support RasMol                         * Donate to Support RasMol  
+  * Register your RasMol                             * Register your RasMol      
 
-                                     and Based on Mods by
+                     Molecular Graphics Visualisation Tool
+                        13 June 2009 (rev. 13 May 2011)
 
-+---------------------------------------------------------------------------------------------+
-| Author               | Version, Date                   | Copyright                          |
-|----------------------+---------------------------------+------------------------------------|
-| Arne Mueller         | RasMol 2.6x1 May 1998           | (c) Arne Mueller 1998              |
-|----------------------+---------------------------------+------------------------------------|
-| Gary Grossman and    | RasMol 2.5-ucb November 1995    | (c) UC Regents/ModularCHEM         |
-| Marco Molinaro       | RasMol 2.6-ucb November 1996    | Consortium 1995, 1996              |
-|----------------------+---------------------------------+------------------------------------|
-| Philippe Valadon     | RasTop 1.3 August 2000          | (c) Philippe Valadon 2000          |
-|----------------------+---------------------------------+------------------------------------|
-| Herbert J. Bernstein | RasMol 2.7.0 March 1999         | (c) Herbert J. Bernstein 1998-2008 |
-|                      | RasMol 2.7.1 June 1999          |                                    |
-|                      | RasMol 2.7.1.1 January 2001     |                                    |
-|                      | RasMol 2.7.2 August 2000        |                                    |
-|                      | RasMol 2.7.2.1 April 2001       |                                    |
-|                      | RasMol 2.7.2.1.1 January 2004   |                                    |
-|                      | RasMol 2.7.3 February 2005      |                                    |
-|                      | RasMol 2.7.3.1 Apr 06           |                                    |
-|                      | RasMol 2.7.4 Nov 07             |                                    |
-|                      | RasMol 2.7.4.1 Jan 08           |                                    |
-|                      | RasMol 2.7.4.2 Mar 08           |                                    |
-|                      | RasMol 2.7.5 Jun 09 RasMol      |                                    |
-|                      | 2.7.5.1 Jul 09                  |                                    |
-+---------------------------------------------------------------------------------------------+
+                       Based on RasMol 2.6 by Roger Sayle
+Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
+                               Hertfordshire, UK
+             Version 2.6, August 1995, Version 2.6.4, December 1998
+                      Copyright (c) Roger Sayle 1992-1999
 
-                                        This Release by
-          Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Lane, Bellport, NY, USA
-                                 yaya@bernstein-plus-sons.com
-                         Copyright (c) Herbert J. Bernstein 1998-2009
+                              and Based on Mods by
 
-   -----------------------------------------------------------------------------------------
++------------------------------------------------------------------------------+
+| Author            | Version, Date        | Copyright                         |
+|-------------------+----------------------+-----------------------------------|
+| Arne Mueller      | RasMol 2.6x1 May     | (c) Arne Mueller 1998             |
+|                   | 1998                 |                                   |
+|-------------------+----------------------+-----------------------------------|
+| Gary Grossman and | RasMol 2.5-ucb       | (c) UC Regents/ModularCHEM        |
+| Marco Molinaro    | November 1995        | Consortium 1995, 1996             |
+|                   | RasMol 2.6-ucb       |                                   |
+|                   | November 1996        |                                   |
+|-------------------+----------------------+-----------------------------------|
+| Philippe Valadon  | RasTop 1.3 August    | (c) Philippe Valadon 2000         |
+|                   | 2000                 |                                   |
+|-------------------+----------------------+-----------------------------------|
+| Herbert J.        | RasMol 2.7.0 March   | (c) Herbert J. Bernstein          |
+| Bernstein         | 1999                 | 1998-2011                         |
+|                   | RasMol 2.7.1 June    |                                   |
+|                   | 1999                 |                                   |
+|                   | RasMol 2.7.1.1       |                                   |
+|                   | January 2001         |                                   |
+|                   | RasMol 2.7.2 August  |                                   |
+|                   | 2000                 |                                   |
+|                   | RasMol 2.7.2.1 April |                                   |
+|                   | 2001                 |                                   |
+|                   | RasMol 2.7.2.1.1     |                                   |
+|                   | January 2004         |                                   |
+|                   | RasMol 2.7.3         |                                   |
+|                   | February 2005        |                                   |
+|                   | RasMol 2.7.3.1 Apr   |                                   |
+|                   | 06                   |                                   |
+|                   | RasMol 2.7.4 Nov 07  |                                   |
+|                   | RasMol 2.7.4.1 Jan   |                                   |
+|                   | 08                   |                                   |
+|                   | RasMol 2.7.4.2 Mar   |                                   |
+|                   | 08                   |                                   |
+|                   | RasMol 2.7.5 Jun 09  |                                   |
+|                   | RasMol 2.7.5.1 Jul   |                                   |
+|                   | 09                   |                                   |
+|                   | RasMol 2.7.5.2 May   |                                   |
+|                   | 11                   |                                   |
++------------------------------------------------------------------------------+
 
-                THIS IS A PRELIMINARY RELEASE INVOLVING EXTENSIVE MODIFICATIONS
-                                 ***** USE WITH CAUTION ******
+                                This Release by
+   Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Lane, Bellport, NY, USA
+                          yaya@bernstein-plus-sons.com
+                  Copyright (c) Herbert J. Bernstein 1998-2009
 
-   -----------------------------------------------------------------------------------------
+     ----------------------------------------------------------------------
 
-                                           IMPORTANT
+                                   IMPORTANT
 
-   This version is based directly on RasMol 2.7.4.2, RasMol 2.7.4.1, RasMol 2.7.4, RasMol
-   2.7.3.1, RasMol 2.7.3, RasMol 2.7.2.1.1 and on RasMol 2.7.2, on RasMol 2.7.1.1, on RasTop
-   1.3, on RasMol version 2.6_CIF.2, on RasMol version 2.6x1, on RasMol version 2.6.4, and
-   RasMol 2.5-ucb and 2.6-ucb. Please read the file NOTICE for important notices which apply
-   to this package and for license terms (GPL or RASLIC).
+   This version is based directly on RasMol 2.7.5.1, RasMol 2.7.4.2, RasMol
+   2.7.4.1, RasMol 2.7.4, RasMol 2.7.3.1, RasMol 2.7.3, RasMol 2.7.2.1.1 and
+   on RasMol 2.7.2, on RasMol 2.7.1.1, on RasTop 1.3, on RasMol version
+   2.6_CIF.2, on RasMol version 2.6x1, on RasMol version 2.6.4, and RasMol
+   2.5-ucb and 2.6-ucb. Please read the file NOTICE for important notices
+   which apply to this package and for license terms (GPL or RASLIC).
 
-   This version of RasMol is not in the public domain, but it is given freely to the
-   community in the hopes of advancing science. If you make changes, please make them in a
-   responsible manner, and please offer us the opportunity to include those changes in
-   future versions of RasMol.
+   This version of RasMol is not in the public domain, but it is given freely
+   to the community in the hopes of advancing science. If you make changes,
+   please make them in a responsible manner, and please offer us the
+   opportunity to include those changes in future versions of RasMol.
 
-   -----------------------------------------------------------------------------------------
+     ----------------------------------------------------------------------
+
+  Changes from RasMol 2.7.5.1 to RasMol 2.7.5.2 include:
+
+     * Faster surface rendering by use of NearTree 3.1
+     * Updates to GTK version from T. Ikonen
+     * Use of CBFlib 0.9.2
+     * Use of CQRlib 1.1.2
+     * Minor bug fixes
+
+  Changes to RasMol 2.7.5.1 to create RasMol 2.7.5.2:
+
+
+ [24/04/2011]    HJB command.c, command.h, molecule.c, molecule.h
+                 Add time command, remove redundant tree builds.
+                 Change flags to NearTree 3.1 interface
+
+ [13/12/2009]    TPI render.c
+                 PickAtoms(): Use WriteMsg() for text output
+                 DescribeAtom(), PickAtoms(): Reindent
+                
+ [13/12/2009]    TPI gtkwin.c
+                 UpdateScrollBars(): Do not set ReDrawFlag.
+                 Fix screen update on picking labels etc.
+                 Remove unused variables, reindent.
+                
+ [02/09/2009]    HJB maps.c
+                 Change maps to 4.5 sigma cutoff.
+
+ [02/09/2009]    HJB cmndline.c, command.c
+                 Correct failure to do world rotation in new mouse mode
+
+
+ [09/08/2009]    HJB cmndline.c, command.c
+                 Restore general mouse control of bond rotation lost in
+                 2.7.4.2 to 2.7.5 transition
+
+ [23/07/2009]    HJB maps.c
+                 As per Marian Szebenyi correct the skip of symmetry
+                 ops in CCP4 maps by missing factor of 80.
+
+
 
   Changes from RasMol 2.7.4.2 to RasMol 2.7.5 include:
 
      * Support for SBEVSL movie commands.
-     * Support for Lee-Richards surface approximation by contouring pseudo-Gaussian electron
-       densities.
+     * Support for Lee-Richards surface approximation by contouring
+       pseudo-Gaussian electron densities.
      * Selection of atoms by proximity to map contours
      * Coloring of maps by the colors of neighboring atoms
      * Signficant improvements to the GTK version by Teemu Ikonen
@@ -78,7 +145,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [17/07/2009]    HJB cif.c command.c raswin_install.nsi
                  Windows port changes:  Update NSIS installer script
-                 Change from mktemp to tmpfile and use rewind not freopen
+                 Change from mktemp to tmpfile and use rewind not freopen               
 
  [17/07/2009]    HJB rasmol.doc rasmol.hlp rasmol.html cif.c command.c
                  rasmol.man rasmol.tex rasmol.vms raswin.rtf
@@ -258,14 +325,16 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
   Changes from RasMol 2.7.4.1 to RasMol 2.7.4.2 include:
 
-     * Alignment of command line sizing and positioning options for Windows and X-Windows
-       version. The command line options -height nnnn, -width nnnn, -xpos nnnn and -ypos
-       nnnn may be used to set the size and position of the initial window.
-     * Change of the encoding for Japanese messages and menus from SJIS to EUC-JP, and
-       corrections to the fontset handling for Chinese and Japanese. Thanks to Mamoru
-       Yamanishi for contributing the improved fontset logic.
-     * Updates to the rasmol_install.sh and rasmol_run.sh scripts to support Chinese and
-       Japanese using cxterm.
+     * Alignment of command line sizing and positioning options for Windows
+       and X-Windows version. The command line options -height nnnn, -width
+       nnnn, -xpos nnnn and -ypos nnnn may be used to set the size and
+       position of the initial window.
+     * Change of the encoding for Japanese messages and menus from SJIS to
+       EUC-JP, and corrections to the fontset handling for Chinese and
+       Japanese. Thanks to Mamoru Yamanishi for contributing the improved
+       fontset logic.
+     * Updates to the rasmol_install.sh and rasmol_run.sh scripts to support
+       Chinese and Japanese using cxterm.
      * Optional use of GTK. Thanks to Teemu Ikonen for the new GTK code.
 
   Changes to RasMol 2.7.4 to create RasMol 2.7.4.1:
@@ -301,9 +370,11 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
   Changes from RasMol 2.7.3 to RasMol 2.7.4.1 include:
 
      * Support for maps.
-     * Message and menu translations for Russian, Bulgarian, Japanese and Chinese. Our
-       thanks to G. Pozhvanov, G. Todorov, Nan Jia, Mamoru Yamanishi and Katajima Hajime.
-     * Fix torsion angle calculation as per bug report and patch by Swati Jain.
+     * Message and menu translations for Russian, Bulgarian, Japanese and
+       Chinese. Our thanks to G. Pozhvanov, G. Todorov, Nan Jia, Mamoru
+       Yamanishi and Katajima Hajime.
+     * Fix torsion angle calculation as per bug report and patch by Swati
+       Jain.
      * Corrections by Ladislav Michnovic to port to more platforms.
      * Code to read remediated PDB entries as suggested by Huanwang Yang
      * Updated icons.
@@ -314,7 +385,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [19/01/2008]    HJB
                  Release 2.7.4.1 created
-
+                
  [18/01/2008]    HJB command.c, maps.c, maps.h, molecule.c
                  mswin31.c outfile.c outfile.h pixutils.c pixutils.h
                  rasmac.c, repres.c
@@ -328,15 +399,15 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  and save maps in CBFlib format.  Fix stereo.
 
  [16/01/2008]    HJB vector.c wbrotate.c
-                 Fix multiple definitions of PI.
-
+                 Fix multiple definitions of PI.                
+                
  [14/01/2008]    LM infile.c
                  Add include of string.h as per Ladislav Michnovic.
-
+                
  [14/12/2008]    HJB graphics.h
                  Add buffers for slab and depth pixel-by-pixel
                  cutoff values.
-
+                
  [10/12/2007]    GM langsel.c langsel.h languages/README.txt
                  languages/genlanselall languages/langsel*.utf.c,
                  tokens.c tokens.c
@@ -355,22 +426,22 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [19/11/2007]    HJB
                  Release 2.7.4 created
-
+                
  [19/11/2007]    HJB abstree.c abstree.h
                  Break out element identification from GetElemNumber
                  into GetElemDescrNumber.  Fix torsion angle calculation
                  as per bug report and patch by Swati Jain.
-
+                
  [19/11/2007]    HJB applemac.c
                  Add code to make languages sticky.  Add register and
                  donate menu items, make languages sticky and launch
                  browsers.
-
+                
  [19/11/2007]    HJB cif_fract.c
                  Correct calculation of matrix transforming orthogonal
                  to fractional coordinates and rewrite matrix
                  transforming fractional to orthogonal.
-
+                
  [19/11/2007]    HJB command.c command.h
                  Add code for map commands. Make CommandError accessible
                  from other routines.  Add Raster3D write/save option.
@@ -378,7 +449,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  Chinese, Japanese and Russian commands.  Allow
                  spacefill up to 12 Angstroms.  Allow mirror and
                  rotate suboptions on write/save.
-
+ 
  [19/11/2007]    HJB font.h, graphics.h
                  Allow access to font parameters and support info
 
@@ -389,11 +460,11 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  Make sensitive to PDB version to allow for handling of
                  remediated files, based on changes suggested by
                  Huanwang Yang of the RCSB PDB in April 2007.
-
+ 
  [19/11/2007]    GT langsel.c languages/
                  langsel.c restructured to be generated from separate
                  language files in the directory languages/
-
+                
 
  [19/11/2007]    HJB molecule.c molecule.h
                   Add atom type processing and DA, DC, DG, DT, DI for
@@ -401,7 +472,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                   Huanwang Yang of the RCSB PDB in April 2007.
 
 
- [19/11/2007]    HJB multiple.c multiple.h
+ [19/11/2007]    HJB multiple.c multiple.h      
                   Manage map data for multiple molecules.  Increase the number
                   of molecules from 5 to 15. Increase the number of characters
                   in the name to 33 characters.
@@ -411,12 +482,12 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [19/11/2007]    HJB outfile.c outfile.h
                  Add Raster3D support based on code by V. Stanev.  Partial
-                 Vector PS map support.
+                 Vector PS map support. 
 
  [19/11/2007]    HJB pixutils.h
                  Fix stereo of ribbons and map surfaces.  Protect against
                  duplicate definition of Knot struct.  Make ClipPolygon
-                 accessible.
+                 accessible. 
 
  [19/11/2007]    HJB rasmac.c rasmac.h
                  Increase terminal window to 132 characters.  Add About dialog.
@@ -424,14 +495,14 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  Chinese and Japonese.  Add register and donate browser calls.
                  Add G4 CPU type.  Extend export file types.
 
-
+                
  [19/11/2007]    HJB RasMac.r
                  Update icons to new style.  Extend Export menu to BMP...,
                  GIF..., IRIS RGB..., PPM..., Sun Raster, PostScript, PICT...,
                  Vector PS ..., Molscript ..., Kinemage ..., POVRay 3 ...,
-                 VRML ..., Ramachandran ..., Raster3D ..., RasMol Script ....
+                 VRML ..., Ramachandran ..., Raster3D ..., RasMol Script .... 
                  Extend Apple menu to About RasMol..., RasMol Help ...,
-                 Register ..., Donate ....
+                 Register ..., Donate .... 
 
  [19/11/2007]    HJB rasmol.c
                  Update to release 2.7.4 with map support.
@@ -453,7 +524,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  = ContourTok), Map (MapTok), Mask (MaskTok), Mesh (WireframeTok),
                  Mirror (MirrorTok), New (NewTok), Next (NextTok), R3D or
                  Raster3D (Raster3DTok), Resolution (ResolutionTok), Spacing
-                 (SpacingTok), Spread (SpreadTok), Width (SpreadTok),
+                 (SpacingTok), Spread (SpreadTok), Width (SpreadTok), 
 
 
  [19/11/2007]    HJB transfor.c transfor.h
@@ -472,10 +543,10 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  Change text metrics to allow for Chineses and Japanese.
                  Try to make lack of access to shared memory non-fatal.
 
- [03/10/2007]    PK molecule.c
+ [03/10/2007]    PK molecule.c       
                   "RasMol - " string added to the title of the window.
 
- [03/10/2007]    PK multiple.c
+ [03/10/2007]    PK multiple.c       
                   Window title is updated when different molecule is selected.
 
  [02/02/2007]    HJB rasmol.c
@@ -490,7 +561,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
  [29/12/2006]    HJB rasmol.c x11win.c
                  Update x11win.c and rasmol.c to add links to list of browsers
                  and to kill About dialog when the menu bar is selected
-
+                
  [29/12/2006]    HJB rasmol_install.sh
                  Update rasmol_install.sh to allow recompilation of fonts
                  on install to handle openwin and other old systems that
@@ -530,32 +601,35 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  Add mirror and rotate options for VRML.
 
 
-  Changes from RasMol 2.7.2.1.1 (the final reference release of RasMol 2.7.2) to RasMol 2.7.3.1
-  include:
+  Changes from RasMol 2.7.2.1.1 (the final reference release of RasMol 2.7.2) to
+  RasMol 2.7.3.1 include:
 
-     * Adjustment to the mouse handling for a better, more natural feel. Our thanks to C.
-       Chigbo for the suggestion.
+     * Adjustment to the mouse handling for a better, more natural feel. Our
+       thanks to C. Chigbo for the suggestion.
      * Correction to cif.c for blanks after an initial quote mark.
      * Correction to mswin31.c to restore lost initializations of ZRange and
        DialValue[8..9].
-     * Modifications by Mamoru Yamanishi to Imakefile and rasmol.c to use xforms for GUI
-       file open. This patch needs the opens source xforms 1.0.90 library by Steve Lamont.
-     * Correction to molecule.c to correct input of xyz files. Thanks to Stuart Prescott.
-     * Revision to CPK colors by C. Chigbo. The new colors are called CPKNEW. The current
-       CPK colors remain available as CPK.
-     * Correction to negative torsion angle monitors and to imprecise distance and angle
-       monitors by C. Chigbo. This patch corrects the display of negative torsion angles
-       caused by use of the unsigned short type, and correctys imprecise distance and angle
-       displays. This extends the original patch which was just for torsion angles
-       (torsion.patch). A side effect of this change is to limit the available range for
-       distance monitors to approximately 327 AAngstroms.
-     * Initial code for display of solid Lee-Richards molecular surfaces. This patch adds
-       the basic code for display of Lee-Richards surfaces with a new Molecular Surface menu
-       item, and surface molecule <probe radius> and surface solvent <probe radius>
-       commands.
-     * Corrections of ribbons 0, etc. commands by R. Chachra. With this patch, the wireframe
-       0, ribbon 0, cartoon 0, backbone 0, strands 0 and trace 0 commands work the same as
-       these command with off instead of 0.
+     * Modifications by Mamoru Yamanishi to Imakefile and rasmol.c to use
+       xforms for GUI file open. This patch needs the opens source xforms
+       1.0.90 library by Steve Lamont.
+     * Correction to molecule.c to correct input of xyz files. Thanks to
+       Stuart Prescott.
+     * Revision to CPK colors by C. Chigbo. The new colors are called CPKNEW.
+       The current CPK colors remain available as CPK.
+     * Correction to negative torsion angle monitors and to imprecise
+       distance and angle monitors by C. Chigbo. This patch corrects the
+       display of negative torsion angles caused by use of the unsigned short
+       type, and correctys imprecise distance and angle displays. This
+       extends the original patch which was just for torsion angles
+       (torsion.patch). A side effect of this change is to limit the
+       available range for distance monitors to approximately 327 AAngstroms.
+     * Initial code for display of solid Lee-Richards molecular surfaces.
+       This patch adds the basic code for display of Lee-Richards surfaces
+       with a new Molecular Surface menu item, and surface molecule <probe
+       radius> and surface solvent <probe radius> commands.
+     * Corrections of ribbons 0, etc. commands by R. Chachra. With this
+       patch, the wireframe 0, ribbon 0, cartoon 0, backbone 0, strands 0 and
+       trace 0 commands work the same as these command with off instead of 0.
 
   Changes to RasMol 2.7.3 to create RasMol 2.7.3.1:
 
@@ -571,10 +645,10 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
  [15/12/2005]    HJB x11win.c
                  Fix mouse runaway by removing conflict of HeldStep
                  and HeldButton variable name use.
-
+                
  [16/07/2005]    HJB abstree.c infile.c render.c
                  Correct sign errors in use of ztrl
-
+                
 
 
 
@@ -600,7 +674,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
  [12/01/2005]    Clarice Chigbo repres.c, render.c, repres.h
                  Correction to negative torsion angle monitors and to imprecise
                  distance and angle monitors; limits the available range for
-                 distance monitors to approximately 327 Angstroms.
+                 distance monitors to approximately 327 Angstroms. 
 
  [17/01/2005]    Clarice Chigbo script.c
                  Output CPKNEW in scripts
@@ -627,32 +701,39 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  correction to SubtractAtoms for bond rotation.
 
 
-  Changes from RasMol 2.7.1 (the final reference release of RasMol 2.7.2) to RasMol 2.7.2.1.1
-  include:
+  Changes from RasMol 2.7.1 (the final reference release of RasMol 2.7.2) to
+  RasMol 2.7.2.1.1 include:
 
-     * Post release patches to command.c were included to fix the handling of load inline in
-       the UCB multiple molecule environment. In addition conditional code controlled by
-       STRICT was disabled to restore operation of load inline under windows. Thanks to Jan
-       Reichert <jr@imb-jena.de> for pointing out these problems. Thanks to E. Martz
-       <emartz@microbio.umass.edu> for pointing out an error in the Spanish translation
-       credits which has been corrected. Thanks to a report by Julien Hering, the omission
-       of a prior fix to the MS Windows version was found and corrected on 7 May 2004.
-     * Adaption of the multilingual mods from RasMol 2.7.1.1 into Rasmol 2.7.2.1.
-     * Rewrite of the mouse handling and rotation logic to correct the problems in 2.7.2 and
-       make the feel of 2.7.2.1 closer to that of RasMol 2.7.1.
+     * Post release patches to command.c were included to fix the handling of
+       load inline in the UCB multiple molecule environment. In addition
+       conditional code controlled by STRICT was disabled to restore
+       operation of load inline under windows. Thanks to Jan Reichert
+       <jr@imb-jena.de> for pointing out these problems. Thanks to E. Martz
+       <emartz@microbio.umass.edu> for pointing out an error in the Spanish
+       translation credits which has been corrected. Thanks to a report by
+       Julien Hering, the omission of a prior fix to the MS Windows version
+       was found and corrected on 7 May 2004.
+     * Adaption of the multilingual mods from RasMol 2.7.1.1 into Rasmol
+       2.7.2.1.
+     * Rewrite of the mouse handling and rotation logic to correct the
+       problems in 2.7.2 and make the feel of 2.7.2.1 closer to that of
+       RasMol 2.7.1.
      * Addition of French menus and messages
      * Addition of Italian menus and messages
-     * Adoption of picking for selection of atoms, groups or chains from RasTop 1.3.
+     * Adoption of picking for selection of atoms, groups or chains from
+       RasTop 1.3.
      * Adoption of backclipping from RasTop 1.3
      * Adoption of shadepower command for glassy surfaces from RasTop 1.3
      * Change of the menu stereo option to rotate cross-wall-none
      * Allow longer atom names (12 characters) in CIFs.
-     * Incorporation of some of the code from the UCB RasMol variants. Out thanks to Eileen
-       Lewis and Marco Molinaro for their cooperation in contributing the UCB Enhanced
-       RasMol code for incorporation into the RasMol 2.7 series.
-     * Code to represent bonds in and to alternate conformers with a narrowed portion in the
-       middle of each bond.
-     * An attempt to fix some of the chirality reversals in some of the output modes.
+     * Incorporation of some of the code from the UCB RasMol variants. Out
+       thanks to Eileen Lewis and Marco Molinaro for their cooperation in
+       contributing the UCB Enhanced RasMol code for incorporation into the
+       RasMol 2.7 series.
+     * Code to represent bonds in and to alternate conformers with a narrowed
+       portion in the middle of each bond.
+     * An attempt to fix some of the chirality reversals in some of the
+       output modes.
      * Fixes for some of the problems reported since the last release.
 
   Post-release changes to RasMol 2.7.2.1.1:
@@ -789,7 +870,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  Add include of cmndline.h.  Remove unused variables.  Initialize
                  variables to avoid compiler warnings.  Use %ld format for longs.
                  Add value for a returns that need them.
-
+ 
  [26/01/04]    HJB x11win.c
                  Initialize variables to avoid compiler warnings.  Add brackets to
                  avoid compiler warnings on dangling elses.
@@ -861,7 +942,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [14/04/01]    HJB rasmol.doc, itasmol2721.hlp, esrasmol.html
                  Updated manuals for 2.7.2.1.
-
+                
  [02/04/01]    HJB       abstree.c, abstree.h
                  Increase space for atom names from 4 to 12 characters.
 
@@ -905,7 +986,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
  [02/04/01]    HJB       tokens.c
                  Added the following tokens relative to 2.7.2, includes tokens
                  added for 2.7.1.1:
-
+                
                  ASSE                 AxesTok
                  ASSI                 AxesTok
                  CADENA               ChainTok
@@ -928,10 +1009,10 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  ETIQUETA             LabelTok
                  ETIQUETAS            LabelTok
                  ETICHETTA            LabelTok
-                 ETICHETTE            LabelTok
+                 ETICHETTE            LabelTok 
                  FILODIFERRO          WireframeTok
                  FILDIFERRO           WireframeTok
-                 FILI                 StrandsTok
+                 FILI                 StrandsTok 
                  FRENCH               FrenchTok
                  GIRO                 TurnTok
                  GIROS                TurnTok
@@ -986,7 +1067,6 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  and DisplayArea(); added code for command "select view"
 
  [30/01/00]    PV command.c
-
                  Added command "select view" and corresponding code,
                  which allows to select a part of a molecule based on screen display.
 
@@ -1038,15 +1118,15 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [21/09/99]    PV        cif.h
                  Fixed missing declaration of cif_parse in cif.h
-
+                
  [21/09/99]    PV        cmndline.c
                  In ProcessCharacter()) added ESC (0x1b) character to interrupt
-                 script pausing.
+                 script pausing.        
 
  [21/09/99]    PV        command.c
                  Changed output for one-letter-code sequence in series of 50
                  characters with a space each subgroup of 10.
-
+    
  [21/09/99]    PV        infile.c
                  Compiling problems with RasMol 2.7.1 files (VisualC++ 5.0)
                  - explicited all conversions long to short in infile.c  /*casting*/
@@ -1061,21 +1141,21 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
  [14/07/99]    PV        abstree.c transfor.c
                  (Adapted from RasTop 1.3) Added shortcuts for direct evaluations
                  of atomsets (BuildAtomSet(), SelectZoneExpr()).
-
+                
  [14/07/99]    PV        abstree.c, transfor.c
                  Added shortcuts for direct evaluations of atomsets (BuildAtomSet(),
                  SelectZoneExpr()); gain up to 15 seconds of computer time on very
                  large molecules.
 
  [10/07/99]    PV        cif.c
-                 Fixed memory allocation bug in cif_make_handle
+                 Fixed memory allocation bug in cif_make_handle         
 
   Changes from RasMol 2.7.1 to create RasMol 2.7.2:
 
  [28/08/00]    HJB       all
                  Updates to comments, resources, etc for preliminary testing
                  release.
-
+                
  [21/08/00]    HJB       abstree.c, abstree.h
                  Change type Atom to RAtom to avoid conflicts with X.
                  Offset all uses of xorg, yorg, zorg databse entried with
@@ -1119,7 +1199,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  Change all Atom types to RAtom.  Add xorg, etc. offsets
                  on all coordinate calauclations.  Move GroupPool definition
                  to header.
-
+                
  [21/08/00]    HJB       molecule.h and all referring files
                  Change type Atom to RAtom to avoid conflicts with X.
                  Add fxorg, fyorg, fzorg database entries for UCB bond
@@ -1179,9 +1259,9 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
   Changes adapted from UCB rasmol in creating RasMol 2.7.2:
 
-   Note: These mods do not reflect the complete source of UCB RasMol. In particular
-   toolbar.h and toolbar.c have not been used in this pass, and the full source of UCB
-   RasMol has not yet been recovered.
+   Note: These mods do not reflect the complete source of UCB RasMol. In
+   particular toolbar.h and toolbar.c have not been used in this pass, and
+   the full source of UCB RasMol has not yet been recovered.
 
  [30/11/95]    GSG rasmac.c
                  Hide command window.  Add help screen menu logic.  Add hooks to
@@ -1189,7 +1269,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  mouse moves control bond rotation, molecule rotation or world
                  rotation depending on tool bar button choices.  Same for scroll
                  bars.
-
+                
  [29/11/95]    GSG       applemac.c
                  Change default background for printing to white.
                  Hook scroll bar H values to bond angle (BRotValue),
@@ -1204,7 +1284,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
  [21/08/00]    GSG       font.h
                  Add characters for Angstrom and degree as replacements
                  for vertical bar and tilde.
-
+                
  [16/11/95]    GSG render.c, render.h
                  Add PickBond.  Add hooks to draw multiple molecules.  Automatically
                  switch to the molecule of any picked atom.  Add monitor for picked
@@ -1212,7 +1292,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [14/11/95]    GSG transfor.c
                  Add hooks for bond rotation and global rotation.
-
+                
  [14/11/95]    GSG vector.c, vector.h, wbrotate.c, wbrotate.h
                  New routines introduced with UCB mods to allow for
                  bond rotations and global rotation.
@@ -1223,14 +1303,14 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
  [14/11/95]    GSG molecule.c, molecule.h
                  Add fxorg, fyorg, fxorg and list of bonds to atom database
                  for world and bond rotation.
-
+                
  [11/11/95]    GSG multiple.c, multiple.h
                  New routine introduced with UCB mods to allow for
                  multiple molecules.
 
  [10/11/95]    GSG tokens.c,tokens.h
                  Add MoleculeTok.
-
+                
  [10/11/95]    GSG repres.h
                  Add flag for units to Monitors.
 
@@ -1322,16 +1402,16 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [12/01/01]    HJB       cmndline.c
                  Added include of langsel.h, changed prompts as follows:
-
+                
                  "PDB file name:"                MsgStrs[StrPrmtPDB]
                  "Image file name:"              MsgStrs[StrPrmtImg]
                  "Molecule file name:"   MsgStrs[StrPrmtMol]
-
-
+                
+                
 
  [12/01/01]    HJB       tokens.c
                  Added the following tokens:
-
+                
                  CADENA               ChainTok
                  CADENAS              ChainTok
                  DIBUJO               CartoonTok
@@ -1368,16 +1448,18 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
      * Upgrade of some of the Windows printer logic
      * Correction of coordinate handling for Mol2 and XYZ coordinates
      * Fix to the parsing of D2O.
-     * The ability to automatically mark non bonded atoms in wireframe and stick displays.
-       Our thanks to R. Curtis Haltiwanger for suggesting this change.
-     * The ability to use a proportionally spaced font and to draw labels with heavier
-       strokes. Our thanks to Eric Martz for suggesting this change.
+     * The ability to automatically mark non bonded atoms in wireframe and
+       stick displays. Our thanks to R. Curtis Haltiwanger for suggesting
+       this change.
+     * The ability to use a proportionally spaced font and to draw labels
+       with heavier strokes. Our thanks to Eric Martz for suggesting this
+       change.
      * The ability to auto-recognize PDB vs. CIF and mmCIF datasets.
-     * Extensive updating to the manual. Our thanks to William McClure, Margaret Wong, Eric
-       Martz and Frances Bernstein.
-     * Updating the canvas title with the PDB ID code and EXPDTA information, so models will
-       be clearly distinguished from experimental data. Our thanks to Helen Berman for
-       suggesting this change.
+     * Extensive updating to the manual. Our thanks to William McClure,
+       Margaret Wong, Eric Martz and Frances Bernstein.
+     * Updating the canvas title with the PDB ID code and EXPDTA information,
+       so models will be clearly distinguished from experimental data. Our
+       thanks to Helen Berman for suggesting this change.
      * The ability to report coordinates.
      * Additions to the list of pre-defined colours.
      * Improved accuracy of coordinates in pseudo-PDB output.
@@ -1458,7 +1540,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  Accept HEADER and DATA_... as commands in a script,
                  processing that line and all subsequent lines as a
                  data file, unless a prior load inline command was already
-                 done
+                 done           
 
  [12/06/99]    HJB       infile.c
                  When processing a PDB file, test for DATA_... until
@@ -1466,7 +1548,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  to CIF processing if DATA_... is found.
 
  [11/06/99]    HJB       infile.c
-                 In PDB format input extract EXPDTA for Info.technique.
+                 In PDB format input extract EXPDTA for Info.technique. 
                  In CIF format input accept _audit_block_code for the
                  entry ID, _exptl.method, _diffrn_radiation.probe or
                  _diffrn_radiation_probe for Info.technique.  Preserve
@@ -1475,7 +1557,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  low-order bits for coordinates.
 
  [10/06/99]    HJB       abstree.c
-                 Add code to report coordinates for show selected cordinates
+                 Add code to report coordinates for show selected cordinates 
 
  [10/06/99]    HJB       command.c
                  Recognize new commands, picking coordinates,
@@ -1510,7 +1592,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
  [06/06/99]    HJB       command.c
                  Add command centre [CenX,CenY,CenZ] to center by offsets
                  from centre of gravity.
-
+                
  [03/06/99]    HJB       render.c
                  Remove call to TranslateToCentre, hold centering
                  in CenX, CenY and CenZ, decoupled from dials,
@@ -1557,7 +1639,8 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
 
 
-  Changes from RasMol_2.6.4, RasMol2.6x1 and RasMol_2.6_CIF.2 to create RasMol_2.7.0:
+  Changes from RasMol_2.6.4, RasMol2.6x1 and RasMol_2.6_CIF.2 to create
+  RasMol_2.7.0:
 
  [30/03/99]    HJB       all
                  Cleanup and release of version 2.7.0
@@ -1614,7 +1697,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [15/2/98]    AM script.h, script.c
                  Add WritePhiPsiAngles, code for POV-Ray version 3
-
+                
 
  [15/2/98]    AM tokens.h
                  Add CisBondedTok, RamachanTok, CisAngleTok, PhiPsiTok,
@@ -1633,7 +1716,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [27/12/98]    RS        abstree.c
                  Redo torsion angel calculation.
-
+                
 
  [27/12/98]    RS        applemac.c
                  Convert to Apple's new routine names
@@ -1651,7 +1734,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  ProcessPDBUnitCell.  Fix recognition of END. Use
                  InvalidateCmndline and UnusedArgument.  Write MODEL and
                  ENDMDL records when appropriate
-
+                
  [27/12/98]    RS        molecule.c
                  Reorganize FindResNo as a character-oriented search tree
                  Add Cache.
@@ -1675,7 +1758,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [27/12/98]    RS        tokens.c
                  New routine for character-oriented search tree for tokens.
-
+                
  [01/08/97]    RS        infile.c
                  Decreased the maximum valid alpha carbon to alpha carbon
                  distance to 4.2 Angstroms from 7.0 Angstroms.  Thanks to
@@ -1740,11 +1823,11 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  and announce to mmCIF mailing list.
 
  [9/1/99]    HJB cif.c
-                 Change toupper calls to ToUpper calls.
+                 Change toupper calls to ToUpper calls. 
 
  [8/1/99]    HJB command.c
                  Add argument to CreateMoleculeBonds to force zapping
-                 on connect.
+                 on connect. 
 
  [8/1/99]    HJB infile.c
                  Log requested bonds which cannot be made in NullBonds
@@ -1755,12 +1838,12 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [8/1/99]    HJB molecule.c
                  Add argument to CreateMoleculeBonds to force zapping
-                 on connect.
+                 on connect. 
 
  [8/1/99]    HJB molecule.h
                  Add argument to CreateMoleculeBonds to force zapping
                  on connect, add NullBonds to log requested bonds which
-                 cannot be made.
+                 cannot be made. 
 
  [8/1/99]    HJB mswin31.c
                  Use VERSION to construct window title.
@@ -1799,19 +1882,19 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [09/12/98]    HJB       infile.c
                  Cummulative changes for fractional coordinates,
-                 CIF.
+                 CIF. 
 
  [09/12/98]    HJB       command.c
                  Changes for alt, model labels, colour schemes,
-                 CIF.
+                 CIF. 
 
  [09/12/98]    HJB       molecule.h
                  Cummulative changes for fractional coordinates,
-                 new colour schemes, CIF.
+                 new colour schemes, CIF. 
 
  [09/12/98]    HJB       molecule.c
                  Cummulative changes for fractional coordinates,
-                 new colour schemes, CIF.
+                 new colour schemes, CIF. 
  [09/12/98]    HJB       x11win.c
                  Update comments, menus and version text.
 
@@ -1829,7 +1912,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [04/12/98]    HJB       pixutils.c
                  Update comments, code to stripe bonds for alternate
-                 conformers.
+                 conformers. 
 
  [04/12/98]    HJB       pixutils.h
                  Update comments, protytpes to stripe bonds for alternate
@@ -1837,18 +1920,18 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [04/12/98]    HJB       rasmac.c
                  Update comments, adjust code for current Metrowerks
-                 compiler.
+                 compiler. 
 
  [04/12/98]    HJB       raswin.c
                  Update comments, adjust code for current Metrowerks
-                 compiler.
+                 compiler. 
 
  [04/12/98]    HJB       tokens.h
                  Update comments, tokens for alt, model colours.
 
  [04/12/98]    HJB       transfor.c
                  Update comments, add code for alt, model colours.
-
+                
  [04/12/98]    HJB       transfor.h
                  Update comments, prototypes for alt, model colours.
 
@@ -1857,7 +1940,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [22/11/98]    HJB       cif_fract.c
                  New routine, derived from cif2pdb by H.J. Bernstein
-                 and F. C. Bernstein.
+                 and F. C. Bernstein. 
 
  [22/11/98]    HJB       cif_fract.h.
                  New header for cif_fact.c.
@@ -1875,7 +1958,7 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
  [09/09/98]    HJB       cif_ctonum.c
                  New routine, derived from ciftbx by S. R. Hall
-                 and H. J. Bernstein.
+                 and H. J. Bernstein. 
 
  [09/09/98]    HJB       cif_ctonum.h
                  New header for cif_ctonum.c.
@@ -1883,11 +1966,11 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
  [18/08/98]    HJB       cif.h
                  New header for cif.c, derived from CBFlib by P. Ellis
                  and H. J. Bernstein.
-
+                         
  [18/08/98]    HJB       cif.c
                  New routine derived from CBFlib by P. Ellis and
                  H. J. Bernstein.
-
+                         
  [14/08/98]    HJB       rasmol.c
                  Added hooks for termio for Linux.  These changes
                  are similar to, but not identical to the FreeBSD hooks.
@@ -1897,64 +1980,17 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
    The complete version 2 change history is in the directory ChangeLog
 
-   -----------------------------------------------------------------------------------------
+     ----------------------------------------------------------------------
 
-       | OpenRasMol | Copying and Distribution | Contents | Installation Instructions |
-             | Changes | Things To Do | Introduction | Source Code and Binaries |
-  | RasMol Manual | Spanish Translation of RasMol Manual | Italian Translation of RasMol Help
-                                            File |
-             | Donate to Support RasMol | Release README | Register your RasMol |
+| OpenRasMol | Copying and Distribution | Contents | Installation Instructions |
+      | Changes | Things To Do | Introduction | Source Code and Binaries |
+| RasMol Manual | Spanish Translation of RasMol Manual | Italian Translation of
+                               RasMol Help File |
+      | Donate to Support RasMol | Release README | Register your RasMol |
 
-   -----------------------------------------------------------------------------------------
+     ----------------------------------------------------------------------
 
-   Updated 19 July 2009.
+   Updated 14 May 2011.
    Herbert J. Bernstein
    Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA
    yaya@bernstein-plus-sons.com
-
-References
-
-   Visible links
-   . http://www.iucr.org/iucr-top/welcome.html
-   . http://www.iucr.org/iucr-top/cif/home.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html
-   . http://www.openrasmol.org/
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#Copying
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#Contents
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/INSTALL.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/ChangeLog.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/TODO.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#Introduction
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#CodeAndBinaries
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/doc/rasmol.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/doc/esrasmol27.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/doc/itrasmol.hlp
-   . http://www.rasmol.org/donate.shtml
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html
-   . http://www.rasmol.org/register.shtml
-   . http://www.rasmol.org/software/RasMol_Latest_Windows_Installer.exe
-   . http://www.rasmol.org/software/RasMol_Latest.tar.gz
-   . http://www.rasmol.org/software/RasMol_Latest_Manual.html
-   . http://www.rasmol.org/donate.shtml
-   . http://www.rasmol.org/register.shtml
-   . http://www.rasmol.org/software/RasMol_2.7.5_Windows_Installer.exe
-   . http://www.rasmol.org/software/RasMol_2.7.5.tar.gz
-   . http://www.rasmol.org/software/RasMol_2.7.5_Manual.html
-   . http://www.rasmol.org/donate.shtml
-   . http://www.rasmol.org/register.shtml
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/doc/NOTICE.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/ChangeLog/
-   . http://www.openrasmol.org/
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#Copying
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#Contents
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/INSTALL.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/ChangeLog.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/TODO.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#Introduction
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#CodeAndBinaries
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/doc/rasmol.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/doc/esrasmol27.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/doc/itrasmol.hlp
-   . http://www.rasmol.org/donate.shtml
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html
-   . http://www.rasmol.org/register.shtml

@@ -2895,6 +2895,30 @@ static void InitDefaultValues( void )
 }
 
 
+     
+    
+    /* dummy ShowInterpNames */
+    
+int ShowInterpNames ( void )
+{
+        return False;
+}
+    
+    /* dummy CheckInterpName */
+    
+    
+int CheckInterpName( char __huge *name, unsigned long __huge *interpid) {
+        return False;
+}
+    
+    /* dummy SendInterpCommand */
+    
+int SendInterpCommand( char __huge *name, unsigned long interpid,
+                       char __huge *command){
+        return False;
+}
+
+
 int main( void )
 {
     static char VersionStr[255];

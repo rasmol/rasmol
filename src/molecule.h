@@ -270,6 +270,7 @@ typedef struct _Atom {
         struct _Atom __far *anext;        /* Linked list of atoms  */
         struct _Atom __far *bucket;       /* Sphere Y-Bucket       */
         struct _Atom __far *next;         /* Active Object List    */
+        void __far * pargroup;            /* Parent Group          */ 
         Long   xorg, yorg, zorg;          /* World Co-ordinates    */
         Long   fxorg, fyorg, fzorg;       /* Offsets for rotations */
         Long   x, y, z;                   /* Image Co-ordinates    */
@@ -325,6 +326,7 @@ typedef struct _SurfBond {
 typedef struct _Group {
         struct _Group __far *gnext;       /* Linked list of groups */
         RAtom __far *alist;               /* Linked list of atoms  */
+        void __far *parchain;             /* Parent Chain          */
         short serno;                      /* Group serial number   */
         short sserno;                     /* Secondary serial no.  */ 
         short width;                      /* Ribbon Width          */
@@ -345,6 +347,7 @@ typedef struct _Group {
 
 typedef struct _ChainSeg {
         struct _ChainSeg __far *cnext;    /* Linked list of chains     */
+        void __far * parmolecule;         /* Parent Molecule           */
         Group __far *glist;               /* Linked list of groups     */
         Bond __far *blist;                /* Linked list of back bonds */
         char ident;                       /* Chain identifier          */

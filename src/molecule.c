@@ -507,6 +507,41 @@ void RegisterAlloc( void *data )
 /* Group & Chain Handling Functions */
 /*==================================*/
 
+/* Dummy Delete Group to be added later */
+
+int DeleteGroup(Group __far *group) {
+    return -1;
+}
+
+int DeleteChain(Chain __far * chain) {
+    register Chain __far *cprev;
+    register Chain __far *cnext;
+    register Group __far *group;
+    int found;
+    if (!chain || !Database ||
+        (Molecule __far *)chain->parmolecule != Database ) 
+        return -1;
+    found = False;
+    cprev=(Chain __far *)NULL;
+    for (cnext=Database->clist;cnext;cnext=(cprev=cnext)->cnext) {
+        if (cnext==chain) {
+            if (!cprev) {
+                Database->clist = cnext->cnext;
+            } else {
+                cprev->cnext = cnext->cnext;
+            }
+            found = True;
+            break;
+        }
+    }
+    if (!found) return -1;
+    for (group=cnext->glist;group;group=group->gnext) {
+        if (!DeleteGroup(group)) return -1;
+    }
+    return 0;
+    
+}
+
 void CreateChain( int ident )
 {
     register Chain __far *prev;
@@ -554,6 +589,7 @@ void CreateChain( int ident )
     CurChain->glist = (void __far*)0;
     CurChain->blist = (void __far*)0;
     CurGroup = (void __far*)0;
+    CurChain->parmolecule = (void __far *)CurMolecule;
     Info.chaincount++;
 
     Cache = (Group __far*)0;
@@ -586,6 +622,7 @@ void CreateGroup( int pool )
     CurGroup = ptr;
 
     CurAtom = (void __far*)0;
+    ptr->parchain = (void __far *)CurChain;
     ptr->alist = (void __far*)0;
     ptr->serno = -9999;
     ptr->sserno = -9999;
@@ -977,6 +1014,7 @@ RAtom __far *CreateAtom( void )
     CurAtom = ptr;
 
     SelectCount++;
+    ptr->pargroup = (void __far *) CurGroup;
     ptr->flag = SelectFlag | NonBondFlag;
     ptr->label = (void*)0;
     ptr->radius = 375;
@@ -2102,7 +2140,7 @@ int CreateAtomTree( void ) {
     register Group __far *group;
 
     double coord[3];
-
+    
     clock_t tc1,tc2;
 
     int err;
