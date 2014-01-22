@@ -479,7 +479,7 @@ void DefaultLabels( int enable )
 
                     if( enable )
                     {   if( Info.chaincount > 1 )
-                        {   if( isdigit(chain->ident) )
+                        {   if( chain->chrefno != 52 )
                             {   if( !label1 )
                                     label1 = CreateLabel("%n%r:%c",7);
                                 aptr->label = label1;

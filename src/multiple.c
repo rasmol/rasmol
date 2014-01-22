@@ -366,6 +366,7 @@ struct {
     { &MaxBondDist,       sizeof (MaxBondDist),    0 },
     { &ElemNo,            sizeof (ElemNo),         0 },
     { &ResNo,             sizeof (ResNo),          0 },
+    { &ChNo,              sizeof (ChNo),           0 },
     { &HasHydrogen,       sizeof (HasHydrogen),    0 },
     { &MaskCount,         sizeof (MaskCount),      0 },
     { &NMRModel,          sizeof (NMRModel),       0 },

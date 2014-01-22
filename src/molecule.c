@@ -542,7 +542,7 @@ int DeleteChain(Chain __far * chain) {
     
 }
 
-void CreateChain( int ident )
+void CreateChain( int chrefno )
 {
     register Chain __far *prev;
 
@@ -584,7 +584,7 @@ void CreateChain( int ident )
     } else CurMolecule->clist = CurChain;
     CurChain->cnext = (void __far*)0;
      
-    CurChain->ident = ident;
+    CurChain->chrefno = chrefno;
     CurChain->model = NMRModel;
     CurChain->glist = (void __far*)0;
     CurChain->blist = (void __far*)0;
@@ -635,6 +635,32 @@ void CreateGroup( int pool )
     ptr->model = NMRModel;
 }
 
+
+int FindChNo( char *ptr )
+{
+    int chlen, refno;
+    
+    chlen = strlen(ptr);
+    if (chlen > 4) {
+        FatalDataError(MsgStrs[StrILong]);
+    }
+    if (chlen == 0) return 52;
+    if (chlen == 1 && ptr[0] >= 'A' && ptr[0] <= 'Z' ) return (int)(ptr[0]-'A');
+    if (chlen == 1 && ptr[0] >= 'a' && ptr[0] <= 'z' ) return 26+(int)(ptr[0]-'a');
+    if (chlen == 1 && ptr[0] == ' ') return 52;
+    if (chlen == 1 && ptr[0] == '*') return 53;
+
+    for( refno=MINCHIDENT; refno<ChNo; refno++ )
+        if( !strncmp(ChIdents[refno],ptr,4) )
+            return refno;
+    
+    if( ChNo++ == MAXCHIDENT )
+        FatalDataError("Too many new chains"); /* "Too many new chains" */
+
+    strcpy(ChIdents[refno],ptr);
+
+    return refno;
+}
 
 int FindResNo( char *ptr )
 {
@@ -958,7 +984,7 @@ void CreateMolGroup( void )
 {
     strcpy(Info.filename,DataFileName);
 
-    CreateChain( ' ' );
+    CreateChain( 52 );
     CreateGroup( 1 );
 
     CurGroup->refno = FindResNo( "MOL" );
@@ -973,7 +999,7 @@ void CreateMolGroup( void )
 void CreateNextMolGroup( void )
 {
     if( CurGroup->alist )
-    {   CreateChain(' ');
+    {   CreateChain(52);
         CreateGroup(1);
         MainGroupCount++;
         CurGroup->refno = FindResNo( "MOL" );
@@ -1028,6 +1054,11 @@ RAtom __far *CreateAtom( void )
     ptr->fxorg = 0;
     ptr->fyorg = 0;
     ptr->fzorg = 0;
+    ptr->fieldxorg = 0; ptr->fieldyorg = 0; ptr->fieldzorg = 0; ptr->fieldworg = 0;
+    ptr->basexorg = 0; ptr->baseyorg = 0; ptr->basezorg = 0;
+    ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+    ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
+    ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
     NeedAtomTree = 1;
     return ptr;
 }
@@ -3224,7 +3255,6 @@ static void ResetDatabase( void )
 
     MinX = MinY = MinZ = 0;
     MaxX = MaxY = MaxZ = 0;
-
     MinMainTemp = MaxMainTemp = 0;
     MinHetaTemp = MaxHetaTemp = 0;
     MinMainRes = MaxMainRes = 0;
@@ -3247,6 +3277,7 @@ static void ResetDatabase( void )
     HasHydrogen = False;
     ElemNo = MINELEM;
     ResNo = MINRES;
+    ChNo = MINCHIDENT;
     MaskCount = 0;
     NMRModel = 0;
     NullBonds = 0;

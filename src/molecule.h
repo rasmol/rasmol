@@ -169,6 +169,8 @@
 #define MINELEM 29
 #define MAXRES  104
 #define MINRES  59
+#define MAXCHIDENT 512
+#define MINCHIDENT 54
 #define CIS     90  /* max. omega-angle to form a cis-peptide bond */
 
 
@@ -228,6 +230,7 @@
 #define TouchFlag       0x100    /* Touch by probe                 */
 #define ExpandFlag      0x200    /* Expand by probe radius         */
 #define SurfBondFlag    0x400    /* Atom is part of a surface bond */
+#define FieldFlag       0x800    /* Atom has an auxilliary field   */
 
 
 /* Bond Flags */
@@ -275,6 +278,22 @@ typedef struct _Atom {
         Long   fxorg, fyorg, fzorg;       /* Offsets for rotations */
         Long   x, y, z;                   /* Image Co-ordinates    */
                                           /* also used as scratch  */
+        /* auxillary coordinates are field vectors based on
+           the current atom.  The world coordinates are relative
+           to the atom.  The Image coordinates are absolute */ 
+                    
+        Long   fieldworg, fieldxorg, fieldyorg, fieldzorg;
+                                          /* World aux coords      */
+        Long   basexorg, baseyorg, basezorg;
+                                          /* base perp to field    */
+        Long   fieldw, fieldx, fieldy, fieldz;
+                                          /* Image aux coords      */
+        Long   basex, basey, basez;
+                                          /* image base per coords */
+        short  fieldcol;                  /* Field Colour          */
+        short  fieldradius;               /* Field vector radius   */
+        short  fieldirad;                 /* Field image radius    */
+        
         short  xtrl, ytrl, ztrl;          /* Trailing Bits         */
         short  radius;                    /* World Radius          */
         short  temp;                      /* Temperature Factor    */
@@ -350,7 +369,7 @@ typedef struct _ChainSeg {
         void __far * parmolecule;         /* Parent Molecule           */
         Group __far *glist;               /* Linked list of groups     */
         Bond __far *blist;                /* Linked list of back bonds */
-        char ident;                       /* Chain identifier          */
+        int  chrefno;                     /* Chain identifier refno    */
         Byte model;                       /* NMR Model / Symmetry      */
     } Chain;
 
@@ -456,6 +475,14 @@ typedef enum{NO, ATM, CRD, GRP, CHN, MDL} Selection;
 
 #include <CNearTree.h>
 #ifdef MOLECULE
+char ChIdents[MAXCHIDENT][5] = {
+    "A","B","C","D","E","F","G","H","I","J",
+    "K","L","M","N","O","P","Q","R","S","T",
+    "U","V","W","X","Y","Z",
+    "a","b","c","d","e","f","g","h","i","j",
+    "k","l","m","n","o","p","q","r","s","t",
+    "u","v","w","x","y","z"," ","*"};
+    
 /* Avoid SGI Compiler Warnings! */
 char Residue[MAXRES][4] = {
     /*===============*/
@@ -569,7 +596,7 @@ Molecule __far *Database;
 MaskDesc UserMask[MAXMASK];
 Long MinHBondDist, MaxHBondDist;
 Long MinBondDist,  MaxBondDist;
-int ElemNo,ResNo;
+int ElemNo,ResNo,ChNo;
 int HasHydrogen;
 int MaskCount;
 int NMRModel;
@@ -588,6 +615,7 @@ int NeedAtomTree;
 
 
 #else
+extern char ChIdents[MAXCHIDENT][5];
 extern char Residue[MAXRES][4];
 extern char ElemDesc[MAXELEM][12];
 extern InfoStruct Info;
@@ -620,7 +648,7 @@ extern Molecule __far *Database;
 extern MaskDesc UserMask[MAXMASK];
 extern Long MinHBondDist, MaxHBondDist;
 extern Long MinBondDist,  MaxBondDist;
-extern int ElemNo,ResNo;
+extern int ElemNo,ResNo,ChNo;
 extern int HasHydrogen;
 extern int MaskCount;
 extern int NMRModel;
@@ -648,6 +676,8 @@ void ProcessGroup( int );
 void CreateMolGroup( void );
 void CreateNextMolGroup( void );
 int FindResNo( char* );
+int FindResNo( char __far * );
+int FindChNo( char __far *);
 
 RAtom __far *CreateAtom( void );
 RAtom __far *FindGroupAtom( Group __far*, int );

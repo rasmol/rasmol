@@ -630,7 +630,7 @@ static int EvaluateProperty( int prop )
         case( PropName ):     return( QAtom->refno );
         case( PropResId ):    return( QGroup->serno );
         case( PropResName ):  return( QGroup->refno );
-        case( PropChain ):    return( QChain->ident );
+        case( PropChain ):    return( QChain->chrefno );
         case( PropSelect ):   return( QAtom->flag&SelectFlag );
         case( PropElemNo ):   return( QAtom->elemno );
         case( PropModel ):    return( (int)QChain->model );
@@ -1233,7 +1233,8 @@ void FormatLabel( Chain __far *chain, Group __far *group, RAtom __far *aptr,
                case('c'):  /* Chain Identifier */
                case('C'):
                case('s'):
-               case('S'):  *ptr++ = chain->ident;
+               case('S'):  for( j=0; j<4 && ChIdents[chain->chrefno][j]; j++)
+                               *ptr++=ChIdents[chain->chrefno][j];
                            break;
 
                case('e'):
@@ -1540,7 +1541,7 @@ char *DescribeObj( AtomRef *ptr, Selection select )
   eptr = buffer;
     
  /* identification of 'model' */
-  if( select == CHN || select == GRP || select == ATM || select == CRD){
+    if( select == CHN || select == GRP || select == ATM || select == CRD){
         if( ptr->chn->model!= 0 ){
             sprintf(eptr, "Model: %d", (int) ptr->chn->model);
             eptr = buffer+strlen(buffer);
@@ -1549,11 +1550,11 @@ char *DescribeObj( AtomRef *ptr, Selection select )
     
   /* identification of 'chain' */
   if( select == CHN || select == GRP || select == ATM || select == CRD ){
-    if( ptr->chn->ident!=' ' ){
-      if (eptr != buffer) *(eptr++) = ' ';
-      sprintf(eptr, "Chain: %c", ptr->chn->ident);
-      eptr = eptr+strlen(eptr);
-    }
+      if( ptr->chn->chrefno != 52) {
+          if (eptr != buffer) *(eptr++) = ' ';
+          sprintf(eptr, "Chain: %s", ChIdents[ptr->chn->chrefno]);
+          eptr = eptr+strlen(eptr);
+      }
   }
 
   /* identification of 'group' */
@@ -1563,7 +1564,7 @@ char *DescribeObj( AtomRef *ptr, Selection select )
     if( ptr->atm->flag&HeteroFlag ){
       strcpy(eptr, "Hetero: ");
     }
-    else{ 
+    else{  
       strcpy(eptr, "Group: ");
     }
     eptr = eptr+strlen(eptr);
@@ -1604,7 +1605,7 @@ char *DescribeObj( AtomRef *ptr, Selection select )
     if ( ptr->atm->model ) {
       *(eptr++) = '/';
       sprintf(eptr,"%d",(int)ptr->atm->model);
-    }
+    } 
     eptr = eptr+strlen(eptr);
     if( select == CRD ){
       register double x, y, z;

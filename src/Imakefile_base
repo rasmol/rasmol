@@ -245,7 +245,7 @@ LIBXEXT_LDLIB = -L$(LIBXEXT_DIR) -lXi
 # Definitions for CBFLIB
 #
 #ifdef CBFLIB_LOCAL
-CBFLIB_VERSION = 0.9.2.4
+CBFLIB_VERSION = 0.9.2.12
 CBFLIB_TARBALL = CBFlib-$(CBFLIB_VERSION).tar.gz
 CBFLIB_TARBALLDIR = $(EXTPKGDIR)
 CBFLIB_TARBALL_URL = http://downloads.sf.net/cbflib/$(CBFLIB_TARBALL)
@@ -363,13 +363,16 @@ SRCS = rasmol.c rasmol.h molecule.c molecule.h abstree.c abstree.h \
        cif.h cif_ctonum.c cif_ctonum.h cif_stx.c \
        multiple.h multiple.c vector.h vector.c \
        wbrotate.c wbrotate.c langsel.h langsel_unix.c maps.h maps.c $(GUISRC) \
+       CVector_3D.h CVector_3D.c rmsd.h rmsd.c\
        $(CQRLIB_SRC) $(CVECTOR_SRC) $(NEARTREE_SRC)
 
 
 OBJS = rasmol.o molecule.o abstree.o cmndline.o command.o transfor.o \
        render.o repres.o  pixutils.o outfile.o script.o \
        infile.o tokens.o  cif_fract.o cif.o cif_ctonum.o cif_stx.o \
-       multiple.o vector.o wbrotate.o langsel_unix.o maps.o $(GUIOBJ)
+       multiple.o vector.o wbrotate.o langsel_unix.o maps.o \
+       CVector_3D.o rmsd.o \
+       $(GUIOBJ)
 
 # Previous Risc/Os definition
 # LDLIBS = -lm -lXinput $(XLIB)

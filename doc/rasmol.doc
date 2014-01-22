@@ -2243,6 +2243,64 @@ HRexample, 'spacefill 1.2' specifies a sphere radius of 1.2 &Aring;.
 HRThis is particularly useful for the cut-off distance parameter in 
 HR<B><TT>within</B></TT> expressions.
 
+HRThe coordinate frame most commonly used if structural biology
+HRis a right-handed coordinate system (X, Y, Z)  in &Aring;ngstroms (&Aring;)
+HR(10<sup>(-10)</sup> metres) with an arbitrary origin.  
+HRComputer screens are organized in terms of &quot;pixels&quot; 
+HR(picture elements), typically 1/72<sup>nd</sup> of inch with 
+HRan origin at the top left, with the screen Y-axis running down,
+HRor, on some systems, with the origin at the bottom left, with the screen Y-axis running up.  
+HRRasmol converts from the original coordinate in several steps. <br />
+
+HR<br />
+
+HRThe first coordinate transformation is from (X,Y,Z) in 
+HR&Aring;ngstroms (&Aring;) to (xorg,yorg,zorg) in RasMol
+HRunits with both the Y-axis and the Z-axis inverted
+HRif the C-preprocessor symbol INVERT is defined in
+HRrasmol.h (the most common case):  <br />
+
+HR<br />
+HRxorg = X*250; yorg = -Y*250; zorg = -Z*250;<br />
+HR<br />
+
+HRIf the C-preprocessor symbol INVERT is <b>not</b> defined,
+HRthen the Y-axis is not inverted, but the Z-axis is: <br />
+
+HR<br />
+HRxorg = X*250; yorg = Y*250; zorg = -Z*250;<br />
+HR<br />
+
+HRThe origin is then shifted to the center of mass, by
+HRcomputing (OrigCX, OrigCY, OrigCZ) as the average of
+HRthe atom coordinates in rasmol units (after the axis
+HRinversions), and subtracting that origin vector
+HRfrom all coordinates.  Note that each loaded molecule
+HRis assigned its own center-of-mass origin. <br />
+
+HR<br />
+
+HRIn order to actually display the molecule on the screen
+HRthe recentered rasmol unit coordinates need to be
+HRconverted to pixels coordinates.<br />
+
+HR<br />
+HRRasMol uses a second centering vector (CenX,CenY,CenZ)
+HRin rasmol units (initially set to zero) which it
+HRsubtracts from the recentered rasmol unit coordinates
+HRbefore the display transform, effectively translating
+HRthe origin from the center of mass by that amount  
+HRbefore any rotations and scaling.  Rotations and scaling
+HRto pixels are held in three vectors, MatX, MatY and MatZ
+HRwhich act as the rows of the final rotation matix.  Finally
+HRa vector in pixels (XOffset,YOffset,ZOffset) is added to
+HRconform to the requirements of the indexing of the pixel
+HRbuffer.  Each molecule has its own centering vector a
+HRand display transform.
+
+
+
+
 HR<P>
 HR<A NAME="go_ini"></A>
 

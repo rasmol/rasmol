@@ -76,7 +76,10 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* applemac.c
- $Log$
+ $Log: applemac.c,v $
+ Revision 1.1  2012/04/28 02:08:54  yaya
+ Initial revision
+
  Revision 1.5  2008/03/22 18:42:51  yaya
  Post release cleanup and credit to Ikonen in file headers. -- HJB
 
@@ -163,26 +166,31 @@
 
  */
 
-#include <QuickDraw.h>
-#include <Controls.h>
-#include <Palettes.h>
-#include <Windows.h>
-#include <Errors.h>
-#include <Menus.h>
-#include <Fonts.h>
+#include <Carbon/Carbon.h>
+#include <CarbonCore/MacTypes.h>
+#include <CarbonCore/MacErrors.h>
+#include <QD/QuickDraw.h> 
+#include <QD/Palettes.h>
+#include <HIToolbox/MacWindows.h>
+/* #include <Controls.h> */
+/* #include <Palettes.h> */
+/* #include <Windows.h> */
+/* #include <Errors.h> */
+/* #include <Menus.h> */
+/* #include <Fonts.h> */
 #ifndef __MC68K__
-  #include <InternetConfig.h>
+ /* #include <InternetConfig.h> */
 #endif
 
 #ifdef __CONDITIONALMACROS__
-#include <Printing.h>
+/* #include <Printing.h> */
 #else
-#include <PrintTraps.h>
+/* #include <PrintTraps.h> */
 #endif
-#include <ToolUtils.h>
+/* #include <ToolUtils.h> */
 #include <Memory.h>
-#include <Types.h>
-#include <Scrap.h>
+/* #include <Types.h> */
+/* #include <Scrap.h> */
 
 #include <stdlib.h>
 #include <stdio.h>

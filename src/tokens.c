@@ -204,6 +204,7 @@ int LookUpKeyword( char *ptr )
              ACYCLIC              AcyclicTok 
              ADD                  AddTok
              ALCHEMY              AlchemyTok
+             ALIGN                AlignTok             
              ALIPHATIC            AliphaticTok
              ALL                  AllTok 
              ALPHA                AlphaTok
@@ -248,6 +249,8 @@ int LookUpKeyword( char *ptr )
                 case('L'):
                     if( !strcmp(ptr,"CHEMY") ) {
                         return( AlchemyTok );
+                    } else if( !strcmp(ptr,"IGN") ) {
+                        return( AlignTok );
                     } else if( !strcmp(ptr,"IPHATIC") ) {
                         return( AliphaticTok );
                     } else if( (*ptr=='L') && !ptr[1] ) {
@@ -754,6 +757,7 @@ int LookUpKeyword( char *ptr )
             /*
              FALSE                FalseTok
              FDAT                 FDATTok
+             FIELD                FieldTok
              FILODIFERRO          WireframeTok
              FILDIFERRO           WireframeTok
              FILI                 StrandsTok  
@@ -781,7 +785,9 @@ int LookUpKeyword( char *ptr )
                     break;
                     
                 case('I'):
-                    if( !strcmp(ptr,"LODIFERRO") || !strcmp(ptr,"LDIFERRO")) {
+                    if( !strcmp(ptr,"ELD") ) {
+                        return( FieldTok );
+                    } else if( !strcmp(ptr,"LODIFERRO") || !strcmp(ptr,"LDIFERRO")) {
                         return( WireframeTok );
                     } else if( !strcmp(ptr,"LI") ) {
                         return( StrandsTok );
@@ -1058,11 +1064,14 @@ int LookUpKeyword( char *ptr )
             break;
             
             /*
+             KABSCH               KabschTok
              KINEMAGE             KinemageTok
              */
             
         case('K'):
-            if( !strcmp(ptr,"INEMAGE") ) {
+            if( !strcmp(ptr,"ABSCH") ) {
+                return( KabschTok );
+            } else if( !strcmp(ptr,"INEMAGE") ) {
                 return( KinemageTok );
             }
             break;
@@ -1078,7 +1087,7 @@ int LookUpKeyword( char *ptr )
              LIGAND               LigandTok
              LIGANDS              LigandTok
              LOAD                 LoadTok
-             LRS                  MolSurfTok
+             LOCAL                LocalTok
              LRSURF               MolSurfTok
              */
             
@@ -1122,6 +1131,8 @@ int LookUpKeyword( char *ptr )
                 case('O'):
                     if( !strcmp(ptr,"AD") ) {
                         return( LoadTok );
+                    } else if( !strcmp(ptr,"CAL") ) {
+                        return( LocalTok );
                     }
                     break;
                     

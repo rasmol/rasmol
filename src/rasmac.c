@@ -76,7 +76,10 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* rasmac.c
- $Log$
+ $Log: rasmac.c,v $
+ Revision 1.1  2012/04/28 02:08:54  yaya
+ Initial revision
+
  Revision 1.9  2008/03/22 18:42:54  yaya
  Post release cleanup and credit to Ikonen in file headers. -- HJB
 
@@ -186,11 +189,13 @@
 #include <string.h>
 #include <stdio.h>
 
-#include <Errors.h>
+#include <Carbon/Carbon.h>
+#include <CarbonCore/MacTypes.h>
+/*#include <Errors.h>*/
 #ifdef __CONDITIONALMACROS__
-#include <Printing.h>
+/* #include <Printing.h> */
 #else
-#include <PrintTraps.h>
+/* #include <PrintTraps.h> */
 #endif
 
 #ifdef USEOLDROUTINENAMES
@@ -198,34 +203,34 @@
 #include <OSEvents.h>
 #include <Desk.h>
 #else
-#include <Devices.h>
-#include <Gestalt.h>
+/* #include <Devices.h> */
+/* #include <Gestalt.h> */
 #endif
 
-#include <StandardFile.h>
-#include <AppleEvents.h>
-#include <ToolUtils.h>
-#include <Resources.h>
-#include <DiskInit.h>
-#include <Printing.h>
-#include <OSUtils.h>
-#include <SegLoad.h>
-#include <Events.h>
+/* #include <StandardFile.h> */
+/* #include <AppleEvents.h> */
+/* #include <ToolUtils.h> */
+/* #include <Resources.h> */
+/* #include <DiskInit.h> */
+/* #include <Printing.h> */
+/* #include <OSUtils.h> */
+/* #include <SegLoad.h> */
+/* #include <Events.h> */
 #include <Memory.h>
-#include <Finder.h>
-#include <Files.h>
-#include <Types.h>
-#include <Scrap.h>
-#include <EPPC.h>
+/* #include <Finder.h> */
+/* #include <Files.h> */
+/* #include <Types.h> */
+/* #include <Scrap.h> */
+/* #include <EPPC.h> */
 
-#include <Quickdraw.h>
-#include <Controls.h>
-#include <Palettes.h>
-#include <TextEdit.h>
-#include <Windows.h>
-#include <Dialogs.h>
-#include <Menus.h>
-#include <Fonts.h>
+/* #include <Quickdraw.h> */
+/* #include <Controls.h> */
+/* #include <Palettes.h> */
+/* #include <TextEdit.h> */
+/* #include <Windows.h> */
+/* #include <Dialogs.h> */
+/* #include <Menus.h> */
+/* #include <Fonts.h> */
 
 #include "molecule.h"
 #include "abstree.h"
@@ -237,9 +242,12 @@
 #include "render.h"
 #include "repres.h"
 #include "outfile.h"
-#include "multiple.h" /* [GSG 11/9/95] */
-#include "vector.h"   /* [GSG 11/13/95] */
-#include "wbrotate.h" /* [GSG 11/14/95] */
+#include "multiple.h" 
+  /* [GSG 11/9/95] */
+#include "vector.h"   
+  /* [GSG 11/13/95] */
+#include "wbrotate.h" 
+  /* [GSG 11/14/95] */
 #include "langsel.h"
 #include "maps.h"
 
@@ -247,7 +255,7 @@
 
 #ifndef __CONDITIONALMACROS__
 /* Undocumented System Functions */
-pascal OSErr SetDialogDefaultItem( DialogPtr theDialog,
+pascal OSErr; SetDialogDefaultItem( DialogPtr theDialog,
         short newItem ) = {0x303C,0x0304,0xAA68};
 #endif
 
@@ -2894,8 +2902,7 @@ static void InitDefaultValues( void )
     AllowWrite = False;
 }
 
-
-     
+    
     
     /* dummy ShowInterpNames */
     

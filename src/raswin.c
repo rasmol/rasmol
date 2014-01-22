@@ -1552,9 +1552,11 @@ static void SendItemData( HWND hSrc, HWND hDst,
 
 		      sprintf(dst,"%d",QGroup->serno);
 		      for( dst=Text; *dst; dst++ );
-		      if( QChain->ident!=' ' )
+		      if( QChain->chrefno!=52 )
 		      {   *dst++ = ':';
-			  *dst++ = QChain->ident;
+                  for (i=0;ChIdents[QChain->chrefno][i];i++){
+                      *dst++ = ChIdents[QChain->chrefno][i];
+                  }
 		      }
 		      *dst++ = '.';
 		      
@@ -1693,9 +1695,10 @@ static void PrepareIPCAdviseItem( int item )
                       if( flag ) *dst++ = ']';
                       sprintf(dst,"%d",QGroup->serno);
                       for( dst=AdviseBuffer; *dst; dst++ );
-                      if( QChain->ident!=' ' )
-                      {   if( isdigit(QChain->ident) ) *dst++ = ':';
-                          *dst++ = QChain->ident;
+                      if( QChain->chrefno!=52 )
+                      {   *dst++ = ':';
+                          for(i=0;ChIndents[QChain->chrefno][i];i++))
+                          *dst++ = ChIndents[QChain->chrefno][i];
                       }
                       *dst++ = '.';
 

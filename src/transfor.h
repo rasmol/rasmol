@@ -158,6 +158,8 @@
 
  */
 
+#include "CVector_3D.h"
+
 #define GroupAttr       0x00
 #define ChainAttr       0x01
 #define TempAttr	    0x02
@@ -238,6 +240,14 @@ typedef struct {
 #define Colour2Shade(x)  ((int)((x)-FirstCol)/ColourDepth)
 #define Shade2Colour(x)  ((x)*ColourDepth+FirstCol)
 
+#define ALIGN_KABSCH       1
+#define ALIGN_LOCAL        2
+#define ALIGN_NONE         1
+#define ALIGN_ANGLE        2
+#define ALIGN_DISTANCE     3
+#define ALIGN_ANGLE_SUM    4
+#define ALIGN_DISTANCE_SUM 5
+
 
 #ifdef TRANSFORM
 ShadeDesc Shade[LastShade];
@@ -277,6 +287,7 @@ int DrawBonds,MaxBondRadius;
 int DrawStars;
 int DrawSurf;
 int DrawRibbon;
+int DrawField,MaxVectorField;
 int ZoneBoth;
 int ModelInclude;
 
@@ -331,6 +342,7 @@ extern int DrawBonds,MaxBondRadius;
 extern int DrawStars;
 extern int DrawSurf;
 extern int DrawRibbon;
+extern int DrawField,MaxVectorField;
 extern int ZoneBoth;
 extern int ModelInclude;
 
@@ -350,11 +362,15 @@ extern size_t record_frame[2], play_frame[2];
 
 #endif
 
+void SetOneFieldValue(long field[4], RAtom __far *aptr, int wait);
+void SetFieldValue(long field[4]);
+void ScaleFieldValue(long fscale);
 
 void SetRadiusValue( int, int  );
 void SetRadiusTemperature( int );
 void SetVanWaalRadius( int );
 void DisableSpacefill( void );
+void DisableField( void );
 void SetHBondStatus( int, int, int, int );
 void SetRibbonStatus( int, int, int );
 void SetRibbonCartoons( void );
@@ -383,12 +399,14 @@ int DefineShade( int, int, int );
 void DefineColourMap( void );
 void ResetColourMap( void );
 
+void ColourFieldNone( void );
 void ColourBackNone( void );
 void ColourBondNone( void );
 void ColourHBondType( void );
 void ColourHBondNone( int );
 void ColourRibbonNone( int );
 void ColourMonitNone( void );
+void ColourFieldAttrib( int, int, int );
 void ColourBackAttrib( int, int, int );
 void ColourBondAttrib( int, int, int );
 void ColourHBondAttrib( int, int, int, int );
@@ -425,3 +443,12 @@ void CentreTransform( int, int, int, int );
 void ResetTransform( void );
 
 void SetLutEntry( int, int, int, int );
+void TestKabsch( const CVectorHandle /*CV3Vector */ v1, const CVectorHandle /*CV3Vector */ v2,
+                 CQRQuaternionHandle q );
+void GatherSelected(CVectorHandle /* RAtom * */ selAtoms, CVectorHandle /* Group * */ selGroups  );
+int AlignToMolecule(int molnum, double * rmsd, 
+                    CQRQuaternionHandle qRotToMolecule, 
+                    CV3VectorHandle vTransToMolecule,
+                    int seqrange, double mindist, 
+                    double maxdist, int kabsch_local,
+                    int none_ang_dist, int xlatecen);

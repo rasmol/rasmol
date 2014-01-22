@@ -709,7 +709,7 @@ static void HandleSocketData( int conv )
     register int result;
     register int ch,len;
     char buffer[4097];
-
+    
     if (!TkResponsePtr) {
         if (vector_create((GenericVec __far * __far *)&IPCResponsePtr,
                           sizeof(char),32) ){
@@ -1954,9 +1954,10 @@ static void PrepareIPCAdviseItem( int item )
                       if( flag ) *dst++ = ']';
                       sprintf(dst,"%d",QGroup->serno);
                       for( dst=AdviseBuffer; *dst; dst++ );
-                      if( QChain->ident!=' ' )
-                      {   if( isdigit(QChain->ident) ) *dst++ = ':';
-                          *dst++ = QChain->ident;
+                      if( QChain->chrefno!=52 )
+                      {   *dst++ = ':';
+                          for(i=0;ChIdents[QChain->chrefno][i];i++)
+                          *dst++ = ChIdents[QChain->chrefno][i];
                       }
                       *dst++ = '.';
 

@@ -145,6 +145,7 @@
 #include "maps.h"
 
 #include <math.h>
+#include <cqrlib.h>
 #include <CVector.h>
 #ifndef CVECTOR_FAR
 #define CVECTOR_FAR
@@ -2036,6 +2037,42 @@ static void FetchBracketedTriple(Long Triple[3]) {
 	return;
 }
 
+static void FetchBracketedArray(Long * Array, int arraydim, int * arrayfound ) {
+	int index, neg;
+	*arrayfound = 0;
+	for (index = 0; index < arraydim; index++) {
+		FetchToken();
+		Array[index] = 0;
+		if (CurToken == '-') {
+			FetchToken();
+			neg = True;
+		} else {
+			neg = False;
+		}
+		if (CurToken == NumberTok)  {
+		    if (*TokenPtr=='.')  {
+		    	TokenPtr++;
+                FetchFloat(TokenValue,250);
+		    }
+		} else if( CurToken=='.' ) {
+		    FetchFloat(0,250);
+        } else CommandError(MsgStrs[ErrNotNum]);
+	    Array[index] = neg?(-TokenValue):TokenValue;
+	    FetchToken();
+	    if( CurToken == ']') {
+	        *arrayfound = index+1;
+	        return;
+	    }
+	    if( !(CurToken == ',' && index < arraydim-1)) {   
+            CommandError(MsgStrs[ErrSyntax]);
+            return;
+        }
+	}
+	*arrayfound = index;
+	return;
+}
+
+
 
 static int ParseColour( void )
 {
@@ -3810,6 +3847,20 @@ static void ExecuteColourCommand( void )
             } else CommandError(MsgStrs[ErrNoCol]);
             break;
             
+        case(FieldTok):
+            FetchToken();
+            if( CurToken==NoneTok )
+            {   ColourFieldNone();
+                ReDrawFlag |= RFColour;
+            } else if( ParseColour() )
+            {   ColourFieldAttrib(RVal,GVal,BVal);
+                ReDrawFlag |= RFColour;
+            } else if( CurToken )
+            {      CommandError(MsgStrs[ErrColour]);
+            } else CommandError(MsgStrs[ErrNoCol]);
+            break;
+
+            
         case(SSBondTok):
             FetchToken();
             if( CurToken==NoneTok )
@@ -4113,7 +4164,7 @@ static void DescribeSequence( void )
                 }
             }
                 WriteString("Chain ");
-                WriteChar(chn->ident);
+                WriteString(ChIdents[chn->chrefno]);
                 WriteString(":\n");
                 chain = True;
             }
@@ -6048,6 +6099,111 @@ int ExecuteCommandOne( int * restore )
         case(RefreshTok):    RefreshScreen();
                              ReDrawFlag = NextReDrawFlag; break;
             
+        /* align <molnum> {kabsch|local} {none|angles|distance} {translate|centre}*/
+                             
+        case(AlignTok):
+            FetchToken();
+            if (CurToken != NumberTok) {
+                CommandError(MsgStrs[ErrBadArg]);
+                break;
+            }
+            if (TokenValue < 1 || TokenValue > NumMolecules
+                || TokenValue-1 == MoleculeIndex) {
+                CommandError(MsgStrs[ErrBadArg]);
+                break;
+            }
+        {
+            double rmsd;
+            CQRQuaternion q;
+            CV3Vector trans;
+            int seqrange;
+            double mindist, maxdist;
+            int kabsch_local;
+            int none_ang_dist;
+            int molnum;
+            int xlatecen;
+            
+            molnum = TokenValue-1;
+            seqrange = 5;
+            mindist = 0.5;
+            maxdist = 7.5;
+            kabsch_local = 0;
+            none_ang_dist = 0;
+            xlatecen = 0;
+            
+            FetchToken();
+            while (CurToken) {
+                 if (CurToken==CentreTok || CurToken==TranslateTok) {
+                    if (!xlatecen) {
+              	  	  xlatecen = CurToken;
+                    } else {
+                      CommandError(MsgStrs[ErrBadArg]);
+              	      break;
+                    }
+                 } else if (CurToken==KabschTok) {
+                    if (!kabsch_local) {
+              	  	  kabsch_local = ALIGN_KABSCH;
+                    } else {
+                      CommandError(MsgStrs[ErrBadArg]);
+              	      break;
+                    }
+              	  } else if (CurToken==LocalTok){
+              	    if (!kabsch_local) {
+              	  	  kabsch_local = ALIGN_LOCAL;
+                    } else {
+                      CommandError(MsgStrs[ErrBadArg]);
+              	      break;
+                    }
+              	  } else if (CurToken==NoneTok){
+              	    if (!none_ang_dist) {
+              	  	  none_ang_dist = ALIGN_NONE;
+                    } else {
+                      CommandError(MsgStrs[ErrBadArg]);
+              	      break;
+                    }
+              	  } else if (CurToken==AngleTok){
+              	    if (!none_ang_dist) {
+              	  	  none_ang_dist = ALIGN_ANGLE;
+                    } else {
+                      CommandError(MsgStrs[ErrBadArg]);
+              	      break;
+                    }
+              	  } else if (CurToken==DistanceTok){
+              	    if (!none_ang_dist) {
+              	  	  none_ang_dist = ALIGN_DISTANCE;
+                    } else {
+                      CommandError(MsgStrs[ErrBadArg]);
+              	      break;
+                    }
+              	  } else if (CurToken=='+' || CurToken == AddTok)  {
+              	    if (!none_ang_dist) {
+              	      none_ang_dist = ALIGN_DISTANCE_SUM;
+              	    } else if (none_ang_dist == ALIGN_ANGLE) {
+              	      none_ang_dist = ALIGN_ANGLE_SUM;
+              	    } else if (none_ang_dist == ALIGN_DISTANCE) {
+              	      none_ang_dist = ALIGN_DISTANCE_SUM;
+              	    } else {
+                      CommandError(MsgStrs[ErrBadArg]);
+              	      break;
+                    }
+              	  } else break;
+                  FetchToken();
+              }
+              if (CurToken) break;
+            if (!kabsch_local) kabsch_local = ALIGN_LOCAL;
+            if (!none_ang_dist) none_ang_dist = ALIGN_DISTANCE;
+            if (xlatecen)  {
+            	XlateCen = (xlatecen==TranslateTok)?True:False;
+            }
+            
+            
+            AlignToMolecule(TokenValue-1,&rmsd,&q, 
+            &trans, seqrange, mindist, maxdist, 
+            kabsch_local,none_ang_dist, XlateCen);
+            fprintf(stderr," rmsd %g\n",rmsd);
+            ReDrawFlag |= RFInitial;
+        }
+         break;
             
         case(ZapTok):        FetchToken();
             if ( CurToken == MapTok )  {
@@ -7041,6 +7197,129 @@ int ExecuteCommandOne( int * restore )
             } else CommandError(MsgStrs[ErrBadArg]);
             break;
             
+        case(FieldTok):
+            FetchToken();
+            { Long Field[4];
+              int neg;
+              int fieldtowrite;
+              fieldtowrite = False;
+              while (CurToken) { 
+                if( CurToken==FalseTok ) {
+                  ReDrawFlag |= RFRefresh|RFRotate;
+                  DisableField();
+                } else if( CurToken=='[' ) {
+              	  int ifound;
+            	  FetchBracketedArray(Field,4, &ifound);
+            	  if (ifound<3) {
+            	    CommandError(MsgStrs[ErrBadArg]);
+            	    break;
+            	  }
+#ifdef INVERT
+                  Field[1] = -Field[1];
+#endif
+                  Field[2] = -Field[2];
+                  if (ifound < 4) {
+                    Field[3] = 0;
+                  }
+                  fieldtowrite = True;
+                } else if (CurToken == AngleTok && fieldtowrite == True)  {
+                  FetchToken();
+                  neg=False;
+                  if (CurToken == '-') {
+			        FetchToken();
+			        neg = True;
+                  }
+                  if( CurToken==NumberTok ) {
+                    if( *TokenPtr=='.' ) {
+                      TokenPtr++;
+                      FetchFloat(TokenValue,1000);
+                    } else {
+                        TokenValue *= 1000;
+                    }
+                    if( TokenValue<=360000 ) {
+                      Field[3] = TokenValue;
+                    } else CommandError(MsgStrs[ErrBigNum]);
+                  } else if( CurToken=='.' ) {
+                    FetchFloat(0,1000);
+                    if( TokenValue<=360000 ) {
+                      Field[3] = TokenValue;
+                    } else CommandError(MsgStrs[ErrBigNum]);
+                  }
+                  if (Field[3] > 180000) {
+                    Field[3] = 360000 - Field[3];
+                    neg = !neg;
+                  }
+                  if (neg) {
+                     Field[0] = -Field[0];
+                     Field[1] = -Field[1];
+                     Field[2] = -Field[2];                     
+                  }
+                  Field[3] = -Field[3];
+                  Field[3] = rint(PI*(double)Field[3]/180.);
+                } else if( (CurToken==TrueTok) || !CurToken ) {
+                  ReDrawFlag |= RFRefresh|RFRotate;
+                  SetOneFieldValue(NULL,NULL,False);
+                } else if (CurToken==RadiusTok) {
+                  FetchToken();
+                  if( CurToken==NumberTok ) {
+                    if( *TokenPtr=='.' ) {
+                      TokenPtr++;
+                      FetchFloat(TokenValue,250);
+                    }
+                    if( TokenValue<=3000 ) {
+                      SetRadiusValue(MaxFun((int)TokenValue,1),
+                                   FieldFlag);
+                      DrawField = True;
+                      ReDrawFlag |= RFRefresh|RFRotate;
+                    } else CommandError(MsgStrs[ErrBigNum]);
+                  } else if( CurToken=='.' ) {
+                    FetchFloat(0,250);
+                    if( TokenValue<=3000 ) {
+                      SetRadiusValue(MaxFun((int)TokenValue,1),
+                                   FieldFlag);
+                      DrawField = True;
+                      ReDrawFlag |= RFRefresh|RFRotate;
+                    } else CommandError(MsgStrs[ErrBigNum]);
+                  }
+                }else if (CurToken=='*' || CurToken == ScaleTok) {
+                    FetchToken();
+                    if( CurToken==NumberTok ) {
+                        if( *TokenPtr=='.' ) {
+                            TokenPtr++;
+                            FetchFloat(TokenValue,1000);
+                            ScaleFieldValue(TokenValue);
+                            DrawField = True;
+                            ReDrawFlag |= RFRefresh|RFRotate;
+                            FetchToken();
+                            continue;
+                        }
+                        if( TokenValue<=3000000 ) {
+                            ScaleFieldValue(TokenValue*1000);
+                            DrawField = True;
+                            ReDrawFlag |= RFRefresh|RFRotate;
+                        } else CommandError(MsgStrs[ErrBigNum]);
+                    } else if( CurToken=='.' ) {
+                        FetchFloat(0,1000);
+                        if( TokenValue<=3000000 ) {
+                            ScaleFieldValue(TokenValue);
+                            DrawField = True;
+                            ReDrawFlag |= RFRefresh|RFRotate;
+                        } else CommandError(MsgStrs[ErrBigNum]);
+                    }
+                } else  {
+            	  CommandError(MsgStrs[ErrBadArg]);
+            	  break;
+                }
+                FetchToken();
+              }
+              if (fieldtowrite) {
+                SetFieldValue(Field);
+                ReDrawFlag |= RFRefresh|RFRotate;
+              }
+              RefreshScreen();
+            }
+            break;
+
         case(StarTok):
             FetchToken();
             if( CurToken==FalseTok )

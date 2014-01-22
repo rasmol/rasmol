@@ -248,6 +248,7 @@ extern int FontStroke;
 extern SBDstruct SBD;
 #endif
 
+void ClipDashCylinder( int, int, int, int, int, int, int, int, int, char, int );
 void ClipCylinder( int, int, int, int, int, int, int, int, int, char, int );
 void ClipDashLine( int, int, int, int, int, int, int, int, char );
 void ClipDeepPoint( int, int, int, int );
@@ -264,6 +265,7 @@ void ClipVector( int, int, int, int, int, int, int, char );
 void ClipDashVector( int, int, int, int, int, int, int, int, char );
 void DashRibbon( Knot __far*, Knot __far*, int, int );
 void DisplayRasString( int, int, int, unsigned char *, int );
+void DrawDashCylinder( int, int, int, int, int, int, int, int, int, char, int );
 void DrawCylinder( int, int, int, int, int, int, int, int, int, char, int );
 void DrawSphere( int, int, int, int, int );
 void DrawStar( int, int, int, int, int );

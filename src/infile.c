@@ -263,7 +263,7 @@
 
 typedef struct {
 	int init, term;
-	char chain;
+	int chrefno;
 	char type;
 	} FeatEntry;
 
@@ -501,7 +501,7 @@ static void UpdateFeature( FeatEntry __far *ptr, int mask )
     register Group __far *group;
  
     for( chain=Database->clist; chain; chain=chain->cnext )
-        if( chain->ident == ptr->chain )
+        if( chain->chrefno == ptr->chrefno )
         {   group=chain->glist;
             while( group && (group->serno<ptr->init) )
                 group = group->gnext;
@@ -550,9 +550,9 @@ static void ProcessFeatures( void )
     }
 }
  
-static void ApplyConfInfo( char __far *ResName1, char Chain1, int ResNum1, 
+static void ApplyConfInfo( char __far *ResName1, int Chain1, int ResNum1,
                            char Icode1, int sResNum1, char sIcode1,
-                           char __far *ResName2, char Chain2, int ResNum2, 
+                           char __far *ResName2, int Chain2, int ResNum2,
                            char Icode2, int sResNum2, char sIcode2,
                            char __far *CType )
 {
@@ -568,9 +568,9 @@ static void ApplyConfInfo( char __far *ResName1, char Chain1, int ResNum1,
    if ( ResName1[0] != '\0' ) refno1 = FindResNo( ResName1 );
    if ( ResName2[0] != '\0' ) refno2 = FindResNo( ResName2 );
    for(chn1=Database->clist;chn1;chn1=chn1->cnext)
-   if ( (Chain1 == '\0') ||  (Chain1 == chn1->ident) )
+   if ( (Chain1 == 52) ||  (Chain1 == chn1->chrefno) )
      for(chn2=Database->clist;chn2;chn2=chn2->cnext)
-     if ( (Chain2 == '\0' || Chain2 == chn2->ident ) )
+     if ( (Chain2 == 52 || Chain2 == chn2->chrefno ) )
        for(group1=chn1->glist;group1;group1=group1->gnext)
        if ( ( ResName1[0] == '\0' || group1->refno == refno1) &&
 	 (ResNum1 == -9999 || group1->serno == ResNum1) &&
@@ -600,18 +600,18 @@ static void ApplyConfInfo( char __far *ResName1, char Chain1, int ResNum1,
                }
              }             
            }
-           ptr->chain = chn1->ident;
+           ptr->chrefno = chn1->chrefno;
            ptr->init = group1->serno;
            ptr->term = group2->serno;       
 	 }
 
 }
 
-static void ApplyBondInfo( char __far *ResName1, char Chain1,int ResNum1, 
+static void ApplyBondInfo( char __far *ResName1, int Chain1,int ResNum1,
                            char Icode1, int sResNum1, char sIcode1,
                            char __far *AtomName1, int AtomNum1, 
                            char __far  Altl1, short Model1, char __far *Symm1,
-                           char __far *ResName2, char Chain2, int ResNum2, 
+                           char __far *ResName2, int Chain2, int ResNum2,
                            char Icode2, int sResNum2, char sIcode2,
                            char __far *AtomName2, int AtomNum2, 
                            char __far  Altl2, short Model2, char __far *Symm2,
@@ -645,9 +645,9 @@ static void ApplyBondInfo( char __far *ResName1, char Chain1,int ResNum1,
    if ( ResName1[0] != '\0' ) refno1 = FindResNo( ResName1 );
    if ( ResName2[0] != '\0' ) refno2 = FindResNo( ResName2 );
    for(chn1=Database->clist;chn1;chn1=chn1->cnext)
-   if ( (Chain1 == '\0') ||  (Chain1 == chn1->ident) )
+   if ( (Chain1 == 52) ||  (Chain1 == chn1->chrefno) )
      for(chn2=Database->clist;chn2;chn2=chn2->cnext)
-     if ( (Chain2 == '\0' || Chain2 == chn2->ident ) )
+     if ( (Chain2 == 52 || Chain2 == chn2->chrefno ) )
        for(group1=chn1->glist;group1;group1=group1->gnext)
        if ( ( ResName1[0] == '\0' || group1->refno == refno1) &&
 	 (ResNum1 == -9999 || group1->serno == ResNum1) &&
@@ -750,10 +750,27 @@ static Long ReadPDBCoord( int offset )
 
 static void ProcessPDBGroup( int heta, int serno )
 {
+    char chbuf[11];
+    int ii, jj;
+    jj = 0;
+    
+    if (WPDB) {
+        for (ii=45;ii<55;ii++) {
+            if (Record[ii]!=' ') {
+                chbuf[jj++] = Record[ii];
+            }
+        }
+        chbuf[jj++] = '\0';
+    } else {
+        chbuf[0] = Record[21];
+        chbuf[1] = '\0';
+    }
+    
     PDBInsert = Record[WPDB?64:26];
-    if( !CurChain || (CurChain->ident!=Record[WPDB?54:21]) )
+    
+    if( !CurChain || (CurChain->chrefno!=FindChNo(chbuf)) )
     {   ConnectAtom = (RAtom __far*)0;
-        CreateChain( Record[WPDB?54:21] );
+        CreateChain( FindChNo(chbuf) );
     }
     CreateGroup( GroupPool );
  
@@ -828,15 +845,27 @@ static void ProcessPDBAtom( int heta, double pdb_version )
         return;
  
     if (WPDB) {
-    serno = (int)ReadValue(55,9);
-    if( !CurGroup || (CurGroup->serno!=serno)
-        || (CurChain->ident!=Record[54])
+        char chbuf[11];
+        int ii, jj;
+        jj = 0;
+        for (ii=45; ii < 55; ii++) {
+            if (Record[ii]!=' ') {
+                chbuf[jj++] = Record[ii];
+            }
+        }
+        chbuf[jj++] = '\0';
+        serno = (int)ReadValue(55,9);
+        if( !CurGroup || (CurGroup->serno!=serno)
+        || (CurChain->chrefno!=FindChNo(chbuf))
         || (PDBInsert!=Record[64]) )
         ProcessPDBGroup( heta, serno );
 	} else {
+        char chbuf[2];
+        chbuf[0] = Record[21];
+        chbuf[1] = '\0';
     serno = (int)ReadValue(22,4);
     if( !CurGroup || (CurGroup->serno!=serno)
-        || (CurChain->ident!=Record[21])
+        || (CurChain->chrefno!=FindChNo(chbuf))
         || (PDBInsert!=Record[26]) )
         ProcessPDBGroup( heta, serno );
 	}
@@ -876,6 +905,23 @@ static void ProcessPDBAtom( int heta, double pdb_version )
     ptr->xtrl =  (short) (10*(dx-4*ptr->xorg));
     ptr->ytrl =  (short) (10*(dy-4*ptr->yorg));
     ptr->ztrl =  (short) (10*(-dz-4*ptr->zorg));
+    ptr->fieldxorg = 0;
+    ptr->fieldyorg = 0;
+    ptr->fieldzorg = 0;
+    ptr->fieldworg = 0;
+    ptr->basexorg = 0;
+    ptr->baseyorg = 0;
+    ptr->basezorg = 0;
+    ptr->fieldx = 0;
+    ptr->fieldy = 0;
+    ptr->fieldz = 0;
+    ptr->fieldw = 0;
+    ptr->basex = 0;
+    ptr->basey = 0;
+    ptr->basez = 0;
+    ptr->fieldradius = 60;
+    ptr->fieldirad = 0;
+    ptr->fieldcol = 0;
  
     if( heta ) ptr->flag |= HeteroFlag;
     if (pdb_version < 3.)
@@ -1103,14 +1149,17 @@ int LoadPDBMolecule( FILE *fp,  int flag )
                                 ProcessPDBAtom( True, pdb_version );
                               }
                           } else if( !strncmp("HELI",Record,4) )
-                          {   if( ignore ) continue;
+                          {   char chain[2];
+                              if( ignore ) continue;
  
                               /* Remaining HELIX record fields   */
                               /* 38-39 .... Helix Classification */
                               /* 31 ....... Same Chain as 19?    */
                               ptr = AllocFeature();
                               ptr->type = FeatHelix;
-                              ptr->chain = Record[19];
+                              chain[0] = Record[19];
+                              chain[1] = '\0';
+                              ptr->chrefno = FindChNo(chain);
                               ptr->init = (int)ReadValue(21,4);
                               ptr->term = (int)ReadValue(33,4);
                               
@@ -1150,14 +1199,17 @@ int LoadPDBMolecule( FILE *fp,  int flag )
         	              }
  
             case('S'):    if( !strncmp("SHEE",Record,4) )
-                          {   if( ignore ) break;
+                          {   char chain[2];
+                              if( ignore ) break;
 						      if (WPDB && (Record[6]!='S')) break;
                               /* Remaining SHEET record fields   */
                               /* 38-39 .... Strand Parallelism   */
                               /* 32 ....... Same Chain as 21?    */
                               ptr = AllocFeature();
                               ptr->type = FeatSheet;
-                              ptr->chain = Record[WPDB?52:21];
+                              chain[0]=Record[WPDB?52:21];
+                              chain[1]='\0';
+                              ptr->chrefno = FindChNo(chain);
                               ptr->init = (int)ReadValue(WPDB?53:22,WPDB?9:4);
                               ptr->term = (int)ReadValue(WPDB?84:33,WPDB?9:4);
                           } else if (!strncmp("SCAL",Record,4) )
@@ -1192,11 +1244,14 @@ int LoadPDBMolecule( FILE *fp,  int flag )
                           break;
 
             case('T'):    if( !strncmp("TURN",Record,4) )
-                          {   if( ignore ) continue;
+                          {   char chain[2];
+                              if( ignore ) continue;
  
                               ptr = AllocFeature();
                               ptr->type = FeatTurn;
-                              ptr->chain = Record[WPDB?52:19];
+                              chain[0] = Record[WPDB?52:19];
+                              chain[1] = '\0';
+                              ptr->chrefno = FindChNo(chain);
                               ptr->init = (int)ReadValue(WPDB?53:20,WPDB?9:4);
                               ptr->term = (int)ReadValue(WPDB?84:31,WPDB?9:4);
                           } else if( !strncmp("TER",Record,3) )
@@ -1277,6 +1332,23 @@ int LoadMDLMolecule( FILE *fp )
         ptr->xtrl  = (short)(dx-40*ptr->xorg);
         ptr->ytrl  = (short)(dy-40*ptr->yorg);
         ptr->ztrl  = (short)(-dz-40*ptr->zorg);
+        ptr->fieldxorg = 0;
+        ptr->fieldyorg = 0;
+        ptr->fieldzorg = 0;
+        ptr->fieldworg = 0;
+        ptr->basexorg = 0;
+        ptr->baseyorg = 0;
+        ptr->basezorg = 0;
+        ptr->fieldx = 0;
+        ptr->fieldy = 0;
+        ptr->fieldz = 0;
+        ptr->fieldw = 0;
+        ptr->basex = 0;
+        ptr->basey = 0;
+        ptr->basez = 0;
+        ptr->fieldradius = 60;
+        ptr->irad = 0;
+        ptr->fieldcol = 0;
         ProcessAtom( ptr );
     }
  
@@ -1381,6 +1453,24 @@ int LoadXYZMolecule( FILE *fp )
             ptr->xtrl = (short)(10000.0*xpos-40.*(double)ptr->xorg);
             ptr->ytrl = (short)(10000.0*ypos-40.*(double)ptr->yorg);
             ptr->ztrl = (short)(-10000.0*zpos-40.*(double)ptr->zorg);
+            ptr->fieldxorg = 0;
+            ptr->fieldyorg = 0;
+            ptr->fieldzorg = 0;
+            ptr->fieldworg = 0;
+            ptr->basexorg = 0;
+            ptr->baseyorg = 0;
+            ptr->basezorg = 0;
+            ptr->fieldx = 0;
+            ptr->fieldy = 0;
+            ptr->fieldz = 0;
+            ptr->fieldw = 0;
+            ptr->basex = 0;
+            ptr->basey = 0;
+            ptr->basez = 0;
+            ptr->fieldradius = 60;
+            ptr->fieldirad = 0;
+            ptr->fieldcol = 0;
+ 
  
             if( (count==5) || (count==8) )
             {   ptr->temp = (short)(100.0*charge);
@@ -1487,6 +1577,11 @@ int LoadMol2Molecule( FILE *fp )
                  ptr->xtrl = (short)(10000.0*xpos-40.*(double)ptr->xorg);
                  ptr->ytrl = (short)(10000.0*ypos-40.*(double)ptr->yorg);
                  ptr->ztrl = (short)(-10000.0*zpos-40.*(double)ptr->zorg);
+                 ptr->fieldxorg = 0; ptr->fieldyorg = 0; ptr->fieldzorg = 0; ptr->fieldworg = 0;
+                 ptr->basexorg = 0; ptr->baseyorg = 0; ptr->basezorg = 0;
+                 ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+                 ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
+                 ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
                  ProcessAtom( ptr );
             }
  
@@ -1572,7 +1667,13 @@ int LoadAlchemyMolecule( FILE *fp )
         ptr->xtrl =  (short)(10*(dx-4*ptr->xorg));
         ptr->ytrl =  (short)(10*(dy-4*ptr->yorg));
         ptr->ztrl =  (short)(10*(-dz-4*ptr->zorg));
-
+        ptr->fieldxorg = 0; ptr->fieldyorg = 0; ptr->fieldzorg = 0; ptr->fieldworg = 0;
+        ptr->basexorg = 0; ptr->baseyorg = 0; ptr->basezorg = 0;
+        ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+        ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
+        ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+        ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
+        ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
         ProcessAtom( ptr );
     }
  
@@ -1626,10 +1727,13 @@ int LoadCharmmMolecule( FILE *fp )
     {   FetchRecord(DataFile,Record);
  
         if( !CurChain || strncmp(Record+51,buffer,4) )
-        {   for( i=0; i<4; i++ )
+        {   char chbuf[2];
+            for( i=0; i<4; i++ )
                 buffer[i] = Record[51+i];
             ConnectAtom = (RAtom __far*)0;
-            CreateChain(chain+49);
+            chbuf[0] = chain+49;
+            chbuf[1] = '\0';
+            CreateChain(FindChNo(chbuf));
             chain++;
         }
 
@@ -1660,6 +1764,11 @@ int LoadCharmmMolecule( FILE *fp )
         ptr->xtrl =  (short)(10*(dx-4*ptr->xorg));
         ptr->ytrl =  (short)(10*(dy-4*ptr->yorg));
         ptr->ztrl =  (short)(10*(-dz-4*ptr->zorg));
+        ptr->fieldxorg = 0; ptr->fieldyorg = 0; ptr->fieldzorg = 0; ptr->fieldworg = 0;
+        ptr->basexorg = 0; ptr->baseyorg = 0; ptr->basezorg = 0;
+        ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+        ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
+        ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
         ProcessAtom( ptr );
     }
     return True;
@@ -1773,7 +1882,11 @@ static int ReadMOPACOutputFile( void )
                 atm->xtrl  = (short)(dx-40*atm->xorg);
                 atm->ytrl  = (short)(dy-40*atm->yorg);
                 atm->ztrl  = (short)(-dz-40*atm->zorg);
-
+                atm->fieldxorg = 0; atm->fieldyorg = 0; atm->fieldzorg = 0; atm->fieldworg = 0;
+                atm->basexorg = 0; atm->baseyorg = 0; atm->basezorg = 0;
+                atm->fieldx = 0; atm->fieldy = 0; atm->fieldz = 0; atm->fieldw = 0;
+                atm->basex = 0; atm->basey = 0; atm->basez = 0;
+                atm->fieldradius = 60; atm->fieldirad = 0; atm->fieldcol = 0;
                 ProcessAtom(atm);
                 atm = atm->anext;
             }
@@ -1940,6 +2053,15 @@ int LoadMOPACMolecule( FILE *fp )
             aptr->xorg =  (Long)(250.0*coord->dist);
             aptr->yorg =  (Long)(250.0*coord->angle);
             aptr->zorg = -(Long)(250.0*coord->dihed);
+            aptr->fxorg = 0;
+            aptr->fyorg = 0;
+            aptr->fzorg = 0;
+            aptr->fieldxorg = 0; aptr->fieldyorg = 0; aptr->fieldzorg = 0; aptr->fieldworg = 0;
+            aptr->basexorg = 0; aptr->baseyorg = 0; aptr->basezorg = 0;
+            aptr->fieldx = 0; aptr->fieldy = 0; aptr->fieldz = 0; aptr->fieldw = 0;
+            aptr->basex = 0; aptr->basey = 0; aptr->basez = 0;
+            aptr->fieldradius = 60; aptr->fieldirad = 0; aptr->fieldcol = 0;
+
             ProcessAtom(aptr);
         } else count++;
  
@@ -2521,12 +2643,12 @@ int LoadCIFMolecule( FILE *fp )
             if (*endptr != '\0') sicode = *endptr;
           }
           if ( !CurGroup || (CurGroup->serno!=seqnum)
-            || (CurChain->ident!=label_asym_id[0])
+            || (CurChain->chrefno!=FindChNo(label_asym_id))
 	    || (PDBInsert != icode) ) {
             PDBInsert = icode;
-            if( !CurChain || (CurChain->ident!=label_asym_id[0] )) {
+            if( !CurChain || (CurChain->chrefno!=FindChNo(label_asym_id))) {
               ConnectAtom = (RAtom __far*)0;
-              CreateChain (label_asym_id[0]);
+              CreateChain (FindChNo(label_asym_id));
             }
             CreateGroup( GroupPool );
             CurGroup->refno = FindResNo(label_comp_id);
@@ -2588,7 +2710,11 @@ int LoadCIFMolecule( FILE *fp )
         ptr->xtrl = (short)(10000.0*cartn_x-40.0*(double)ptr->xorg);
         ptr->ytrl = (short)(10000.0*cartn_y-40.0*(double)ptr->yorg);
         ptr->ztrl = (short)(-10000.0*cartn_z-40.0*(double)ptr->zorg);
-
+        ptr->fieldxorg = 0; ptr->fieldyorg = 0; ptr->fieldzorg = 0; ptr->fieldworg = 0;
+        ptr->basexorg = 0; ptr->baseyorg = 0; ptr->basezorg = 0;
+        ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+        ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
+        ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
         if (label_atom_id[0]=='\0')  strncpy(label_atom_id,oidstr,4);
 	{
           int i, laid, lat;
@@ -2861,14 +2987,14 @@ int LoadCIFMolecule( FILE *fp )
         ConvertNames(NULL,AtomName1);
         ConvertNames(NULL,AtomName2);
 
-        ApplyBondInfo(CompId1, Asym1[0], ResNum1, Icode1, sResNum1, sIcode1,
+        ApplyBondInfo(CompId1, FindChNo(Asym1), ResNum1, Icode1, sResNum1, sIcode1,
                           AtomName1, Sitenum1, Alt1[0], Model1, Symm1,
-                          CompId2, Asym2[0], ResNum2, Icode2, sResNum2, 
+                          CompId2, FindChNo(Asym2), ResNum2, Icode2, sResNum2,
                           sIcode2, AtomName2, Sitenum2, Alt2[0], Model2, 
                           Symm2, CType);
-        ApplyBondInfo(CompId2, Asym2[0], ResNum2, Icode2, sResNum2, sIcode2,
+        ApplyBondInfo(CompId2, FindChNo(Asym2), ResNum2, Icode2, sResNum2, sIcode2,
                           AtomName2, Sitenum2, Alt2[0], Model2, Symm2,
-                          CompId1, Asym1[0], ResNum1, Icode1, sResNum1,
+                          CompId1, FindChNo(Asym1), ResNum1, Icode1, sResNum1,
                           sIcode1, AtomName1, Sitenum1, Alt1[0], Model1, 
                           Symm1, CType);
       }
@@ -3059,14 +3185,14 @@ int LoadCIFMolecule( FILE *fp )
         ConvertNames(NULL,AtomName1);
         ConvertNames(NULL,AtomName2);
 
-        ApplyBondInfo(CompId1, Asym1[0], ResNum1, Icode1, sResNum1, sIcode1,
+        ApplyBondInfo(CompId1, FindChNo(Asym1), ResNum1, Icode1, sResNum1, sIcode1,
                           AtomName1, Sitenum1, Alt1[0], Model1, Symm1,
-                          CompId2, Asym2[0], ResNum2, Icode2, sResNum2, 
+                          CompId2, FindChNo(Asym2), ResNum2, Icode2, sResNum2,
                           sIcode2, AtomName2, Sitenum2, Alt2[0], Model2, 
                           Symm2, NULL);
-        ApplyBondInfo(CompId2, Asym2[0], ResNum2, Icode2, sResNum2, sIcode2,
+        ApplyBondInfo(CompId2, FindChNo(Asym2), ResNum2, Icode2, sResNum2, sIcode2,
                           AtomName2, Sitenum2, Alt2[0], Model2, Symm2,
-                          CompId1, Asym1[0], ResNum1, Icode1, sResNum1,
+                          CompId1, FindChNo(Asym1), ResNum1, Icode1, sResNum1,
                           sIcode1, AtomName1, Sitenum1, Alt1[0], Model1, 
                           Symm1, NULL);
       }
@@ -3200,8 +3326,8 @@ int LoadCIFMolecule( FILE *fp )
         }
 
 
-        ApplyConfInfo(CompId1, Asym1[0], ResNum1, Icode1, sResNum1, sIcode1,
-                      CompId2, Asym2[0], ResNum2, Icode2, sResNum2, sIcode2,
+        ApplyConfInfo(CompId1, FindChNo(Asym1), ResNum1, Icode1, sResNum1, sIcode1,
+                      CompId2, FindChNo(Asym2), ResNum2, Icode2, sResNum2, sIcode2,
                       CType);
       }
 
@@ -3316,7 +3442,7 @@ int LoadCIFMolecule( FILE *fp )
             seroffset = 0;
             if (maxsernum >= minsernum)  {
                 NMRModel = maxnmrmodel;
-                seroffset=maxsernum+1;
+                seroffset=maxsernum;
             } else {
             	NMRModel = 0;
             }
@@ -3361,12 +3487,12 @@ int LoadCIFMolecule( FILE *fp )
                     seqnum = sseqnum = 1;
                     icode = sicode = ' ';
                     if ( !CurGroup || (CurGroup->serno!=seqnum)
-                         || (CurChain->ident!=label_asym_id[0])
+                         || (CurChain->chrefno!=FindChNo(label_asym_id))
                          || (PDBInsert != icode) ) {
                         PDBInsert = icode;
-                        if( !CurChain || (CurChain->ident!=label_asym_id[0] )) {
+                        if( !CurChain || (CurChain->chrefno!=FindChNo(label_asym_id) )) {
                             ConnectAtom = (RAtom __far*)0;
-                            CreateChain (label_asym_id[0]);
+                            CreateChain (FindChNo(label_asym_id));
                         }
                         CreateGroup( GroupPool );
                         CurGroup->refno = FindResNo(label_comp_id);
@@ -3408,7 +3534,11 @@ int LoadCIFMolecule( FILE *fp )
                 ptr->xtrl = (short)(10000.0*cartn_x-40.0*(double)ptr->xorg);
                 ptr->ytrl = (short)(10000.0*cartn_y-40.0*(double)ptr->yorg);
                 ptr->ztrl = (short)(-10000.0*cartn_z-40.0*(double)ptr->zorg);
-                
+                ptr->fieldxorg = 0; ptr->fieldyorg = 0; ptr->fieldzorg = 0; ptr->fieldworg = 0;
+                ptr->basexorg = 0; ptr->baseyorg = 0; ptr->basezorg = 0;
+                ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
+                ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
+                ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
                 if (label_atom_id[0]=='\0')  strncpy(label_atom_id,idstr,4);
                 {
                     int i, laid, lat;
@@ -3516,9 +3646,9 @@ int LoadCIFMolecule( FILE *fp )
                         bvalue=AromBondFlag;
                     }else
                         bvalue=NormBondFlag;
-                    id1 = seroffset + find_chem_comp_id(cif,label_comp_id, atom_id_1);
-                    id2 = seroffset + find_chem_comp_id(cif,label_comp_id, atom_id_2);
-                    if (id1 > seroffset && id2 > seroffset) CreateBond(id1,id1,bvalue);
+                    id1 = seroffset + find_chem_comp_id(cif,label_comp_id, atom_id_1)-1;
+                    id2 = seroffset + find_chem_comp_id(cif,label_comp_id, atom_id_2)-1;
+                    if (id1 >= seroffset && id2 >= seroffset) CreateBond(id1,id1,bvalue);
                     else NullBonds++;
                     if (cif_findtag(cif,"_chem_comp_bond.ordinal"))
                         cif_findtag(cif,"_chem_comp_bond.pdbx_ordinal");
@@ -3576,7 +3706,7 @@ int SavePDBMolecule( char *filename )
     register char *ptr;
     register int count;
     register int model;
-    register char ch = '\0';
+    register int ch = -1;
     register int i;
     register int models = 0;
     register int modelcount = 0;
@@ -3612,7 +3742,7 @@ int SavePDBMolecule( char *filename )
     prev = (void __far*)0; 
     count = 1;
     model = 0;
-    ch = ' ';
+    ch = 52;
 
         /* count the total max atoms per model */
 
@@ -3656,9 +3786,9 @@ int SavePDBMolecule( char *filename )
 
     ForEachAtom
         if( aptr->flag&SelectFlag )
-        {   if( prev && (chain->ident!=ch) )
-                fprintf( DataFile, "TER   %5d      %.3s %c%4d \n",
-                         count++, Residue[prev->refno], ch, prev->serno);
+        {   if( prev && (chain->chrefno!=ch) )
+                fprintf( DataFile, "TER   %5d      %.3s %s%4d \n",
+                         count++, Residue[prev->refno], ChIdents[ch], prev->serno);
             if( chain->model != model )
             {   if( model )
                     fputs("ENDMDL\n",DataFile);
@@ -3687,16 +3817,16 @@ int SavePDBMolecule( char *filename )
                 c[3]=ElemDesc[aptr->refno][2];
                 c[4]=0;
                 for (ic=0; ic<4; ic++) if (!c[ic]) c[ic]=' ';
-                fprintf( DataFile, "%5d %-4.4s%c%3.3s %c%4d    ",
+                fprintf( DataFile, "%5d %-4.4s%c%3.3s %s%4d    ",
                      1+((count-1)%99999), c,
                      aptr->altl, Residue[group->refno],
-                     chain->ident, group->serno );
+                     ChIdents[chain->chrefno], group->serno );
                 count++;
             } else {
-              fprintf( DataFile, "%5d %-4.4s%c%3.3s %c%4d    ",
+              fprintf( DataFile, "%5d %-4.4s%c%3.3s %s%4d    ",
                      1+((count-1)%99999), ElemDesc[aptr->refno],
                      aptr->altl, Residue[group->refno],
-                     chain->ident, group->serno );
+                     ChIdents[chain->chrefno], group->serno );
                 count++;
             }   
  
@@ -3714,7 +3844,7 @@ int SavePDBMolecule( char *filename )
 #endif
             fprintf(DataFile,"  1.00%6.2f\n",aptr->temp/100.0);
  
-            ch = chain->ident;
+            ch = chain->chrefno;
             prev = group;
         }
  
@@ -3741,7 +3871,7 @@ int SaveWPDBMolecule( char *filename )
     register char *ptr;
     register int count;
     register int model;
-    register char ch = '\0';
+    register int ch = -1;
     register int i;
     char eltype[2];
  
@@ -3773,13 +3903,13 @@ int SaveWPDBMolecule( char *filename )
     prev = (void __far*)0; 
     count = 1;
     model = 0;
-    ch = ' ';
+    ch = 52;
 
     ForEachAtom
         if( aptr->flag&SelectFlag )
-        {   if( prev && (chain->ident!=ch) )
-                fprintf( DataFile, "TER     %9d                  %.10s         %c%9d \n",
-                         count++, Residue[prev->refno], ch, prev->serno);
+        {   if( prev && (chain->chrefno!=ch) )
+                fprintf( DataFile, "TER     %9d                  %.10s      %.4s%9d \n",
+                         count++, Residue[prev->refno], ChIdents[ch], prev->serno);
             if( chain->model != model )
             {   if( model )
                     fputs("ENDMDL\n",DataFile);
@@ -3805,17 +3935,17 @@ int SaveWPDBMolecule( char *filename )
                   if(!c[ic+1])c[ic+1]=' ';
                 }
                 c[10]=0;
-                fprintf( DataFile, "  %9d     %-10.10s  %c%10.10s         %c%9d ",
+                fprintf( DataFile, "  %9d     %-10.10s  %c%10.10s      %.4s%9d ",
                      count++, c,
                      aptr->altl, Residue[group->refno],
-                     chain->ident, group->serno );
+                     ChIdents[chain->chrefno], group->serno );
             	
             } else {
  
-              fprintf( DataFile, "  %9d     %-10.10s  %c%10.10s         %c%9d ",
+              fprintf( DataFile, "  %9d     %-10.10s  %c%10.10s      %.4s%9d ",
                      count++, ElemDesc[aptr->refno],
                      aptr->altl, Residue[group->refno],
-                     chain->ident, group->serno );
+                     ChIdents[chain->chrefno], group->serno );
             }
  
             x = (double)(aptr->xorg + aptr->fxorg + OrigCX)/250.0
@@ -3832,13 +3962,13 @@ int SaveWPDBMolecule( char *filename )
 #endif
             fprintf(DataFile,"  1.00%6.2f\n",aptr->temp/100.0);
  
-            ch = chain->ident;
+            ch = chain->chrefno;
             prev = group;
         }
  
     if( prev )
-        fprintf( DataFile, "TER     %9d                  %.10s         %c%9d \n",
-                 count, Residue[prev->refno], ch, prev->serno);
+        fprintf( DataFile, "TER     %9d                  %.10s      %.4s%9d \n",
+                 count, Residue[prev->refno], ChIdents[ch], prev->serno);
     if( model )
         fputs("ENDMDL\n",DataFile);
     fputs("END   \n",DataFile);
@@ -4159,7 +4289,7 @@ int SaveXYZMolecule( char *filename )
     return True;
 }
  
- 
+
 char * numnullify( char * buffer, size_t limit, long number) {
     int limret;
     if (limit < 2) return (char  *)NULL;
@@ -4233,12 +4363,12 @@ int SaveCIFMolecule( char *filename )
     register RAtom __far *aptr;
     register long count;
     register int model;
-    register char ch = '\0';
+    register int ch = -1;
     char eltype[2];
     char numbuf[20];
     char resbuf[20];
     char atombuf[20];
-    char chainx[2];
+    char chainx[11];
     char chainbuf[5];
     char altbuf[5];
     char altx[2];
@@ -4291,11 +4421,11 @@ int SaveCIFMolecule( char *filename )
     count=1;
     model = 0;
     prev = (Group __far *)NULL;
-    ch = ' ';
+    ch = 52;
     
     ForEachAtom
     if( aptr->flag&SelectFlag )
-    {   if( prev && (chain->ident!=ch) ){
+    {   if( prev && (chain->chrefno!=ch) ){
         fprintf( DataFile, "#TER    %s %ld %s %s %s %d . . . . . \n", 
                 numnullify(numbuf,20,chain->model),
                 count++, ". . .",
@@ -4307,8 +4437,8 @@ int SaveCIFMolecule( char *filename )
             model = chain->model;
         }
         
-        chainx[0] = chain->ident;
-        chainx[1] = '\0';
+        strcpy(chainx,ChIdents[chain->chrefno]);
+        
         altx[0] = aptr->altl;
         altx[1] = '\0';
         elemx[0] = ((Element[aptr->elemno]).symbol)[0];
@@ -4368,7 +4498,7 @@ int SaveCIFMolecule( char *filename )
 #endif
         fprintf(DataFile,"  1.00 %6.2f\n",aptr->temp/100.0);
         
-        ch = chain->ident;
+        ch = chain->chrefno;
         prev = group;
     }
     

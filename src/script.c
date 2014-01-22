@@ -431,8 +431,8 @@ static void WriteMolScriptAtomSel( Chain __far *chain,
             fputc(ptr[i],OutFile);
 
     fputs(" and in residue ",OutFile);
-    if( chain->ident!=' ' && !isdigit(chain->ident) )
-        fputc(chain->ident,OutFile);
+    if( chain->chrefno!=52 && !isdigit(ChIdents[chain->chrefno][0]) )
+        fputs(ChIdents[chain->chrefno],OutFile);
     fprintf(OutFile,"%d",group->serno);
 }
 
@@ -542,10 +542,10 @@ static void WriteMolScriptLabels( void )
 }
 
 
-static void MolScriptSegment( char *ptr, int src, int dst, int chain )
+static void MolScriptSegment( char *ptr, int src, int dst, int chrefno )
 {   
-    if( (chain!=' ') && !isdigit(chain) ) 
-    {   fprintf(OutFile,"  %s from %c%d to %c%d;\n",ptr,chain,src,chain,dst);
+    if( (chrefno!=52) && !isdigit(ChIdents[chrefno][0]) )
+    {   fprintf(OutFile,"  %s from %s%d to %s%d;\n",ptr,ChIdents[chrefno],src,ChIdents[chrefno],dst);
     } else fprintf(OutFile,"  %s from %d to %d;\n",ptr,src,dst);
 }
 
@@ -640,7 +640,7 @@ int WriteMolScriptFile( char *name )
                 if( next->serno < group->serno )
                 {   if( prev && prev!=group )
                         MolScriptSegment("coil",prev->serno,group->serno,
-                                                chain->ident);
+                                                chain->chrefno);
                     prev = (Group __far*)0;
                     continue;
                 }
@@ -655,8 +655,8 @@ int WriteMolScriptFile( char *name )
                 } else 
                 {   if( flag&TurnFlag )
                     {   fputs("  turn residue ",OutFile);
-                        if( chain->ident != ' ' )
-                            fputc(chain->ident,OutFile);
+                        if( chain->chrefno != 52 )
+                            fputs(ChIdents[chain->chrefno],OutFile);
                         fprintf(OutFile,"%d;\n",group->serno);
                     }
                     if( !prev ) prev = group;
@@ -673,15 +673,15 @@ int WriteMolScriptFile( char *name )
                 if( len>2 )
                 {   if( prev && prev!=group ) /* MolScript coil or turn? */
                        MolScriptSegment("coil",prev->serno,group->serno,
-                                              chain->ident);
+                                              chain->chrefno);
                     MolScriptSegment(ptr,group->serno,next->serno,
-                                         chain->ident);
+                                         chain->chrefno);
                     prev = next;
                 } 
             }
 
             if( prev && prev!=group )  /* C-terminal coil/turn */
-                MolScriptSegment("coil",prev->serno,group->serno,chain->ident);
+                MolScriptSegment("coil",prev->serno,group->serno,chain->chrefno);
         }
     }
 
@@ -813,7 +813,8 @@ static void WriteScriptAtoms( void )
     register int same,init;
     register int cpk=0,cpknew=0,vdw=0;
     register int col=0,rad=0;
-    register int prevflag,staron,sphereon;
+    register int prevflag,staron,sphereon,fieldon;
+    long     fieldorg[5];
 
     fputs("\n# Atoms\n",OutFile);
 
@@ -963,6 +964,130 @@ static void WriteScriptAtoms( void )
     {   WriteScriptAll();
         fputs("spacefill off\n",OutFile);
     }
+        
+     
+    fieldon = False;
+    if( FieldFlag )
+    {   same = True;
+        init = False;
+        prevflag = 0;
+        ForEachAtom
+	    {
+            if( !init )
+            {   fieldorg[0] = fieldorg[1]= fieldorg[2] = fieldorg[3] = fieldorg[4] = 0;
+                if (aptr->flag&(FieldFlag)) {
+                    fieldorg[0] = aptr->fieldxorg;
+                    fieldorg[1] = aptr->fieldyorg;
+                    fieldorg[2] = aptr->fieldzorg;
+                    fieldorg[3] = aptr->fieldworg;
+                    fieldorg[4] = aptr->fieldradius;
+                    init = True;
+                    prevflag = aptr->flag&(FieldFlag);
+                } else {
+                  if ( (prevflag == (aptr->flag&(FieldFlag)))
+                      && (prevflag && fieldorg[0] == aptr->fieldxorg &&
+                    fieldorg[1] == aptr->fieldyorg &&
+                    fieldorg[2] == aptr->fieldzorg &&
+                    fieldorg[3] == aptr->fieldworg &&
+                    fieldorg[4] == aptr->fieldradius)) {
+                      last = aptr->serno;
+                  } else {
+                    if ( prevflag ) {
+                    	WriteScriptBetween(first,last);
+                        if (fieldorg[0] !=0 || fieldorg[1] !=0 || fieldorg[2] !=0 || fieldorg[3] !=0 || fieldorg[4] !=0) {
+                          fieldon = True;
+                            if (fieldorg[3] == 0) {
+#ifdef INVERT
+                                fprintf(OutFile,"field [%ld,%ld,%ld]\n", fieldorg[0], -fieldorg[1], -fieldorg[2]);
+#else
+                                fprintf(OutFile,"field [%ld,%ld,%ld]\n", fieldorg[0], fieldorg[1], -fieldorg[2]);
+#endif
+                            } else if (fieldorg[3] > 0) {
+#ifdef INVERT
+                                fprintf(OutFile,"field [%ld,%ld,%ld,%ld]\n", fieldorg[0], -fieldorg[1], -fieldorg[2], fieldorg[3]);
+#else
+                                fprintf(OutFile,"field [%ld,%ld,%ld,%ld]\n", fieldorg[0], fieldorg[1], -fieldorg[2], fieldorg[3]);
+#endif
+                            } else {
+#ifdef INVERT
+                                fprintf(OutFile,"field [%ld,%ld,%ld] angle %g\n", 
+                                        fieldorg[0], -fieldorg[1], -fieldorg[2],
+                                        ((double)-fieldorg[3])*.180/PI);
+#else
+                                fprintf(OutFile,"field [%ld,%ld,%ld] angle %g\n", 
+                                        fieldorg[0], fieldorg[1], -fieldorg[2],
+                                        ((double)-fieldorg[3])*.180/PI);
+#endif
+                                
+}
+                            fprintf(OutFile,"field radius %ld\n", fieldorg[4]);
+
+                        } else {
+                          if (fieldon) {
+                              fieldon = False;
+                              fputs("field off\n",OutFile);
+
+                          }
+                        	
+                        }
+                    }
+                  	
+                  }
+                	
+                }
+                prevflag = aptr->flag&(FieldFlag);
+                fieldorg[0] = fieldorg[1]= fieldorg[2] = 0;
+                if (prevflag) {
+                    fieldorg[0] = aptr->fieldxorg;
+                    fieldorg[1] = aptr->fieldyorg;
+                    fieldorg[2] = aptr->fieldzorg;
+                    fieldorg[3] = aptr->fieldworg;
+                    fieldorg[4] = aptr->fieldradius;
+                }
+                first = last = aptr->serno;
+                same = False;
+            }
+            
+          }
+        }
+
+        if( !same )
+        {   WriteScriptBetween(first,last);
+        } else WriteScriptAll();
+
+    if( fieldorg[0] !=0 || fieldorg[1] !=0 || fieldorg[2] !=0 ) {
+        if( prevflag&FieldFlag ){  
+            if (fieldorg[3] == 0) {
+#ifdef INVERT
+                fprintf(OutFile,"field [%ld,%ld,%ld]\n", fieldorg[0], -fieldorg[1], -fieldorg[2]);
+#else
+                fprintf(OutFile,"field [%ld,%ld,%ld]\n", fieldorg[0], fieldorg[1], -fieldorg[2]);
+#endif
+            } else if (fieldorg[3] > 0) {
+#ifdef INVERT
+                fprintf(OutFile,"field [%ld,%ld,%ld,%ld]\n", fieldorg[0], -fieldorg[1], -fieldorg[2], fieldorg[3]);
+#else
+                fprintf(OutFile,"field [%ld,%ld,%ld,%ld]\n", fieldorg[0], fieldorg[1], -fieldorg[2], fieldorg[3]);
+#endif
+            } else {
+#ifdef INVERT
+                fprintf(OutFile,"field [%ld,%ld,%ld] angle %g\n", 
+                        fieldorg[0], -fieldorg[1], -fieldorg[2],
+                        ((double)-fieldorg[3])*.180/PI);
+#else
+                fprintf(OutFile,"field [%ld,%ld,%ld] angle %g\n", 
+                        fieldorg[0], fieldorg[1], -fieldorg[2],
+                        ((double)-fieldorg[3])*.180/PI);
+#endif
+                
+            }
+            fprintf(OutFile,"field radius %ld\n", fieldorg[4]);
+            
+            
+        }
+    } else {
+          if (fieldon) fputs("field off\n",OutFile); 
+        }
         
 }
 
@@ -2014,7 +2139,7 @@ int WriteKinemageFile( char *name )
 
     if( Info.chaincount > 1 )
     {   for( chain=Database->clist; chain; chain=chain->cnext )
-        {   fprintf(OutFile,"@group {chain %c}\n",chain->ident);
+        {   fprintf(OutFile,"@group {chain %s}\n",ChIdents[chain->chrefno]);
             WriteKinemageSpheres( chain );
             WriteKinemageBonds( chain );
             WriteKinemageLabels( chain );
@@ -2650,9 +2775,9 @@ int WritePhiPsiAngles ( char *name, int ramachan )
 	  if(ramachan){     /* data for Ramachandran-plot */
 	    if(fabs(phi) <= 180.0 && 180.0 >= fabs(psi)) {
           if (ramachan > 0) {
-	        sprintf(buffer, "%3s\t%c%d\t%#.1f\t%#.1f\n", 
+	        sprintf(buffer, "%3s\t%s%d\t%#.1f\t%#.1f\n",
 		      Residue[group->refno], 
-		      chain->ident, 
+		      ChIdents[chain->chrefno],
 		      group->serno, 
 		      phi, psi);
 		    WriteBuffer(buffer);
