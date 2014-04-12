@@ -1752,6 +1752,7 @@ int LookUpKeyword( char *ptr )
              STEREO               StereoTok
              STRANDS              StrandsTok
              STRUCTURE            StructureTok
+             SUBSTRUCTURE         SubstructureTok
              SUN                  SUNTok
              SUNRLE               SUNRLETok
              SURFACE              SurfaceTok
@@ -1902,7 +1903,9 @@ int LookUpKeyword( char *ptr )
                     break;
                     
                 case('U'):
-                    if( (*ptr=='N') && !ptr[1] ) {
+                    if( !strcmp(ptr,"BSTRUCTURE") ) {
+                        return( SubstructureTok );
+                    } else if( (*ptr=='N') && !ptr[1] ) {
                         return( SUNTok );
                     } else if( !strcmp(ptr,"NRLE") ) {
                         return( SUNRLETok );

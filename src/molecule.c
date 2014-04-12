@@ -1059,6 +1059,8 @@ RAtom __far *CreateAtom( void )
     ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
     ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
     ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
+    ptr->bondsvector = NULL;
+    ptr->distancevector = NULL;
     NeedAtomTree = 1;
     return ptr;
 }
@@ -1442,6 +1444,7 @@ Bond __far *ProcessBond( RAtom __far *src, RAtom __far *dst, int flag )
 {
     register Bond __far *ptr;
     register int i;
+    register Long lx, ly, lz, lxyzsq;
 
     if( flag & (DoubBondFlag|TripBondFlag) )
         DrawDoubleBonds = True;
@@ -1469,6 +1472,11 @@ Bond __far *ProcessBond( RAtom __far *src, RAtom __far *dst, int flag )
     ptr->altl = '\0';
     if (src && src->altl != '\0' && src->altl != ' ') ptr->altl = src->altl;
     if (dst && dst->altl != '\0' && dst->altl != ' ') ptr->altl = dst->altl;
+    lx = src->xorg+src->fxorg-dst->xorg-dst->fxorg;
+    ly = src->yorg+src->fyorg-dst->yorg-dst->fyorg;
+    lz = src->zorg+src->fzorg-dst->zorg-dst->fzorg;
+    lxyzsq = lx*lx + ly*ly + lz*lz;
+    ptr->sxyz = (Long)(sqrt((double)lxyzsq)+.5);
 
     return ptr;
 }

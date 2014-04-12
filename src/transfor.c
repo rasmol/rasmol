@@ -234,6 +234,7 @@
 #include "langsel.h"
 #include "maps.h"
 #include "tokens.h"
+#include "rmsd.h"
 
 #define CPKMAX  16
 static ShadeRef CPKShade[] = {
@@ -452,7 +453,7 @@ void SetOneFieldValue(long field[4], RAtom __far *aptr, int wait) {
                 aptr->basezorg = field[1];
               }
             }
-            basenormsq = (ptr->basexorg)*(ptr->basexorg) + (ptr->baseyorg)*(ptr->baseyorg) + (ptr->basezorg)*(ptr->basezorg);
+            basenormsq = (aptr->basexorg)*(aptr->basexorg) + (aptr->baseyorg)*(aptr->baseyorg) + (aptr->basezorg)*(aptr->basezorg);
             if (basenormsq > 0) {
               int basenorm;
               basenorm = isqrt(basenormsq);
@@ -623,7 +624,6 @@ void ScaleFieldValue(long fscale) {
     register Chain __far *chain;
     register Group __far *group;
     register RAtom __far *ptr;
-    register int change;
     double normsq, maxnormsq;
     long basenormsq;
     
@@ -4608,17 +4608,19 @@ void InitialiseTransform( void )
     MarkAtoms = 0;
 }
 
+
 /*  Functions to process alignments */
 
-void TestKabsch( const CVectorHandle /*CV3Vector */ v1, const CVectorHandle /*CV3Vector */ v2,
-                 CQRQuaternionHandle q )
+void TestKabsch( const CVectorHandle /*CV3Vector */ v1,
+                 const CVectorHandle /*CV3Vector */ v2,
+                 CQRQuaternionHandle q,
+                 double * rmsd)
 {
     CV3Matrix mrot;
     CQRQuaternion qrot;
     CVectorHandle /* double[3] */ x1, x2;
     int i, imax;
     double mov[3], ref[3], U[3][3];
-    double rmsd;
     double anormsq;
     double costh;
     double sinth;
@@ -4643,9 +4645,8 @@ void TestKabsch( const CVectorHandle /*CV3Vector */ v1, const CVectorHandle /*CV
          ((double *) CVectorElementAt(x2,i))[0],  ((double *) CVectorElementAt(x2,i))[1], ((double *) CVectorElementAt(x2,i))[2]
           /* x1[i][0],x1[i][1],x1[i][2],x2[i][0],x2[i][1],x2[i][2] */);
     }
-    /* calculate_rotation_rmsd( x1,x2, imax, mov, ref, U, &rmsd )*/;
-    calculate_rotation_rmsd( ((double *)(x1->array)),((double *)(x2->array)), imax, mov, ref, U, &rmsd );
-    fprintf( stdout, "rmsd from Kabsch %f\n", rmsd );
+    calculate_rotation_rmsd( ((x1->array)),((x2->array)), imax, mov, ref, U, rmsd );
+    fprintf( stdout, "rmsd from Kabsch %f\n", *rmsd );
     fprintf( stdout, "rotation matrix:\n [[%g %g %g]\n  [%g %g %g]\n  [%g %g %g]]\n",
             U[0][0],U[0][1],U[0][2],
             U[1][0],U[1][1],U[1][2],
@@ -4678,21 +4679,37 @@ void TestKabsch( const CVectorHandle /*CV3Vector */ v1, const CVectorHandle /*CV
 }
 
 
-/*  Gather the selected atoms and groups from the current molecule */
+/*  Gather the selected atoms and groups from the current molecule 
+    add each selected atom to selAtoms
+    add each selected group to selGroups 
+    do not clear the vectors first*/
 
 void GatherSelected(CVectorHandle /* RAtom * */ selAtoms, CVectorHandle /* Group * */ selGroups ) {
     register Chain __far *chain;
     Group __far *group;
     RAtom __far *ptr;
 
+    /* First pick up atoms and clear tempmarker for
+       the enclosing groups */
+
     ForEachAtom {
-        if (ptr->flag & SelectFlag && selAtoms) {
+        if (ptr->flag & SelectFlag) {
+            group->tempmarker = False;
+            if (selAtoms) {
             CVectorAddElement(selAtoms,&ptr);
         }
-        if (ptr->flag & SelectFlag && selGroups) {
-            CVectorAddElement(selGroups,&group);
         }
+    }
         
+    /* Now reprocess the atoms to pick up each group
+        once */
+    if (selGroups) {
+        ForEachAtom {
+            if (ptr->flag & SelectFlag && selGroups && (group->tempmarker==False)) {
+                CVectorAddElement(selGroups,&group);
+                group->tempmarker = True;
+    }
+        }
     }
     return;
 }
@@ -4743,27 +4760,323 @@ void ApplyQTXform (CQRQuaternionHandle qRotToMolecule,
     return;
 }
     
+int GetAnnulus(CVectorHandle selAtomsTemplate,
+                 CVectorHandle selAtomsTarget,
+                 CNearTreeHandle AtomTreeTarget,
+                 CVectorHandle * Annulus,
+                 int prevlevel, double precision) {
+    
+    RAtom * ptrtemplate;
+    RAtom * nexttemplate;
+    RAtom * ptrtarget;
+    Long lx, ly, lz, lxyzsq;
+    double dxyz;
+    double coord[3];
+
+    *Annulus = NULL;
+    if (prevlevel < 1 || prevlevel >= CVectorSize(selAtomsTemplate)) return -1;
+    ptrtemplate =  *(RAtom * *)CVectorElementAt(selAtomsTemplate,prevlevel);
+    nexttemplate = *(RAtom * *)CVectorElementAt(selAtomsTemplate,prevlevel+1);
+    ptrtarget = *(RAtom * *)CVectorElementAt(selAtomsTemplate,ptrtemplate->ordlist[0]);
+    lx = ptrtemplate->xorg+ptrtemplate->fxorg-nexttemplate->xorg-nexttemplate->fxorg;
+    ly = ptrtemplate->yorg+ptrtemplate->fyorg-nexttemplate->yorg-nexttemplate->fyorg;
+    lz = ptrtemplate->zorg+ptrtemplate->fzorg-nexttemplate->zorg-nexttemplate->fzorg;
+    lxyzsq = lx*lx + ly*ly + lz*lz;
+    dxyz = sqrt((double)lxyzsq);
+    coord[0] =  (double)(ptrtarget->xorg + ptrtarget->fxorg);
+    coord[1] =  (double)(ptrtarget->yorg + ptrtarget->fyorg);
+    coord[2] =  (double)(ptrtarget->zorg + ptrtarget->fzorg);
+    if (CVectorCreate(Annulus,sizeof(void CVECTOR_FAR *),1)) {
+        RasMolFatalExit(MsgStrs[StrMalloc]);
+    }
+    if (!CNearTreeFindInAnnulus(AtomTreeTarget,dxyz*(1.-precision),dxyz*(1.+precision),NULL,*Annulus,coord,True)) {
+        return 0;
+    }
+    CVectorFree(Annulus);
+    return 1;
+}
+
+   /* Save the new mapping assignments from Template to Target
+      in Target placing them at level ilev, but do not clear
+      the current assignments */
+
+int SaveLastTrial(CVectorHandle selAtomsTemplate,int ilev) {
+    
+    RAtom * ptrtemplate;
+    int ii;
+    int current;
+
+    if (ilev > MaxSDepth) return -1;
+    
+    for (current=0; current < CVectorSize(selAtomsTemplate); current++){
+        ptrtemplate = *(RAtom * *)CVectorElementAt(selAtomsTemplate,current);
+        for (ii=MaxSDepth-1;ii>=ilev;ii--) ptrtemplate->ordlist[ii+1] = ptrtemplate->ordlist[ii];
+        ptrtemplate->ordlist[ilev] = ptrtemplate->ordlist[0];
+    }
+    
+    return 0;
+
+}
+
+
+/* Get the next trial alignment step in a template and target.
+ Just as with an odometer digit increment, if this step
+ would bring it past its limit in the target, this digit
+ roles to zero and we step the digit to the left.
+ 
+ If annulusToUse is not NULL it restricts the acceptable
+ target atoms.
+ 
+ In this case, the "digit" is an ordinal in selAtomsTemplate
+ counting from 1 on the right.
+ 
+ If the increment is successful, return 0, otherwise 1.
+ 
+ */
+
+
+int GetNextTrialStep(CVectorHandle selAtomsTemplate,
+                     CVectorHandle selAtomsTarget,
+                     CNearTreeHandle AtomTreeTarget,
+                     int digit, double precision) {
+    
+    RAtom * ptrtemplate;
+    RAtom * ptrtarget;
+    RAtom * bndtarget;
+    RAtom * bndtemplate;
+    int starttemplate;
+    RAtom* ptrprevtemplate;
+    RAtom* ptrprevtarget;
+    int prevtarget;
+    int newtarget;
+    int starttarget;
+    int freebondstemplate;
+    int freebondstarget;
+    int ibond;
+    Long lx, ly, lz, lxyzsq;
+    double dxyz;
+    double coord[3];
+    CVectorHandle annulusToUse;
+    CVectorHandle nextannulusToUse;
+    
+    starttemplate = digit;
+    if (starttemplate < 1) starttemplate = 1;
+    if (starttemplate > CVectorSize(selAtomsTemplate)) return 1;
+    ptrtemplate = *(RAtom * *)CVectorElementAt(selAtomsTemplate,starttemplate-1);
+    /* If this digit is not assigned, we will try to assign
+     starting from ordinal 1 in the target.
+     If this digit is assigned, we will try to assign from
+     1 more than the current assignment sfter clearing the
+     assigment in both the target and the template */
+    if (ptrtemplate->ordlist && ptrtemplate->ordlist[0]) {
+        starttarget = ptrtemplate->ordlist[0];
+        ptrtarget = *(RAtom * *)CVectorElementAt(selAtomsTarget,starttarget-1);
+        ptrtarget->ordlist[0] = 0;
+        starttarget = ptrtemplate->ordlist[0] + 1;
+        ptrtemplate->ordlist[0] = 0;
+    } else {
+        starttarget = 1;
+    }
+    
+    annulusToUse = NULL;  /* assume we will be using all of target */
+    ptrprevtemplate = NULL;  /* assume nothing has been matched yet */
+    
+    if (starttemplate > 1) {
+        /* get the annulus to use around the prior hit in target */
+        ptrprevtemplate = *(RAtom * *)CVectorElementAt(selAtomsTemplate,starttemplate-2);
+        prevtarget = ptrprevtemplate->ordlist[0];
+        ptrprevtarget = *(RAtom * *)CVectorElementAt(selAtomsTarget,prevtarget-1);
+        lx = ptrtemplate->xorg+ptrtemplate->fxorg-ptrprevtemplate->xorg-ptrprevtemplate->fxorg;
+        ly = ptrtemplate->yorg+ptrtemplate->fyorg-ptrprevtemplate->yorg-ptrprevtemplate->fyorg;
+        lz = ptrtemplate->zorg+ptrtemplate->fzorg-ptrprevtemplate->zorg-ptrprevtemplate->fzorg;
+        lxyzsq = lx*lx + ly*ly + lz*lz;
+        dxyz = sqrt((double)lxyzsq);
+        coord[0] =  (double)(ptrprevtarget->xorg + ptrprevtarget->fxorg);
+        coord[1] =  (double)(ptrprevtarget->yorg + ptrprevtarget->fyorg);
+        coord[2] =  (double)(ptrprevtarget->zorg + ptrprevtarget->fzorg);
+        if (CVectorCreate(&annulusToUse,sizeof(void CVECTOR_FAR *),1)) {
+            RasMolFatalExit(MsgStrs[StrMalloc]);
+        }
+        if (CNearTreeFindInAnnulus(AtomTreeTarget,dxyz*(1.-precision),dxyz*(1.+precision),NULL,annulusToUse,coord,True)) {
+            /* There is nothing that can match so we need to report failure.
+             The calling routine will have to back down a level and
+             try again
+             */
+            CVectorFree(&annulusToUse);
+            return 1;  /* declare failure */
+        }
+    }
+    
+    freebondstemplate = 0;
+    for (ibond = 0; ptrtemplate->bondsvector&&ibond<CVectorSize(ptrtemplate->bondsvector);ibond++) {
+        bndtemplate = *(RAtom * *)CVectorElementAt(ptrtemplate->bondsvector,ibond);
+        if (bndtemplate->ordlist[0]==0) {
+            freebondstemplate++;
+        }
+    }
+    
+    
+    if (annulusToUse) {
+        for (newtarget=0; newtarget < CVectorSize(annulusToUse); newtarget++) {
+            ptrtarget = * *(RAtom * * *)CVectorElementAt(annulusToUse,newtarget);
+            /* If this atom has an ordinal <= startarget, we cannot use it */
+            if (ptrtarget->ordinal < starttarget) continue;
+            /* If this atom is already assigned, we cannot use it */
+            if (ptrtarget->ordlist[0]) continue;
+            /* If this is not the same element we cannot use it */
+            if (ptrtarget->elemno != ptrtemplate->elemno) continue;
+            /* Now we need to compare the connectivity of the template atom
+             to the target atom */
+            freebondstarget = 0;
+            for (ibond = 0; ptrtarget->bondsvector&&ibond<CVectorSize(ptrtarget->bondsvector);ibond++) {
+                bndtarget = *(RAtom * *)CVectorElementAt(ptrtarget->bondsvector,ibond);
+                if (bndtarget->ordlist[0]==0) {
+                    freebondstarget++;
+                }
+            }
+            if (freebondstarget < freebondstemplate) continue;
+            /* It is worth trying this as a match */
+            ptrtarget->ordlist[0] = ptrtemplate->ordinal;
+            ptrtemplate->ordlist[0] = ptrtarget->ordinal;
+            CVectorFree(&annulusToUse);
+            return 0;
+        }
+    } else {
+        for (newtarget=0; newtarget < CVectorSize(selAtomsTarget); newtarget++)  {
+            ptrtarget =  *(RAtom * * )CVectorElementAt(selAtomsTarget,newtarget);
+            /* If this atom has an ordinal <= startarget, we cannot use it */
+            if (ptrtarget->ordinal < starttarget) continue;
+            /* If this atom is already assigned, we cannot use it */
+            if (ptrtarget->ordlist[0]) continue;
+            /* If this is not the same element we cannot use it */
+            if (ptrtarget->elemno != ptrtemplate->elemno) continue;
+            /* Now we need to compare the connectivity of the template atom
+             to the target atom */
+            freebondstarget = 0;
+            for (ibond = 0; ptrtarget->bondsvector&&ibond<CVectorSize(ptrtarget->bondsvector);ibond++) {
+                bndtarget = *(RAtom * *)CVectorElementAt(ptrtarget->bondsvector,ibond);
+                if (bndtarget->ordlist[0]==0) {
+                    freebondstarget++;
+                }
+            }
+            if (freebondstarget < freebondstemplate) continue;
+            /* It is worth trying this as a match */
+            ptrtarget->ordlist[0] = ptrtemplate->ordinal;
+            ptrtemplate->ordlist[0] = ptrtarget->ordinal;
+            return 0;
+        }
+    }
+    return 1;  /* Failed to find a match */
+}
+
+
+/* Get the next trial alignment in a template and target
+ starting from startfrom in selAtomsTemplate, try to
+ align in order to selAtomsTemplate.
+ 
+ Return the new value of the mapping in the target of
+ startfrom or zero if no further alignment is possible.
+ 
+ The very first call should be done with startfrom = 1
+ 
+ The idea is to either build up a match from the current
+ level, or if all levels are matched, to undo matches from
+ the highest level back down until we can work up again.
+ 
+ The value returned is either 0, an available trial
+ or 1 for none.
+ 
+ */
+
+
+int GetNextTrial(CVectorHandle selAtomsTemplate,
+                 CVectorHandle selAtomsTarget,
+                 CNearTreeHandle AtomTreeTarget,
+                 int startfrom, double precision) {
+    
+    RAtom * ptrtemplate;
+    int starttemplate;
+    int digit;
+    int newassignment = 0;
+
+ 
+    /*  See if everything is assigned yet */
+    
+    for (starttemplate=startfrom; starttemplate <= CVectorSize(selAtomsTemplate); starttemplate++){
+        ptrtemplate = *(RAtom * *)CVectorElementAt(selAtomsTemplate,starttemplate-1);
+        if (ptrtemplate->ordlist && ptrtemplate->ordlist[0]) continue;
+        /* We have an unassigned template atom,
+           try to assign it */
+        newassignment = 1-GetNextTrialStep(selAtomsTemplate, selAtomsTarget, AtomTreeTarget, starttemplate, precision);
+        if (newassignment) continue;
+        /* We failed to do this assignment, so we need to back down 1 level and try again */
+        if (starttemplate > 1) {
+            starttemplate --;
+            if (!GetNextTrialStep(selAtomsTemplate, selAtomsTarget, AtomTreeTarget, starttemplate, precision)) {
+                newassignment = 1;
+                continue;
+            }
+            return 1; /* Assignment Failed */
+        }
+        return 1;
+    }
+    
+    if (newassignment) return 0;
+    
+    /* Everything is assigned, attempt to increment from the highest level down */
+    
+    
+    for (digit=CVectorSize(selAtomsTemplate); digit > 0; digit-- )  {
+        if (!GetNextTrialStep(selAtomsTemplate, selAtomsTarget, AtomTreeTarget, digit, precision)) {
+            if (digit < CVectorSize(selAtomsTemplate)) {
+                return GetNextTrial(selAtomsTemplate, selAtomsTarget, AtomTreeTarget, digit, precision);
+            }
+            return 0;
+        }
+    }
+    return 1; /* attempted assignment failed */
+            
+}
+
+
 /* Get the transform to align the current molecule to the given
    molecule.  Works on the world coordinates with bond rotations
-   but without screen rotations */
+   but without screen rotations 
+
+   For substructure searches, the molecule selection with the smaller
+   number of atoms is used as the template, while selections
+   with a sliding origin marches through the molecule selection with
+   the larger number of atoms for trial targets.
+ 
+ */
 
 int AlignToMolecule(int molnum, double * rmsd, 
                     CQRQuaternionHandle qRotToMolecule, 
                     CV3VectorHandle vTransToMolecule,
                     int seqrange, double mindist, 
                     double maxdist, int kabsch_local,
-                    int none_ang_dist, int xlatecen ) {
+                    int none_ang_dist, int xlatecen,
+                    int findsubstructure ) {
     
-    CVectorHandle /* RAtom * */ selAtomsLocal;
-    CVectorHandle /* RAtom * */ selAtomsRemote;
-    CVectorHandle /* Group * */ selGroupsLocal;
-    CVectorHandle /* Group * */ selGroupsRemote;
-    CVectorHandle /* CV3Vector */ vlistLocal, vlistRemote, vlistRot; /* coordinate lists to align */
-    CVectorHandle /* short */     glistLocal, glistRemote;           /* matching residue numbers */
-    CVectorHandle /* CV3Plane */ planeList; /* list of planes */
-    CVectorHandle /* CQRQuaternion */ quatList; /* list of quaternions */
-    CVectorHandle /* CQRQuaternion */ quatLocalList; /* list of local quaternions by atom */
-    CVectorHandle /* int */ quatLocalCountList; /* list of local quaternion counts */
+    CVectorHandle /* RAtom * */   selAtomsLocal = NULL;
+    CVectorHandle /* RAtom * */   selAtomsRemote = NULL;
+    CVectorHandle /* RAtom * */   selAtomsTemplate = NULL;
+    CVectorHandle /* RAtom * */   selAtomsTarget = NULL;
+    CVectorHandle /* Group * */   selGroupsLocal = NULL;
+    CVectorHandle /* Group * */   selGroupsRemote = NULL;
+    CVectorHandle /* CV3Vector */ vlistLocal = NULL, vlistRemote = NULL, vlistRot = NULL; /* coordinate lists to align */
+    CVectorHandle /* CV3Vector */ vlistTarget = NULL; /* copy of vlistLocal or vlistRemote */
+    CVectorHandle /* short */     glistLocal = NULL, glistRemote = NULL;           /* matching residue numbers */
+    CVectorHandle /* CV3Plane */  planeList = NULL; /* list of planes */
+    CVectorHandle /* CQRQuaternion */ quatList = NULL; /* list of quaternions */
+    CVectorHandle /* CQRQuaternion */ quatLocalList = NULL; /* list of local quaternions by atom */
+    CVectorHandle /* int */       quatLocalCountList = NULL; /* list of local quaternion counts */
+    
+    CNearTreeHandle AtomTreeLocal = NULL;
+    CNearTreeHandle AtomTreeRemote = NULL;
+    CNearTreeHandle AtomTreeTemplate = NULL;
+    CNearTreeHandle AtomTreeTarget = NULL;
+    
     CV3Vector origcLocal, origcRemote;
     CV3Vector cenLocal, cenRemote;
     CV3Vector shiftLocal;
@@ -4774,8 +5087,11 @@ int AlignToMolecule(int molnum, double * rmsd,
     CV3Vector rotaxis;
     CV3Vector origshift;
     int MoleculeIndexSave;
-    int ii;
+    int ii, jj;
     int count;
+    int dosubstruct;
+    int done;
+    int ilev;
     
     int chainCountLocal;
     int chainCountRemote;
@@ -4786,30 +5102,113 @@ int AlignToMolecule(int molnum, double * rmsd,
     double sinTerm = 0.0;
     double angle;
     double angleDegrees;
+    double rmsds[MaxSDepth];
+    double precision = 0.2;
+    int nrmsds;
+    int startfrom;
     
     
     double qnorm,qnormsq;
     double vnormsq, vnormsqmax;
     
     if (seqrange < 0) seqrange=0;
+    dosubstruct = 0;
+    nrmsds=0;
+    for (ii=0;ii<MaxSDepth;ii++){
+        rmsds[ii] = -1.;
+    }
+    if (findsubstructure == ALIGN_SUBSTRUCTURE) dosubstruct = 1;
     
     qRotToMolecule->w=0.; qRotToMolecule->x=0.; qRotToMolecule->y=0.; qRotToMolecule->z=0.; 
     if (molnum < 0 || molnum >=NumMolecules) return -1;
     if (molnum == MoleculeIndex) return 1;
+    
+    if (!AtomTree || NeedAtomTree) {
+        if (CreateAtomTree()) {
+            RasMolFatalExit(MsgStrs[StrMalloc]);
+        }
+    }
+    AtomTreeLocal = AtomTree;
     
     CVectorCreate( &selAtomsLocal, sizeof (RAtom *), 1);
     CVectorCreate( &selAtomsRemote, sizeof (RAtom *), 1);
     CVectorCreate( &selGroupsLocal, sizeof (Group *), 1);
     CVectorCreate( &selGroupsRemote, sizeof (Group *), 1);
     GatherSelected( selAtomsLocal, selGroupsLocal );
+    if (dosubstruct) {
+        ConstructGraph(True,True);
+    }
     CV3M_vsssSet(origcLocal,(double)OrigCX,(double)OrigCY,(double)OrigCZ);
     CV3M_vsssSet(cenLocal,(double)CenX,(double)CenY,(double)CenZ);
     MoleculeIndexSave = MoleculeIndex;
     SwitchMolecule(molnum);
+    if (!AtomTree || NeedAtomTree) {
+        if (CreateAtomTree()) {
+            RasMolFatalExit(MsgStrs[StrMalloc]);
+        }
+    }
+    AtomTreeRemote = AtomTree;
+    
     GatherSelected( selAtomsRemote, selGroupsRemote );
+    if (dosubstruct) {
+        ConstructGraph(True,True);
+    }
     CV3M_vsssSet(origcRemote,(double)OrigCX,(double)OrigCY,(double)OrigCZ);
     CV3M_vsssSet(cenRemote,(double)CenX,(double)CenY,(double)CenZ);
     
+    
+    /*  zero-out each atom's ordlist */
+    
+    for (ii=0; ii<CVectorSize(selAtomsLocal);ii++) {
+        RAtom * ptemp;
+        ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
+        for (jj=0; jj < MaxSDepth; jj++) ptemp->ordlist[jj]=0;
+    }
+
+    for (ii=0; ii<CVectorSize(selAtomsRemote);ii++) {
+        RAtom * ptemp;
+        ptemp = *(RAtom * *)CVectorElementAt(selAtomsRemote,ii);
+        for (jj=0; jj < MaxSDepth; jj++) ptemp->ordlist[jj]=0;
+    }
+            
+
+    
+    /* If we are going to work with substructures, we need to identify
+     the smaller of the two structures as the template and the larger
+     as the target.  Otherwise we take the Remote as the target and
+     the local as the template */
+    
+    selAtomsTarget = selAtomsRemote;
+    selAtomsTemplate = selAtomsLocal;
+    AtomTreeTarget = AtomTreeRemote;
+    AtomTreeTemplate = AtomTreeLocal;
+    
+    if (dosubstruct && CVectorSize(selAtomsLocal) != CVectorSize(selAtomsRemote)) {
+        if (CVectorSize(selAtomsLocal) > CVectorSize(selAtomsRemote)) {
+            selAtomsTarget = selAtomsLocal;
+            selAtomsTemplate = selAtomsRemote;
+            AtomTreeTarget = AtomTreeLocal;
+            AtomTreeTemplate = AtomTreeRemote;
+        }
+    }
+    if (dosubstruct) {
+        if (GetNextTrial(selAtomsTemplate,selAtomsTarget,AtomTreeTarget,1,precision)) {
+            startfrom = -1;
+            InvalidateCmndLine();
+            WriteString(" No matching selection!!\n");
+            if (planeList) CVectorFree(&planeList);
+            if (vlistRot) CVectorFree(&vlistRot);
+            if (vlistLocal) CVectorFree(&vlistLocal);
+            if (vlistRemote) CVectorFree(&vlistRemote);
+            if (selAtomsLocal) CVectorFree(&selAtomsLocal);
+            if (selAtomsRemote) CVectorFree(&selAtomsRemote);
+            
+            return 1;
+
+        }
+        startfrom = CVectorSize(selAtomsTemplate);
+    }
+
     
     /* Now transfer the current coordinate information to vlist1 and vlist2 */
     
@@ -4818,13 +5217,17 @@ int AlignToMolecule(int molnum, double * rmsd,
     CVectorCreate(&glistLocal,sizeof(short),1);
     CVectorCreate(&glistRemote,sizeof(short),1);
     CVectorCreate(&vlistRot,sizeof(CV3Vector),1);
+    vlistTarget = vlistRemote;
     
-    /* Compute the actual coordinates in rasmol units */
+    /* Compute the actual coordinates in rasmol units,
+     and zero-out each atom's ordlist*/
     
     for (ii=0; ii<CVectorSize(selAtomsLocal);ii++) {
         CV3Vector vtemp;
         RAtom * ptemp;
         ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
+        if (!dosubstruct || selAtomsLocal == selAtomsTemplate ||
+            (selAtomsLocal == selAtomsTarget && ptemp->ordlist[0])){
         vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
                          +(double)(ptemp->xtrl)/10000.0;
 #ifdef INVERT
@@ -4839,10 +5242,14 @@ int AlignToMolecule(int molnum, double * rmsd,
         CVectorAddElement(vlistLocal,&vtemp);
         CVectorAddElement(glistLocal,&((*(Group * *)CVectorElementAt(selGroupsLocal,ii))->serno));
     }
+    }
     for (ii=0; ii<CVectorSize(selAtomsRemote);ii++) {
         CV3Vector vtemp;
         RAtom * ptemp;
         ptemp = *(RAtom * *)CVectorElementAt(selAtomsRemote,ii);
+        if (!dosubstruct || selAtomsRemote == selAtomsTemplate ||
+            (selAtomsRemote == selAtomsTarget && ptemp->ordlist[0])){
+            
         vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcRemote.vec[0])/250.0
         +(double)(ptemp->xtrl)/10000.0;
 #ifdef INVERT
@@ -4857,7 +5264,14 @@ int AlignToMolecule(int molnum, double * rmsd,
         CVectorAddElement(vlistRemote,&vtemp);
         CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,ii))->serno));
     }
+    }
+    if (dosubstruct && selAtomsLocal == selAtomsTarget) vlistTarget = vlistLocal;
     
+    
+    done = True;
+    
+    do {
+        
     CV3GetCenterOfMass(&comLocal,vlistLocal); /* get center of mass local */
     CV3GetCenterOfMass(&comRemote,vlistRemote); /* get center of mass remote */
     CV3M_vvvSubtract(*vTransToMolecule,comRemote,comLocal);
@@ -4926,10 +5340,90 @@ int AlignToMolecule(int molnum, double * rmsd,
         }
     }
     
+        
     if (kabsch_local==ALIGN_KABSCH) {
-    	TestKabsch(vlistRemote,vlistLocal,&qsum);
+            TestKabsch(vlistRemote,vlistLocal,&qsum,rmsd);
+            if (!dosubstruct) {
+                done = True;
+                break;
+            }
+            ilev = -1;
+            if (nrmsds == 0) {
+                nrmsds = 1;
+                rmsds[0] = *rmsd;
+                ilev = 1;
     } else {
+                if (*rmsd >= rmsds[nrmsds-1] && nrmsds < MaxSDepth) {
+                    rmsds[nrmsds++] = *rmsd;
+                    ilev = MaxSDepth;
+                }
+                for (ii=0; ii < nrmsds; ii++) {
+                    if (*rmsd < rmsds[ii]) {
+                        /* move the remaining rmsds down 1 */
+                        for (jj=nrmsds-1; jj >= ii; jj--) {
+                            if (jj < MaxSDepth-1) {
+                                rmsds[jj+1]=rmsds[jj];
+                            }
+                        }
+                        rmsds[ii] = *rmsd;
+                        if (nrmsds < MaxSDepth) nrmsds++;
+                        ilev = ii+1;
+                    }
+                }
+            }
+            SaveLastTrial(selAtomsTemplate,ilev);
+            if (GetNextTrial(selAtomsTemplate,selAtomsTarget,AtomTreeTarget,startfrom,precision)) break;
+            if (selAtomsLocal == selAtomsTarget) {
+                CVectorClear(vlistLocal);
+                for (ii=0; ii<CVectorSize(selAtomsLocal);ii++) {
+                    CV3Vector vtemp;
+                    RAtom * ptemp;
+                    ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
+                    if (ptemp->ordlist[0]){
+                        vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
+                        +(double)(ptemp->xtrl)/10000.0;
+#ifdef INVERT
+                        vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                                         -(double)(ptemp->ytrl)/10000.0);
+#else
+                        vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                        +(double)(ptemp->ytrl)/10000.0;
+#endif
+                        vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcLocal.vec[2])/250.0
+                                         -(double)(ptemp->ztrl)/10000.0);
+                        CVectorAddElement(vlistLocal,&vtemp);
+                        CVectorAddElement(glistLocal,&((*(Group * *)CVectorElementAt(selGroupsLocal,ii))->serno));
+                    }
+                }
 
+            } else {
+                CVectorClear(vlistRemote);
+                for (ii=0; ii<CVectorSize(selAtomsRemote);ii++) {
+                    CV3Vector vtemp;
+                    RAtom * ptemp;
+                    ptemp = *(RAtom * *)CVectorElementAt(selAtomsRemote,ii);
+                    if (ptemp->ordlist[0]){
+                        vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcRemote.vec[0])/250.0
+                        +(double)(ptemp->xtrl)/10000.0;
+#ifdef INVERT
+                        vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcRemote.vec[1])/250.0
+                                         +(double)(ptemp->ytrl)/10000.0);
+#else
+                        vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcRemote.vec[1])/250.0
+                        +(double)(ptemp->ytrl)/10000.0;
+#endif
+                        vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcRemote.vec[2])/250.0
+                                         +(double)(ptemp->ztrl)/10000.0);
+                        CVectorAddElement(vlistRemote,&vtemp);
+                        CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,ii))->serno));
+                    }
+                }
+            }
+            
+            done = False;
+            
+        } else {
+            
     CVectorCreate(&quatList,sizeof(CQRQuaternion),1);
     CVectorCreate(&quatLocalList,sizeof(CQRQuaternion),1);
     CVectorCreate(&quatLocalCountList,sizeof(int),1);
@@ -5089,7 +5583,86 @@ int AlignToMolecule(int molnum, double * rmsd,
         CQRMScalarMultiply(qsum,qsum,1/qnorm);
     }
     
+            if (!dosubstruct) {
+                done = True;
+                break;
     }
+            ilev = -1;
+            if (nrmsds == 0) {
+                nrmsds = 1;
+                rmsds[0] = *rmsd;
+                ilev = 1;
+            } else {
+                if (*rmsd >= rmsds[nrmsds-1] && nrmsds < MaxSDepth) {
+                    rmsds[nrmsds++] = *rmsd;
+                    ilev = MaxSDepth;
+                }
+                for (ii=0; ii < nrmsds; ii++) {
+                    if (*rmsd < rmsds[ii]) {
+                        /* move the remaining rmsds down 1 */
+                        for (jj=nrmsds-1; jj >= ii; jj--) {
+                            if (jj < MaxSDepth-1) {
+                                rmsds[jj+1]=rmsds[jj];
+                            }
+                        }
+                        rmsds[ii] = *rmsd;
+                        if (nrmsds < MaxSDepth) nrmsds++;
+                        ilev = ii+1;
+                    }
+                }
+            }
+            SaveLastTrial(selAtomsTemplate,ilev);
+            if(GetNextTrial(selAtomsTemplate,selAtomsTarget,AtomTreeTarget,startfrom,precision)) break;
+            if (selAtomsLocal == selAtomsTarget) {
+                CVectorClear(vlistLocal);
+                for (ii=0; ii<CVectorSize(selAtomsLocal);ii++) {
+                    CV3Vector vtemp;
+                    RAtom * ptemp;
+                    ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
+                    if (ptemp->ordlist[0]){
+                        vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
+                        +(double)(ptemp->xtrl)/10000.0;
+#ifdef INVERT
+                        vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                                         -(double)(ptemp->ytrl)/10000.0);
+#else
+                        vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                        +(double)(ptemp->ytrl)/10000.0;
+#endif
+                        vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcLocal.vec[2])/250.0
+                                         -(double)(ptemp->ztrl)/10000.0);
+                        CVectorAddElement(vlistLocal,&vtemp);
+                        CVectorAddElement(glistLocal,&((*(Group * *)CVectorElementAt(selGroupsLocal,ii))->serno));
+                    }
+                }
+                
+            } else {
+                CVectorClear(vlistRemote);
+                for (ii=0; ii<CVectorSize(selAtomsRemote);ii++) {
+                    CV3Vector vtemp;
+                    RAtom * ptemp;
+                    ptemp = *(RAtom * *)CVectorElementAt(selAtomsRemote,ii);
+                    if (ptemp->ordlist[0]){
+                        vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcRemote.vec[0])/250.0
+                        +(double)(ptemp->xtrl)/10000.0;
+#ifdef INVERT
+                        vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcRemote.vec[1])/250.0
+                                         +(double)(ptemp->ytrl)/10000.0);
+#else
+                        vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcRemote.vec[1])/250.0
+                        +(double)(ptemp->ytrl)/10000.0;
+#endif
+                        vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcRemote.vec[2])/250.0
+                                         +(double)(ptemp->ztrl)/10000.0);
+                        CVectorAddElement(vlistRemote,&vtemp);
+                        CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,ii))->serno));
+                    }
+                }
+            }
+            
+            done = False;
+            
+        }
     /* Calculate the standard deviation of the atom fits */
     sum = 0.0;
     cosTerm = qsum.w;
@@ -5217,7 +5790,7 @@ int AlignToMolecule(int molnum, double * rmsd,
 
     } else if (none_ang_dist == ALIGN_ANGLE || none_ang_dist == ALIGN_ANGLE_SUM) {
     
-        CQRQuaternion angSum, angprod;
+            CQRQuaternion angSum;
         CQRMSet(angSum,1.,0.,0.,0.);
     
         for (ii=0; ii < chainCountCommon; ii++) {
@@ -5225,7 +5798,7 @@ int AlignToMolecule(int molnum, double * rmsd,
             CQRQuaternion qtemp1, qtemp2, atemp ;
             double localcos, localsin, localangle;
             RAtom * pLocal;
-            long field[3];
+                long field[4];
             pLocal = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
             qlocal = (CQRQuaternionHandle)CVectorElementAt(quatLocalList,ii);
             CQRMConjugate(qtemp1,qsum);
@@ -5273,13 +5846,14 @@ int AlignToMolecule(int molnum, double * rmsd,
             }
         }
     }
+    } while (!done);
     
-    CVectorFree(&planeList);
-    CVectorFree(&vlistRot);
-    CVectorFree(&vlistLocal);
-    CVectorFree(&vlistRemote);
-    CVectorFree(&selAtomsLocal);
-    CVectorFree(&selAtomsRemote);
+    if (planeList) CVectorFree(&planeList);
+    if (vlistRot) CVectorFree(&vlistRot);
+    if (vlistLocal) CVectorFree(&vlistLocal);
+    if (vlistRemote) CVectorFree(&vlistRemote);
+    if (selAtomsLocal) CVectorFree(&selAtomsLocal);
+    if (selAtomsRemote) CVectorFree(&selAtomsRemote);
     
     return 0;
 }

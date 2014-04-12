@@ -247,6 +247,8 @@ typedef struct {
 #define ALIGN_DISTANCE     3
 #define ALIGN_ANGLE_SUM    4
 #define ALIGN_DISTANCE_SUM 5
+#define ALIGN_STRUCTURE    1
+#define ALIGN_SUBSTRUCTURE 2
 
 
 #ifdef TRANSFORM
@@ -443,12 +445,15 @@ void CentreTransform( int, int, int, int );
 void ResetTransform( void );
 
 void SetLutEntry( int, int, int, int );
-void TestKabsch( const CVectorHandle /*CV3Vector */ v1, const CVectorHandle /*CV3Vector */ v2,
-                 CQRQuaternionHandle q );
+void TestKabsch( const CVectorHandle /*CV3Vector */ v1,
+                 const CVectorHandle /*CV3Vector */ v2,
+                 CQRQuaternionHandle q,
+                 double * rmsd );
 void GatherSelected(CVectorHandle /* RAtom * */ selAtoms, CVectorHandle /* Group * */ selGroups  );
 int AlignToMolecule(int molnum, double * rmsd, 
                     CQRQuaternionHandle qRotToMolecule, 
                     CV3VectorHandle vTransToMolecule,
                     int seqrange, double mindist, 
                     double maxdist, int kabsch_local,
-                    int none_ang_dist, int xlatecen);
+                    int none_ang_dist, int xlatecen,
+                    int findsubstructure);

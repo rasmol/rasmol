@@ -190,6 +190,7 @@ void CreateBondAxis( Long, Long );
 void SetBondAxis( RAtom __far *, RAtom __far * );
 int RemoveBond(  Long , Long );
 void ResetBondsSel( void );
+int ConstructGraph( int, int ) ;
 
 #ifdef WBROTATE
 Real WLastRS;

@@ -6099,7 +6099,7 @@ int ExecuteCommandOne( int * restore )
         case(RefreshTok):    RefreshScreen();
                              ReDrawFlag = NextReDrawFlag; break;
             
-        /* align <molnum> {kabsch|local} {none|angles|distance} {translate|centre}*/
+        /* align <molnum> {kabsch|local} {none|angles|distance} {translate|centre} {structure|substructure}*/
                              
         case(AlignTok):
             FetchToken();
@@ -6122,6 +6122,7 @@ int ExecuteCommandOne( int * restore )
             int none_ang_dist;
             int molnum;
             int xlatecen;
+            int findsubstructure;
             
             molnum = TokenValue-1;
             seqrange = 5;
@@ -6130,6 +6131,7 @@ int ExecuteCommandOne( int * restore )
             kabsch_local = 0;
             none_ang_dist = 0;
             xlatecen = 0;
+            findsubstructure = 0;
             
             FetchToken();
             while (CurToken) {
@@ -6175,6 +6177,20 @@ int ExecuteCommandOne( int * restore )
                       CommandError(MsgStrs[ErrBadArg]);
               	      break;
                     }
+              	  } else if (CurToken==SubstructureTok){
+                      if (!findsubstructure) {
+                          findsubstructure = ALIGN_SUBSTRUCTURE;
+                      } else {
+                          CommandError(MsgStrs[ErrBadArg]);
+                          break;
+                      }
+              	  } else if (CurToken==StructureTok){
+                      if (!findsubstructure) {
+                          findsubstructure = ALIGN_STRUCTURE;
+                      } else {
+                          CommandError(MsgStrs[ErrBadArg]);
+                          break;
+                      }
               	  } else if (CurToken=='+' || CurToken == AddTok)  {
               	    if (!none_ang_dist) {
               	      none_ang_dist = ALIGN_DISTANCE_SUM;
@@ -6192,6 +6208,7 @@ int ExecuteCommandOne( int * restore )
               if (CurToken) break;
             if (!kabsch_local) kabsch_local = ALIGN_LOCAL;
             if (!none_ang_dist) none_ang_dist = ALIGN_DISTANCE;
+            if (!findsubstructure) findsubstructure = ALIGN_STRUCTURE;
             if (xlatecen)  {
             	XlateCen = (xlatecen==TranslateTok)?True:False;
             }
@@ -6199,7 +6216,8 @@ int ExecuteCommandOne( int * restore )
             
             AlignToMolecule(TokenValue-1,&rmsd,&q, 
             &trans, seqrange, mindist, maxdist, 
-            kabsch_local,none_ang_dist, XlateCen);
+            kabsch_local,none_ang_dist, XlateCen,
+            findsubstructure);
             fprintf(stderr," rmsd %g\n",rmsd);
             ReDrawFlag |= RFInitial;
         }

@@ -260,19 +260,20 @@
 #define SpacefillTok   326
 #define StarTok        327
 #define StructureTok   328
-#define SurfaceTok     329
-#define SymmetryTok    330
-#define TimeTok        331
-#define TitleTok       332
-#define TraceTok       333
-#define TranslateTok   334
+#define SubstructureTok 329
+#define SurfaceTok     330
+#define SymmetryTok    331
+#define TimeTok        332
+#define TitleTok       333
+#define TraceTok       334
+#define TranslateTok   335
 
-#define ViewTok        335
-#define WaitTok        336
-#define WireframeTok   337
-#define WriteTok       338
-#define ZapTok         339
-#define ZoomTok        340
+#define ViewTok        336
+#define WaitTok        337
+#define WireframeTok   338
+#define WriteTok       339
+#define ZapTok         340
+#define ZoomTok        341
 
 /* Predicate Tokens */
 #define IsPredTok(x)   (((x)>=AlphaTok) && ((x)<=SmallTok))

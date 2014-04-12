@@ -164,6 +164,11 @@
  Parametrization for alt conformer bond radius
 
  */
+
+#ifndef MOLECULE_H
+#define MOLECULE_H
+#include <CVector.h>
+
 #define MAXMASK 40
 #define MAXELEM 1024
 #define MINELEM 29
@@ -267,7 +272,8 @@
 /*  Molecule Database  */
 /*=====================*/
 
-#define MaxBonds 6
+#define MaxSDepth 4
+
 
 typedef struct _Atom {
         struct _Atom __far *anext;        /* Linked list of atoms  */
@@ -308,16 +314,27 @@ typedef struct _Atom {
         short  mbox;                      /* Shadow Casting NOnce  */
         short  model;                     /* Atom Model Number     */
         short  visited;                   /* For bond rotation     */
-        short  nbonds;                    /* For bond rotation     */ 
-        struct _Atom __far *bonds[MaxBonds];
-        void   *surfbonds;                /* Surface bonds list    */
+        Long   ordinal;                   /* ordinal of this atom  */
+        Long   ordlist[MaxSDepth+1];      /* ordinal in template matching  */
+        CVectorHandle bondsvector;        /* For Align and bond rotation */
+        CVectorHandle distancevector;     /* For Align             */
     } RAtom;
+
+/*  notes on ordlist:
+    For the atoms in a template, ordlist holds the ordinals in the
+    target molecule that match.  Zero means not assigned.
+
+    For the atoms in a target, ordlist holds the orinals in the
+    template that match.  Zero means not assigned.
+
+ */
 
 
 typedef struct _Bond {
         struct _Bond __far *bnext;       /* Linked list of bonds  */
         RAtom __far *srcatom;            /* Source Atom Ptr       */
         RAtom __far *dstatom;            /* Destination Atom Ptr  */
+        long  sxyz;                      /* Bond length           */
         short radius;                    /* World Radius          */
         short irad;                      /* Image Radius          */
         short aradius;                   /* World Alt Radius      */
@@ -357,6 +374,7 @@ typedef struct _Group {
         Byte  struc;                      /* Secondary Structure   */
         short flag;                       /* Database flags        */
         short model;                      /* Group Model Number    */
+        short tempmarker;                 /* Temporary Marker      */
     } Group;
  
 #ifdef APPLEMAC
@@ -723,3 +741,4 @@ void SaveAtomSelection( void );
 void RegisterAlloc( void *);
 #endif
 
+#endif
