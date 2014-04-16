@@ -4688,29 +4688,24 @@ void GatherSelected(CVectorHandle /* RAtom * */ selAtoms, CVectorHandle /* Group
     register Chain __far *chain;
     Group __far *group;
     RAtom __far *ptr;
+    int ii;
 
     /* First pick up atoms and clear tempmarker for
        the enclosing groups */
 
     ForEachAtom {
         if (ptr->flag & SelectFlag) {
-            group->tempmarker = False;
             if (selAtoms) {
             CVectorAddElement(selAtoms,&ptr);
+                CVectorAddElement(selGroups,&group);
+                ptr->ordinal = CVectorSize(selAtoms);
+                for (ii=0; ii < MaxSDepth; ii++) {
+                    ptr->ordlist[ii] = 0;
         }
         }
+    }
     }
         
-    /* Now reprocess the atoms to pick up each group
-        once */
-    if (selGroups) {
-        ForEachAtom {
-            if (ptr->flag & SelectFlag && selGroups && (group->tempmarker==False)) {
-                CVectorAddElement(selGroups,&group);
-                group->tempmarker = True;
-    }
-        }
-    }
     return;
 }
 
@@ -4842,22 +4837,23 @@ int GetNextTrialStep(CVectorHandle selAtomsTemplate,
     
     RAtom * ptrtemplate;
     RAtom * ptrtarget;
+    RAtom * ptrprevtarget;
     RAtom * bndtarget;
     RAtom * bndtemplate;
     int starttemplate;
     RAtom* ptrprevtemplate;
-    RAtom* ptrprevtarget;
     int prevtarget;
     int newtarget;
     int starttarget;
     int freebondstemplate;
     int freebondstarget;
     int ibond;
-    Long lx, ly, lz, lxyzsq;
-    double dxyz;
+    double lx, ly, lz, lxyzsq;
+    double dxyz, dxyzlow, dxyzhigh;
     double coord[3];
     CVectorHandle annulusToUse;
-    CVectorHandle nextannulusToUse;
+    int ii;
+    
     
     starttemplate = digit;
     if (starttemplate < 1) starttemplate = 1;
@@ -4886,18 +4882,21 @@ int GetNextTrialStep(CVectorHandle selAtomsTemplate,
         ptrprevtemplate = *(RAtom * *)CVectorElementAt(selAtomsTemplate,starttemplate-2);
         prevtarget = ptrprevtemplate->ordlist[0];
         ptrprevtarget = *(RAtom * *)CVectorElementAt(selAtomsTarget,prevtarget-1);
-        lx = ptrtemplate->xorg+ptrtemplate->fxorg-ptrprevtemplate->xorg-ptrprevtemplate->fxorg;
-        ly = ptrtemplate->yorg+ptrtemplate->fyorg-ptrprevtemplate->yorg-ptrprevtemplate->fyorg;
-        lz = ptrtemplate->zorg+ptrtemplate->fzorg-ptrprevtemplate->zorg-ptrprevtemplate->fzorg;
+        lx = (double)(ptrtemplate->xorg+ptrtemplate->fxorg-ptrprevtemplate->xorg-ptrprevtemplate->fxorg);
+        ly = (double)(ptrtemplate->yorg+ptrtemplate->fyorg-ptrprevtemplate->yorg-ptrprevtemplate->fyorg);
+        lz = (double)(ptrtemplate->zorg+ptrtemplate->fzorg-ptrprevtemplate->zorg-ptrprevtemplate->fzorg);
         lxyzsq = lx*lx + ly*ly + lz*lz;
-        dxyz = sqrt((double)lxyzsq);
-        coord[0] =  (double)(ptrprevtarget->xorg + ptrprevtarget->fxorg);
+        dxyz = sqrt(lxyzsq);
+         coord[0] =  (double)(ptrprevtarget->xorg + ptrprevtarget->fxorg);
         coord[1] =  (double)(ptrprevtarget->yorg + ptrprevtarget->fyorg);
         coord[2] =  (double)(ptrprevtarget->zorg + ptrprevtarget->fzorg);
         if (CVectorCreate(&annulusToUse,sizeof(void CVECTOR_FAR *),1)) {
             RasMolFatalExit(MsgStrs[StrMalloc]);
         }
-        if (CNearTreeFindInAnnulus(AtomTreeTarget,dxyz*(1.-precision),dxyz*(1.+precision),NULL,annulusToUse,coord,True)) {
+        dxyzlow = dxyz-375.*precision;
+        if (dxyzlow < 0.) dxyzlow = 0.;
+        dxyzhigh = dxyz+375.*precision;
+        if (CNearTreeFindInAnnulus(AtomTreeTarget,dxyzlow,dxyzhigh,NULL,annulusToUse,coord,True)) {
             /* There is nothing that can match so we need to report failure.
              The calling routine will have to back down a level and
              try again
@@ -4905,6 +4904,7 @@ int GetNextTrialStep(CVectorHandle selAtomsTemplate,
             CVectorFree(&annulusToUse);
             return 1;  /* declare failure */
         }
+    }
     }
     
     freebondstemplate = 0;
@@ -4917,9 +4917,17 @@ int GetNextTrialStep(CVectorHandle selAtomsTemplate,
     
     
     if (annulusToUse) {
+        
+        int bestordinal;
+        
+        /* Search the annulus, accepting only unassigned elements with an
+         ordinal >= starttarget, a matching element and acceptable
+         connectivity, looking for the minimal ordinal */
+        ptrprevtarget = NULL;
+        bestordinal = CVectorSize(selAtomsTarget)+1;
         for (newtarget=0; newtarget < CVectorSize(annulusToUse); newtarget++) {
             ptrtarget = * *(RAtom * * *)CVectorElementAt(annulusToUse,newtarget);
-            /* If this atom has an ordinal <= startarget, we cannot use it */
+            /* If this atom has an ordinal < startarget, we cannot use it */
             if (ptrtarget->ordinal < starttarget) continue;
             /* If this atom is already assigned, we cannot use it */
             if (ptrtarget->ordlist[0]) continue;
@@ -4936,11 +4944,19 @@ int GetNextTrialStep(CVectorHandle selAtomsTemplate,
             }
             if (freebondstarget < freebondstemplate) continue;
             /* It is worth trying this as a match */
-            ptrtarget->ordlist[0] = ptrtemplate->ordinal;
-            ptrtemplate->ordlist[0] = ptrtarget->ordinal;
+            if (!ptrprevtarget || bestordinal > ptrtarget->ordinal) {
+                ptrprevtarget = ptrtarget;
+                bestordinal = ptrtarget->ordinal;
+            }
+        }
+        
+        if (ptrprevtarget) {
+            ptrprevtarget->ordlist[0] = ptrtemplate->ordinal;
+            ptrtemplate->ordlist[0] = ptrprevtarget->ordinal;
             CVectorFree(&annulusToUse);
             return 0;
         }
+        CVectorFree(&annulusToUse);
     } else {
         for (newtarget=0; newtarget < CVectorSize(selAtomsTarget); newtarget++)  {
             ptrtarget =  *(RAtom * * )CVectorElementAt(selAtomsTarget,newtarget);
@@ -5009,16 +5025,15 @@ int GetNextTrial(CVectorHandle selAtomsTemplate,
            try to assign it */
         newassignment = 1-GetNextTrialStep(selAtomsTemplate, selAtomsTarget, AtomTreeTarget, starttemplate, precision);
         if (newassignment) continue;
-        /* We failed to do this assignment, so we need to back down 1 level and try again */
-        if (starttemplate > 1) {
+        /* We failed to do this assignment, so we need to back down 1 level at a time and try again */
+        while (starttemplate > 1) {
             starttemplate --;
             if (!GetNextTrialStep(selAtomsTemplate, selAtomsTarget, AtomTreeTarget, starttemplate, precision)) {
                 newassignment = 1;
-                continue;
+                break;
             }
-            return 1; /* Assignment Failed */
         }
-        return 1;
+        if (!newassignment) return 1;
     }
     
     if (newassignment) return 0;
@@ -5029,7 +5044,12 @@ int GetNextTrial(CVectorHandle selAtomsTemplate,
     for (digit=CVectorSize(selAtomsTemplate); digit > 0; digit-- )  {
         if (!GetNextTrialStep(selAtomsTemplate, selAtomsTarget, AtomTreeTarget, digit, precision)) {
             if (digit < CVectorSize(selAtomsTemplate)) {
-                return GetNextTrial(selAtomsTemplate, selAtomsTarget, AtomTreeTarget, digit, precision);
+                if (!GetNextTrial(selAtomsTemplate, selAtomsTarget, AtomTreeTarget, digit+1, precision)){
+                    return 0;
+                } else {
+                    digit --;
+                    continue;
+                };
             }
             return 0;
         }
@@ -5134,10 +5154,10 @@ int AlignToMolecule(int molnum, double * rmsd,
     CVectorCreate( &selAtomsRemote, sizeof (RAtom *), 1);
     CVectorCreate( &selGroupsLocal, sizeof (Group *), 1);
     CVectorCreate( &selGroupsRemote, sizeof (Group *), 1);
-    GatherSelected( selAtomsLocal, selGroupsLocal );
     if (dosubstruct) {
         ConstructGraph(True,True);
     }
+    GatherSelected( selAtomsLocal, selGroupsLocal );
     CV3M_vsssSet(origcLocal,(double)OrigCX,(double)OrigCY,(double)OrigCZ);
     CV3M_vsssSet(cenLocal,(double)CenX,(double)CenY,(double)CenZ);
     MoleculeIndexSave = MoleculeIndex;
@@ -5149,29 +5169,13 @@ int AlignToMolecule(int molnum, double * rmsd,
     }
     AtomTreeRemote = AtomTree;
     
-    GatherSelected( selAtomsRemote, selGroupsRemote );
     if (dosubstruct) {
         ConstructGraph(True,True);
     }
+    GatherSelected( selAtomsRemote, selGroupsRemote );
     CV3M_vsssSet(origcRemote,(double)OrigCX,(double)OrigCY,(double)OrigCZ);
     CV3M_vsssSet(cenRemote,(double)CenX,(double)CenY,(double)CenZ);
     
-    
-    /*  zero-out each atom's ordlist */
-    
-    for (ii=0; ii<CVectorSize(selAtomsLocal);ii++) {
-        RAtom * ptemp;
-        ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
-        for (jj=0; jj < MaxSDepth; jj++) ptemp->ordlist[jj]=0;
-    }
-
-    for (ii=0; ii<CVectorSize(selAtomsRemote);ii++) {
-        RAtom * ptemp;
-        ptemp = *(RAtom * *)CVectorElementAt(selAtomsRemote,ii);
-        for (jj=0; jj < MaxSDepth; jj++) ptemp->ordlist[jj]=0;
-    }
-            
-
     
     /* If we are going to work with substructures, we need to identify
      the smaller of the two structures as the template and the larger
@@ -5569,6 +5573,40 @@ int AlignToMolecule(int molnum, double * rmsd,
     	
     }
     
+            /* Calculate the standard deviation of the atom fits */
+            sum = 0.0;
+            cosTerm = qsum.w;
+            sinTerm = sqrt( qsum.x*qsum.x+qsum.y*qsum.y+qsum.z*qsum.z );
+            CV3M_vsssSet(rotaxis,0.,0.,0.);
+            if (sinTerm > 0.) {
+                CV3M_vsssSet(rotaxis,-qsum.x/sinTerm,-qsum.y/sinTerm,-qsum.z/sinTerm);
+            }
+            angleDegrees = -2.0*atan2( sinTerm, cosTerm ) * 45.0 / atan2(1.0,1.0);
+            if (qsum.x+qsum.y+qsum.z > 0.0) {
+                angleDegrees = -angleDegrees;
+                CV3M_vsssSet(rotaxis,qsum.x/sinTerm,qsum.y/sinTerm,qsum.z/sinTerm);
+            }
+            fprintf( stdout, "angleDegrees %g\n", angleDegrees );
+            fprintf( stdout, "axis [%g, %g, %g]\n",  rotaxis.vec[0], rotaxis.vec[1], rotaxis.vec[2] );
+            
+            
+            fprintf( stdout, "qsum %f %f %f %f\n", qsum.w, qsum.x, qsum.y, qsum.z );
+            
+            CV3M_mqQuaternion2Matrix(rotmat,qsum);
+            
+            for( ii=0; ii<chainCountCommon; ++ii )
+            {
+                CV3Vector vtemp;
+                CV3M_vmvMultiply(vtemp,rotmat,*((CV3VectorHandle)CVectorElementAt(vlistLocal,ii)));
+                CVectorSetElement(vlistRot,&vtemp,ii);
+                CV3M_vvvSubtract(vtemp,*((CV3VectorHandle)CVectorElementAt(vlistRemote,ii)),*((CV3VectorHandle)CVectorElementAt(vlistRot,ii)));
+                if (ii < 10) fprintf(stderr,"ii %d delta1 [%g,%g,%g]\n", ii, vtemp.vec[0],vtemp.vec[1],vtemp.vec[2]);
+                CV3M_svNormsq(vnormsq,vtemp);
+                sum += vnormsq;
+            }
+            *rmsd = sqrt(sum/chainCountCommon); /* RETURN PARAMETER */
+
+            
     CQRMNormsq(qnormsq,qsum);
     
     if ( qnormsq == 0.0  )
@@ -5615,6 +5653,7 @@ int AlignToMolecule(int molnum, double * rmsd,
             if(GetNextTrial(selAtomsTemplate,selAtomsTarget,AtomTreeTarget,startfrom,precision)) break;
             if (selAtomsLocal == selAtomsTarget) {
                 CVectorClear(vlistLocal);
+                CVectorClear(glistLocal);
                 for (ii=0; ii<CVectorSize(selAtomsLocal);ii++) {
                     CV3Vector vtemp;
                     RAtom * ptemp;
@@ -5638,6 +5677,7 @@ int AlignToMolecule(int molnum, double * rmsd,
                 
             } else {
                 CVectorClear(vlistRemote);
+                CVectorClear(glistRemote);
                 for (ii=0; ii<CVectorSize(selAtomsRemote);ii++) {
                     CV3Vector vtemp;
                     RAtom * ptemp;
@@ -5663,38 +5703,6 @@ int AlignToMolecule(int molnum, double * rmsd,
             done = False;
             
         }
-    /* Calculate the standard deviation of the atom fits */
-    sum = 0.0;
-    cosTerm = qsum.w;
-    sinTerm = sqrt( qsum.x*qsum.x+qsum.y*qsum.y+qsum.z*qsum.z );
-    CV3M_vsssSet(rotaxis,0.,0.,0.);
-    if (sinTerm > 0.) {
-        CV3M_vsssSet(rotaxis,-qsum.x/sinTerm,-qsum.y/sinTerm,-qsum.z/sinTerm);
-    }
-    angleDegrees = -2.0*atan2( sinTerm, cosTerm ) * 45.0 / atan2(1.0,1.0);
-    if (qsum.x+qsum.y+qsum.z > 0.0) {
-        angleDegrees = -angleDegrees;
-        CV3M_vsssSet(rotaxis,qsum.x/sinTerm,qsum.y/sinTerm,qsum.z/sinTerm);
-    }
-    fprintf( stdout, "angleDegrees %g\n", angleDegrees );
-    fprintf( stdout, "axis [%g, %g, %g]\n",  rotaxis.vec[0], rotaxis.vec[1], rotaxis.vec[2] );
-    
-    
-    fprintf( stdout, "qsum %f %f %f %f\n", qsum.w, qsum.x, qsum.y, qsum.z );
-    
-    CV3M_mqQuaternion2Matrix(rotmat,qsum);
-    
-    for( ii=0; ii<chainCountCommon; ++ii )
-    {
-        CV3Vector vtemp;
-        CV3M_vmvMultiply(vtemp,rotmat,*((CV3VectorHandle)CVectorElementAt(vlistLocal,ii)));
-        CVectorSetElement(vlistRot,&vtemp,ii);
-        CV3M_vvvSubtract(vtemp,*((CV3VectorHandle)CVectorElementAt(vlistRemote,ii)),*((CV3VectorHandle)CVectorElementAt(vlistRot,ii)));
-        if (ii < 10) fprintf(stderr,"ii %d delta1 [%g,%g,%g]\n", ii, vtemp.vec[0],vtemp.vec[1],vtemp.vec[2]);
-        CV3M_svNormsq(vnormsq,vtemp);
-        sum += vnormsq;
-    }
-    *rmsd = sqrt(sum/chainCountCommon); /* RETURN PARAMETER */
     
     CQRMCopy(*qRotToMolecule,qsum);
     
@@ -5852,8 +5860,12 @@ int AlignToMolecule(int molnum, double * rmsd,
     if (vlistRot) CVectorFree(&vlistRot);
     if (vlistLocal) CVectorFree(&vlistLocal);
     if (vlistRemote) CVectorFree(&vlistRemote);
+    if (glistLocal) CVectorFree(&glistLocal);
+    if (glistRemote) CVectorFree(&glistRemote);
     if (selAtomsLocal) CVectorFree(&selAtomsLocal);
     if (selAtomsRemote) CVectorFree(&selAtomsRemote);
+    if (selGroupsLocal) CVectorFree(&selGroupsLocal);
+    if (selGroupsRemote) CVectorFree(&selGroupsRemote);
     
     return 0;
 }
