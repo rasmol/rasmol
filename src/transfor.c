@@ -4831,12 +4831,16 @@ int SaveLastTrial(CVectorHandle selAtomsTemplate,int ilev) {
 
 
 int GetNextTrialStep(CVectorHandle selAtomsTemplate,
+                     CVectorHandle selGroupsTemplate,
                      CVectorHandle selAtomsTarget,
+                     CVectorHandle selGroupsTarget,
                      CNearTreeHandle AtomTreeTarget,
                      int digit, double precision) {
     
     RAtom * ptrtemplate;
     RAtom * ptrtarget;
+    Group * gptrtemplate;
+    Group * gptrtarget;
     RAtom * ptrprevtarget;
     RAtom * bndtarget;
     RAtom * bndtemplate;
@@ -4859,10 +4863,11 @@ int GetNextTrialStep(CVectorHandle selAtomsTemplate,
     if (starttemplate < 1) starttemplate = 1;
     if (starttemplate > CVectorSize(selAtomsTemplate)) return 1;
     ptrtemplate = *(RAtom * *)CVectorElementAt(selAtomsTemplate,starttemplate-1);
+    gptrtemplate = *(Group * *)CVectorElementAt(selGroupsTemplate,starttemplate-1);
     /* If this digit is not assigned, we will try to assign
      starting from ordinal 1 in the target.
      If this digit is assigned, we will try to assign from
-     1 more than the current assignment sfter clearing the
+     1 more than the current assignment after clearing the
      assigment in both the target and the template */
     if (ptrtemplate->ordlist && ptrtemplate->ordlist[0]) {
         starttarget = ptrtemplate->ordlist[0];
@@ -4870,6 +4875,7 @@ int GetNextTrialStep(CVectorHandle selAtomsTemplate,
         ptrtarget->ordlist[0] = 0;
         starttarget = ptrtemplate->ordlist[0] + 1;
         ptrtemplate->ordlist[0] = 0;
+        if (starttarget > CVectorSize(selAtomsTarget)) return 1;
     } else {
         starttarget = 1;
     }
@@ -4933,6 +4939,8 @@ int GetNextTrialStep(CVectorHandle selAtomsTemplate,
             if (ptrtarget->ordlist[0]) continue;
             /* If this is not the same element we cannot use it */
             if (ptrtarget->elemno != ptrtemplate->elemno) continue;
+            gptrtarget = *(Group * *)CVectorElementAt(selGroupsTarget,(ptrtarget->ordinal)-1);
+            if (strncasecmp(Residue[gptrtarget->refno],Residue[gptrtemplate->refno],3)) continue;
             /* Now we need to compare the connectivity of the template atom
              to the target atom */
             freebondstarget = 0;
@@ -4966,6 +4974,8 @@ int GetNextTrialStep(CVectorHandle selAtomsTemplate,
             if (ptrtarget->ordlist[0]) continue;
             /* If this is not the same element we cannot use it */
             if (ptrtarget->elemno != ptrtemplate->elemno) continue;
+            gptrtarget = *(Group * *)CVectorElementAt(selGroupsTarget,(ptrtarget->ordinal)-1);
+            if (strncasecmp(Residue[gptrtarget->refno],Residue[gptrtemplate->refno],3)) continue;
             /* Now we need to compare the connectivity of the template atom
              to the target atom */
             freebondstarget = 0;
@@ -5005,8 +5015,8 @@ int GetNextTrialStep(CVectorHandle selAtomsTemplate,
  */
 
 
-int GetNextTrial(CVectorHandle selAtomsTemplate,
-                 CVectorHandle selAtomsTarget,
+int GetNextTrial(CVectorHandle selAtomsTemplate,CVectorHandle selGroupsTemplate,
+                 CVectorHandle selAtomsTarget, CVectorHandle selGroupsTarget,
                  CNearTreeHandle AtomTreeTarget,
                  int startfrom, double precision) {
     
@@ -5023,12 +5033,16 @@ int GetNextTrial(CVectorHandle selAtomsTemplate,
         if (ptrtemplate->ordlist && ptrtemplate->ordlist[0]) continue;
         /* We have an unassigned template atom,
            try to assign it */
-        newassignment = 1-GetNextTrialStep(selAtomsTemplate, selAtomsTarget, AtomTreeTarget, starttemplate, precision);
+        newassignment = 1-GetNextTrialStep(selAtomsTemplate, selGroupsTemplate,
+                                           selAtomsTarget, selGroupsTarget,
+                                           AtomTreeTarget, starttemplate, precision);
         if (newassignment) continue;
         /* We failed to do this assignment, so we need to back down 1 level at a time and try again */
         while (starttemplate > 1) {
             starttemplate --;
-            if (!GetNextTrialStep(selAtomsTemplate, selAtomsTarget, AtomTreeTarget, starttemplate, precision)) {
+            if (!GetNextTrialStep(selAtomsTemplate, selGroupsTemplate,
+                                  selAtomsTarget, selGroupsTarget,
+                                  AtomTreeTarget, starttemplate, precision)) {
                 newassignment = 1;
                 break;
             }
@@ -5042,18 +5056,19 @@ int GetNextTrial(CVectorHandle selAtomsTemplate,
     
     
     for (digit=CVectorSize(selAtomsTemplate); digit > 0; digit-- )  {
-        if (!GetNextTrialStep(selAtomsTemplate, selAtomsTarget, AtomTreeTarget, digit, precision)) {
+        if (GetNextTrialStep(selAtomsTemplate, selGroupsTemplate,
+                              selAtomsTarget, selGroupsTarget,
+                              AtomTreeTarget, digit, precision)) {
+            continue;
+        }  /* We finally managed to do an assignment at some level
+            so we can now try to work forward from there */
             if (digit < CVectorSize(selAtomsTemplate)) {
-                if (!GetNextTrial(selAtomsTemplate, selAtomsTarget, AtomTreeTarget, digit+1, precision)){
-                    return 0;
-                } else {
-                    digit --;
-                    continue;
-                };
+                return GetNextTrial(selAtomsTemplate, selGroupsTemplate,
+                                  selAtomsTarget, selGroupsTarget,
+                                    AtomTreeTarget, digit+1, precision);
             }
             return 0;
         }
-    }
     return 1; /* attempted assignment failed */
             
 }
@@ -5084,6 +5099,9 @@ int AlignToMolecule(int molnum, double * rmsd,
     CVectorHandle /* RAtom * */   selAtomsTarget = NULL;
     CVectorHandle /* Group * */   selGroupsLocal = NULL;
     CVectorHandle /* Group * */   selGroupsRemote = NULL;
+    CVectorHandle /* Group * */   selGroupsTemplate = NULL;
+    CVectorHandle /* Group * */   selGroupsTarget = NULL;
+
     CVectorHandle /* CV3Vector */ vlistLocal = NULL, vlistRemote = NULL, vlistRot = NULL; /* coordinate lists to align */
     CVectorHandle /* CV3Vector */ vlistTarget = NULL; /* copy of vlistLocal or vlistRemote */
     CVectorHandle /* short */     glistLocal = NULL, glistRemote = NULL;           /* matching residue numbers */
@@ -5184,6 +5202,8 @@ int AlignToMolecule(int molnum, double * rmsd,
     
     selAtomsTarget = selAtomsRemote;
     selAtomsTemplate = selAtomsLocal;
+    selGroupsTarget = selGroupsRemote;
+    selGroupsTemplate = selGroupsLocal;
     AtomTreeTarget = AtomTreeRemote;
     AtomTreeTemplate = AtomTreeLocal;
     
@@ -5191,12 +5211,16 @@ int AlignToMolecule(int molnum, double * rmsd,
         if (CVectorSize(selAtomsLocal) > CVectorSize(selAtomsRemote)) {
             selAtomsTarget = selAtomsLocal;
             selAtomsTemplate = selAtomsRemote;
+            selGroupsTarget = selGroupsLocal;
+            selGroupsTemplate = selGroupsRemote;
             AtomTreeTarget = AtomTreeLocal;
             AtomTreeTemplate = AtomTreeRemote;
         }
     }
     if (dosubstruct) {
-        if (GetNextTrial(selAtomsTemplate,selAtomsTarget,AtomTreeTarget,1,precision)) {
+        if (GetNextTrial(selAtomsTemplate,selGroupsTemplate,
+                         selAtomsTarget,selGroupsTarget,
+                         AtomTreeTarget,1,precision)) {
             startfrom = -1;
             InvalidateCmndLine();
             WriteString(" No matching selection!!\n");
@@ -5376,7 +5400,9 @@ int AlignToMolecule(int molnum, double * rmsd,
                 }
             }
             SaveLastTrial(selAtomsTemplate,ilev);
-            if (GetNextTrial(selAtomsTemplate,selAtomsTarget,AtomTreeTarget,startfrom,precision)) break;
+            if (GetNextTrial(selAtomsTemplate,selGroupsTemplate,
+                             selAtomsTarget,selGroupsTarget,
+                             AtomTreeTarget,startfrom,precision)) break;
             if (selAtomsLocal == selAtomsTarget) {
                 CVectorClear(vlistLocal);
                 for (ii=0; ii<CVectorSize(selAtomsLocal);ii++) {
@@ -5650,7 +5676,9 @@ int AlignToMolecule(int molnum, double * rmsd,
                 }
             }
             SaveLastTrial(selAtomsTemplate,ilev);
-            if(GetNextTrial(selAtomsTemplate,selAtomsTarget,AtomTreeTarget,startfrom,precision)) break;
+            if(GetNextTrial(selAtomsTemplate,selGroupsTemplate,
+                            selAtomsTarget,selGroupsTarget,
+                            AtomTreeTarget,startfrom,precision)) break;
             if (selAtomsLocal == selAtomsTarget) {
                 CVectorClear(vlistLocal);
                 CVectorClear(glistLocal);
