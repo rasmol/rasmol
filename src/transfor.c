@@ -4880,6 +4880,13 @@ int GetNextTrialStep(CVectorHandle selAtomsTemplate,
         starttarget = 1;
     }
     
+    /* fprintf(stderr,"\n\nEntering GetNextTrialStep starttemplate = %d, ordinal = %d, coord [%g,%g,%g]\n",
+            starttemplate, (int)(ptrtemplate->ordinal),
+            (double)(ptrtemplate->xorg + ptrtemplate->fxorg + OrigCX)/250.,
+            (double)(ptrtemplate->yorg + ptrtemplate->fyorg + OrigCY)/250.,
+            (double)(ptrtemplate->zorg + ptrtemplate->fzorg + OrigCZ)/250.); */
+    
+    
     annulusToUse = NULL;  /* assume we will be using all of target */
     ptrprevtemplate = NULL;  /* assume nothing has been matched yet */
     
@@ -4893,6 +4900,11 @@ int GetNextTrialStep(CVectorHandle selAtomsTemplate,
         lz = (double)(ptrtemplate->zorg+ptrtemplate->fzorg-ptrprevtemplate->zorg-ptrprevtemplate->fzorg);
         lxyzsq = lx*lx + ly*ly + lz*lz;
         dxyz = sqrt(lxyzsq);
+        /* fprintf(stderr,"Annulus prevtemplate = %d, ordinal = %d, dxyx = %g, coord [%g,%g,%g]\n",
+                starttemplate-1, (int)(ptrprevtemplate->ordinal),dxyz,
+                (double)(ptrprevtemplate->xorg + ptrprevtemplate->fxorg + OrigCX)/250.,
+                (double)(ptrprevtemplate->yorg + ptrprevtemplate->fyorg + OrigCY)/250.,
+                (double)(ptrprevtemplate->zorg + ptrprevtemplate->fzorg + OrigCZ)/250.); */
          coord[0] =  (double)(ptrprevtarget->xorg + ptrprevtarget->fxorg);
         coord[1] =  (double)(ptrprevtarget->yorg + ptrprevtarget->fyorg);
         coord[2] =  (double)(ptrprevtarget->zorg + ptrprevtarget->fzorg);
@@ -4910,7 +4922,26 @@ int GetNextTrialStep(CVectorHandle selAtomsTemplate,
             CVectorFree(&annulusToUse);
             return 1;  /* declare failure */
         }
+        
+        /* fprintf(stderr,"Annulus generated around starttemplate=%d, ordinal = %d, target coord [%g,%g,%g]\n",
+                starttemplate-1,(int)(ptrprevtarget->ordinal),
+                (double)(ptrprevtarget->xorg + ptrprevtarget->fxorg + OrigCX)/250.,
+                (double)(ptrprevtarget->yorg + ptrprevtarget->fyorg + OrigCY)/250.,
+                (double)(ptrprevtarget->zorg + ptrprevtarget->fzorg + OrigCZ)/250.); 
+        for(ii=0; ii < CVectorSize(annulusToUse) && ii < 10; ii ++) {
+            ptrtarget = * *(RAtom * * *)CVectorElementAt(annulusToUse,ii);
+            if (ptrtarget->ordinal >=starttarget && ptrtarget->ordlist[0] == 0 ) {
+                fprintf(stderr,"target ordinal %d, coord [%g,%g,%g]\n",
+                    (int)(ptrtarget->ordinal),
+                    (double)(ptrtarget->xorg + ptrtarget->fxorg + OrigCX)/250.,
+                    (double)(ptrtarget->yorg + ptrtarget->fyorg + OrigCY)/250.,
+                    (double)(ptrtarget->zorg + ptrtarget->fzorg + OrigCZ)/250.);
+                gptrtarget = *(Group * *)CVectorElementAt(selGroupsTarget,(ptrtarget->ordinal)-1);
+                fprintf(stderr,"resname: %s\n",Residue[gptrtarget->refno]);
     }
+            
+    }
+        */
     }
     
     freebondstemplate = 0;
@@ -5025,6 +5056,7 @@ int GetNextTrial(CVectorHandle selAtomsTemplate,CVectorHandle selGroupsTemplate,
     int digit;
     int newassignment = 0;
 
+    /* fprintf(stderr,"Entering GetNextTrial: startfrom = %d\n",startfrom); */
  
     /*  See if everything is assigned yet */
     
@@ -5038,7 +5070,7 @@ int GetNextTrial(CVectorHandle selAtomsTemplate,CVectorHandle selGroupsTemplate,
                                            AtomTreeTarget, starttemplate, precision);
         if (newassignment) continue;
         /* We failed to do this assignment, so we need to back down 1 level at a time and try again */
-        while (starttemplate > 1) {
+        while (starttemplate > 1 && !newassignment) {
             starttemplate --;
             if (!GetNextTrialStep(selAtomsTemplate, selGroupsTemplate,
                                   selAtomsTarget, selGroupsTarget,
@@ -5564,7 +5596,7 @@ int AlignToMolecule(int molnum, double * rmsd,
                     sin(-angle/2.0) * l.m_lineAxis.vec[1],
                     sin(-angle/2.0) * l.m_lineAxis.vec[2]);
             
-            fprintf(stderr," q = [%g, %g, %g, %g], angle %g \n", q.w,q.x,q.y,q.z,angle*45./atan2(1.,1.));
+                    /* fprintf(stderr," q = [%g, %g, %g, %g], angle %g \n", q.w,q.x,q.y,q.z,angle*45./atan2(1.,1.)); */
             
             if ( fabs(q.x)+fabs(q.y)+fabs(q.z) != 0 ) {
                 
@@ -5626,7 +5658,7 @@ int AlignToMolecule(int molnum, double * rmsd,
                 CV3M_vmvMultiply(vtemp,rotmat,*((CV3VectorHandle)CVectorElementAt(vlistLocal,ii)));
                 CVectorSetElement(vlistRot,&vtemp,ii);
                 CV3M_vvvSubtract(vtemp,*((CV3VectorHandle)CVectorElementAt(vlistRemote,ii)),*((CV3VectorHandle)CVectorElementAt(vlistRot,ii)));
-                if (ii < 10) fprintf(stderr,"ii %d delta1 [%g,%g,%g]\n", ii, vtemp.vec[0],vtemp.vec[1],vtemp.vec[2]);
+                /* if (ii < 10) fprintf(stderr,"ii %d delta1 [%g,%g,%g]\n", ii, vtemp.vec[0],vtemp.vec[1],vtemp.vec[2]); */
                 CV3M_svNormsq(vnormsq,vtemp);
                 sum += vnormsq;
             }
@@ -5791,8 +5823,8 @@ int AlignToMolecule(int molnum, double * rmsd,
                 CV3M_vvvSubtract(vDiff,vRemote,vLocal);
                 CV3M_vvvAdd(vSum,vSum,vDiff);
                 
-                if (ii < 10) fprintf(stderr,"ii %d delta2 [%g,%g,%g]\n", ii, vDiff.vec[0],vDiff.vec[1],vDiff.vec[2]);
-                if (ii < 10) fprintf(stderr,"ii %d delta2 [%g,%g,%g]\n", ii, vSum.vec[0],vSum.vec[1],vSum.vec[2]);
+                /* if (ii < 10) fprintf(stderr,"ii %d delta2 [%g,%g,%g]\n", ii, vDiff.vec[0],vDiff.vec[1],vDiff.vec[2]);
+                if (ii < 10) fprintf(stderr,"ii %d delta2 [%g,%g,%g]\n", ii, vSum.vec[0],vSum.vec[1],vSum.vec[2]); */
 
                 if (none_ang_dist == ALIGN_DISTANCE_SUM) {
                 
@@ -5848,8 +5880,8 @@ int AlignToMolecule(int molnum, double * rmsd,
                CQRMCopy(qtemp2,angSum);
             }
 
-            fprintf(stderr,"qlocal, qtemp1, qtemp2 [%g,%g,%g,%g] [%g,%g,%g,%g] [%g,%g,%g,%g]\n",
-                    qlocal->w,qlocal->x,qlocal->y,qlocal->z, qtemp1.w,qtemp1.x,qtemp1.y,qtemp1.z, qtemp2.w,qtemp2.x,qtemp2.y,qtemp2.z);
+                /* fprintf(stderr,"qlocal, qtemp1, qtemp2 [%g,%g,%g,%g] [%g,%g,%g,%g] [%g,%g,%g,%g]\n",
+                        qlocal->w,qlocal->x,qlocal->y,qlocal->z, qtemp1.w,qtemp1.x,qtemp1.y,qtemp1.z, qtemp2.w,qtemp2.x,qtemp2.y,qtemp2.z); */
             localcos = qtemp2.w;
             if (fabs(localcos)< 1.) {
                 CV3Vector localaxis;
