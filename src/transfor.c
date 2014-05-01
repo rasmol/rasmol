@@ -5463,7 +5463,7 @@ int AlignToMolecule(int molnum, double * rmsd,
     } else {
                 if (*rmsd >= rmsds[nrmsds-1] && nrmsds < MaxSDepth) {
                     rmsds[nrmsds++] = *rmsd;
-                    ilev = MaxSDepth;
+                    ilev = nrmsds;
                 }
                 for (ii=0; ii < nrmsds; ii++) {
                     if (*rmsd < rmsds[ii]) {
@@ -5476,6 +5476,7 @@ int AlignToMolecule(int molnum, double * rmsd,
                         rmsds[ii] = *rmsd;
                         if (nrmsds < MaxSDepth) nrmsds++;
                         ilev = ii+1;
+                        break;
                     }
                 }
             }
@@ -5483,6 +5484,7 @@ int AlignToMolecule(int molnum, double * rmsd,
             if (GetNextTrial(selAtomsTemplate,selGroupsTemplate,
                              selAtomsTarget,selGroupsTarget,
                              AtomTreeTarget,startfrom,precision)) break;
+            /* The target has been updated, update the related vlist */
             if (selAtomsLocal == selAtomsTarget) {
                 CVectorClear(vlistLocal);
                 for (ii=0; ii<CVectorSize(selAtomsLocal);ii++) {
@@ -5533,7 +5535,8 @@ int AlignToMolecule(int molnum, double * rmsd,
             done = False;
             continue;
             
-        } else {
+        } else {  /*  not kabsch_local==ALIGN_KABSCH 
+                      ALIGN_ANGLE */
             
     CVectorCreate(&quatList,sizeof(CQRQuaternion),1);
     CVectorCreate(&quatLocalList,sizeof(CQRQuaternion),1);
@@ -5740,7 +5743,7 @@ int AlignToMolecule(int molnum, double * rmsd,
             } else {
                 if (*rmsd >= rmsds[nrmsds-1] && nrmsds < MaxSDepth) {
                     rmsds[nrmsds++] = *rmsd;
-                    ilev = MaxSDepth;
+                    ilev = nrmsds;
                 }
                 for (ii=0; ii < nrmsds; ii++) {
                     if (*rmsd < rmsds[ii]) {
@@ -5753,6 +5756,7 @@ int AlignToMolecule(int molnum, double * rmsd,
                         rmsds[ii] = *rmsd;
                         if (nrmsds < MaxSDepth) nrmsds++;
                         ilev = ii+1;
+                        break;
                     }
                 }
             }
@@ -5811,7 +5815,7 @@ int AlignToMolecule(int molnum, double * rmsd,
             
             done = False;
             
-        }
+        } /* end ALIGN_ANGLE */
     
     CQRMCopy(*qRotToMolecule,qsum);
     

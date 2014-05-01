@@ -1046,7 +1046,11 @@ int ParsePrimitiveExpr( char **orig )
         ch = *ptr++;
 
     if( isalnum(ch) )
-    {   ch = ToUpper(ch);
+    {   char buffer[2];
+        buffer[0] = ch;
+        buffer[1] = '\0';
+
+        ch = FindChNo(buffer);
 
         tmp1 = AllocateNode();
         tmp1->type = OpEqual | OpLftProp | OpRgtVal;
