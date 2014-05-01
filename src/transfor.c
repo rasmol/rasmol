@@ -235,6 +235,7 @@
 #include "maps.h"
 #include "tokens.h"
 #include "rmsd.h"
+#include "script.h"
 
 #define CPKMAX  16
 static ShadeRef CPKShade[] = {
@@ -4639,12 +4640,6 @@ void TestKabsch( const CVectorHandle /*CV3Vector */ v1,
     
     imax = i;
     
-    for (i=0; i<CVectorSize(v1) && i < 5; i++) {
-        fprintf( stdout," atoms %d, [%g,%g,%g] [%g,%g,%g]\n",i,
-         ((double *) CVectorElementAt(x1,i))[0],  ((double *) CVectorElementAt(x1,i))[1], ((double *) CVectorElementAt(x1,i))[2],
-         ((double *) CVectorElementAt(x2,i))[0],  ((double *) CVectorElementAt(x2,i))[1], ((double *) CVectorElementAt(x2,i))[2]
-          /* x1[i][0],x1[i][1],x1[i][2],x2[i][0],x2[i][1],x2[i][2] */);
-    }
     calculate_rotation_rmsd( ((x1->array)),((x2->array)), imax, mov, ref, U, rmsd );
     fprintf( stdout, "rmsd from Kabsch %f\n", *rmsd );
     fprintf( stdout, "rotation matrix:\n [[%g %g %g]\n  [%g %g %g]\n  [%g %g %g]]\n",
@@ -4699,7 +4694,7 @@ void GatherSelected(CVectorHandle /* RAtom * */ selAtoms, CVectorHandle /* Group
             CVectorAddElement(selAtoms,&ptr);
                 CVectorAddElement(selGroups,&group);
                 ptr->ordinal = CVectorSize(selAtoms);
-                for (ii=0; ii < MaxSDepth; ii++) {
+                for (ii=0; ii <= MaxSDepth; ii++) {
                     ptr->ordlist[ii] = 0;
         }
         }
@@ -4813,6 +4808,56 @@ int SaveLastTrial(CVectorHandle selAtomsTemplate,int ilev) {
 
 }
 
+   /* Write trail selections as scripts
+      The target should be made the current molecule
+      before calling
+    */
+
+int WriteTrialSelectionScripts(char * scripts,
+                               CVectorHandle selAtomsTemplate,
+                               CVectorHandle selAtomsTarget,
+                               int nrmsds, double *rmsds) {
+    
+    RAtom * ptrtemplate;
+    RAtom * ptrtarget;
+    int current;
+    int ii;
+    char buffer[132];
+    
+    for (ii=nrmsds-1; ii >= 0; ii--){
+        for (current=0; current < CVectorSize(selAtomsTarget); current++ ) {
+            ptrtarget = *(RAtom * *)CVectorElementAt(selAtomsTarget,current);
+            ptrtarget->flag &= ~SelectFlag;
+        }
+        for (current=0; current < CVectorSize(selAtomsTemplate); current++ ) {
+            ptrtemplate = *(RAtom * *)CVectorElementAt(selAtomsTemplate,current);
+            if (ptrtemplate->ordlist[ii+1]) {
+                ptrtarget = *(RAtom * *)CVectorElementAt(selAtomsTarget,ptrtemplate->ordlist[ii+1]-1);
+                ptrtarget->flag |= SelectFlag;
+            }
+        }
+        if (scripts) {
+            if (ii == 0) {
+                WriteSelectionFile(scripts);
+                WriteString("Selection script: ");
+                WriteString(scripts);
+                WriteString("\n");
+                snprintf(buffer,132,"rmsd: %g\n",rmsds[ii]);
+                WriteString(buffer);
+            } else {
+                if (snprintf(buffer,132,"%s_%d",scripts,ii) <= 132) {
+                    WriteSelectionFile(buffer);
+                    WriteString("Selection script: ");
+                    WriteString(buffer);
+                    WriteString("\n");
+                    snprintf(buffer,132,"rmsd: %g\n",rmsds[ii]);
+                    WriteString(buffer);
+                }
+            }
+        }
+    }
+}
+
 
 /* Get the next trial alignment step in a template and target.
  Just as with an odometer digit increment, if this step
@@ -4856,7 +4901,6 @@ int GetNextTrialStep(CVectorHandle selAtomsTemplate,
     double dxyz, dxyzlow, dxyzhigh;
     double coord[3];
     CVectorHandle annulusToUse;
-    int ii;
     
     
     starttemplate = digit;
@@ -5123,7 +5167,7 @@ int AlignToMolecule(int molnum, double * rmsd,
                     int seqrange, double mindist, 
                     double maxdist, int kabsch_local,
                     int none_ang_dist, int xlatecen,
-                    int findsubstructure ) {
+                    int findsubstructure, char * scripts ) {
     
     CVectorHandle /* RAtom * */   selAtomsLocal = NULL;
     CVectorHandle /* RAtom * */   selAtomsRemote = NULL;
@@ -5335,6 +5379,10 @@ int AlignToMolecule(int molnum, double * rmsd,
     CV3GetCenterOfMass(&comLocal,vlistLocal); /* get center of mass local */
     CV3GetCenterOfMass(&comRemote,vlistRemote); /* get center of mass remote */
     CV3M_vvvSubtract(*vTransToMolecule,comRemote,comLocal);
+        /* fprintf(stderr," vTransToMolecule: [%g,%g,%g]\n",
+                vTransToMolecule->vec[0],
+                vTransToMolecule->vec[1],
+                vTransToMolecule->vec[2]); */
     
     /* If we add vTransToMolecule to each atom on Local, the new
        center-of-mass will be aligned to the Remote center-of-mass 
@@ -5483,6 +5531,7 @@ int AlignToMolecule(int molnum, double * rmsd,
             }
             
             done = False;
+            continue;
             
         } else {
             
@@ -5915,6 +5964,18 @@ int AlignToMolecule(int molnum, double * rmsd,
         }
     }
     } while (!done);
+    
+    if (dosubstruct) {
+        if (selAtomsRemote == selAtomsTarget) {
+            SwitchMolecule(molnum);
+        } else {
+            SwitchMolecule(MoleculeIndexSave);
+        }
+        WriteTrialSelectionScripts(scripts,
+                                   selAtomsTemplate,
+                                   selAtomsTarget,
+                                   nrmsds, rmsds);
+    }
     
     if (planeList) CVectorFree(&planeList);
     if (vlistRot) CVectorFree(&vlistRot);

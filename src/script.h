@@ -91,6 +91,7 @@ int KinemageFlag;
 extern int KinemageFlag;
 #endif
 
+int WriteSelectionFile( char* );
 int WriteMolScriptFile( char* );
 int WriteKinemageFile( char* );
 int WriteScriptFile( char* );

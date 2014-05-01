@@ -6099,7 +6099,8 @@ int ExecuteCommandOne( int * restore )
         case(RefreshTok):    RefreshScreen();
                              ReDrawFlag = NextReDrawFlag; break;
             
-        /* align <molnum> {kabsch|local} {none|angles|distance} {translate|centre} {structure|substructure}*/
+        /* align <molnum> {kabsch|local} {none|angles|distance} {translate|centre}
+             {structure|substructure selectionscripts} */
                              
         case(AlignTok):
             FetchToken();
@@ -6123,6 +6124,7 @@ int ExecuteCommandOne( int * restore )
             int molnum;
             int xlatecen;
             int findsubstructure;
+            char * scripts;
             
             molnum = TokenValue-1;
             seqrange = 5;
@@ -6132,9 +6134,14 @@ int ExecuteCommandOne( int * restore )
             none_ang_dist = 0;
             xlatecen = 0;
             findsubstructure = 0;
+            scripts = NULL;
             
             FetchToken();
             while (CurToken) {
+                if( !Database ) {
+                    CommandError(MsgStrs[ErrBadMolDB]);
+                    break;
+                }
                  if (CurToken==CentreTok || CurToken==TranslateTok) {
                     if (!xlatecen) {
               	  	  xlatecen = CurToken;
@@ -6180,6 +6187,22 @@ int ExecuteCommandOne( int * restore )
               	  } else if (CurToken==SubstructureTok){
                       if (!findsubstructure) {
                           findsubstructure = ALIGN_SUBSTRUCTURE;
+                          if (!AllowWrite ) {
+                              if( (FileDepth!=-1) && LineStack[FileDepth] )
+                              {   CommandError(MsgStrs[ErrInScrpt]);
+                                  break;
+                              }
+                          }
+                          FetchToken();
+                          if( !CurToken ) {
+                              scripts = NULL;
+                              break;
+                          } else if( CurToken==StringTok ) {
+                              ProcessFileName(TokenIdent);
+                          } else ProcessFileName(TokenStart);
+                          
+                          scripts = DataFileName;
+                          CurToken = 0;
                       } else {
                           CommandError(MsgStrs[ErrBadArg]);
                           break;
@@ -6213,11 +6236,10 @@ int ExecuteCommandOne( int * restore )
             	XlateCen = (xlatecen==TranslateTok)?True:False;
             }
             
-            
             AlignToMolecule(TokenValue-1,&rmsd,&q, 
             &trans, seqrange, mindist, maxdist, 
             kabsch_local,none_ang_dist, XlateCen,
-            findsubstructure);
+            findsubstructure, scripts);
             fprintf(stderr," rmsd %g\n",rmsd);
             ReDrawFlag |= RFInitial;
         }

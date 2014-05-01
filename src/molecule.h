@@ -314,6 +314,7 @@ typedef struct _Atom {
         short  mbox;                      /* Shadow Casting NOnce  */
         short  model;                     /* Atom Model Number     */
         short  visited;                   /* For bond rotation     */
+        int    nexttarget;                /* For sorts             */
         Long   ordinal;                   /* ordinal of this atom  */
         Long   ordlist[MaxSDepth+1];      /* ordinal in template matching  */
         CVectorHandle bondsvector;        /* For Align and bond rotation */

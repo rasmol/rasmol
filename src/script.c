@@ -795,6 +795,14 @@ static void WriteScriptBetween( int lo, int hi )
     SelectAll = False;
 }
 
+static void WriteScriptBetweenAppend( int lo, int hi )
+{
+    if( lo != hi )
+    {   fprintf(OutFile,"select selection or ((atomno>=%d) and (atomno<=%d))\n",lo,hi);
+    } else fprintf(OutFile,"select selection or atomno=%d\n",lo);
+    SelectAll = False;
+}
+
 
 static void WriteScriptSelectBond( RAtom __far *src, RAtom __far *dst )
 {
@@ -1674,6 +1682,80 @@ int WriteScriptFile( char *name )
     return True;
 }
 
+
+/*================================================*/
+/*  Write the current selection to a script file  */
+/*================================================*/
+
+int WriteSelectionFile( char *name )
+{
+    register Chain __far *chain;
+    register Group __far *group;
+    register RAtom __far *aptr;
+    register Long first=0,last=0;
+    register int init, selcount;
+    register int selected, newselected;
+    
+    OutFile = fopen(name,"w");
+    if( !OutFile )
+    {   FatalScriptError(name);
+        return(False);
+    }
+    
+    if( !Database )
+    {   /* No Molecule! */
+        fclose(OutFile);
+#ifdef APPLEMAC
+        SetFileInfo(name,'RSML','RSML',133);
+#endif
+        return True;
+    }
+    
+    fputs("\n# Selection\n",OutFile);
+    
+    init = False;
+    selected = False;
+    selcount = 0;
+    
+    ForEachAtom
+    {
+        if( !init )
+        {   first = last = aptr->serno;
+            init = True;
+            selected = (aptr->flag)&SelectFlag;
+        } else {
+            newselected = (aptr->flag)&SelectFlag;
+            if (selected == newselected) {
+                last = aptr->serno;
+            } else {
+                if (!newselected) {
+                    if (selcount == 0) {
+                        WriteScriptBetween(first,last);
+                    } else {
+                        WriteScriptBetweenAppend(first,last);
+                    }
+                    selcount++;
+                }
+                first = last = aptr->serno;
+                selected = newselected;
+            }
+        }
+    }
+    if (selected) {
+        if (selcount == 0) {
+            WriteScriptBetween(first,last);
+        } else {
+            WriteScriptBetweenAppend(first,last);
+        }
+        selcount++;
+    }
+    
+    fclose(OutFile);
+#ifdef APPLEMAC
+    SetFileInfo(name,'RSML','RSML',133);
+#endif
+    return True;
+}
 
 
 /*=======================*/

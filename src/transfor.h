@@ -456,4 +456,4 @@ int AlignToMolecule(int molnum, double * rmsd,
                     int seqrange, double mindist, 
                     double maxdist, int kabsch_local,
                     int none_ang_dist, int xlatecen,
-                    int findsubstructure);
+                    int findsubstructure, char * scripts);

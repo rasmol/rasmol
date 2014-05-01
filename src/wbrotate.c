@@ -306,7 +306,7 @@ int ConstructGraph( int requireselected, int requiredistances )
                 CVectorFree(&(ptr->distancevector));
             }
             ptr->ordinal = ordinal;
-            for (ii=0; ii < MaxSDepth; ii++) {
+            for (ii=0; ii <= MaxSDepth; ii++) {
                 ptr->ordlist[ii] = 0;
             }
         } else {
