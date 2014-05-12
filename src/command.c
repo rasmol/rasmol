@@ -4211,7 +4211,7 @@ static void DescribeSequence( void )
 static void ExecuteShowCommand( void )
 {
     register Real temp;
-    char buffer[40];
+    char buffer[140];
     Real theta,phi,psi;
     
     switch( FetchToken() )
@@ -4312,6 +4312,16 @@ static void ExecuteShowCommand( void )
             
             phi = psi = theta = 0.0;
             RMat2RV(&theta, &phi, &psi, RotX, RotY, RotZ);
+            if (fabs(theta) > .0005 || fabs(phi) > .0005 || fabs(psi) > .0005 ){
+                CQRQuaternion trot;
+                CQRAngles2Quaternion (&trot, theta*PI,
+                                      phi*PI,
+                                      psi*PI);
+                sprintf(buffer,"rotation quaternion: [%g,%g,%g,%g]\n",
+                        trot.w,trot.x,trot.y,trot.z);
+                WriteString(buffer);
+            
+            }
             theta *= 180.;
             phi *= 180.;
             psi *= 180.;
@@ -4329,6 +4339,7 @@ static void ExecuteShowCommand( void )
                 sprintf(buffer,"rotate z %d\n",Round(InvertY(-psi)));
                 WriteString(buffer);
             }
+ 
             if (BondsSelected) {
                 BondRot __far *brptr;
                 
@@ -4543,6 +4554,7 @@ void ZapDatabase( void )
     for( i=0; i<10; i++ )
         DialValue[i] = 0.0;
     CQRMSet(DialQRot,0.,0.,0.,0.);
+    CQRMSet(AuxQRot,0.,0.,0.,0.);
 
     SelectCount = 0;
     
@@ -7945,8 +7957,8 @@ int ExecuteCommandOne( int * restore )
         case(ResizeTok):  FetchToken();
             break;
             
-        case(ResetTok):   for( i=0; i<10; i++ )
-            DialValue[i] = 0.0;
+        case(ResetTok):
+            for( i=0; i<10; i++ ) DialValue[i] = 0.0;
             ReDrawFlag |= RFDials;
             ResetTransform();
             

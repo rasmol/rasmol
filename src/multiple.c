@@ -324,9 +324,8 @@ struct {
    /* graphics.h */
     
     { DialValue,          sizeof (DialValue),      0 },
-     	
     { &DialQRot,          sizeof (DialQRot),       0 },
-
+    { &AuxQRot,           sizeof (AuxQRot),        0 },
 
     /* molecule.h */
     { &Info,              sizeof (Info),           0 },

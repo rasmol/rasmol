@@ -4020,7 +4020,11 @@ void PrepareTransform( void )
          ( DialQRot.w != 0. ) ||
          ( DialQRot.x != 0. ) ||
          ( DialQRot.y != 0. ) ||
-         ( DialQRot.z != 0. )
+         ( DialQRot.z != 0. ) ||
+         ( AuxQRot.w != 0) ||
+         ( AuxQRot.x != 0) ||
+         ( AuxQRot.y != 0) ||
+         ( AuxQRot.z != 0)
         ) {
                  
         /* *** redo the balance *** */
@@ -4030,7 +4034,7 @@ void PrepareTransform( void )
             Real rangle;
             Real newcos, newsin, oldsin;
             Real balcos, balsin;
-            CQRQuaternion quat;
+            CQRQuaternion quat, quattemp;;
             CQRQuaternion balquat;
             CQRQuaternion trot;
             DialValueOffset[DialRX] *= PI;
@@ -4043,12 +4047,24 @@ void PrepareTransform( void )
               CQRAngles2Quaternion (&trot, DialValueOffset[DialRX],
                                       DialValueOffset[DialRY],
                                       DialValueOffset[DialRZ]);
-              CQRMMultiply(quat,DialQRot,trot);  
+              CQRMMultiply(quattemp,DialQRot,trot);
             } else {    
-              CQRAngles2Quaternion (&quat, DialValueOffset[DialRX],
+              CQRAngles2Quaternion (&quattemp, DialValueOffset[DialRX],
                   DialValueOffset[DialRY],
                   DialValueOffset[DialRZ]);
             }
+            if (( AuxQRot.w != 0. ) ||
+                ( AuxQRot.x != 0. ) ||
+                ( AuxQRot.y != 0. ) ||
+                ( AuxQRot.z != 0. )) {
+                CQRMMultiply(quat,AuxQRot,quattemp);
+             } else {
+                quat.w = quattemp.w;
+                quat.x = quattemp.x;
+                quat.y = quattemp.y;
+                quat.z = quattemp.z;
+            }
+
             rangle = acos(quat.w);
             oldsin = sin(rangle);
             slimit = 62.5*record_aps/record_fps/WorldRadius;
@@ -4117,8 +4133,9 @@ void PrepareTransform( void )
             if (DialValueOffset[DialRZ] > 1. ) DialValueOffset[DialRZ] -=2.;
             if (DialValueOffset[DialRZ] < -1. ) DialValueOffset[DialRZ] +=2.;
             CQRMSet(DialQRot,0.,0.,0.,0.);
+            CQRMSet(AuxQRot,0.,0.,0.,0.);
         } else {
-            CQRQuaternion quat;
+            CQRQuaternion quat, quattemp;
             CQRQuaternion trot;
             DialValueOffset[DialRX] *= PI;
             DialValueOffset[DialRY] *= PI;
@@ -4130,11 +4147,35 @@ void PrepareTransform( void )
                 CQRAngles2Quaternion (&trot, DialValueOffset[DialRX],
                                       DialValueOffset[DialRY],
                                       DialValueOffset[DialRZ]);
-                CQRMMultiply(quat,DialQRot,trot);  
+                CQRMMultiply(quattemp,DialQRot,trot);
+                if (( AuxQRot.w != 0. ) ||
+                    ( AuxQRot.x != 0. ) ||
+                    ( AuxQRot.y != 0. ) ||
+                    ( AuxQRot.z != 0. )) {
+                    CQRMMultiply(quat,AuxQRot,quattemp);
+                } else {
+                    quat.w = quattemp.w;
+                    quat.x = quattemp.x;
+                    quat.y = quattemp.y;
+                    quat.z = quattemp.z;
+                }
                 CQRQuaternion2Angles (&DialValueOffset[DialRX],
                                       &DialValueOffset[DialRY],
                                       &DialValueOffset[DialRZ],&quat);
+            } else {
+                if (( AuxQRot.w != 0. ) ||
+                    ( AuxQRot.x != 0. ) ||
+                    ( AuxQRot.y != 0. ) ||
+                    ( AuxQRot.z != 0. )) {
+                    CQRAngles2Quaternion (&trot, DialValueOffset[DialRX],
+                                          DialValueOffset[DialRY],
+                                          DialValueOffset[DialRZ]);
+                    CQRMMultiply(quat,AuxQRot,trot);
+                    CQRQuaternion2Angles (&DialValueOffset[DialRX],
+                                          &DialValueOffset[DialRY],
+                                          &DialValueOffset[DialRZ],&quat);
             } 
+            }
             DialValueOffset[DialRX] /= PI;
             DialValueOffset[DialRY] /= PI;
             DialValueOffset[DialRZ] /= PI;
@@ -4145,6 +4186,9 @@ void PrepareTransform( void )
             if (DialValueOffset[DialRZ] > 1. ) DialValueOffset[DialRZ] -=2.;
             if (DialValueOffset[DialRZ] < -1. ) DialValueOffset[DialRZ] +=2.;
             CQRMSet(DialQRot,0.,0.,0.,0.);
+            CQRMSet(AuxQRot,0.,0.,0.,0.);
+            /* fprintf(stderr,"[RX,RY,RZ] = [%g,%g,%g]\n",
+                    DialValueOffset[DialRX],DialValueOffset[DialRY],DialValueOffset[DialRZ]); */
         } 
       	
         RV2RMat(DialValueOffset[DialRX], DialValueOffset[DialRY], DialValueOffset[DialRZ],
@@ -4552,6 +4596,8 @@ void ResetTransform( void )
     LastDialValue[DialRX] = LastDialValue[DialRY] = LastDialValue[DialRZ] = 0.0;
     LastDialValue[DialTX] = LastDialValue[DialTY] = LastDialValue[DialTZ] = 0.0;
     
+    DialQRot.w = DialQRot.x = DialQRot.y = DialQRot.z = 0.;
+
     WorldDialValue[DialRX] = 0;
     WorldDialValue[DialRY] = 0;
     WorldDialValue[DialRZ] = 0;
@@ -4796,7 +4842,7 @@ int SaveLastTrial(CVectorHandle selAtomsTemplate,int ilev) {
     int ii;
     int current;
 
-    if (ilev > MaxSDepth) return -1;
+    if (ilev > MaxSDepth||ilev < 1) return -1;
     
     for (current=0; current < CVectorSize(selAtomsTemplate); current++){
         ptrtemplate = *(RAtom * *)CVectorElementAt(selAtomsTemplate,current);
@@ -4856,6 +4902,7 @@ int WriteTrialSelectionScripts(char * scripts,
             }
         }
     }
+    return 0;
 }
 
 
@@ -5161,7 +5208,7 @@ int GetNextTrial(CVectorHandle selAtomsTemplate,CVectorHandle selGroupsTemplate,
  
  */
 
-int AlignToMolecule(int molnum, double * rmsd, 
+int AlignToMolecule(int MoleculeRemote, double * rmsd,
                     CQRQuaternionHandle qRotToMolecule, 
                     CV3VectorHandle vTransToMolecule,
                     int seqrange, double mindist, 
@@ -5194,14 +5241,14 @@ int AlignToMolecule(int molnum, double * rmsd,
     CV3Vector origcLocal, origcRemote;
     CV3Vector cenLocal, cenRemote;
     CV3Vector shiftLocal;
-    CV3Vector comLocal, comRemote;
+    CV3Vector comLocal[MaxSDepth+1], comRemote[MaxSDepth+1];
     CV3VectorHandle tvec;
-    CQRQuaternion qsum;
+    CQRQuaternion qsum[MaxSDepth+1];
     CV3Matrix rotmat;
     CV3Vector rotaxis;
     CV3Vector origshift;
-    int MoleculeIndexSave;
-    int ii, jj;
+    int MoleculeLocal;
+    int i, ii, iii, jj;
     int count;
     int dosubstruct;
     int done;
@@ -5234,8 +5281,8 @@ int AlignToMolecule(int molnum, double * rmsd,
     if (findsubstructure == ALIGN_SUBSTRUCTURE) dosubstruct = 1;
     
     qRotToMolecule->w=0.; qRotToMolecule->x=0.; qRotToMolecule->y=0.; qRotToMolecule->z=0.; 
-    if (molnum < 0 || molnum >=NumMolecules) return -1;
-    if (molnum == MoleculeIndex) return 1;
+    if (MoleculeRemote < 0 || MoleculeRemote >=NumMolecules) return -1;
+    if (MoleculeRemote == MoleculeIndex) return 1;
     
     if (!AtomTree || NeedAtomTree) {
         if (CreateAtomTree()) {
@@ -5254,8 +5301,8 @@ int AlignToMolecule(int molnum, double * rmsd,
     GatherSelected( selAtomsLocal, selGroupsLocal );
     CV3M_vsssSet(origcLocal,(double)OrigCX,(double)OrigCY,(double)OrigCZ);
     CV3M_vsssSet(cenLocal,(double)CenX,(double)CenY,(double)CenZ);
-    MoleculeIndexSave = MoleculeIndex;
-    SwitchMolecule(molnum);
+    MoleculeLocal = MoleculeIndex;
+    SwitchMolecule(MoleculeRemote);
     if (!AtomTree || NeedAtomTree) {
         if (CreateAtomTree()) {
             RasMolFatalExit(MsgStrs[StrMalloc]);
@@ -5322,16 +5369,63 @@ int AlignToMolecule(int molnum, double * rmsd,
     CVectorCreate(&glistRemote,sizeof(short),1);
     CVectorCreate(&vlistRot,sizeof(CV3Vector),1);
     vlistTarget = vlistRemote;
+    if (dosubstruct && selAtomsLocal == selAtomsTarget) vlistTarget = vlistLocal;
     
-    /* Compute the actual coordinates in rasmol units,
-     and zero-out each atom's ordlist*/
+    /* Compute the actual coordinates in rasmol units */
     
-    for (ii=0; ii<CVectorSize(selAtomsLocal);ii++) {
+    if (dosubstruct) {
+        for (iii=0; iii<CVectorSize(selAtomsTemplate);iii++) {
         CV3Vector vtemp;
         RAtom * ptemp;
+            ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,iii);
+            ii = ptemp->ordlist[0];
+            if (ii == 0) continue;
+            ii--;
+            vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
+            +(double)(ptemp->xtrl)/10000.0;
+#ifdef INVERT
+            vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                             -(double)(ptemp->ytrl)/10000.0);
+#else
+            vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+            +(double)(ptemp->ytrl)/10000.0;
+#endif
+            vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcLocal.vec[2])/250.0
+                             -(double)(ptemp->ztrl)/10000.0);
+            if (selAtomsTemplate == selAtomsLocal) {
+                CVectorAddElement(vlistLocal,&vtemp);
+                CVectorAddElement(glistLocal,&((*(Group * *)CVectorElementAt(selGroupsLocal,iii))->serno));
+            } else {
+                CVectorAddElement(vlistRemote,&vtemp);
+                CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,iii))->serno));
+            }
+            ptemp = *(RAtom * *)CVectorElementAt(selAtomsTarget,ii);
+            vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
+            +(double)(ptemp->xtrl)/10000.0;
+#ifdef INVERT
+            vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                             -(double)(ptemp->ytrl)/10000.0);
+#else
+            vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+            +(double)(ptemp->ytrl)/10000.0;
+#endif
+            vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcLocal.vec[2])/250.0
+                             -(double)(ptemp->ztrl)/10000.0);
+            if (selAtomsTarget == selAtomsLocal) {
+                CVectorAddElement(vlistLocal,&vtemp);
+                CVectorAddElement(glistLocal,&((*(Group * *)CVectorElementAt(selGroupsLocal,ii))->serno));
+            } else {
+                CVectorAddElement(vlistRemote,&vtemp);
+                CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,ii))->serno));
+            }
+        }
+    } else {
+        for (iii=0; iii<CVectorSize(selAtomsLocal);iii++) {
+            CV3Vector vtemp;
+            RAtom * ptemp;
         ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
-        if (!dosubstruct || selAtomsLocal == selAtomsTemplate ||
-            (selAtomsLocal == selAtomsTarget && ptemp->ordlist[0])){
+            ii = iii;
+            
         vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
                          +(double)(ptemp->xtrl)/10000.0;
 #ifdef INVERT
@@ -5345,14 +5439,12 @@ int AlignToMolecule(int molnum, double * rmsd,
                          -(double)(ptemp->ztrl)/10000.0);
         CVectorAddElement(vlistLocal,&vtemp);
         CVectorAddElement(glistLocal,&((*(Group * *)CVectorElementAt(selGroupsLocal,ii))->serno));
-    }
+            
     }
     for (ii=0; ii<CVectorSize(selAtomsRemote);ii++) {
         CV3Vector vtemp;
         RAtom * ptemp;
         ptemp = *(RAtom * *)CVectorElementAt(selAtomsRemote,ii);
-        if (!dosubstruct || selAtomsRemote == selAtomsTemplate ||
-            (selAtomsRemote == selAtomsTarget && ptemp->ordlist[0])){
             
         vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcRemote.vec[0])/250.0
         +(double)(ptemp->xtrl)/10000.0;
@@ -5369,53 +5461,14 @@ int AlignToMolecule(int molnum, double * rmsd,
         CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,ii))->serno));
     }
     }
-    if (dosubstruct && selAtomsLocal == selAtomsTarget) vlistTarget = vlistLocal;
-    
     
     done = True;
     
     do {
         
-    CV3GetCenterOfMass(&comLocal,vlistLocal); /* get center of mass local */
-    CV3GetCenterOfMass(&comRemote,vlistRemote); /* get center of mass remote */
-    CV3M_vvvSubtract(*vTransToMolecule,comRemote,comLocal);
-        /* fprintf(stderr," vTransToMolecule: [%g,%g,%g]\n",
-                vTransToMolecule->vec[0],
-                vTransToMolecule->vec[1],
-                vTransToMolecule->vec[2]); */
+        CV3GetCenterOfMass(&comLocal[0],vlistLocal); /* get center of mass local */
+        CV3GetCenterOfMass(&comRemote[0],vlistRemote); /* get center of mass remote */
     
-    /* If we add vTransToMolecule to each atom on Local, the new
-       center-of-mass will be aligned to the Remote center-of-mass 
-     */
-    
-    /* recenter display of each molecule on its own center of mass of the selection 
-       making (CenX, CenY, CenZ) agree with the new center of mass
-     */
-
-#ifdef INVERT
-    CentreTransform((long)rint(comRemote.vec[0]*250.-origcRemote.vec[0]),
-      -(long)rint(comRemote.vec[1]*250.+origcRemote.vec[1]),
-      -(long)rint(comRemote.vec[2]*250.+origcRemote.vec[2]),xlatecen);   
-#else 
-    CentreTransform((long)rint(comRemote.vec[0]*250.-origcRemote.vec[0]),
-       (long)rint(comRemote.vec[1]*250.-origcRemote.vec[1]),
-      -(long)rint(comRemote.vec[2]*250.+origcRemote.vec[2]),xlatecen);
-#endif
-
-    SwitchMolecule( MoleculeIndexSave );
-    
-    
-#ifdef INVERT
-    CentreTransform((long)rint(comLocal.vec[0]*250.-origcLocal.vec[0]),
-      -(long)rint(comLocal.vec[1]*250.+origcLocal.vec[1]),
-      -(long)rint(comLocal.vec[2]*250.+origcLocal.vec[2]),xlatecen);   
-#else 
-    CentreTransform((long)rint(comLocal.vec[0]*250.-origcLocal.vec[0]),
-       (long)rint(comLocal.vec[1]*250.-origcLocal.vec[1]),
-      -(long)rint(comLocal.vec[2]*250.+origcLocal.vec[2]),xlatecen);
-#endif
-
-
     chainCountLocal = CVectorSize(vlistLocal);
     chainCountRemote = CVectorSize(vlistRemote);
     chainCountCommon = chainCountLocal<chainCountRemote?chainCountLocal:chainCountRemote;
@@ -5428,9 +5481,11 @@ int AlignToMolecule(int molnum, double * rmsd,
     CV3M_vsssSet(shiftLocal,0.0,0.0,0.0);
     vnormsqmax =0.;
     
+        /* Recenter each vlist to its center of mass */
+        
     for (ii=0; ii < chainCountLocal; ii++) {
         tvec = (CV3VectorHandle)CVectorElementAt(vlistLocal,ii);
-        CV3M_vvvSubtract(*tvec,*tvec,comLocal);
+            CV3M_vvvSubtract(*tvec,*tvec,comLocal[0]);
         CV3M_svNormsq(vnormsq,*tvec);
         if (vnormsq > vnormsqmax) {
             CV3M_vvCopy(shiftLocal,*tvec);
@@ -5440,7 +5495,7 @@ int AlignToMolecule(int molnum, double * rmsd,
     
     for (ii=0; ii < chainCountRemote; ii++) {
         tvec = (CV3VectorHandle)CVectorElementAt(vlistRemote,ii);
-        CV3M_vvvSubtract(*tvec,*tvec,comRemote);
+            CV3M_vvvSubtract(*tvec,*tvec,comRemote[0]);
         CV3M_svNormsq(vnormsq,*tvec);
         if (vnormsq > vnormsqmax) {
             CV3M_vvCopy(shiftLocal,*tvec);
@@ -5450,7 +5505,8 @@ int AlignToMolecule(int molnum, double * rmsd,
     
         
     if (kabsch_local==ALIGN_KABSCH) {
-            TestKabsch(vlistRemote,vlistLocal,&qsum,rmsd);
+            TestKabsch(vlistRemote,vlistLocal,&qsum[0],rmsd);
+            /*fprintf(stderr,"qsum[0] [%g,%g,%g,%g]\n",qsum[0].w,qsum[0].x,qsum[0].y,qsum[0].z); */
             if (!dosubstruct) {
                 done = True;
                 break;
@@ -5459,11 +5515,17 @@ int AlignToMolecule(int molnum, double * rmsd,
             if (nrmsds == 0) {
                 nrmsds = 1;
                 rmsds[0] = *rmsd;
+                CV3M_vvCopy(comLocal[1],comLocal[0]);
+                CV3M_vvCopy(comRemote[1],comRemote[0]);
+                CQRMCopy(qsum[1],qsum[0]);
                 ilev = 1;
     } else {
                 if (*rmsd >= rmsds[nrmsds-1] && nrmsds < MaxSDepth) {
                     rmsds[nrmsds++] = *rmsd;
                     ilev = nrmsds;
+                    CV3M_vvCopy(comLocal[ilev],comLocal[0]);
+                    CV3M_vvCopy(comRemote[ilev],comRemote[0]);
+                    CQRMCopy(qsum[ilev],qsum[0]);
                 }
                 for (ii=0; ii < nrmsds; ii++) {
                     if (*rmsd < rmsds[ii]) {
@@ -5471,9 +5533,15 @@ int AlignToMolecule(int molnum, double * rmsd,
                         for (jj=nrmsds-1; jj >= ii; jj--) {
                             if (jj < MaxSDepth-1) {
                                 rmsds[jj+1]=rmsds[jj];
+                                CV3M_vvCopy(comLocal[jj+2],comLocal[jj+1]);
+                                CV3M_vvCopy(comRemote[jj+2],comRemote[jj+1]);
+                                CQRMCopy(qsum[jj+2],qsum[jj+1]);
                             }
                         }
                         rmsds[ii] = *rmsd;
+                        CV3M_vvCopy(comLocal[ii+1],comLocal[0]);
+                        CV3M_vvCopy(comRemote[ii+1],comRemote[0]);
+                        CQRMCopy(qsum[ii],qsum[0]);
                         if (nrmsds < MaxSDepth) nrmsds++;
                         ilev = ii+1;
                         break;
@@ -5485,13 +5553,16 @@ int AlignToMolecule(int molnum, double * rmsd,
                              selAtomsTarget,selGroupsTarget,
                              AtomTreeTarget,startfrom,precision)) break;
             /* The target has been updated, update the related vlist */
-            if (selAtomsLocal == selAtomsTarget) {
+            
                 CVectorClear(vlistLocal);
-                for (ii=0; ii<CVectorSize(selAtomsLocal);ii++) {
+            CVectorClear(vlistRemote);
+            for (iii=0; iii<CVectorSize(selAtomsTemplate);iii++) {
                     CV3Vector vtemp;
                     RAtom * ptemp;
-                    ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
-                    if (ptemp->ordlist[0]){
+                ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,iii);
+                ii = ptemp->ordlist[0];
+                if (ii == 0) continue;
+                ii--;
                         vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
                         +(double)(ptemp->xtrl)/10000.0;
 #ifdef INVERT
@@ -5503,34 +5574,34 @@ int AlignToMolecule(int molnum, double * rmsd,
 #endif
                         vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcLocal.vec[2])/250.0
                                          -(double)(ptemp->ztrl)/10000.0);
+                if (selAtomsTemplate == selAtomsLocal) {
                         CVectorAddElement(vlistLocal,&vtemp);
-                        CVectorAddElement(glistLocal,&((*(Group * *)CVectorElementAt(selGroupsLocal,ii))->serno));
+                    CVectorAddElement(glistLocal,&((*(Group * *)CVectorElementAt(selGroupsLocal,iii))->serno));
+                } else {
+                    CVectorAddElement(vlistRemote,&vtemp);
+                    CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,iii))->serno));
                     }
-                }
-
-            } else {
-                CVectorClear(vlistRemote);
-                for (ii=0; ii<CVectorSize(selAtomsRemote);ii++) {
-                    CV3Vector vtemp;
-                    RAtom * ptemp;
-                    ptemp = *(RAtom * *)CVectorElementAt(selAtomsRemote,ii);
-                    if (ptemp->ordlist[0]){
-                        vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcRemote.vec[0])/250.0
+                ptemp = *(RAtom * *)CVectorElementAt(selAtomsTarget,ii);
+                vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
                         +(double)(ptemp->xtrl)/10000.0;
 #ifdef INVERT
-                        vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcRemote.vec[1])/250.0
-                                         +(double)(ptemp->ytrl)/10000.0);
+                vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                                 -(double)(ptemp->ytrl)/10000.0);
 #else
-                        vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcRemote.vec[1])/250.0
+                vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
                         +(double)(ptemp->ytrl)/10000.0;
 #endif
-                        vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcRemote.vec[2])/250.0
-                                         +(double)(ptemp->ztrl)/10000.0);
+                vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcLocal.vec[2])/250.0
+                                 -(double)(ptemp->ztrl)/10000.0);
+                if (selAtomsTarget == selAtomsLocal) {
+                    CVectorAddElement(vlistLocal,&vtemp);
+                    CVectorAddElement(glistLocal,&((*(Group * *)CVectorElementAt(selGroupsLocal,ii))->serno));
+                } else {
                         CVectorAddElement(vlistRemote,&vtemp);
                         CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,ii))->serno));
                     }
                 }
-            }
+            
             
             done = False;
             continue;
@@ -5541,7 +5612,7 @@ int AlignToMolecule(int molnum, double * rmsd,
     CVectorCreate(&quatList,sizeof(CQRQuaternion),1);
     CVectorCreate(&quatLocalList,sizeof(CQRQuaternion),1);
     CVectorCreate(&quatLocalCountList,sizeof(int),1);
-    CQRMSet(qsum,1.,0.,0.,0.);
+            CQRMSet(qsum[0],1.,0.,0.,0.);
     count = 0;
     
     /* Get a small fraction of the radius vector to use to
@@ -5569,7 +5640,7 @@ int AlignToMolecule(int molnum, double * rmsd,
         CV3VectorScalarDivide(&vtemp2,&vtemp2,2.);
         CV3PlaneFrom2Vectors(&ptemp, &vtemp1, &vtemp2);
         CVectorAddElement(planeList,&ptemp);
-        CVectorAddElement(quatLocalList,&qsum);
+                CVectorAddElement(quatLocalList,&qsum[0]);
         CVectorAddElement(quatLocalCountList,&izero);
     }
     
@@ -5655,9 +5726,9 @@ int AlignToMolecule(int molnum, double * rmsd,
                 CQRNormsq(&qnormsq,&q);
                 CQRMScalarMultiply(q,q,1./sqrt(qnormsq));
             }
-            CQRHLERP (&qsum, &qsum, &q,(double)count,1.);
-            CQRNormsq(&qnormsq,&qsum);
-            CQRMScalarMultiply(qsum,qsum,1./sqrt(qnormsq))
+                    CQRHLERP (&qsum[0], &qsum[0], &q,(double)count,1.);
+                    CQRNormsq(&qnormsq,&qsum[0]);
+                    CQRMScalarMultiply(qsum[0],qsum[0],1./sqrt(qnormsq))
             CVectorAddElement(quatList,&q);
             count++;
             if (none_ang_dist == ALIGN_ANGLE || none_ang_dist == ALIGN_ANGLE_SUM) {
@@ -5685,24 +5756,24 @@ int AlignToMolecule(int molnum, double * rmsd,
     
             /* Calculate the standard deviation of the atom fits */
             sum = 0.0;
-            cosTerm = qsum.w;
-            sinTerm = sqrt( qsum.x*qsum.x+qsum.y*qsum.y+qsum.z*qsum.z );
+            cosTerm = qsum[0].w;
+            sinTerm = sqrt( qsum[0].x*qsum[0].x+qsum[0].y*qsum[0].y+qsum[0].z*qsum[0].z );
             CV3M_vsssSet(rotaxis,0.,0.,0.);
             if (sinTerm > 0.) {
-                CV3M_vsssSet(rotaxis,-qsum.x/sinTerm,-qsum.y/sinTerm,-qsum.z/sinTerm);
+                CV3M_vsssSet(rotaxis,-qsum[0].x/sinTerm,-qsum[0].y/sinTerm,-qsum[0].z/sinTerm);
             }
             angleDegrees = -2.0*atan2( sinTerm, cosTerm ) * 45.0 / atan2(1.0,1.0);
-            if (qsum.x+qsum.y+qsum.z > 0.0) {
+            if (qsum[0].x+qsum[0].y+qsum[0].z > 0.0) {
                 angleDegrees = -angleDegrees;
-                CV3M_vsssSet(rotaxis,qsum.x/sinTerm,qsum.y/sinTerm,qsum.z/sinTerm);
+                CV3M_vsssSet(rotaxis,qsum[0].x/sinTerm,qsum[0].y/sinTerm,qsum[0].z/sinTerm);
             }
             fprintf( stdout, "angleDegrees %g\n", angleDegrees );
             fprintf( stdout, "axis [%g, %g, %g]\n",  rotaxis.vec[0], rotaxis.vec[1], rotaxis.vec[2] );
             
             
-            fprintf( stdout, "qsum %f %f %f %f\n", qsum.w, qsum.x, qsum.y, qsum.z );
+            fprintf( stdout, "qsum %f %f %f %f\n", qsum[0].w, qsum[0].x, qsum[0].y, qsum[0].z );
             
-            CV3M_mqQuaternion2Matrix(rotmat,qsum);
+            CV3M_mqQuaternion2Matrix(rotmat,qsum[0]);
             
             for( ii=0; ii<chainCountCommon; ++ii )
             {
@@ -5717,18 +5788,18 @@ int AlignToMolecule(int molnum, double * rmsd,
             *rmsd = sqrt(sum/chainCountCommon); /* RETURN PARAMETER */
 
             
-    CQRMNormsq(qnormsq,qsum);
+            CQRMNormsq(qnormsq,qsum[0]);
     
     if ( qnormsq == 0.0  )
     {
-        CQRMSet (qsum, 0.0, 0.0, 0.0, 0.0 );
+                CQRMSet (qsum[0], 0.0, 0.0, 0.0, 0.0 );
         *rmsd = DBL_MAX;
         qnorm = 0.;
     }
     else
     {
         qnorm = sqrt( qnormsq );
-        CQRMScalarMultiply(qsum,qsum,1/qnorm);
+                CQRMScalarMultiply(qsum[0],qsum[0],1/qnorm);
     }
     
             if (!dosubstruct) {
@@ -5739,11 +5810,17 @@ int AlignToMolecule(int molnum, double * rmsd,
             if (nrmsds == 0) {
                 nrmsds = 1;
                 rmsds[0] = *rmsd;
+                CV3M_vvCopy(comLocal[1],comLocal[0]);
+                CV3M_vvCopy(comRemote[1],comRemote[0]);
+                CQRMCopy(qsum[1],qsum[0]);
                 ilev = 1;
             } else {
                 if (*rmsd >= rmsds[nrmsds-1] && nrmsds < MaxSDepth) {
                     rmsds[nrmsds++] = *rmsd;
                     ilev = nrmsds;
+                    CV3M_vvCopy(comLocal[ilev],comLocal[0]);
+                    CV3M_vvCopy(comRemote[ilev],comRemote[0]);
+                    CQRMCopy(qsum[ilev],qsum[0]);
                 }
                 for (ii=0; ii < nrmsds; ii++) {
                     if (*rmsd < rmsds[ii]) {
@@ -5751,9 +5828,15 @@ int AlignToMolecule(int molnum, double * rmsd,
                         for (jj=nrmsds-1; jj >= ii; jj--) {
                             if (jj < MaxSDepth-1) {
                                 rmsds[jj+1]=rmsds[jj];
+                                CV3M_vvCopy(comLocal[jj+2],comLocal[jj+1]);
+                                CV3M_vvCopy(comRemote[jj+2],comRemote[jj+1]);
+                                CQRMCopy(qsum[jj+2],qsum[jj+1]);
                             }
                         }
                         rmsds[ii] = *rmsd;
+                        CV3M_vvCopy(comLocal[ii+1],comLocal[0]);
+                        CV3M_vvCopy(comRemote[ii+1],comRemote[0]);
+                        CQRMCopy(qsum[ii+1],qsum[0]);
                         if (nrmsds < MaxSDepth) nrmsds++;
                         ilev = ii+1;
                         break;
@@ -5764,14 +5847,16 @@ int AlignToMolecule(int molnum, double * rmsd,
             if(GetNextTrial(selAtomsTemplate,selGroupsTemplate,
                             selAtomsTarget,selGroupsTarget,
                             AtomTreeTarget,startfrom,precision)) break;
-            if (selAtomsLocal == selAtomsTarget) {
+            
                 CVectorClear(vlistLocal);
                 CVectorClear(glistLocal);
-                for (ii=0; ii<CVectorSize(selAtomsLocal);ii++) {
+            for (iii=0; iii<CVectorSize(selAtomsTemplate);iii++) {
                     CV3Vector vtemp;
                     RAtom * ptemp;
-                    ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
-                    if (ptemp->ordlist[0]){
+                ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,iii);
+                ii = ptemp->ordlist[0];
+                if (ii == 0) continue;
+                ii--;
                         vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
                         +(double)(ptemp->xtrl)/10000.0;
 #ifdef INVERT
@@ -5783,41 +5868,139 @@ int AlignToMolecule(int molnum, double * rmsd,
 #endif
                         vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcLocal.vec[2])/250.0
                                          -(double)(ptemp->ztrl)/10000.0);
+                if (selAtomsTemplate == selAtomsLocal) {
                         CVectorAddElement(vlistLocal,&vtemp);
-                        CVectorAddElement(glistLocal,&((*(Group * *)CVectorElementAt(selGroupsLocal,ii))->serno));
+                    CVectorAddElement(glistLocal,&((*(Group * *)CVectorElementAt(selGroupsLocal,iii))->serno));
+                } else {
+                    CVectorAddElement(vlistRemote,&vtemp);
+                    CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,iii))->serno));
                     }
-                }
-                
-            } else {
-                CVectorClear(vlistRemote);
-                CVectorClear(glistRemote);
-                for (ii=0; ii<CVectorSize(selAtomsRemote);ii++) {
-                    CV3Vector vtemp;
-                    RAtom * ptemp;
-                    ptemp = *(RAtom * *)CVectorElementAt(selAtomsRemote,ii);
-                    if (ptemp->ordlist[0]){
-                        vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcRemote.vec[0])/250.0
+                ptemp = *(RAtom * *)CVectorElementAt(selAtomsTarget,ii);
+                vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
                         +(double)(ptemp->xtrl)/10000.0;
 #ifdef INVERT
-                        vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcRemote.vec[1])/250.0
-                                         +(double)(ptemp->ytrl)/10000.0);
+                vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                                 -(double)(ptemp->ytrl)/10000.0);
 #else
-                        vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcRemote.vec[1])/250.0
+                vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
                         +(double)(ptemp->ytrl)/10000.0;
 #endif
-                        vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcRemote.vec[2])/250.0
-                                         +(double)(ptemp->ztrl)/10000.0);
+                vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcLocal.vec[2])/250.0
+                                 -(double)(ptemp->ztrl)/10000.0);
+                if (selAtomsTarget == selAtomsLocal) {
+                    CVectorAddElement(vlistLocal,&vtemp);
+                    CVectorAddElement(glistLocal,&((*(Group * *)CVectorElementAt(selGroupsLocal,ii))->serno));
+                } else {
                         CVectorAddElement(vlistRemote,&vtemp);
                         CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,ii))->serno));
                     }
                 }
-            }
+            
             
             done = False;
             
-        } /* end ALIGN_ANGLE */
+        }
     
-    CQRMCopy(*qRotToMolecule,qsum);
+    
+    } while (!done);
+    
+    if (nrmsds){
+        CV3M_vvCopy(comLocal[0],comLocal[1]);
+        CV3M_vvCopy(comRemote[0],comRemote[1]);
+        CQRMCopy(qsum[0],qsum[1]);
+    }
+    
+    CQRMCopy(*qRotToMolecule,qsum[0]);
+    
+    CV3M_vvvSubtract(*vTransToMolecule,comRemote[0],comLocal[0]);
+    
+    /* If we add vTransToMolecule to each atom on Local, the new
+     center-of-mass will be aligned to the Remote center-of-mass
+     */
+    
+    /* recenter display of each molecule on its own center of mass of the selection
+     making (CenX, CenY, CenZ) agree with the new center of mass
+     */
+    
+    SwitchMolecule(MoleculeRemote);
+    for( i=0; i<10; i++ ) DialValue[i] = 0.0;
+    ReDrawFlag |= RFDials;
+    ResetTransform();
+        
+    RotMode = RotAll;
+    ReDrawFlag |= RFRotate
+    
+    if( Interactive )
+        UpdateScrollBars();
+    
+    
+#ifdef INVERT
+    CentreTransform((long)rint(comRemote[0].vec[0]*250.-origcRemote.vec[0]),
+                    -(long)rint(comRemote[0].vec[1]*250.+origcRemote.vec[1]),
+                    -(long)rint(comRemote[0].vec[2]*250.+origcRemote.vec[2]),xlatecen);
+    
+    fprintf(stderr,"Remote centered on: [%ld,%ld,%ld]\n",
+            (long)rint(comRemote[0].vec[0]*250.-origcRemote.vec[0]),
+            -(long)rint(comRemote[0].vec[1]*250.+origcRemote.vec[1]),
+            -(long)rint(comRemote[0].vec[2]*250.+origcRemote.vec[2]));
+    
+#else
+    CentreTransform((long)rint(comRemote[0].vec[0]*250.-origcRemote.vec[0]),
+                    (long)rint(comRemote[0].vec[1]*250.-origcRemote.vec[1]),
+                    -(long)rint(comRemote[0].vec[2]*250.+origcRemote.vec[2]),xlatecen);
+    fprintf(stderr,"Remote centered on: [%ld,%ld,%ld]\n",
+            (long)rint(comRemote[0].vec[0]*250.-origcRemote.vec[0]),
+            (long)rint(comRemote[0].vec[1]*250.-origcRemote.vec[1]),
+            -(long)rint(comRemote[0].vec[2]*250.+origcRemote.vec[2]));
+    
+#endif
+    
+    
+    SwitchMolecule( MoleculeLocal );
+    for( i=0; i<10; i++ ) DialValue[i] = 0.0;
+    ReDrawFlag |= RFDials;
+    ResetTransform();
+    
+    /* ReDrawFlag |= RFRefresh|RFColour; */
+    /* DisplayMode = 0;                  */
+    
+    if( Interactive )
+        UpdateScrollBars();
+    
+    
+#ifdef INVERT
+    CentreTransform((long)rint(comLocal[0].vec[0]*250.-origcLocal.vec[0]),
+                    -(long)rint(comLocal[0].vec[1]*250.+origcLocal.vec[1]),
+                    -(long)rint(comLocal[0].vec[2]*250.+origcLocal.vec[2]),xlatecen);
+    fprintf(stderr,"Local centered on: [%ld,%ld,%ld]\n",
+            (long)rint(comLocal[0].vec[0]*250.-origcLocal.vec[0]),
+            -(long)rint(comLocal[0].vec[1]*250.+origcLocal.vec[1]),
+            -(long)rint(comLocal[0].vec[2]*250.+origcLocal.vec[2]));
+    
+#else
+    CentreTransform((long)rint(comLocal[0].vec[0]*250.-origcLocal.vec[0]),
+                    (long)rint(comLocal[0].vec[1]*250.-origcLocal.vec[1]),
+                    -(long)rint(comLocal[0].vec[2]*250.+origcLocal.vec[2]),xlatecen);
+    fprintf(stderr,"Local centered on: [%ld,%ld,%ld]\n",
+            (long)rint(comLocal[0].vec[0]*250.-origcLocal.vec[0]),
+            (long)rint(comLocal[0].vec[1]*250.-origcLocal.vec[1]),
+            -(long)rint(comLocal[0].vec[2]*250.+origcLocal.vec[2]));
+#endif
+    
+    
+    
+    if (dosubstruct) {
+        if (selAtomsRemote == selAtomsTarget) {
+            SwitchMolecule(MoleculeRemote);
+        } else {
+            SwitchMolecule(MoleculeLocal);
+        }
+        WriteTrialSelectionScripts(scripts,
+                                   selAtomsTemplate,
+                                   selAtomsTarget,
+                                   nrmsds, rmsds);
+    }
+    
     
     /* convert the origin shift back to real world coordinates */
     
@@ -5830,12 +6013,28 @@ int AlignToMolecule(int molnum, double * rmsd,
 
     CV3M_vvvAdd(origshift,*vTransToMolecule,origshift);
     
-    ApplyQTXform (qRotToMolecule, 
-                  vTransToMolecule,
-                  &comLocal);
+    SwitchMolecule( MoleculeLocal );
                     
+    {
+        CV3Matrix rotmat;
+        CV3M_mqQuaternion2Matrix(rotmat,*qRotToMolecule);
+#ifdef INVERT
+        rotmat.mat[1] = - rotmat.mat[1];
+        rotmat.mat[3] = - rotmat.mat[3];
+        rotmat.mat[5] = - rotmat.mat[5];
+        rotmat.mat[7] = - rotmat.mat[7];
+#endif
+        rotmat.mat[2] = - rotmat.mat[2];
+        rotmat.mat[5] = - rotmat.mat[5];
+        rotmat.mat[6] = - rotmat.mat[6];
+        rotmat.mat[7] = - rotmat.mat[7];
+        CV3M_qmMatrix2Quaternion(AuxQRot,rotmat);
+    }
     
-    if (none_ang_dist==ALIGN_DISTANCE || none_ang_dist==ALIGN_DISTANCE_SUM) {
+    fprintf(stderr,"AuxQRot [%g,%g,%g,%g]\n",AuxQRot.w,AuxQRot.x,AuxQRot.y,AuxQRot.z);
+        
+    
+    if ((none_ang_dist==ALIGN_DISTANCE || none_ang_dist==ALIGN_DISTANCE_SUM)&&!dosubstruct) {
         
         CV3Vector vSum;
         
@@ -5847,6 +6046,7 @@ int AlignToMolecule(int molnum, double * rmsd,
                 RAtom * pRemote;
                 long field[4];
                 pLocal = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
+            {
                 vLocal.vec[0] = (double)(pLocal->xorg + pLocal->fxorg + origcLocal.vec[0])/250.0
                                  +(double)(pLocal->xtrl)/10000.0;
 #ifdef INVERT
@@ -5858,9 +6058,10 @@ int AlignToMolecule(int molnum, double * rmsd,
 #endif
                 vLocal.vec[2] = -((double)(pLocal->zorg + pLocal->fzorg + origcLocal.vec[2])/250.0
                                  -(double)(pLocal->ztrl)/10000.0);
-                                 
+            }
                                  
                 pRemote = *(RAtom * *)CVectorElementAt(selAtomsRemote,ii);
+            {
                 vRemote.vec[0] = (double)(pRemote->xorg + pRemote->fxorg + origcRemote.vec[0])/250.0
                 +(double)(pRemote->xtrl)/10000.0;
 #ifdef INVERT
@@ -5872,6 +6073,7 @@ int AlignToMolecule(int molnum, double * rmsd,
 #endif
                 vRemote.vec[2] = -((double)(pRemote->zorg + pRemote->fzorg + origcRemote.vec[2])/250.0
                                  +(double)(pRemote->ztrl)/10000.0);
+            }
                 
                 CV3M_vvvSubtract(vDiff,vRemote,vLocal);
                 CV3M_vvvAdd(vSum,vSum,vDiff);
@@ -5909,7 +6111,7 @@ int AlignToMolecule(int molnum, double * rmsd,
                 
         }
 
-    } else if (none_ang_dist == ALIGN_ANGLE || none_ang_dist == ALIGN_ANGLE_SUM) {
+    } else if ((none_ang_dist == ALIGN_ANGLE || none_ang_dist == ALIGN_ANGLE_SUM)&&!dosubstruct) {
     
             CQRQuaternion angSum;
         CQRMSet(angSum,1.,0.,0.,0.);
@@ -5922,7 +6124,7 @@ int AlignToMolecule(int molnum, double * rmsd,
                 long field[4];
             pLocal = *(RAtom * *)CVectorElementAt(selAtomsLocal,ii);
             qlocal = (CQRQuaternionHandle)CVectorElementAt(quatLocalList,ii);
-            CQRMConjugate(qtemp1,qsum);
+            CQRMConjugate(qtemp1,qsum[0]);
             CQRMMultiply(qtemp2,*qlocal,qtemp1)
             CQRMMultiply(atemp,qtemp2,angSum);
             if (none_ang_dist ==  ALIGN_ANGLE_SUM) {
@@ -5966,20 +6168,9 @@ int AlignToMolecule(int molnum, double * rmsd,
             	
             }
         }
-    }
-    } while (!done);
     
-    if (dosubstruct) {
-        if (selAtomsRemote == selAtomsTarget) {
-            SwitchMolecule(molnum);
-        } else {
-            SwitchMolecule(MoleculeIndexSave);
         }
-        WriteTrialSelectionScripts(scripts,
-                                   selAtomsTemplate,
-                                   selAtomsTarget,
-                                   nrmsds, rmsds);
-    }
+    
     
     if (planeList) CVectorFree(&planeList);
     if (vlistRot) CVectorFree(&vlistRot);

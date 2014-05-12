@@ -1112,6 +1112,7 @@ int OpenDisplay( int x, int y )
         DialValue[i] = 0.0;
         
     CQRMSet(DialQRot,0.,0.,0.,0.);
+    CQRMSet(AuxQRot,0.,0.,0.,0.);
     
     ULut[0] = ULut[255] = True;
     RLut[255] = GLut[255] = BLut[255] = 0;
