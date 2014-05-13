@@ -6252,7 +6252,7 @@ int ExecuteCommandOne( int * restore )
             &trans, seqrange, mindist, maxdist, 
             kabsch_local,none_ang_dist, XlateCen,
             findsubstructure, scripts);
-            fprintf(stderr," rmsd %g\n",rmsd);
+            /* fprintf(stderr," rmsd %g\n",rmsd);*/
             ReDrawFlag |= RFInitial;
         }
          break;
