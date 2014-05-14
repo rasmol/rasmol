@@ -4658,12 +4658,21 @@ void InitialiseTransform( void )
 
 /*  Functions to process alignments */
 
+int Quat2RMat(CV3Matrix * rotmat, CQRQuaternion qsum) {
+    Real theta, phi, psi;
+    Real RMat[3][3];
+    CQRQuaternion2Angles (&theta, &phi, &psi, &qsum);
+    RV2RMat(theta/PI, phi/PI, psi/PI, RMat[0], RMat[1], RMat[2]);
+    CV3M_mcmSet(*rotmat,RMat);
+    return 0;
+}
+
+
 void TestKabsch( const CVectorHandle /*CV3Vector */ v1,
                  const CVectorHandle /*CV3Vector */ v2,
                  CQRQuaternionHandle q,
                  double * rmsd)
 {
-    CV3Matrix mrot;
     CQRQuaternion qrot;
     CVectorHandle /* double[3] */ x1, x2;
     int i, imax;
@@ -4671,6 +4680,7 @@ void TestKabsch( const CVectorHandle /*CV3Vector */ v1,
     double anormsq;
     double costh;
     double sinth;
+    Real theta, phi, psi;
 
     CVectorCreate(&x1,sizeof(double[3]),1);
     CVectorCreate(&x2,sizeof(double[3]),1);
@@ -4692,17 +4702,15 @@ void TestKabsch( const CVectorHandle /*CV3Vector */ v1,
             U[0][0],U[0][1],U[0][2],
             U[1][0],U[1][1],U[1][2],
             U[2][0],U[2][1],U[2][2]);*/
-    CV3M_msssssssssSet(mrot,U[0][0],U[0][1],U[0][2],
-                       U[1][0],U[1][1],U[1][2],
-                       U[2][0],U[2][1],U[2][2]);
-    /* fprintf( stderr, "rot CV3Matrix:\n %g %g %g %g %g %g %g %g %g\n",
-            mrot.mat[0], mrot.mat[1], mrot.mat[2], mrot.mat[3], mrot.mat[4], mrot.mat[5], mrot.mat[6], mrot.mat[7], mrot.mat[8]);  */
-    CV3Matrix2Quaternion(&qrot,&mrot);
+    theta = phi = psi = 0.;
+    RMat2RV(&theta,&phi,&psi,U[0],U[1],U[2]);
+    theta *= PI; phi *= PI; psi *= PI;
+    CQRAngles2Quaternion (&qrot, theta, phi, psi );
     /* fprintf( stderr, "rotation quaternion:\n [%g %g %g %g]\n",qrot.w,qrot.x,qrot.y,qrot.z); */
-    anormsq=qrot.x*qrot.x+qrot.y*qrot.y+qrot.z*qrot.z;
+    /* anormsq=qrot.x*qrot.x+qrot.y*qrot.y+qrot.z*qrot.z;
     sinth = sqrt(anormsq);
     costh = qrot.w;
-    /*if (sinth>0.) {
+    if (sinth>0.) {
         if (qrot.x+qrot.y+qrot.z < 0.) {
             fprintf( stdout, "axis:\n [%g %g %g]\n",-qrot.x/sinth,-qrot.y/sinth,-qrot.z/sinth);
             fprintf( stdout, "angle: %g\n", -2.*atan2(sinth,costh)*45./atan2(1.,1.));            
@@ -4770,7 +4778,6 @@ void GenerateDispField(CQRQuaternionHandle qRotToMolecule,
                        int none_ang_dist) {
     
     CV3Vector curpos;
-    CV3Vector vtemp;
     CV3Matrix rotmat;
     CV3Vector vSum;
     CQRQuaternion qinv;
@@ -5278,14 +5285,6 @@ int GetNextTrial(CVectorHandle selAtomsTemplate,CVectorHandle selGroupsTemplate,
             
 }
 
-int Quat2RMat(CV3Matrix * rotmat, CQRQuaternion qsum) {
-    Real theta, phi, psi;
-    Real RMat[3][3];
-    CQRQuaternion2Angles (&theta, &phi, &psi, &qsum);
-    RV2RMat(theta/PI, phi/PI, psi/PI, RMat[0], RMat[1], RMat[2]);
-    CV3M_mcmSet(*rotmat,RMat);
-    return 0;
-}
 
 
 /* Get the transform to align the current molecule to the given
@@ -5337,7 +5336,6 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
     CV3VectorHandle tvec;
     CQRQuaternion qsum[MaxSDepth+1];
     CV3Matrix rotmat;
-    CV3Matrix rotmat_inv;
     CV3Vector rotaxis;
     CV3Vector origshift;
     int MoleculeLocal;
