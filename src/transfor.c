@@ -4772,16 +4772,21 @@ void GenerateDispField(CQRQuaternionHandle qRotToMolecule,
     CV3Vector curpos;
     CV3Vector vtemp;
     CV3Matrix rotmat;
-    CV3Matrix rotmat_inv;
     CV3Vector vSum;
+    CQRQuaternion qinv;
     
     long field[4];
     int ii,iii;
 
     CV3M_vsssSet(vSum,0.,0.,0.);
     
-    CV3M_mqQuaternion2Matrix(rotmat,*qRotToMolecule);
-    CV3M_mmTranspose(rotmat_inv,rotmat);
+    qinv.w = qRotToMolecule->w;
+    qinv.x = -qRotToMolecule->x;
+    qinv.y = -qRotToMolecule->y;
+    qinv.z = -qRotToMolecule->z;
+    
+    
+    Quat2RMat(&rotmat,qinv);
     
     for (iii=0; iii<CVectorSize(selAtomsLocal);iii++) {
         CV3Vector vtemp;
@@ -4809,7 +4814,7 @@ void GenerateDispField(CQRQuaternionHandle qRotToMolecule,
         curpos.vec[2] = -((double)(qtemp->zorg + qtemp->fzorg + origcRemote.vec[2])/250.0
                           -(double)(qtemp->ztrl)/10000.0);
         CV3M_vvvSubtract(curpos,curpos,comRemote);  /* put the remote object on its own COM */
-        CV3M_vmvMultiply(vtemp,rotmat_inv,curpos);     /* rotate around its own COM */
+        CV3M_vmvMultiply(vtemp,rotmat,curpos);     /* rotate around its own COM */
         
         /* vtemp now contains the end point of the field
          vector.
@@ -5212,6 +5217,7 @@ int GetNextTrial(CVectorHandle selAtomsTemplate,CVectorHandle selGroupsTemplate,
                  int startfrom, double precision) {
     
     RAtom * ptrtemplate;
+    RAtom * ptrtarget;
     int starttemplate;
     int digit;
     int newassignment = 0;
@@ -5232,6 +5238,9 @@ int GetNextTrial(CVectorHandle selAtomsTemplate,CVectorHandle selGroupsTemplate,
         /* We failed to do this assignment, so we need to back down 1 level at a time and try again */
         while (starttemplate > 1 && !newassignment) {
             starttemplate --;
+            ptrtemplate = *(RAtom * *)CVectorElementAt(selAtomsTemplate,starttemplate-1);
+            ptrtarget = *(RAtom * *)CVectorElementAt(selAtomsTarget,ptrtemplate->ordlist[0]-1);
+            ptrtarget->ordlist[0] = 0;
             if (!GetNextTrialStep(selAtomsTemplate, selGroupsTemplate,
                                   selAtomsTarget, selGroupsTarget,
                                   AtomTreeTarget, starttemplate, precision)) {
@@ -5248,6 +5257,10 @@ int GetNextTrial(CVectorHandle selAtomsTemplate,CVectorHandle selGroupsTemplate,
     
     
     for (digit=CVectorSize(selAtomsTemplate); digit > 0; digit-- )  {
+        ptrtemplate = *(RAtom * *)CVectorElementAt(selAtomsTemplate,digit-1);
+        ptrtarget = *(RAtom * *)CVectorElementAt(selAtomsTarget,ptrtemplate->ordlist[0]-1);
+        ptrtarget->ordlist[0] = 0;
+
         if (GetNextTrialStep(selAtomsTemplate, selGroupsTemplate,
                               selAtomsTarget, selGroupsTarget,
                               AtomTreeTarget, digit, precision)) {
@@ -5263,6 +5276,15 @@ int GetNextTrial(CVectorHandle selAtomsTemplate,CVectorHandle selGroupsTemplate,
         }
     return 1; /* attempted assignment failed */
             
+}
+
+int Quat2RMat(CV3Matrix * rotmat, CQRQuaternion qsum) {
+    Real theta, phi, psi;
+    Real RMat[3][3];
+    CQRQuaternion2Angles (&theta, &phi, &psi, &qsum);
+    RV2RMat(theta/PI, phi/PI, psi/PI, RMat[0], RMat[1], RMat[2]);
+    CV3M_mcmSet(*rotmat,RMat);
+    return 0;
 }
 
 
@@ -5308,12 +5330,14 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
     CNearTreeHandle AtomTreeTarget = NULL;
     
     CV3Vector origcLocal, origcRemote;
+    CV3Vector origcTemplate, origcTarget;
     CV3Vector cenLocal, cenRemote;
     CV3Vector shiftLocal;
     CV3Vector comLocal[MaxSDepth+1], comRemote[MaxSDepth+1];
     CV3VectorHandle tvec;
     CQRQuaternion qsum[MaxSDepth+1];
     CV3Matrix rotmat;
+    CV3Matrix rotmat_inv;
     CV3Vector rotaxis;
     CV3Vector origshift;
     int MoleculeLocal;
@@ -5334,7 +5358,7 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
     double angle;
     double angleDegrees;
     double rmsds[MaxSDepth];
-    double precision = 0.2;
+    double precision = 0.5;
     int nrmsds;
     int startfrom;
     
@@ -5370,6 +5394,7 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
     }
     GatherSelected( selAtomsLocal, selGroupsLocal );
     CV3M_vsssSet(origcLocal,(double)OrigCX,(double)OrigCY,(double)OrigCZ);
+    CV3M_vsssSet(origcTemplate,(double)OrigCX,(double)OrigCY,(double)OrigCZ);
     CV3M_vsssSet(cenLocal,(double)CenX,(double)CenY,(double)CenZ);
     MoleculeLocal = MoleculeIndex;
     SwitchMolecule(MoleculeRemote);
@@ -5385,6 +5410,7 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
     }
     GatherSelected( selAtomsRemote, selGroupsRemote );
     CV3M_vsssSet(origcRemote,(double)OrigCX,(double)OrigCY,(double)OrigCZ);
+    CV3M_vsssSet(origcTarget,(double)OrigCX,(double)OrigCY,(double)OrigCZ);
     CV3M_vsssSet(cenRemote,(double)CenX,(double)CenY,(double)CenZ);
     
     
@@ -5408,6 +5434,8 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
             selGroupsTemplate = selGroupsRemote;
             AtomTreeTarget = AtomTreeLocal;
             AtomTreeTemplate = AtomTreeRemote;
+            CV3M_vsssSet(origcTarget,origcLocal.vec[0],origcLocal.vec[1],origcLocal.vec[2]);
+            CV3M_vsssSet(origcTemplate,origcRemote.vec[0],origcRemote.vec[1],origcRemote.vec[2]);
         }
     }
     if (dosubstruct) {
@@ -5447,20 +5475,20 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
         for (iii=0; iii<CVectorSize(selAtomsTemplate);iii++) {
         CV3Vector vtemp;
         RAtom * ptemp;
-            ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,iii);
+            ptemp = *(RAtom * *)CVectorElementAt(selAtomsTemplate,iii);
             ii = ptemp->ordlist[0];
             if (ii == 0) continue;
             ii--;
-            vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
+            vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcTemplate.vec[0])/250.0
             +(double)(ptemp->xtrl)/10000.0;
 #ifdef INVERT
-            vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+            vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcTemplate.vec[1])/250.0
                              -(double)(ptemp->ytrl)/10000.0);
 #else
-            vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+            vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcTemplate.vec[1])/250.0
             +(double)(ptemp->ytrl)/10000.0;
 #endif
-            vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcLocal.vec[2])/250.0
+            vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcTemplate.vec[2])/250.0
                              -(double)(ptemp->ztrl)/10000.0);
             if (selAtomsTemplate == selAtomsLocal) {
                 CVectorAddElement(vlistLocal,&vtemp);
@@ -5470,16 +5498,16 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
                 CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,iii))->serno));
             }
             ptemp = *(RAtom * *)CVectorElementAt(selAtomsTarget,ii);
-            vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
+            vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcTarget.vec[0])/250.0
             +(double)(ptemp->xtrl)/10000.0;
 #ifdef INVERT
-            vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+            vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcTarget.vec[1])/250.0
                              -(double)(ptemp->ytrl)/10000.0);
 #else
-            vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+            vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcTarget.vec[1])/250.0
             +(double)(ptemp->ytrl)/10000.0;
 #endif
-            vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcLocal.vec[2])/250.0
+            vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcTarget.vec[2])/250.0
                              -(double)(ptemp->ztrl)/10000.0);
             if (selAtomsTarget == selAtomsLocal) {
                 CVectorAddElement(vlistLocal,&vtemp);
@@ -5625,24 +5653,26 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
             /* The target has been updated, update the related vlist */
             
                 CVectorClear(vlistLocal);
+            CVectorClear(glistLocal);
             CVectorClear(vlistRemote);
+            CVectorClear(glistRemote);
             for (iii=0; iii<CVectorSize(selAtomsTemplate);iii++) {
                     CV3Vector vtemp;
                     RAtom * ptemp;
-                ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,iii);
+                ptemp = *(RAtom * *)CVectorElementAt(selAtomsTemplate,iii);
                 ii = ptemp->ordlist[0];
                 if (ii == 0) continue;
                 ii--;
-                        vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
+                vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcTemplate.vec[0])/250.0
                         +(double)(ptemp->xtrl)/10000.0;
 #ifdef INVERT
-                        vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcTemplate.vec[1])/250.0
                                          -(double)(ptemp->ytrl)/10000.0);
 #else
-                        vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcTemplate.vec[1])/250.0
                         +(double)(ptemp->ytrl)/10000.0;
 #endif
-                        vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcLocal.vec[2])/250.0
+                vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcTemplate.vec[2])/250.0
                                          -(double)(ptemp->ztrl)/10000.0);
                 if (selAtomsTemplate == selAtomsLocal) {
                         CVectorAddElement(vlistLocal,&vtemp);
@@ -5652,16 +5682,16 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
                     CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,iii))->serno));
                     }
                 ptemp = *(RAtom * *)CVectorElementAt(selAtomsTarget,ii);
-                vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
+                vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcTarget.vec[0])/250.0
                         +(double)(ptemp->xtrl)/10000.0;
 #ifdef INVERT
-                vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcTarget.vec[1])/250.0
                                  -(double)(ptemp->ytrl)/10000.0);
 #else
-                vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcTarget.vec[1])/250.0
                         +(double)(ptemp->ytrl)/10000.0;
 #endif
-                vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcLocal.vec[2])/250.0
+                vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcTarget.vec[2])/250.0
                                  -(double)(ptemp->ztrl)/10000.0);
                 if (selAtomsTarget == selAtomsLocal) {
                     CVectorAddElement(vlistLocal,&vtemp);
@@ -5671,7 +5701,6 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
                         CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,ii))->serno));
                     }
                 }
-            
             
             done = False;
             continue;
@@ -5843,7 +5872,7 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
             
             fprintf( stderr, "qsum %f %f %f %f\n", qsum[0].w, qsum[0].x, qsum[0].y, qsum[0].z ); */
             
-            CV3M_mqQuaternion2Matrix(rotmat,qsum[0]);
+            Quat2RMat(&rotmat,qsum[0]);
             
             for( ii=0; ii<chainCountCommon; ++ii )
             {
@@ -5921,23 +5950,25 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
             
                 CVectorClear(vlistLocal);
                 CVectorClear(glistLocal);
+            CVectorClear(vlistRemote);
+            CVectorClear(glistRemote);
             for (iii=0; iii<CVectorSize(selAtomsTemplate);iii++) {
                     CV3Vector vtemp;
                     RAtom * ptemp;
-                ptemp = *(RAtom * *)CVectorElementAt(selAtomsLocal,iii);
+                ptemp = *(RAtom * *)CVectorElementAt(selAtomsTemplate,iii);
                 ii = ptemp->ordlist[0];
                 if (ii == 0) continue;
                 ii--;
-                        vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
+                vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcTemplate.vec[0])/250.0
                         +(double)(ptemp->xtrl)/10000.0;
 #ifdef INVERT
-                        vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcTemplate.vec[1])/250.0
                                          -(double)(ptemp->ytrl)/10000.0);
 #else
-                        vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcTemplate.vec[1])/250.0
                         +(double)(ptemp->ytrl)/10000.0;
 #endif
-                        vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcLocal.vec[2])/250.0
+                vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcTemplate.vec[2])/250.0
                                          -(double)(ptemp->ztrl)/10000.0);
                 if (selAtomsTemplate == selAtomsLocal) {
                         CVectorAddElement(vlistLocal,&vtemp);
@@ -5947,16 +5978,16 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
                     CVectorAddElement(glistRemote,&((*(Group * *)CVectorElementAt(selGroupsRemote,iii))->serno));
                     }
                 ptemp = *(RAtom * *)CVectorElementAt(selAtomsTarget,ii);
-                vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcLocal.vec[0])/250.0
+                vtemp.vec[0] = (double)(ptemp->xorg + ptemp->fxorg + origcTarget.vec[0])/250.0
                         +(double)(ptemp->xtrl)/10000.0;
 #ifdef INVERT
-                vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                vtemp.vec[1] = -((double)(ptemp->yorg + ptemp->fyorg + origcTarget.vec[1])/250.0
                                  -(double)(ptemp->ytrl)/10000.0);
 #else
-                vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcLocal.vec[1])/250.0
+                vtemp.vec[1] = (double)(ptemp->yorg + ptemp->fyorg + origcTarget.vec[1])/250.0
                         +(double)(ptemp->ytrl)/10000.0;
 #endif
-                vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcLocal.vec[2])/250.0
+                vtemp.vec[2] = -((double)(ptemp->zorg + ptemp->fzorg + origcTarget.vec[2])/250.0
                                  -(double)(ptemp->ztrl)/10000.0);
                 if (selAtomsTarget == selAtomsLocal) {
                     CVectorAddElement(vlistLocal,&vtemp);
@@ -6126,19 +6157,16 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
     SwitchMolecule( MoleculeLocal );
                     
     {
-        CV3Matrix rotmat;
-        CV3M_mqQuaternion2Matrix(rotmat,*qRotToMolecule);
+        AuxQRot.w = qRotToMolecule->w;
 #ifdef INVERT
-        rotmat.mat[1] = - rotmat.mat[1];
-        rotmat.mat[3] = - rotmat.mat[3];
-        rotmat.mat[5] = - rotmat.mat[5];
-        rotmat.mat[7] = - rotmat.mat[7];
+        AuxQRot.x = qRotToMolecule->x;
+        AuxQRot.y = -qRotToMolecule->y;
+        AuxQRot.z = -qRotToMolecule->z;
+#else
+        AuxQRot.x = -qRotToMolecule->x;
+        AuxQRot.y = -qRotToMolecule->y;
+        AuxQRot.z = qRotToMolecule->z;
 #endif
-        rotmat.mat[2] = - rotmat.mat[2];
-        rotmat.mat[5] = - rotmat.mat[5];
-        rotmat.mat[6] = - rotmat.mat[6];
-        rotmat.mat[7] = - rotmat.mat[7];
-        CV3M_qmMatrix2Quaternion(AuxQRot,rotmat);
     }
     
     /* fprintf(stderr,"AuxQRot [%g,%g,%g,%g]\n",AuxQRot.w,AuxQRot.x,AuxQRot.y,AuxQRot.z); */
