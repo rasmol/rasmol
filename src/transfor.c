@@ -4887,7 +4887,7 @@ int GetAnnulus(CVectorHandle selAtomsTemplate,
     RAtom * nexttemplate;
     RAtom * ptrtarget;
     Long lx, ly, lz, lxyzsq;
-    double dxyz;
+    double dxyz, maxxyz, minxyz;
     double coord[3];
 
     *Annulus = NULL;
@@ -4900,13 +4900,17 @@ int GetAnnulus(CVectorHandle selAtomsTemplate,
     lz = ptrtemplate->zorg+ptrtemplate->fzorg-nexttemplate->zorg-nexttemplate->fzorg;
     lxyzsq = lx*lx + ly*ly + lz*lz;
     dxyz = sqrt((double)lxyzsq);
+    minxyz = dxyz*(1.-precision);
+    maxxyz = dxyz*(1.+precision);
+    if (dxyz > 3. && minxyz > dxyz-2.) minxyz = dxyz-2.;
+    if (dxyz > 3. && maxxyz < dxyz+2.) maxxyz = dxyz+2.;
     coord[0] =  (double)(ptrtarget->xorg + ptrtarget->fxorg);
     coord[1] =  (double)(ptrtarget->yorg + ptrtarget->fyorg);
     coord[2] =  (double)(ptrtarget->zorg + ptrtarget->fzorg);
     if (CVectorCreate(Annulus,sizeof(void CVECTOR_FAR *),1)) {
         RasMolFatalExit(MsgStrs[StrMalloc]);
     }
-    if (!CNearTreeFindInAnnulus(AtomTreeTarget,dxyz*(1.-precision),dxyz*(1.+precision),NULL,*Annulus,coord,True)) {
+    if (!CNearTreeFindInAnnulus(AtomTreeTarget,minxyz,maxxyz,NULL,*Annulus,coord,True)) {
         return 0;
     }
     CVectorFree(Annulus);
@@ -5356,7 +5360,7 @@ int AlignToMolecule(int MoleculeRemote, double * rmsd,
     double angle;
     double angleDegrees;
     double rmsds[MaxSDepth];
-    double precision = 0.5;
+    double precision = 0.3;
     int nrmsds;
     int startfrom;
     
