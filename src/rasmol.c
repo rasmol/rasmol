@@ -347,6 +347,7 @@ int FileNo;
 #define AMSelectCount  0x04
 #define AMMolName      0x08
 #define AMPickCoord    0x10
+#define AMDetail       0x20
 
 typedef struct {
     int bitmask;
@@ -361,7 +362,8 @@ static AdviseType AdviseMap[ItemCount] = {
     { AMNone,        "Ident"   },  /* AdvIdent       */
     { AMNone,        "Class"   },  /* AdvClass       */
     { AMNone,        "Image"   },  /* AdvImage       */
-    { AMPickCoord,   "PickXYZ" }   /* AdvPickCoord   */
+    { AMPickCoord,   "PickXYZ" },  /* AdvPickCoord   */
+    { AMDetail,      "Detail"  },  /* AdvDetail      */
         };
 
 static char AdviseBuffer[256];
@@ -374,7 +376,7 @@ typedef struct {
         int advise;
     } IPCConv;
 
-#define MaxIPCConvNum     8
+#define MaxIPCConvNum     9
 static IPCConv IPCConvData[MaxIPCConvNum];
 
 static int ServerPort;
@@ -409,13 +411,35 @@ void WriteMsg( char *ptr )
 #ifndef GTKWIN
 void WriteChar( int ch )
 {
+    char cc;
     putc(ch,OutFp);
+    if (termlogfile && termlogfile!=OutFp) putc(ch,termlogfile);
+    if (TkResponseDetail && TkResponsePtr) {
+        cc = (char)ch;
+        vector_add_element((GenericVec __far * )TkResponsePtr,
+                           (void __far *)(&ch));
+}
+    if (IPCResponseDetail && IPCResponsePtr) {
+        cc = (char)ch;
+        vector_add_element((GenericVec __far * )IPCResponsePtr,
+                           (void __far *)(&ch));
+    }
+
 }
 
 
 void WriteString( char *ptr )
 {
     fputs(ptr,OutFp);
+    if (termlogfile && termlogfile!=OutFp) fputs(ptr,termlogfile);
+    if (TkResponseDetail && TkResponsePtr) {
+        vector_add_elements((GenericVec __far * )TkResponsePtr,
+                           (void __far *)(ptr),strlen(ptr));
+}
+    if (IPCResponseDetail && IPCResponsePtr) {
+        vector_add_elements((GenericVec __far * )IPCResponsePtr,
+                            (void __far *)(ptr),strlen(ptr));
+    }
 }
 
 
@@ -686,6 +710,15 @@ static void HandleSocketData( int conv )
     register int ch,len;
     char buffer[4097];
 
+    if (!TkResponsePtr) {
+        if (vector_create((GenericVec __far * __far *)&IPCResponsePtr,
+                          sizeof(char),32) ){
+            InvalidateCmndLine();
+            RasMolFatalExit(MsgStrs[StrMalloc]);      
+        }
+    }
+
+
     len = recv( IPCConvData[conv].socket, buffer, 4096, 0 );
     if( len > 0 )
     {   buffer[len] = '\0';
@@ -694,9 +727,18 @@ static void HandleSocketData( int conv )
             if( (ch>=' ') && (ch<='~') )
                 *dst++ = ch;
         *dst = '\0';
-
         if( !IsIPCAdviseRequest(buffer,conv) )
-        {   result = ExecuteIPCCommand(buffer);
+        {   
+            vector_set_elements((GenericVec __far * )IPCResponsePtr,
+                                (void __far *) "1\n", 2,0);
+            IPCResponsePtr->size=2;
+            result = ExecuteIPCCommand(buffer);
+            (IPCResponsePtr->array)[0]= result? '1' : '0';
+            if (!IPCResponseDetail) IPCResponsePtr->size=2;
+            vector_add_element((GenericVec __far * )IPCResponsePtr,
+                               (void __far *)"\0");
+            send(IPCConvData[conv].socket,IPCResponsePtr->array,
+                 (int)(IPCResponsePtr->size),0);
             if( result == IPC_Exit )
             {   CloseIPCConnection( conv );
             } else if( result == IPC_Quit )
@@ -797,6 +839,14 @@ static void InitTerminal( int sockets )
     setbuf(stdin,(char*)NULL);
 #endif
 #endif //GTKWIN
+    if (LogTo) {
+        ProcessFileName(LogTo);
+        termlogfile = fopen(DataFileName,"w");
+        if (!termlogfile) {
+            fprintf(stderr,"LogTo Error: Unable to create file `");
+            fprintf(stderr, "%s",LogTo );  fprintf(stderr,"'!\n");
+}
+    }
 }
 
 
@@ -1904,9 +1954,10 @@ static void PrepareIPCAdviseItem( int item )
                       if( flag ) *dst++ = ']';
                       sprintf(dst,"%d",QGroup->serno);
                       for( dst=AdviseBuffer; *dst; dst++ );
-                      if( QChain->ident!=' ' )
-                      {   if( isdigit(QChain->ident) ) *dst++ = ':';
-                          *dst++ = QChain->ident;
+                      if( QChain->chrefno!=52 )
+                      {   *dst++ = ':';
+                          for(i=0;ChIdents[QChain->chrefno][i];i++)
+                          *dst++ = ChIdents[QChain->chrefno][i];
                       }
                       *dst++ = '.';
 
@@ -2114,14 +2165,40 @@ static void InitDefaultValues( void )
 #ifdef SOCKETS
     ServerPort = 21069;
 #endif
+    TkName = NULL;
+    TkNameTo = NULL;
+    TkInterp[0] = '\0';
+    LogTo = NULL; 
+    termlogfile = NULL;
+    TkResponseDetail = False;
+    TkResponsePtr = NULL;
 }
 
 
 static void DisplayUsage(int retval)
 {
-    fputs("usage: rasmol [-nodisplay] [-script scriptfile] ", OutFp);
-    fputs("[[-format] file]\n    formats: -cif -pdb -nmrpdb ", OutFp);
-    fputs("-mopac -mdl -mol2 -xyz -alchemy -charmm\n\n", OutFp);
+    fputs("usage: rasmol [-nodisplay] [-script scriptfile]\n", OutFp);
+    fputs("[-noconnect] [-connect] [-insecure] [-secure]\n", OutFp);
+    fputs("[-script scripname] [-wireframe] [-backbone]\n", OutFp);
+    fputs("[-sticks] [-spacefill] [-spheres] [-ballstick]\n", OutFp);
+    fputs("[-ribbons] [-strands] [-scartoons]\n", OutFp);
+    fputs("[{-colour|-color} colouring_scheme] [-prompt] [-noprompt]\n", OutFp);
+    fputs("[gtkoptions]", OutFp);
+    fputs("[-width width] [-height height] [-xpos xpos] [-ypos ypos]\n", OutFp);
+    fputs("[-port serverport] [-tkname TkName] [-tknameto TkNamefile]\n", OutFp);
+    fputs("[-tkdetail|-ipcdetail]\n", OutFp);
+    fputs("[-logto terminallogfile]\n",OutFp);
+    fputs("[[-format] file]\n",OutFp);
+    fputs("\ntkoptions (valid only for gtk version of rasmol):\n",OutFp);
+    fputs("           prompt noprompt scrollbars noscrollbars\n", OutFp);
+    fputs("           menu nomenu fullscreen\n", OutFp);
+    fputs("\nformats: -alchemy -biosym -cif -charmm -fdat\n", OutFp);
+    fputs("           -gaussian -macromodel -mdl, -mmdb\n", OutFp);
+    fputs("           -mol2 -sybyl -mopac -nmrpdd, -pdbnmr\n",OutFp);
+    fputs("           -pdb -shelx -xyz\n",OutFp);
+    fputs("\ncolouring schemes: monochrome alt amino chain\n", OutFp);
+    fputs("           charge cpk cpknew group model shapely\n", OutFp);
+    fputs("           structure temperature user\n", OutFp);
     exit(retval);
 }
 
@@ -2292,7 +2369,24 @@ static void ProcessOptions( int argc, char *argv[] )
             } else if (!strcasecmp(ptr, "cex")) {
                 FileFormat = FormatCEX;
 #endif
-
+            } else if (!strcasecmp(ptr, "tkname")) {
+                if (i == argc - 1)
+                    DisplayUsage(1);
+                TkName = argv[++i];
+            } else if (!strcasecmp(ptr, "tknameto")) {
+                if (i == argc - 1)
+                    DisplayUsage(1);
+                TkNameTo = argv[++i];
+            } else if (!strcasecmp(ptr, "tkdetail")
+                       || !strcasecmp(ptr, "ipcdetail")) {
+                if (i == argc - 1)
+                    DisplayUsage(1);
+                    TkResponseDetail = atoi(argv[++i]);
+                    IPCResponseDetail = TkResponseDetail;
+            } else if (!strcasecmp(ptr, "logto")) {
+                if (i == argc - 1)
+                    DisplayUsage(1);
+                LogTo = argv[++i];
             } else {
                 argok = False;
                 /* Languages */

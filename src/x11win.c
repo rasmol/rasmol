@@ -76,7 +76,10 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* x11win.c
- $Log$
+ $Log: x11win.c,v $
+ Revision 1.1  2012/04/28 02:08:54  yaya
+ Initial revision
+
  Revision 1.13  2008/06/28 14:25:26  yaya
  Make more IPC errors non-fatal.  -- HJB
 
@@ -287,6 +290,7 @@ typedef struct _MenuItem {
             int value;
         } MenuItem;
 
+static int zero = 0;
 
 static MenuItem FilMenu[21] = {
     { &MsgStrs[StrMOpen]   /* "Open..."   */,   0x11,  &MsgAuxl[StrMOpen],
@@ -301,35 +305,35 @@ static MenuItem FilMenu[21] = {
         &MsgLens[StrMExit],     NULL, 0    },
     { &MsgStrs[StrMEmpty]  /*  ""         */,   0x08,  &MsgAuxl[StrMEmpty],
         &MsgLens[StrMEmpty],    NULL, 0    },
-    { &(MolNStr[0]),                            0x01,  0, 
+    { &(MolNStr[0]),                            0x01,  &zero,
         &MolNLen[0],            &MoleculeIndex, 0 },  
-    { &(MolNStr[1]),                            0x01,  0, 
+    { &(MolNStr[1]),                            0x01,  &zero,
         &MolNLen[1],            &MoleculeIndex, 1 },  
-    { &(MolNStr[2]),                            0x01,  0, 
+    { &(MolNStr[2]),                            0x01,  &zero,
         &MolNLen[2],            &MoleculeIndex, 2 },  
-    { &(MolNStr[3]),                            0x01,  0, 
+    { &(MolNStr[3]),                            0x01,  &zero,
         &MolNLen[3],            &MoleculeIndex, 3 },  
-    { &(MolNStr[4]),                            0x01,  0, 
+    { &(MolNStr[4]),                            0x01,  &zero,
         &MolNLen[4],            &MoleculeIndex, 4 },
-    { &(MolNStr[5]),                            0x01,  0, 
+    { &(MolNStr[5]),                            0x01,  &zero,
         &MolNLen[5],            &MoleculeIndex, 5 },  
-    { &(MolNStr[6]),                            0x01,  0, 
+    { &(MolNStr[6]),                            0x01,  &zero,
         &MolNLen[6],            &MoleculeIndex, 6 },  
-    { &(MolNStr[7]),                            0x01,  0, 
+    { &(MolNStr[7]),                            0x01,  &zero,
         &MolNLen[7],            &MoleculeIndex, 7 },  
-    { &(MolNStr[8]),                            0x01,  0, 
+    { &(MolNStr[8]),                            0x01,  &zero,
         &MolNLen[8],            &MoleculeIndex, 8 },  
-    { &(MolNStr[9]),                            0x01,  0, 
+    { &(MolNStr[9]),                            0x01,  &zero,
         &MolNLen[9],            &MoleculeIndex, 9 },
-    { &(MolNStr[10]),                            0x01,  0, 
+    { &(MolNStr[10]),                            0x01,  &zero,
         &MolNLen[10],            &MoleculeIndex, 10 },  
-    { &(MolNStr[11]),                            0x01,  0, 
+    { &(MolNStr[11]),                            0x01,  &zero,
         &MolNLen[11],            &MoleculeIndex, 11 },  
-    { &(MolNStr[12]),                            0x01,  0, 
+    { &(MolNStr[12]),                            0x01,  &zero,
         &MolNLen[12],            &MoleculeIndex, 12 },  
-    { &(MolNStr[13]),                            0x01,  0, 
+    { &(MolNStr[13]),                            0x01,  &zero,
         &MolNLen[13],            &MoleculeIndex, 13 },  
-    { &(MolNStr[14]),                            0x01,  0, 
+    { &(MolNStr[14]),                            0x01,  &zero,
         &MolNLen[14],            &MoleculeIndex, 14 }};
 
 static MenuItem DisMenu[9] = {
@@ -593,7 +597,6 @@ static int ScrlY,NewScrlY;
 
 
 /* WM_PROTOCOLS */
-static char TkInterp[10];
 static Atom AppNameAtom;
 static Atom DelWinXAtom;
 static Atom ProtoXAtom;
@@ -987,6 +990,143 @@ static void OpenColourMap( void )
 }
 
 
+int ShowInterpNames ( void )
+{   static unsigned char *registry;
+    static unsigned long len,left;
+    static int format;
+    static Atom type;
+    register int (*handler)();
+    register char *ptr;
+    register int result;
+
+    if (!dpy) return False;
+
+    handler = XSetErrorHandler( HandleIPCError );
+    result = XGetWindowProperty(dpy, RootWindow(dpy,0), InterpAtom,
+                                0, 100000, False, XA_STRING, &type,
+                                &format, &len, &left, &registry );
+    XSync(dpy,False);
+    XSetErrorHandler(handler);
+    
+    if ((result!=Success) || (format!=8) || (type!=XA_STRING) ) {
+        WriteString(" No interpreters ");
+        return True;
+    }
+    
+    ptr = (char*)registry;
+    while( *ptr )
+    {   /* Skip Window ID */
+        while( *ptr++ != ' ' )
+            if( !*ptr ) break;
+        
+        WriteChar('{');
+        WriteString(ptr);
+        WriteString("}\n");
+        while( *ptr++ );
+    }
+    return True;
+}
+
+
+int SendInterpCommand( char __huge *name, unsigned long interpid,
+                      char __huge *command){
+    char buffer[32];
+    Window commWindow;
+    register int (*handler)();
+    
+    commWindow = (Window)interpid;
+    if (!TkSendPtr) {
+        if (vector_create((GenericVec __far * __far *)&TkSendPtr,
+                          sizeof(char),32) ){
+            InvalidateCmndLine();
+            RasMolFatalExit(MsgStrs[StrMalloc]);
+        }
+    }
+    buffer[0] = '\0';
+    buffer[1] = 'c';
+    buffer[2] = '\0';
+    sprintf(buffer+3,"-r %x %d",(int)MainWin,++TkSendSerial);
+    /* copy the buffer with the c string and the
+       -r mycommWindow serial string */
+    vector_set_elements((GenericVec __far * )TkSendPtr,
+                        (void __far *) buffer, 4+strlen(buffer+3),0);
+    TkSendPtr->size=4+strlen(buffer+3);
+    vector_add_elements((GenericVec __far * )TkSendPtr,
+                        (void __far *) "-n ", 3);
+    vector_add_elements((GenericVec __far * )TkSendPtr,
+                        (void __far *) name, strlen(name)+1);
+    vector_add_elements((GenericVec __far * )TkSendPtr,
+                        (void __far *) "-s ", 3);
+    vector_add_elements((GenericVec __far * )TkSendPtr,
+                        (void __far *) command, strlen(command)+1);
+    handler = XSetErrorHandler( HandleIPCError );
+    XChangeProperty(dpy, commWindow ,CommAtom, XA_STRING, 8,
+                    PropModeAppend,
+                    (unsigned char*)(TkSendPtr->array),TkSendPtr->size);
+    XSync(dpy,False);
+    XSetErrorHandler(handler);
+    sprintf(buffer,"Command %d sent to %s\n",TkSendSerial,name);
+    WriteString(buffer);
+    return True;
+}
+
+
+int CheckInterpName( char __huge *name, unsigned long __huge *interpid) {
+    unsigned char *registry;
+    unsigned long len,left;
+    char buffer[32];
+    int format;
+    Atom type;
+    
+    register int result;
+    register char *ptr;
+    register int (*handler)();
+    
+    registry = NULL;
+    *interpid = 0;
+    handler = XSetErrorHandler( HandleIPCError );
+    result = XGetWindowProperty(dpy, RootWindow(dpy,0), InterpAtom,
+                                0, 100000, False, XA_STRING, &type,
+                                &format, &len, &left, &registry );
+    XSync(dpy,False);
+    XSetErrorHandler(handler);
+    
+    if( (result!=Success) || (format!=8) || (type!=XA_STRING) )
+    {   if( (type!=None) && registry ) XFree( (char*)registry );
+        return( False );
+    }
+    
+    ptr = (char*)registry;
+    while( *ptr )
+    {
+        *interpid = 0;
+        while( *ptr != ' ' ) {
+            if (!*ptr ) break;
+            if (isxdigit(*ptr)) {
+                *interpid = ((*interpid)<<4)|(unsigned long)digittoint(*ptr);
+            } else {
+                break;
+            }
+            ptr++;
+        }
+        
+        /* Strip leading blanks */
+        
+        while (*ptr == ' ') ptr++;
+        
+        /* Compare Interp Name */
+        if( !strcmp(ptr,name) )
+        {   XFree( (char*)registry );
+            return True;
+        }
+        
+        while( *ptr++ );
+    }
+    
+    XFree( (char*)registry );
+    return( False );
+}
+
 static int RegisterInterpName( char *name )
 {
     static unsigned char *registry;
@@ -1114,10 +1254,13 @@ static void DeRegisterInterpName( char *name )
 
 static void OpenIPCComms( void )
 {
-    auto char buffer[16];
+    auto char buffer[128];
     register int i;
     register int (*handler)();
+    register size_t lentkname;
+    FILE * TkNameFile;
 
+    /* fprintf(stderr,"TkName %s, TkNameTo %s\n",TkName, TkNameTo); */
     CommAtom = XInternAtom( dpy, "Comm", False );
     InterpAtom = XInternAtom( dpy, "InterpRegistry", False );
     AppNameAtom = XInternAtom(dpy, "TK_APPLICATION", False );
@@ -1133,34 +1276,64 @@ static void OpenIPCComms( void )
     }
     i = 0;
     XSync(dpy,False);
-    if( !RegisterInterpName("rasmol") )
-    {   strcpy(TkInterp,"rasmol #0");
+    if (!TkName) TkName = "rasmol";
+    lentkname = strlen(TkName);
+    if (lentkname > 120) {
+        lentkname = 120;
+    }
+    strncpy(TkInterp,TkName,lentkname);
+    TkInterp[lentkname] = '\0';
+    if( !RegisterInterpName(TkInterp) )
+    {   TkInterp[lentkname] = ' ';
+        TkInterp[lentkname+1] = '#';
+        TkInterp[lentkname+2] = '0';
+        TkInterp[lentkname+3] = '\0';
+
         for( i=1; i<10; i++ )
-        {    TkInterp[8] = i+'0';
+        {    TkInterp[lentkname+2] = i+'0';
              if( RegisterInterpName(TkInterp) )
                  break;
         }
 
         if( i < 10 ) 
         {   /* Tk4.0 and later! */
-            strcpy(buffer,"{rasmol #0}");  buffer[9] = i+'0';
+            sprintf(buffer,"{%s}",TkInterp);
     	    handler = XSetErrorHandler( HandleIPCError );
             XChangeProperty( dpy, MainWin, AppNameAtom, XA_STRING, 
-                             8, PropModeReplace, (Byte*)buffer, 12 );
+                             8, PropModeReplace, (Byte*)buffer, strlen(buffer) );
             XSync(dpy,False);
             XSetErrorHandler(handler);
         } else *TkInterp = 0;
     } else  {  
         handler = XSetErrorHandler( HandleIPCError );
+        sprintf(buffer,"{%s}",TkInterp);
         XChangeProperty( dpy, MainWin, AppNameAtom, XA_STRING,
-                         8, PropModeReplace, (Byte*)"rasmol", 7 );
+                         8, PropModeReplace, (Byte*)buffer, strlen(buffer) );
         XSync(dpy,False);
         XSetErrorHandler(handler);
-        strcpy(TkInterp,"rasmol");
     }
     XUngrabServer( dpy );
+    if (TkNameTo) {
+        ProcessFileName(TkNameTo);
+        if (strcmp(DataFileName,"-")==0) {
+            fprintf(stdout,"RasMol TkName: {");
+            fprintf(stdout,TkInterp);
+            fprintf(stdout,"}\n");
+        } else {
+            TkNameFile = fopen(DataFileName,"w");
+            if (TkNameFile) {
+                fprintf(TkNameFile,"RasMol TKName: {%s}\n",TkInterp);
+                fclose(TkNameFile);
+            } else {
+                fprintf(stderr,"TkNameTo Error: Unable to create file `");
+                fprintf(stderr, TkNameTo );  fprintf(stderr,"'!\n");
+                fprintf(stderr,"RasMol TkName: {");
+                fprintf(stderr,TkInterp);
+                fprintf(stderr,"}\n");
 }
-
+        } 
+    }
+}
 
 
 static void DrawUpCircle( Drawable wdw, int x1, int y1, int x2, int y2 )
@@ -2689,6 +2862,7 @@ int OpenDisplay( void )
          DialValue[i] = 0.0;
          
     CQRMSet(DialQRot,0.,0.,0.,0.);
+    CQRMSet(AuxQRot,0.,0.,0.,0.);
 
     RLut[0]=0;   GLut[0]=0;   BLut[0]=0;    ULut[0]=True;
     RLut[1]=100; GLut[1]=100; BLut[1]=100;  ULut[1]=True;
@@ -3151,6 +3325,12 @@ static void HandleIPCCommand( void )
     register int (*handler)();
     register char *cmnd;
     register char *ptr;
+    char *serialstr;
+    char *codestr;
+    char *resultstr;
+    char *errorInfostr;
+    char *errorCodestr;
+    int ii;
 
     command = NULL;
     result = XGetWindowProperty( dpy, MainWin, CommAtom, 0, 1024, True, 
@@ -3161,14 +3341,34 @@ static void HandleIPCCommand( void )
         return;
     }
 
+    if (!TkResponsePtr) {
+        if (vector_create((GenericVec __far * __far *)&TkResponsePtr,
+                          sizeof(char),32) ){
+            InvalidateCmndLine();
+            RasMolFatalExit(MsgStrs[StrMalloc]);      
+        }
+    }
     result = 0;
     ptr = (char*)command;
     if( !*ptr )
     {   /* Tcl/Tk4.0 and later */
 
+        buffer[0]='\0';
+        buffer[1]='r';
+        buffer[2]='\0';
+        buffer[3]='-';
+        buffer[4]='r';
+        buffer[5]=' ';
+        buffer[6]='1';
+        buffer[7]='\n';
+        
+        vector_set_elements((GenericVec __far * )TkResponsePtr,
+                            (void __far *) buffer, 8,0);
+        TkResponsePtr->size=8;
+
         ptr++;
         while( ptr < (char*)command+len )
-        {    if( (ptr[0]=='c') && (ptr[1]=='\0') )
+        {    if( (ptr[0]=='c') && (ptr[1]=='\0') ) /* check for a command */
              {   ptr += 2;
                  cmnd = (char*)NULL;
                  source = serial = 0;
@@ -3182,26 +3382,92 @@ static void HandleIPCCommand( void )
                  }
 
                  if( !cmnd ) continue;
+                 
                  result = ExecuteIPCCommand(cmnd);
                  if( !source || !serial ) continue;
 
+                 (TkResponsePtr->array)[6]= result? '1' : '0';
+                 if (!TkResponseDetail) {
+                   (TkResponsePtr->array)[7]='\0';
+                   sprintf((TkResponsePtr->array)+8,"-s %d",serial);
+                   rlen = strlen((TkResponsePtr->array)+8)+9;
+                 } else {
                  buffer[0]='\0';
-                 buffer[1]='r';
-                 buffer[2]='\0';
-                 buffer[3]='-';
-                 buffer[4]='r';
-                 buffer[5]=' ';
-                 buffer[6]= result? '1' : '0';
-                 buffer[7]='\0';
-                 sprintf(buffer+8,"-s %d",serial);
-                 rlen = strlen(buffer+8)+9;
+                    vector_add_element((GenericVec __far * )TkResponsePtr,
+                                       (void __far *)buffer);
+                    sprintf(buffer,"-s %d",serial);
+                    vector_add_elements((GenericVec __far * )TkResponsePtr,
+                                        (void __far *)buffer,strlen(buffer)+1);
+                    rlen = TkResponsePtr->size;
+                 }
 
                  /* Return Tcl/Tk v4.0 result! */
                  handler = XSetErrorHandler( HandleIPCError );
                  XChangeProperty(dpy,source,CommAtom, XA_STRING, 8,
-                                 PropModeAppend,(unsigned char*)buffer,rlen);
+                                 PropModeAppend,
+                                 (unsigned char*)(TkResponsePtr->array),rlen);
                  XSync(dpy,False);
                  XSetErrorHandler(handler);
+             } else if (ptr[0]=='r' && ptr[1]=='\0') /* Check for a response */
+            {
+                char xstr[149];
+                int xlen;
+                char * xp;
+                serialstr = NULL;
+                codestr = NULL;
+                resultstr = NULL;
+                errorInfostr = NULL;
+                errorCodestr = NULL;
+                ptr+=2;
+                while((ptr<(char*)command+len)&& (*ptr=='-' )){
+                    if (ptr[1]=='s' && ptr[2]==' ') {
+                        serialstr = ptr+3;
+                    } else if (ptr[1]=='c' && ptr[2]==' ') {
+                        codestr = ptr+3;
+                    } else if (ptr[1]=='r' && ptr[2]==' ') {
+                        resultstr = ptr+3;
+                    } else if (ptr[1]=='i' && ptr[2]==' ') {
+                        errorInfostr = ptr+3;
+                    } else if (ptr[1]=='e' && ptr[2]==' ') {
+                        errorCodestr = ptr+3;
+                    }
+                    while( *ptr ) ptr++;
+                    ptr++;
+                }
+                strcpy(xstr,"Interp response:");
+                xlen = strlen(xstr);
+                xp = xstr+xlen;
+                if (serialstr && xlen < 148-19 && strlen(serialstr)>0) {
+                    strncat(xp," serial: ",9);
+                    strncat(xp+8,serialstr,10);
+                    xlen += strlen(xp);
+                    xp+=strlen(xp);
+                }
+                if (codestr && xlen < 148-18 && strlen(codestr)>0) {
+                    strncat(xp," code: ",7);
+                    xlen += strlen(xp);
+                    xp+=strlen(xp);
+                    strncat(xp+8,codestr,10);
+                }
+                if (resultstr && xlen < 148-69 && strlen(resultstr)>0) {
+                    strncat(xp," result: ",9);
+                    xlen += strlen(xp);
+                    xp+=strlen(xp);
+                    strncat(xp+8,resultstr,60);
+                }
+                if (errorInfostr && xlen < 148-72 && strlen(errorInfostr)>0) {
+                    strncat(xp," errorInfo: ",12);
+                    strncat(xp+8,errorInfostr,60);
+                    xlen += strlen(xp);
+                    xp+=strlen(xp);
+                }
+                if (errorCodestr && xlen < 148-72 && strlen(errorCodestr)>0) {
+                    strncat(xp," errorCode: ",12);
+                    xlen += strlen(xp);
+                    xp+=strlen(xp);
+                    strncat(xp+8,errorInfostr,60);
+                }
+                InterruptCommands(xstr);
              } else /* Unrecognised command! */
              {   while( *ptr ) ptr++;
                  ptr++;

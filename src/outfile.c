@@ -341,7 +341,6 @@ static int FindDepth( PSItemPtr, int );
 static void DepthSort( PSItemPtr __far*, char __far*, int );
 static int ClipVectSphere( RAtom __far* );
 static int ClipVectBond( RAtom __far*, RAtom __far* );
-static int ClipVectField( RAtom __far* );
 static void WriteVectSphere( PSItemPtr __far*, char __far*, int );
 static void WriteVectStick( RAtom __far*, RAtom __far*, int, int );
 static void WriteVectWire( RAtom __far*, RAtom __far*, int, int );

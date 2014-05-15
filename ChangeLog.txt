@@ -1,72 +1,139 @@
-                                         RasMol 2.7.5
+                                   ChangeLog
+                                 RasMol 2.7.5.2
+
+  * RasMol Latest Windows                            * RasMol 2.7.5.2 Windows    
+    Installer                                          Installer                 
+                                                                                 
+  * RasMol Latest Source                             * RasMol 2.7.5.2 Source     
+    Tarball                          RasMol            Tarball                   
+                                                                                 
+  * RasMol Latest Manual                             * RasMol 2.7.5 Manual       
+                                                                                 
+  * Donate to Support RasMol                         * Donate to Support RasMol  
+  * Register your RasMol                             * Register your RasMol      
+
                              Molecular Graphics Visualisation Tool
-                               13 June 2009 (rev. 17 July 2009)
+                        13 June 2009 (rev. 13 May 2011)
 
                               Based on RasMol 2.6 by Roger Sayle
-Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage, Hertfordshire,
-                                              UK
+Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
+                               Hertfordshire, UK
                     Version 2.6, August 1995, Version 2.6.4, December 1998
                               Copyright (c) Roger Sayle 1992-1999
 
                                      and Based on Mods by
 
-+---------------------------------------------------------------------------------------------+
++------------------------------------------------------------------------------+
 | Author               | Version, Date                   | Copyright                          |
-|----------------------+---------------------------------+------------------------------------|
-| Arne Mueller         | RasMol 2.6x1 May 1998           | (c) Arne Mueller 1998              |
-|----------------------+---------------------------------+------------------------------------|
-| Gary Grossman and    | RasMol 2.5-ucb November 1995    | (c) UC Regents/ModularCHEM         |
-| Marco Molinaro       | RasMol 2.6-ucb November 1996    | Consortium 1995, 1996              |
-|----------------------+---------------------------------+------------------------------------|
-| Philippe Valadon     | RasTop 1.3 August 2000          | (c) Philippe Valadon 2000          |
-|----------------------+---------------------------------+------------------------------------|
-| Herbert J. Bernstein | RasMol 2.7.0 March 1999         | (c) Herbert J. Bernstein 1998-2008 |
-|                      | RasMol 2.7.1 June 1999          |                                    |
-|                      | RasMol 2.7.1.1 January 2001     |                                    |
-|                      | RasMol 2.7.2 August 2000        |                                    |
-|                      | RasMol 2.7.2.1 April 2001       |                                    |
-|                      | RasMol 2.7.2.1.1 January 2004   |                                    |
-|                      | RasMol 2.7.3 February 2005      |                                    |
-|                      | RasMol 2.7.3.1 Apr 06           |                                    |
+|-------------------+----------------------+-----------------------------------|
+| Arne Mueller      | RasMol 2.6x1 May     | (c) Arne Mueller 1998             |
+|                   | 1998                 |                                   |
+|-------------------+----------------------+-----------------------------------|
+| Gary Grossman and | RasMol 2.5-ucb       | (c) UC Regents/ModularCHEM        |
+| Marco Molinaro    | November 1995        | Consortium 1995, 1996             |
+|                   | RasMol 2.6-ucb       |                                   |
+|                   | November 1996        |                                   |
+|-------------------+----------------------+-----------------------------------|
+| Philippe Valadon  | RasTop 1.3 August    | (c) Philippe Valadon 2000         |
+|                   | 2000                 |                                   |
+|-------------------+----------------------+-----------------------------------|
+| Herbert J.        | RasMol 2.7.0 March   | (c) Herbert J. Bernstein          |
+| Bernstein         | 1999                 | 1998-2011                         |
+|                   | RasMol 2.7.1 June    |                                   |
+|                   | 1999                 |                                   |
+|                   | RasMol 2.7.1.1       |                                   |
+|                   | January 2001         |                                   |
+|                   | RasMol 2.7.2 August  |                                   |
+|                   | 2000                 |                                   |
+|                   | RasMol 2.7.2.1 April |                                   |
+|                   | 2001                 |                                   |
+|                   | RasMol 2.7.2.1.1     |                                   |
+|                   | January 2004         |                                   |
+|                   | RasMol 2.7.3         |                                   |
+|                   | February 2005        |                                   |
+|                   | RasMol 2.7.3.1 Apr   |                                   |
+|                   | 06                   |                                   |
 |                      | RasMol 2.7.4 Nov 07             |                                    |
-|                      | RasMol 2.7.4.1 Jan 08           |                                    |
-|                      | RasMol 2.7.4.2 Mar 08           |                                    |
-|                      | RasMol 2.7.5 Jun 09 RasMol      |                                    |
-|                      | 2.7.5.1 Jul 09                  |                                    |
-+---------------------------------------------------------------------------------------------+
+|                   | RasMol 2.7.4.1 Jan   |                                   |
+|                   | 08                   |                                   |
+|                   | RasMol 2.7.4.2 Mar   |                                   |
+|                   | 08                   |                                   |
+|                   | RasMol 2.7.5 Jun 09  |                                   |
+|                   | RasMol 2.7.5.1 Jul   |                                   |
+|                   | 09                   |                                   |
+|                   | RasMol 2.7.5.2 May   |                                   |
+|                   | 11                   |                                   |
++------------------------------------------------------------------------------+
 
                                         This Release by
           Herbert J. Bernstein, Bernstein + Sons, 5 Brewster Lane, Bellport, NY, USA
                                  yaya@bernstein-plus-sons.com
                          Copyright (c) Herbert J. Bernstein 1998-2009
 
-   -----------------------------------------------------------------------------------------
+     ----------------------------------------------------------------------
 
-                THIS IS A PRELIMINARY RELEASE INVOLVING EXTENSIVE MODIFICATIONS
-                                 ***** USE WITH CAUTION ******
+                                   IMPORTANT
 
-   -----------------------------------------------------------------------------------------
+   This version is based directly on RasMol 2.7.5.1, RasMol 2.7.4.2, RasMol
+   2.7.4.1, RasMol 2.7.4, RasMol 2.7.3.1, RasMol 2.7.3, RasMol 2.7.2.1.1 and
+   on RasMol 2.7.2, on RasMol 2.7.1.1, on RasTop 1.3, on RasMol version
+   2.6_CIF.2, on RasMol version 2.6x1, on RasMol version 2.6.4, and RasMol
+   2.5-ucb and 2.6-ucb. Please read the file NOTICE for important notices
+   which apply to this package and for license terms (GPL or RASLIC).
 
-                                           IMPORTANT
+   This version of RasMol is not in the public domain, but it is given freely
+   to the community in the hopes of advancing science. If you make changes,
+   please make them in a responsible manner, and please offer us the
+   opportunity to include those changes in future versions of RasMol.
 
-   This version is based directly on RasMol 2.7.4.2, RasMol 2.7.4.1, RasMol 2.7.4, RasMol
-   2.7.3.1, RasMol 2.7.3, RasMol 2.7.2.1.1 and on RasMol 2.7.2, on RasMol 2.7.1.1, on RasTop
-   1.3, on RasMol version 2.6_CIF.2, on RasMol version 2.6x1, on RasMol version 2.6.4, and
-   RasMol 2.5-ucb and 2.6-ucb. Please read the file NOTICE for important notices which apply
-   to this package and for license terms (GPL or RASLIC).
+     ----------------------------------------------------------------------
 
-   This version of RasMol is not in the public domain, but it is given freely to the
-   community in the hopes of advancing science. If you make changes, please make them in a
-   responsible manner, and please offer us the opportunity to include those changes in
-   future versions of RasMol.
+  Changes from RasMol 2.7.5.1 to RasMol 2.7.5.2 include:
 
-   -----------------------------------------------------------------------------------------
+     * Faster surface rendering by use of NearTree 3.1
+     * Updates to GTK version from T. Ikonen
+     * Use of CBFlib 0.9.2
+     * Use of CQRlib 1.1.2
+     * Minor bug fixes
+
+  Changes to RasMol 2.7.5.1 to create RasMol 2.7.5.2:
+
+
+ [24/04/2011]    HJB command.c, command.h, molecule.c, molecule.h
+                 Add time command, remove redundant tree builds.
+                 Change flags to NearTree 3.1 interface
+
+ [13/12/2009]    TPI render.c
+                 PickAtoms(): Use WriteMsg() for text output
+                 DescribeAtom(), PickAtoms(): Reindent
+                
+ [13/12/2009]    TPI gtkwin.c
+                 UpdateScrollBars(): Do not set ReDrawFlag.
+                 Fix screen update on picking labels etc.
+                 Remove unused variables, reindent.
+                
+ [02/09/2009]    HJB maps.c
+                 Change maps to 4.5 sigma cutoff.
+
+ [02/09/2009]    HJB cmndline.c, command.c
+                 Correct failure to do world rotation in new mouse mode
+
+
+ [09/08/2009]    HJB cmndline.c, command.c
+                 Restore general mouse control of bond rotation lost in
+                 2.7.4.2 to 2.7.5 transition
+
+ [23/07/2009]    HJB maps.c
+                 As per Marian Szebenyi correct the skip of symmetry
+                 ops in CCP4 maps by missing factor of 80.
+
+
 
   Changes from RasMol 2.7.4.2 to RasMol 2.7.5 include:
 
      * Support for SBEVSL movie commands.
-     * Support for Lee-Richards surface approximation by contouring pseudo-Gaussian electron
-       densities.
+     * Support for Lee-Richards surface approximation by contouring
+       pseudo-Gaussian electron densities.
      * Selection of atoms by proximity to map contours
      * Coloring of maps by the colors of neighboring atoms
      * Signficant improvements to the GTK version by Teemu Ikonen
@@ -258,14 +325,16 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
   Changes from RasMol 2.7.4.1 to RasMol 2.7.4.2 include:
 
-     * Alignment of command line sizing and positioning options for Windows and X-Windows
-       version. The command line options -height nnnn, -width nnnn, -xpos nnnn and -ypos
-       nnnn may be used to set the size and position of the initial window.
-     * Change of the encoding for Japanese messages and menus from SJIS to EUC-JP, and
-       corrections to the fontset handling for Chinese and Japanese. Thanks to Mamoru
-       Yamanishi for contributing the improved fontset logic.
-     * Updates to the rasmol_install.sh and rasmol_run.sh scripts to support Chinese and
-       Japanese using cxterm.
+     * Alignment of command line sizing and positioning options for Windows
+       and X-Windows version. The command line options -height nnnn, -width
+       nnnn, -xpos nnnn and -ypos nnnn may be used to set the size and
+       position of the initial window.
+     * Change of the encoding for Japanese messages and menus from SJIS to
+       EUC-JP, and corrections to the fontset handling for Chinese and
+       Japanese. Thanks to Mamoru Yamanishi for contributing the improved
+       fontset logic.
+     * Updates to the rasmol_install.sh and rasmol_run.sh scripts to support
+       Chinese and Japanese using cxterm.
      * Optional use of GTK. Thanks to Teemu Ikonen for the new GTK code.
 
   Changes to RasMol 2.7.4 to create RasMol 2.7.4.1:
@@ -301,9 +370,11 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
   Changes from RasMol 2.7.3 to RasMol 2.7.4.1 include:
 
      * Support for maps.
-     * Message and menu translations for Russian, Bulgarian, Japanese and Chinese. Our
-       thanks to G. Pozhvanov, G. Todorov, Nan Jia, Mamoru Yamanishi and Katajima Hajime.
-     * Fix torsion angle calculation as per bug report and patch by Swati Jain.
+     * Message and menu translations for Russian, Bulgarian, Japanese and
+       Chinese. Our thanks to G. Pozhvanov, G. Todorov, Nan Jia, Mamoru
+       Yamanishi and Katajima Hajime.
+     * Fix torsion angle calculation as per bug report and patch by Swati
+       Jain.
      * Corrections by Ladislav Michnovic to port to more platforms.
      * Code to read remediated PDB entries as suggested by Huanwang Yang
      * Updated icons.
@@ -530,32 +601,35 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  Add mirror and rotate options for VRML.
 
 
-  Changes from RasMol 2.7.2.1.1 (the final reference release of RasMol 2.7.2) to RasMol 2.7.3.1
-  include:
+  Changes from RasMol 2.7.2.1.1 (the final reference release of RasMol 2.7.2) to
+  RasMol 2.7.3.1 include:
 
-     * Adjustment to the mouse handling for a better, more natural feel. Our thanks to C.
-       Chigbo for the suggestion.
+     * Adjustment to the mouse handling for a better, more natural feel. Our
+       thanks to C. Chigbo for the suggestion.
      * Correction to cif.c for blanks after an initial quote mark.
      * Correction to mswin31.c to restore lost initializations of ZRange and
        DialValue[8..9].
-     * Modifications by Mamoru Yamanishi to Imakefile and rasmol.c to use xforms for GUI
-       file open. This patch needs the opens source xforms 1.0.90 library by Steve Lamont.
-     * Correction to molecule.c to correct input of xyz files. Thanks to Stuart Prescott.
-     * Revision to CPK colors by C. Chigbo. The new colors are called CPKNEW. The current
-       CPK colors remain available as CPK.
-     * Correction to negative torsion angle monitors and to imprecise distance and angle
-       monitors by C. Chigbo. This patch corrects the display of negative torsion angles
-       caused by use of the unsigned short type, and correctys imprecise distance and angle
-       displays. This extends the original patch which was just for torsion angles
-       (torsion.patch). A side effect of this change is to limit the available range for
-       distance monitors to approximately 327 AAngstroms.
-     * Initial code for display of solid Lee-Richards molecular surfaces. This patch adds
-       the basic code for display of Lee-Richards surfaces with a new Molecular Surface menu
-       item, and surface molecule <probe radius> and surface solvent <probe radius>
-       commands.
-     * Corrections of ribbons 0, etc. commands by R. Chachra. With this patch, the wireframe
-       0, ribbon 0, cartoon 0, backbone 0, strands 0 and trace 0 commands work the same as
-       these command with off instead of 0.
+     * Modifications by Mamoru Yamanishi to Imakefile and rasmol.c to use
+       xforms for GUI file open. This patch needs the opens source xforms
+       1.0.90 library by Steve Lamont.
+     * Correction to molecule.c to correct input of xyz files. Thanks to
+       Stuart Prescott.
+     * Revision to CPK colors by C. Chigbo. The new colors are called CPKNEW.
+       The current CPK colors remain available as CPK.
+     * Correction to negative torsion angle monitors and to imprecise
+       distance and angle monitors by C. Chigbo. This patch corrects the
+       display of negative torsion angles caused by use of the unsigned short
+       type, and correctys imprecise distance and angle displays. This
+       extends the original patch which was just for torsion angles
+       (torsion.patch). A side effect of this change is to limit the
+       available range for distance monitors to approximately 327 AAngstroms.
+     * Initial code for display of solid Lee-Richards molecular surfaces.
+       This patch adds the basic code for display of Lee-Richards surfaces
+       with a new Molecular Surface menu item, and surface molecule <probe
+       radius> and surface solvent <probe radius> commands.
+     * Corrections of ribbons 0, etc. commands by R. Chachra. With this
+       patch, the wireframe 0, ribbon 0, cartoon 0, backbone 0, strands 0 and
+       trace 0 commands work the same as these command with off instead of 0.
 
   Changes to RasMol 2.7.3 to create RasMol 2.7.3.1:
 
@@ -627,32 +701,39 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  correction to SubtractAtoms for bond rotation.
 
 
-  Changes from RasMol 2.7.1 (the final reference release of RasMol 2.7.2) to RasMol 2.7.2.1.1
-  include:
+  Changes from RasMol 2.7.1 (the final reference release of RasMol 2.7.2) to
+  RasMol 2.7.2.1.1 include:
 
-     * Post release patches to command.c were included to fix the handling of load inline in
-       the UCB multiple molecule environment. In addition conditional code controlled by
-       STRICT was disabled to restore operation of load inline under windows. Thanks to Jan
-       Reichert <jr@imb-jena.de> for pointing out these problems. Thanks to E. Martz
-       <emartz@microbio.umass.edu> for pointing out an error in the Spanish translation
-       credits which has been corrected. Thanks to a report by Julien Hering, the omission
-       of a prior fix to the MS Windows version was found and corrected on 7 May 2004.
-     * Adaption of the multilingual mods from RasMol 2.7.1.1 into Rasmol 2.7.2.1.
-     * Rewrite of the mouse handling and rotation logic to correct the problems in 2.7.2 and
-       make the feel of 2.7.2.1 closer to that of RasMol 2.7.1.
+     * Post release patches to command.c were included to fix the handling of
+       load inline in the UCB multiple molecule environment. In addition
+       conditional code controlled by STRICT was disabled to restore
+       operation of load inline under windows. Thanks to Jan Reichert
+       <jr@imb-jena.de> for pointing out these problems. Thanks to E. Martz
+       <emartz@microbio.umass.edu> for pointing out an error in the Spanish
+       translation credits which has been corrected. Thanks to a report by
+       Julien Hering, the omission of a prior fix to the MS Windows version
+       was found and corrected on 7 May 2004.
+     * Adaption of the multilingual mods from RasMol 2.7.1.1 into Rasmol
+       2.7.2.1.
+     * Rewrite of the mouse handling and rotation logic to correct the
+       problems in 2.7.2 and make the feel of 2.7.2.1 closer to that of
+       RasMol 2.7.1.
      * Addition of French menus and messages
      * Addition of Italian menus and messages
-     * Adoption of picking for selection of atoms, groups or chains from RasTop 1.3.
+     * Adoption of picking for selection of atoms, groups or chains from
+       RasTop 1.3.
      * Adoption of backclipping from RasTop 1.3
      * Adoption of shadepower command for glassy surfaces from RasTop 1.3
      * Change of the menu stereo option to rotate cross-wall-none
      * Allow longer atom names (12 characters) in CIFs.
-     * Incorporation of some of the code from the UCB RasMol variants. Out thanks to Eileen
-       Lewis and Marco Molinaro for their cooperation in contributing the UCB Enhanced
-       RasMol code for incorporation into the RasMol 2.7 series.
-     * Code to represent bonds in and to alternate conformers with a narrowed portion in the
-       middle of each bond.
-     * An attempt to fix some of the chirality reversals in some of the output modes.
+     * Incorporation of some of the code from the UCB RasMol variants. Out
+       thanks to Eileen Lewis and Marco Molinaro for their cooperation in
+       contributing the UCB Enhanced RasMol code for incorporation into the
+       RasMol 2.7 series.
+     * Code to represent bonds in and to alternate conformers with a narrowed
+       portion in the middle of each bond.
+     * An attempt to fix some of the chirality reversals in some of the
+       output modes.
      * Fixes for some of the problems reported since the last release.
 
   Post-release changes to RasMol 2.7.2.1.1:
@@ -986,7 +1067,6 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
                  and DisplayArea(); added code for command "select view"
 
  [30/01/00]    PV command.c
-
                  Added command "select view" and corresponding code,
                  which allows to select a part of a molecule based on screen display.
 
@@ -1179,9 +1259,9 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
   Changes adapted from UCB rasmol in creating RasMol 2.7.2:
 
-   Note: These mods do not reflect the complete source of UCB RasMol. In particular
-   toolbar.h and toolbar.c have not been used in this pass, and the full source of UCB
-   RasMol has not yet been recovered.
+   Note: These mods do not reflect the complete source of UCB RasMol. In
+   particular toolbar.h and toolbar.c have not been used in this pass, and
+   the full source of UCB RasMol has not yet been recovered.
 
  [30/11/95]    GSG rasmac.c
                  Hide command window.  Add help screen menu logic.  Add hooks to
@@ -1368,16 +1448,18 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
      * Upgrade of some of the Windows printer logic
      * Correction of coordinate handling for Mol2 and XYZ coordinates
      * Fix to the parsing of D2O.
-     * The ability to automatically mark non bonded atoms in wireframe and stick displays.
-       Our thanks to R. Curtis Haltiwanger for suggesting this change.
-     * The ability to use a proportionally spaced font and to draw labels with heavier
-       strokes. Our thanks to Eric Martz for suggesting this change.
+     * The ability to automatically mark non bonded atoms in wireframe and
+       stick displays. Our thanks to R. Curtis Haltiwanger for suggesting
+       this change.
+     * The ability to use a proportionally spaced font and to draw labels
+       with heavier strokes. Our thanks to Eric Martz for suggesting this
+       change.
      * The ability to auto-recognize PDB vs. CIF and mmCIF datasets.
-     * Extensive updating to the manual. Our thanks to William McClure, Margaret Wong, Eric
-       Martz and Frances Bernstein.
-     * Updating the canvas title with the PDB ID code and EXPDTA information, so models will
-       be clearly distinguished from experimental data. Our thanks to Helen Berman for
-       suggesting this change.
+     * Extensive updating to the manual. Our thanks to William McClure,
+       Margaret Wong, Eric Martz and Frances Bernstein.
+     * Updating the canvas title with the PDB ID code and EXPDTA information,
+       so models will be clearly distinguished from experimental data. Our
+       thanks to Helen Berman for suggesting this change.
      * The ability to report coordinates.
      * Additions to the list of pre-defined colours.
      * Improved accuracy of coordinates in pseudo-PDB output.
@@ -1557,7 +1639,8 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
 
 
-  Changes from RasMol_2.6.4, RasMol2.6x1 and RasMol_2.6_CIF.2 to create RasMol_2.7.0:
+  Changes from RasMol_2.6.4, RasMol2.6x1 and RasMol_2.6_CIF.2 to create
+  RasMol_2.7.0:
 
  [30/03/99]    HJB       all
                  Cleanup and release of version 2.7.0
@@ -1897,64 +1980,17 @@ Biomolecular Structures Group, Glaxo Wellcome Research & Development, Stevenage,
 
    The complete version 2 change history is in the directory ChangeLog
 
-   -----------------------------------------------------------------------------------------
+     ----------------------------------------------------------------------
 
        | OpenRasMol | Copying and Distribution | Contents | Installation Instructions |
              | Changes | Things To Do | Introduction | Source Code and Binaries |
-  | RasMol Manual | Spanish Translation of RasMol Manual | Italian Translation of RasMol Help
-                                            File |
+| RasMol Manual | Spanish Translation of RasMol Manual | Italian Translation of
+                               RasMol Help File |
              | Donate to Support RasMol | Release README | Register your RasMol |
 
-   -----------------------------------------------------------------------------------------
+     ----------------------------------------------------------------------
 
-   Updated 19 July 2009.
+   Updated 14 May 2011.
    Herbert J. Bernstein
    Bernstein + Sons, 5 Brewster Lane, Bellport, NY 11713-2803, USA
    yaya@bernstein-plus-sons.com
-
-References
-
-   Visible links
-   . http://www.iucr.org/iucr-top/welcome.html
-   . http://www.iucr.org/iucr-top/cif/home.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html
-   . http://www.openrasmol.org/
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#Copying
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#Contents
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/INSTALL.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/ChangeLog.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/TODO.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#Introduction
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#CodeAndBinaries
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/doc/rasmol.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/doc/esrasmol27.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/doc/itrasmol.hlp
-   . http://www.rasmol.org/donate.shtml
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html
-   . http://www.rasmol.org/register.shtml
-   . http://www.rasmol.org/software/RasMol_Latest_Windows_Installer.exe
-   . http://www.rasmol.org/software/RasMol_Latest.tar.gz
-   . http://www.rasmol.org/software/RasMol_Latest_Manual.html
-   . http://www.rasmol.org/donate.shtml
-   . http://www.rasmol.org/register.shtml
-   . http://www.rasmol.org/software/RasMol_2.7.5_Windows_Installer.exe
-   . http://www.rasmol.org/software/RasMol_2.7.5.tar.gz
-   . http://www.rasmol.org/software/RasMol_2.7.5_Manual.html
-   . http://www.rasmol.org/donate.shtml
-   . http://www.rasmol.org/register.shtml
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/doc/NOTICE.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/ChangeLog/
-   . http://www.openrasmol.org/
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#Copying
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#Contents
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/INSTALL.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/ChangeLog.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/TODO.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#Introduction
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html#CodeAndBinaries
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/doc/rasmol.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/doc/esrasmol27.html
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/doc/itrasmol.hlp
-   . http://www.rasmol.org/donate.shtml
-   . file:///usr/public_ftp/yaya/software/rasmol-2.7.5-17Jul09/README.html
-   . http://www.rasmol.org/register.shtml

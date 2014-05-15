@@ -1,4 +1,4 @@
-; NSIS Script for RasMol RasWin 2.7.5 windows install
+; NSIS Script for RasMol RasWin 2.7.5.2 windows install
 ; H. J. Bernstein, yaya at bernstein-plus-sons dot com
 ;
 
@@ -8,8 +8,8 @@
 !include "LogicLib.nsh"
 
 ; >>> Name the package, file and default install directory
-Name        "RasMol -- RasWin 2.7.5"
-OutFile     "RasWin_2_7_5_Install.exe"
+Name        "RasMol -- RasWin 2.7.5.2"
+OutFile     "RasWin_2_7_5_2_Install.exe"
 InstallDir  "$PROGRAMFILES\RasWin"
 InstallDirRegKey HKLM "Software\RasWin" ""
 
@@ -52,7 +52,7 @@ InstType "Typical"
 InstType "Without .scr and .ras extensions"
 InstType "Without rasmol.ini"
 
-Section    "Install RasMol -- RasWin 2.7.5" SecInstRasWin
+Section    "Install RasMol -- RasWin 2.7.5.2" SecInstRasWin
 
 SectionIn 1 2 3
 

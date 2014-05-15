@@ -2974,6 +2974,10 @@ static void DrawCylinderCaps( int x1, int y1, int z1,
 {
     register short __huge *dold, __huge *dptr;
     register Pixel __huge *fold;
+#ifdef UNUSED
+    register int ax,ay,ix,iy;
+    register int zrate,lz;
+#endif
     register Long offset,temp,end;
     register int inten,absx;
     register int wide,depth;
@@ -2987,6 +2991,15 @@ static void DrawCylinderCaps( int x1, int y1, int z1,
 
     lx = x2-x1;
     ly = y2-y1;
+
+#ifdef UNUSED
+    lz = z2-z1;
+    if( ly>0 ) { ay = ly; iy = 1; }
+    else { ay = -ly; iy = -1; }
+    if( lx>0 ) { ax = lx; ix = 1; }
+    else { ax = -lx; ix = -1; }
+    zrate = lz/MaxFun(ax,ay);
+#endif
 
     end = (Long)ly*View.yskip+lx;
     temp = (Long)y1*View.yskip+x1;
@@ -3029,12 +3042,27 @@ static void DrawCylinderCaps( int x1, int y1, int z1,
                   Lut[altc+inten],p);
             }
 
+#ifdef UNUSED
+            k1 = AbsFun(dx+ix); 
+            k2 = AbsFun(dx-ix);
+
+            if( ((k1>wide)||(dz>=pythag(wide,k1)-zrate)) &&
+                ((k2>wide)||(dz>pythag(wide,k2)+zrate)) )
+#endif
             if ( (ArcAcPtr-ArcAc)<ARCSIZE ) {
             {   ArcAcPtr->offset = offset; ArcAcPtr->inten = inten;
                 ArcAcPtr->dx=dx; ArcAcPtr->dy=dy; ArcAcPtr->dz=dz;
                 ArcAcPtr++;
             } }
 
+#ifdef UNUSED
+            k1 = AbsFun(dy+iy);
+            k2 = AbsFun(dy-iy);
+
+            high = pythag(rad,absx);
+            if( ((k1>high)||(dz>=pythag(pythag(rad,k1),absx)-zrate)) &&
+                ((k2>high)||(dz>pythag(pythag(rad,k2),absx)+zrate)) )
+#endif
             if ( (ArcDnPtr-ArcDn)<ARCSIZE ) {
             {   ArcDnPtr->offset = offset; ArcDnPtr->inten = inten;
                 ArcDnPtr->dx=dx; ArcDnPtr->dy=dy; ArcDnPtr->dz=dz;
@@ -3266,17 +3294,16 @@ static void ClipArcAc( short __huge *dbase,
     register ArcEntry __far *ptr;
     register short __huge *dptr;
     register short depth;
-    register int temp, tempx;
+    register int temp;
 
     ptr = ArcAc;
-    if (ptr == ArcAcPtr) return;
     while( (temp=y+ptr->dy) < 0 )
         if(++ptr == ArcAcPtr )
             return;
 
-    while( ptr<ArcAcPtr )
-    {   tempx = x+ptr->dx;
-        if( XValid(tempx) && temp<View.ymax && OValid(ptr->offset) )
+    while( (temp<View.ymax) && (ptr<ArcAcPtr) )
+    {   temp = x+ptr->dx;
+        if( XValid(temp) && OValid(ptr->offset) )
         {   dptr = dbase+ptr->offset;  depth = ptr->dz+z;
             SETPIXEL(dptr,fbase+ptr->offset,depth,Lut[ptr->inten+c]);
         }
@@ -3292,7 +3319,7 @@ static void ClipArcDn( short __huge *dbase,
     register ArcEntry __far *ptr;
     register short __huge *dptr;
     register short depth;
-    register int temp, tempx;
+    register int temp;
 
     ptr = ArcDn;
     if (ptr == ArcDnPtr) return;
@@ -3300,9 +3327,9 @@ static void ClipArcDn( short __huge *dbase,
         if(++ptr == ArcDnPtr )
             return;
 
-    while( ptr < ArcDnPtr )
-    {   tempx = x+ptr->dx;
-        if( XValid(tempx) && temp<View.ymax && OValid(ptr->offset) )
+    while( (temp<View.ymax) && (ptr!=ArcDnPtr) )
+    {   temp = x+ptr->dx;
+        if( XValid(temp) && OValid(ptr->offset) )
         {   dptr = dbase+ptr->offset;  depth = ptr->dz+z;
             SETPIXEL(dptr,fbase+ptr->offset,depth,Lut[ptr->inten+c]);
         }

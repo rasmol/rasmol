@@ -184,7 +184,7 @@ typedef struct {
      (mp).ypos = dypos;   \
      (mp).zpos = dzpos;   \
      (mp).Un[0] = (mp).Un[1] = (mp).Un[2] = 0; \
-     if (gradient)      { \
+     if (gradient != NULL)      { \
      dxpos =  MapR2M(map,0,0)*(gradient)[0] + MapR2M(map,0,1)*(gradient)[1] + MapR2M(map,0,2)*(gradient)[2]; \
      dypos =  MapR2M(map,1,0)*(gradient)[0] + MapR2M(map,1,1)*(gradient)[1] + MapR2M(map,1,2)*(gradient)[2]; \
      dzpos =  MapR2M(map,2,0)*(gradient)[0] + MapR2M(map,2,1)*(gradient)[1] + MapR2M(map,2,2)*(gradient)[2]; \
@@ -219,6 +219,13 @@ typedef struct {
         size_t elementsize;      /* size of an element      */
         void __far * array;      /* the array of elements  */
 } GenericVec;
+
+typedef struct {
+        size_t size;             /* size of the vector      */
+        size_t capacity;         /* capacity of the vector  */
+        size_t elementsize;      /* size of an element      */
+    char __far * array;      /* the array of elements  */
+} CharVec;
 
 typedef struct {
         size_t size;             /* size of the vector      */
@@ -272,6 +279,7 @@ typedef struct {
 #define MapMeanFlag     0x800    /* Map level relative to MEAN      */
 #define MapScaleFlag    0x1000   /* Map scaled to atomic no. Z      */
 #define MapLRSurfFlag   0x2000   /* Map with Lee-Richards approx    */  
+#define MapSASurfFlag   0x4000   /* Map with SAS approx             */  
 #define MAP_ORTHOGONAL  0x000    /* Orthogonal map coordinates      */
 #define MAP_FRACTIONAL  0x001    /* Fractional map coordinates      */
 
@@ -367,6 +375,11 @@ int vector_create(GenericVec __far * __far * vector, size_t elementsize, size_t 
 
 int vector_add_element(GenericVec __far * vector, void __far * element);
 
+/*  vector_add_elements -- add multiple elements to a generic vector */
+
+int vector_add_elements(GenericVec __far * vector, void __far * elements,
+                        size_t nelements);
+
 /* vector_get_element -- get a copy of an element from a generic vector */
 
 int vector_get_element(GenericVec __far * vector, void __far * element, size_t index);
@@ -378,6 +391,11 @@ int vector_get_elementptr(GenericVec __far * vector, void __far ** elementptr, s
 /* vector_set_element -- set a copy of an element into a generic vector */
 
 int vector_set_element(GenericVec __far * vector, void __far * element, size_t index);
+
+/* vector_set_elements -- set a copy of elements into a generic vector */
+
+int vector_set_elements(GenericVec __far * vector, void __far * elements, 
+                       size_t nelements, size_t index);
 
 /* vector_free -- remove a generic vector */
 
@@ -437,6 +455,8 @@ int LoadCCP4MapFile( FILE *fp, int info, int mapno );
    sigmas per radius, with the Gaussian treated as zero
    at 4.5 sigma.  If ScaletoAN is set, the Gaussian is scaled to the 
    atomic number, otherwise it is scaled to 1.
+ If SASflag is set, the probe radius is added to the atomic radius
+ and the a very small probe is used.
    
    sig_per_rad is the reciprocal of the spread.
    
@@ -446,7 +466,7 @@ int generate_map(MapStruct **map,
                             Long xint, Long yint, Long zint,
                             Long xorig, Long yorig, Long zorig,
                             Long buffer, double sig_per_rad,
-                            int ScaletoAN);
+                            int ScaletoAN, int SASflag);
                             
                             
 /* Interpolate a map value from map at position [xpos,ypos,zpos]

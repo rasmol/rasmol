@@ -230,6 +230,7 @@
 #include "wbrotate.h"
 #include "cmndline.h"
 #include "langsel.h"
+#include "maps.h"
 
 /* Macros for commonly used loops */
 #define ForEachAtom  for(chain=Database->clist;chain;chain=chain->cnext) \
@@ -243,7 +244,6 @@
 
 static void ResetVisited( void )
 {
-    /* Construct a graph of the current molecule */
     register Chain __far *chain;
     register Group __far *group;
     register RAtom __far *ptr;
@@ -282,30 +282,64 @@ static void UpdateCoord( void )
 }
 
 
-int ConstructGraph( void )
+int ConstructGraph( int requireselected, int requiredistances )
 {
     /* Construct a graph of the current molecule */
     register Chain __far *chain;
     register Group __far *group;
     register Bond __far *bptr;
     register RAtom __far *ptr;
+    int ii;
+    Long ordinal;
     
     /*  Initialize graph */
-    int count = 0;
+
+    ordinal = 0;
     ForEachAtom {
+        if (!requireselected || ptr->flag&SelectFlag) {
+            ordinal++;
 	ptr->visited = 0;
-	ptr->nbonds = 0;
-	count++;
+            if (ptr->bondsvector) {
+                CVectorFree(&(ptr->bondsvector));
+    }
+            if (ptr->distancevector) {
+                CVectorFree(&(ptr->distancevector));
+            }
+            ptr->ordinal = ordinal;
+            for (ii=0; ii <= MaxSDepth; ii++) {
+                ptr->ordlist[ii] = 0;
+            }
+        } else {
+            ptr->ordinal = 0;
+        }
     }
     
     /* Go through each edge (bond), insert edge in our graph */
-    count = 0;
+
     ForEachBond {
-	if (bptr->srcatom->nbonds == MaxBonds) return 0;
-	if (bptr->dstatom->nbonds == MaxBonds) return 0;
-	bptr->srcatom->bonds[bptr->srcatom->nbonds++] = bptr->dstatom;
-	bptr->dstatom->bonds[bptr->dstatom->nbonds++] = bptr->srcatom;
-	count++;
+        if (!requireselected ||
+            ((bptr->srcatom->flag&SelectFlag)&&(bptr->dstatom->flag&SelectFlag))) {
+            if (!(bptr->srcatom->bondsvector)) {
+                CVectorCreate( &(bptr->srcatom->bondsvector), sizeof (RAtom *), 1);
+    }
+            if (requiredistances) {
+                if (!(bptr->srcatom->distancevector)) {
+                CVectorCreate( &(bptr->srcatom->distancevector), sizeof(Long), 1);
+                }
+                CVectorAddElement(bptr->srcatom->distancevector,&(bptr->sxyz));
+            }
+            CVectorAddElement(bptr->srcatom->bondsvector,&(bptr->dstatom));
+            if (!(bptr->dstatom->bondsvector)) {
+                CVectorCreate( &(bptr->dstatom->bondsvector), sizeof (RAtom *), 1);
+            }
+            if (requiredistances) {
+                if (!(bptr->dstatom->distancevector)) {
+                    CVectorCreate( &(bptr->dstatom->distancevector), sizeof(Long), 1);
+                }
+                CVectorAddElement(bptr->dstatom->distancevector,&(bptr->sxyz));
+            }
+            CVectorAddElement(bptr->dstatom->bondsvector,&(bptr->srcatom));
+        }
     }
     
     return 1;
@@ -515,10 +549,11 @@ int BondRotatable( RAtom __far *atom )
 	return 0;
     atom->visited = 1;
     
-    for (i=0; i<atom->nbonds; i++)
-	if (atom == BDstAtom && atom->bonds[i] == BSrcAtom)
+    for (i=0; atom->bondsvector&& i <CVectorSize(atom->bondsvector); i++)
+        if (atom == BDstAtom
+            && (*(RAtom * *)CVectorElementAt(atom->bondsvector,i)) == BSrcAtom)
 	    continue;
-	else if (!BondRotatable(atom->bonds[i]))
+        else if (!BondRotatable(*(RAtom * *)CVectorElementAt(atom->bondsvector,i)))
 	    return 0;
     return 1;
 }
@@ -584,15 +619,18 @@ void SetBondAxis( RAtom __far *src, RAtom __far *dst )
     SubtractAtoms(BDstAtom, BSrcAtom, BAxis);
     NormalizeVector(BAxis);
     
-    if (!ConstructGraph()) {
+    if (!ConstructGraph(False,False)) {
 	WriteString("ConstructGraph failed\n");
 	return;
     }
     
     /* Ensure that this is a bond-rotatable part */
     if (!BondRotatable(BDstAtom)) {
-        for ( i=0; i<BSrcAtom->nbonds; i++ ) {
-          if (BSrcAtom->bonds[i] == BDstAtom ) {
+        for ( i=0;
+             BSrcAtom->bondsvector
+             && i <CVectorSize(BSrcAtom->bondsvector);
+             i++ ) {
+          if ((*(RAtom * *)CVectorElementAt(BSrcAtom->bondsvector,i)) == BDstAtom ) {
             WriteString("Can't bond-rotate this.\n");
             return;
           }
@@ -607,7 +645,7 @@ void SetBondAxis( RAtom __far *src, RAtom __far *dst )
           NewBond->flag |= DashFlag;
           ReDrawFlag |=RFInitial;
         }
-        if (!ConstructGraph()) {
+        if (!ConstructGraph(False,False)) {
 	WriteString("ConstructGraph failed\n");
 	return;
         }
@@ -665,8 +703,8 @@ void Traverse( RAtom __far *atom, Real matrix[4][4] )
     atom->z = x*matrix[2][0]+y*matrix[2][1]+z*matrix[2][2]
                   +BSrcAtom->zorg-atom->zorg+BSrcAtom->fzorg-atom->fzorg;
     
-    for (i=0; i<atom->nbonds; i++)
-	Traverse(atom->bonds[i], matrix);
+    for (i=0; atom->bondsvector&& i <CVectorSize(atom->bondsvector); i++)
+	Traverse((*(RAtom * *)CVectorElementAt(atom->bondsvector,i)), matrix);
     
     visits++;
 }

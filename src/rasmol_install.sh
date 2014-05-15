@@ -1,10 +1,10 @@
 #!/bin/sh
 ###########################################################################
-#                             RasMol 2.7.4.2                              #
+#                             RasMol 2.7.5.3                              #
 #                                                                         #
 #                                 RasMol                                  #
 #                 Molecular Graphics Visualisation Tool                   #
-#                            19 November 2007                             #
+#                               4 May 2012                                #
 #                                                                         #
 #                   Based on RasMol 2.6 by Roger Sayle                    #
 # Biomolecular Structures Group, Glaxo Wellcome Research & Development,   #
@@ -90,7 +90,7 @@
 #
 
 
-VERSION=${RASMOL_VERSION-"RasMol_2_7_5"};
+VERSION=${RASMOL_VERSION-"RasMol_2_7_5_3"};
 
 prefix= ;
 system="no" ;
@@ -119,7 +119,7 @@ do
     ;;
     --help | * )
       echo "rasmol_install.sh usage:"
-      echo "  rasmol_run.sh [--help] | "
+      echo "  rasmol_install.sh [--help] | "
       echo "    [--prefix=installdir] |"
       echo "    [--compilefonts] |"
       echo "    [--system] | [--local] "
@@ -133,6 +133,12 @@ do
       echo "   RASMOL_CHINESEFDIR  path to X11 Intlfonts-1.2.1/Chinese directory"
       echo "   RASMOL_JAPANESEFDIR  path to X11 Intlfonts-1.2.1/Japanese.X directory"
       echo "   RASMOL_DEBUG        if non-empty, report settings"
+      echo "important optional runtime variables:"
+      echo "   RASMOL_SYSTEM_XFORMS if non-empty search for system libxforms"
+      echo "   RASMOL_SYSTEM_LIBXI  if non-empty search for system libXi"
+      echo "   RASMOL_SYSTEM_LIBXEXT  if non-empty search for system libXext"
+      echo "   RASMOL_LIBXiPATH    path to Xi library directory"
+      echo "   RASMOL_LIBXextPATH  path to Xext library directory"
       exit 1;
      
   esac;

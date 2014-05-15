@@ -630,7 +630,7 @@ static int EvaluateProperty( int prop )
         case( PropName ):     return( QAtom->refno );
         case( PropResId ):    return( QGroup->serno );
         case( PropResName ):  return( QGroup->refno );
-        case( PropChain ):    return( QChain->ident );
+        case( PropChain ):    return( QChain->chrefno );
         case( PropSelect ):   return( QAtom->flag&SelectFlag );
         case( PropElemNo ):   return( QAtom->elemno );
         case( PropModel ):    return( (int)QChain->model );
@@ -1046,7 +1046,11 @@ int ParsePrimitiveExpr( char **orig )
         ch = *ptr++;
 
     if( isalnum(ch) )
-    {   ch = ToUpper(ch);
+    {   char buffer[2];
+        buffer[0] = ch;
+        buffer[1] = '\0';
+
+        ch = FindChNo(buffer);
 
         tmp1 = AllocateNode();
         tmp1->type = OpEqual | OpLftProp | OpRgtVal;
@@ -1233,7 +1237,8 @@ void FormatLabel( Chain __far *chain, Group __far *group, RAtom __far *aptr,
                case('c'):  /* Chain Identifier */
                case('C'):
                case('s'):
-               case('S'):  *ptr++ = chain->ident;
+               case('S'):  for( j=0; j<4 && ChIdents[chain->chrefno][j]; j++)
+                               *ptr++=ChIdents[chain->chrefno][j];
                            break;
 
                case('e'):
@@ -1526,34 +1531,49 @@ void InitialiseAbstree( void )
 char *DescribeObj( AtomRef *ptr, Selection select )
 {
   
-#define BS 110
-#define bs 109
+#define BS 132
+#define bs 131
 
   register char *str;
+  char * eptr;
   static char buffer[BS];
   int strucflag=' ';
   
   /* needs to be initialised with whitespaces, expect the last one */
   memset(buffer, ' ', bs * sizeof (char));
 
+  eptr = buffer;
+    
+ /* identification of 'model' */
+    if( select == CHN || select == GRP || select == ATM || select == CRD){
+        if( ptr->chn->model!= 0 ){
+            sprintf(eptr, "Model: %d", (int) ptr->chn->model);
+            eptr = buffer+strlen(buffer);
+        }
+    }
+    
   /* identification of 'chain' */
   if( select == CHN || select == GRP || select == ATM || select == CRD){
-    if( ptr->chn->ident!=' ' ){
-      sprintf(&buffer[0], "Chain: %c", ptr->chn->ident);
+      if( ptr->chn->chrefno != 52) {
+          if (eptr != buffer) *(eptr++) = ' ';
+          sprintf(eptr, "Chain: %s", ChIdents[ptr->chn->chrefno]);
+          eptr = eptr+strlen(eptr);
     }
-    buffer[8] = '\0';
   }
 
   /* identification of 'group' */
-  if( select == GRP || select == ATM || select == CRD){
+  if( select == GRP || select == ATM || select == CRD || select == MDL){
     str = Residue[ptr->grp->refno];
+    if (eptr !=buffer) (*eptr++) = ' ';
     if( ptr->atm->flag&HeteroFlag ){
-      strcpy(&buffer[8], "  Hetero: ");
+      strcpy(eptr, "Hetero: ");
     }
     else{ 
-      strcpy(&buffer[8], "  Group:  ");
+      strcpy(eptr, "Group: ");
     }
-    sprintf(&buffer[18], "%c%c%c %3d", str[0],str[1],str[2],ptr->grp->serno);
+    eptr = eptr+strlen(eptr);
+    sprintf(eptr, "%c%c%c %3d", str[0],str[1],str[2],ptr->grp->serno);
+    eptr = eptr+strlen(eptr);
     if( IsAmino(ptr->grp->refno) ){
        strucflag = Helix3Flag|Helix4Flag|Helix5Flag;
        if( ptr->grp->struc&strucflag )
@@ -1564,32 +1584,33 @@ char *DescribeObj( AtomRef *ptr, Selection select )
 	  strucflag = 'T';
        else
 	  strucflag = 'C';
-       sprintf(&buffer[25], " (%c)", (char)strucflag);
+       sprintf(eptr, " (%c)", (char)strucflag);
     }
     else{
-       sprintf(&buffer[25], "     ");
+       sprintf(eptr, "    ");
     }
   }
 
+  eptr = eptr+strlen(eptr);
+    
   /* identification of 'atom' */
-  if( select == ATM || select == CRD ){
-    char *eptr;
+  if( select == ATM || select == CRD || select == MDL){
     str = ElemDesc[ptr->atm->refno];
-    strcpy(&buffer[29],"  Atom: ");
+    strcpy(eptr,(((ptr->atm->flag)&HeteroFlag)?" HetAtm: ":"   Atom: "));
+    eptr = eptr+strlen(eptr);
     if ( (ptr->atm->altl == ' ') || (ptr->atm->altl == '\0') ) {
-      sprintf(&buffer[37], "%c%c%c%c   %5ld ", 
-	    str[0], str[1], str[2], str[3], ptr->atm->serno );
+      sprintf(eptr, "%c%c%c%c %ld", 
+	    str[0], str[1], str[2], str[3], (long)(ptr->atm->serno) );
     } else {
-      sprintf(&buffer[37], "%c%c%c%c;%c %5ld ",
-	    str[0], str[1], str[2], str[3] ,ptr->atm->altl, ptr->atm->serno );
+      sprintf(eptr, "%c%c%c%c;%c %ld",
+	    str[0], str[1], str[2], str[3] ,ptr->atm->altl, (long)(ptr->atm->serno) );
     }
+    eptr = eptr+strlen(eptr);
     if ( ptr->atm->model ) {
-      buffer[49] = '/';
-      FormatInteger(&buffer[50],(int)ptr->atm->model);
-    } else {
-      buffer[49] = '\0';
+      *(eptr++) = '/';
+      sprintf(eptr,"%d",(int)ptr->atm->model);
     }
-    eptr = buffer+strlen(buffer);
+    eptr = eptr+strlen(eptr);
     if( select == CRD ){
       register double x, y, z;
 
@@ -1601,9 +1622,9 @@ char *DescribeObj( AtomRef *ptr, Selection select )
          +(double)(ptr->atm->ztrl)/10000.0;
 
 #ifdef INVERT
-      sprintf(eptr, "\n  Coordinates: %9.3f %9.3f %9.3f\n",x,-y,-z);
+      sprintf(eptr, " Coord: %9.3f %9.3f %9.3f",x,-y,-z);
 #else
-      sprintf(eptr, "\n  Coordinates: %9.3f %9.3f %9.3f\n",x,y,-z);
+      sprintf(eptr, " Coord: %9.3f %9.3f %9.3f",x,y,-z);
 #endif
     }
   }

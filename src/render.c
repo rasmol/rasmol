@@ -2863,7 +2863,7 @@ void SetPickMode( int mode )
 static int DescribeAtom(char *dest, AtomRef *ptr, int flag )
 {
     register char *str;
-    register int i,ch;
+    register int i,chrefno,ch;
     char *cur;
 
     cur = dest;
@@ -2874,11 +2874,12 @@ static int DescribeAtom(char *dest, AtomRef *ptr, int flag )
 
     cur += sprintf(cur,"%d",ptr->grp->serno);
 
-    ch = ptr->chn->ident;
-    if( ch != ' ' ) {
-        if( isdigit(ch) )
+    chrefno = ptr->chn->chrefno;
+    if (chrefno !=52) {
             *(cur++) = ':';
-        *(cur++) = ch;
+        for (i=0; i < strlen(ChIdents[chrefno]); i++) {
+            *(cur++) = ChIdents[chrefno][i];
+    }
     }
 
     *(cur++) = '.';
@@ -2974,17 +2975,17 @@ int PickAtoms( int shift, int xpos, int ypos )
                 MsgChar(QGroup->insert);
         }
 
-        if( QChain->ident!=' ' ) {
+        if( QChain->chrefno!=52 ) {
             MsgString("  Chain: ");
-            MsgChar(QChain->ident);
+            MsgString(ChIdents[QChain->chrefno]);
         }
 
         if( QAtom->model) {
             cur += sprintf(cur, "  Model: %d", QAtom->model);
         }
         if (PickMode == PickCoord || shift != 0 ) {
-            MsgChar('\n');
            register double x, y, z;
+            MsgChar('\n');
 
            x = (double)(QAtom->xorg + QAtom->fxorg + OrigCX)/250.0
                +(double)(QAtom->xtrl)/10000.0;
@@ -3008,10 +3009,11 @@ int PickAtoms( int shift, int xpos, int ypos )
                 strcpy(buffer,"%n%r");
                 str = buffer+4;
                 if( Info.chaincount > 1 ) {
-                    if( isdigit(QChain->ident) )
+                    if( QChain->chrefno != 52) {
                         *str++ = ':';
                     *str++ = '%';
                     *str++ = 'c';
+                }
                 }
                 strcpy(str,".%a");
 

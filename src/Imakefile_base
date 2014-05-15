@@ -177,10 +177,75 @@ XFORMSLIB_LDLIB = -lXpm -L$(XFORMSLIB_DIR)/lib -lforms
 #endif
 
 
+# Definitions for LIBXI
+#
+LIBXI_LDLIB =
+LIBXI_OBJDEP =
+LIBXI_DIR =
+#define NO_LIBXI_BUILD
+#ifdef X11WIN
+#ifdef USE_XFORMSLIB
+#ifdef LIBXI_LOCAL
+LIBXI_VERSION = 1.5.0
+LIBXI_TARBALL = libXi-$(LIBXI_VERSION).tar.gz
+LIBXI_TARBALLDIR = $(EXTPKGDIR)
+LIBXI_TARBALL_URL = http://ftp.x.org/pub/individual/lib/$(LIBXI_TARBALL)
+LIBXI_DIR = $(LIBXI_TARBALLDIR)/libXi-$(LIBXI_VERSION)
+LIBXI_INCLUDE_DIR = $(LIBXI_DIR)/include/X11/extensions
+LIBXI_LDLIB = $(LIBXI_DIR)/src/.libs/libXi.a
+LIBXI_OBJDEP = $(LIBXI_DIR)/src/.libs/libXi.a
+#undef NO_LIBXI_BUILD
+#else
+ifeq ($(strip $(LIBXI_DIR)),)
+#ifdef MACOSX_MACPORTS
+LIBXI_DIR = /opt/local/lib
+#else
+LIBXI_DIR = /usr/X11/lib
+#endif
+endif
+LIBXI_INCLUDE_DIR = $(LIBXI_DIR)/../include/X11/extensions
+LIBXI_LDLIB = -L$(LIBXI_DIR) -lXi
+#endif
+#endif
+#endif
+
+# Definitions for LIBXEXT
+#
+LIBXEXT_LDLIB =
+LIBXEXT_OBJDEP =
+LIBXEXT_DIR =
+#define NO_LIBXEXT_BUILD
+#ifdef X11WIN
+#ifdef USE_XFORMSLIB
+#ifdef LIBXEXT_LOCAL
+LIBXEXT_VERSION = 1.0.3
+LIBXEXT_TARBALL = libXext-$(LIBXEXT_VERSION).tar.gz
+LIBXEXT_TARBALLDIR = $(EXTPKGDIR)
+LIBXEXT_TARBALL_URL = http://ftp.x.org/pub/individual/lib/$(LIBXEXT_TARBALL)
+LIBXEXT_DIR = $(LIBXEXT_TARBALLDIR)/libXext-$(LIBXEXT_VERSION)
+LIBXEXT_INCLUDE_DIR = $(LIBXEXT_DIR)/include/X11/extensions
+LIBXEXT_LDLIB = $(LIBXEXT_DIR)/src/.libs/libXext.a
+LIBXEXT_OBJDEP = $(LIBXEXT_DIR)/src/.libs/libXext.a
+#undef NO_LIBXEXT_BUILD
+#else
+ifeq ($(strip $(LIBXEXT_DIR)),)
+#ifdef MACOSX_MACPORTS
+LIBXEXT_DIR = /opt/local/lib
+#else
+LIBXEXT_DIR = /usr/X11/lib
+#endif
+endif
+LIBXEXT_INCLUDE_DIR = $(LIBXEXT_DIR)/../include/X11/extensions
+LIBXEXT_LDLIB = -L$(LIBXEXT_DIR) -lXi
+#endif
+#endif
+#endif
+
+
 # Definitions for CBFLIB
 #
 #ifdef CBFLIB_LOCAL
-CBFLIB_VERSION = 0.8.1
+CBFLIB_VERSION = 0.9.2.12
 CBFLIB_TARBALL = CBFlib-$(CBFLIB_VERSION).tar.gz
 CBFLIB_TARBALLDIR = $(EXTPKGDIR)
 CBFLIB_TARBALL_URL = http://downloads.sf.net/cbflib/$(CBFLIB_TARBALL)
@@ -201,7 +266,7 @@ CBFLIB_OBJDEP =
 # Definitions for CQRLIB
 #
 #ifdef CQRLIB_LOCAL
-CQRLIB_VERSION = 1.0.3
+CQRLIB_VERSION = 1.1.3
 CQRLIB_TARBALL = CQRlib-$(CQRLIB_VERSION).tar.gz
 CQRLIB_TARBALLDIR = $(EXTPKGDIR)
 CQRLIB_TARBALL_URL = http://downloads.sf.net/cqrlib/$(CQRLIB_TARBALL)
@@ -247,14 +312,14 @@ CVECTOR_OBJDEP =
 # Definitions for NEARTREE
 #
 #ifdef NEARTREE_LOCAL
-NEARTREE_VERSION = 2.1.3
+NEARTREE_VERSION = 4.0
 NEARTREE_TARBALL = NearTree-$(NEARTREE_VERSION).tar.gz
 NEARTREE_TARBALLDIR = $(EXTPKGDIR)
 NEARTREE_TARBALL_URL = http://downloads.sf.net/neartree/$(NEARTREE_TARBALL)
 NEARTREE_DIR = $(NEARTREE_TARBALLDIR)/NearTree-$(NEARTREE_VERSION)
 NEARTREE_INCLUDE_DIR = $(NEARTREE_DIR)
 NEARTREE_LDLIB = $(NEARTREE_DIR)/CNearTree.o
-NEARTREE_SRC = $(NEARTREE_DIR)/CNearTree.c
+NEARTREE_SRC = -DCNEARTREE_FORCEFLIP $(NEARTREE_DIR)/CNearTree.c
 NEARTREE_OBJDEP = $(NEARTREE_DIR)/CNearTree.o
 #else
 ifeq ($(strip $(NEARTREE_DIR)),)
@@ -286,7 +351,7 @@ DEFINES = $(GTKCFLAGS) $(GUIDEF) -DRASMOLDIR=\"$(RASMOLDIR)\" $(DEPTHDEF) $(LOCA
 	-I$(CQRLIB_INCLUDE_DIR) \
 	-I$(CVECTOR_INCLUDE_DIR) \
 	-I$(NEARTREE_INCLUDE_DIR) \
-  	-I$(XFORMSLIB_INCLUDE_DIR)
+  	-I$(XFORMSLIB_INCLUDE_DIR) -I$(LIBXI_INCLUDE_DIR) -I$(LIBXEXT_INCLUDE_DIR)
 #endif
 
 
@@ -298,13 +363,16 @@ SRCS = rasmol.c rasmol.h molecule.c molecule.h abstree.c abstree.h \
        cif.h cif_ctonum.c cif_ctonum.h cif_stx.c \
        multiple.h multiple.c vector.h vector.c \
        wbrotate.c wbrotate.c langsel.h langsel_unix.c maps.h maps.c $(GUISRC) \
+       CVector_3D.h CVector_3D.c rmsd.h rmsd.c\
        $(CQRLIB_SRC) $(CVECTOR_SRC) $(NEARTREE_SRC)
 
 
 OBJS = rasmol.o molecule.o abstree.o cmndline.o command.o transfor.o \
        render.o repres.o  pixutils.o outfile.o script.o \
        infile.o tokens.o  cif_fract.o cif.o cif_ctonum.o cif_stx.o \
-       multiple.o vector.o wbrotate.o langsel_unix.o maps.o $(GUIOBJ)
+       multiple.o vector.o wbrotate.o langsel_unix.o maps.o \
+       CVector_3D.o rmsd.o \
+       $(GUIOBJ)
 
 # Previous Risc/Os definition
 # LDLIBS = -lm -lXinput $(XLIB)
@@ -312,11 +380,13 @@ OBJS = rasmol.o molecule.o abstree.o cmndline.o command.o transfor.o \
 # Additional RS6000 AIX MITSHM Library
 # LDLIBS = -lm -lXi -lXextSam $(XLIB)
 
-LDLIBS = -lm -lXi $(XLIB) $(EXTRA_LIBRARIES) $(XFORMSLIB) $(GTKLIBS) \
+LDLIBS = -lm $(XLIB) $(EXTRA_LIBRARIES) \
+            $(GTKLIBS) \
 			$(CBFLIB_LDLIB) \
 			$(CQRLIB_LDLIB) \
 			$(CVECTOR_LDLIB) \
-			$(NEARTREE_LDLIB) $(XFORMSLIB_LDLIB)
+			$(NEARTREE_LDLIB) \
+            $(XFORMSLIB_LDLIB) $(LIBXI_LDLIB) $(LIBXEXT_LDLIB)
 
 
 #
@@ -379,6 +449,32 @@ $(XFORMSLIB_DIR)/lib/.libs/libforms.a: $(XFORMSLIB_DIR)
 		(cd $(XFORMSLIB_DIR)/lib; make all)
 #endif
 
+#ifndef NO_LIBXI_BUILD
+$(LIBXI_DIR):
+		(cd $(LIBXI_TARBALLDIR);\
+		  wget $(LIBXI_TARBALL_URL);\
+		  touch $(LIBXI_TARBALL);\
+		  gunzip < $(LIBXI_TARBALL) | tar xvf -)
+
+$(LIBXI_DIR)/src/.libs/libXi.a: $(LIBXI_DIR)
+		(cd $(LIBXI_DIR); ./configure --enable-static)
+		(cd $(LIBXI_DIR)/src; make all)
+#endif
+
+#ifndef NO_LIBXEXT_BUILD
+$(LIBXEXT_DIR):
+		(cd $(LIBXEXT_TARBALLDIR);\
+		  wget $(LIBXEXT_TARBALL_URL);\
+		  touch $(LIBXEXT_TARBALL);\
+		  gunzip < $(LIBXEXT_TARBALL) | tar xvf -)
+
+$(LIBXEXT_DIR)/src/.libs/libXext.a: $(LIBXEXT_DIR)
+		(cd $(LIBXEXT_DIR); ./configure --enable-static)
+		(cd $(LIBXEXT_DIR)/src; make all)
+#endif
+
+
+
 #ifndef NO_CBFLIB_BUILD
 $(CBFLIB_DIR):
 		(cd $(CBFLIB_TARBALLDIR);\
@@ -424,7 +520,7 @@ $(OBJS):  $(EXTPKGDIR) $(CBFLIB_OBJDEP) \
 			$(CQRLIB_OBJDEP) \
 			$(CVECTOR_OBJDEP) \
 			$(NEARTREE_OBJDEP) \
-			$(XFORMSLIB_OBJDEP)
+			$(XFORMSLIB_OBJDEP) $(LIBXI_OBJDEP) $(LIBXEXT_OBJDEP)
 
 
 gtkwin.c: gtkui.h

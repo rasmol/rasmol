@@ -88,6 +88,7 @@
 /* #define APPLEMAC     */
 /* #define X11WIN       */    /* X11WIN or GTKWIN defined in Imakefile */
 #define UNIX
+#define STDINT
 
 /* #define DIALBOX      */
 #ifndef GTKWIN
@@ -128,6 +129,10 @@
 /*========================*/
 /*  Default User Options! */
 /*========================*/
+
+#ifdef STDINT
+#include <stdint.h>
+#endif
 
 #ifdef IBMPC
 #undef THIRTYTWOBIT
@@ -186,9 +191,9 @@
 /*==============================*/
 
 #define MAIN_COPYRIGHT "Copyright (C) Roger Sayle 1992-1999"
-#define VERSION "2.7.6"
-#define VER_COPYRIGHT "Copyright (C) Herbert J. Bernstein 1998-2010"
-#define VER_DATE "May 2010"
+#define VERSION "2.7.5.2"
+#define VER_COPYRIGHT "Copyright (C) Herbert J. Bernstein 1998-2011"
+#define VER_DATE "May 2011"
 
 #ifndef True
 #define True  1
@@ -202,7 +207,11 @@
 
 typedef double Real;
 #ifndef APPLEMAC
+#ifdef STDINT
+typedef uint8_t Byte;
+#else
 typedef unsigned char Byte;
+#endif
 #endif
 
 #ifdef __STDC__
@@ -212,20 +221,40 @@ typedef char Char;
 #endif
 
 #ifdef _LONGLONG
+  #ifdef STDINT
+  typedef uint32_t Card;
+  #else
 typedef unsigned int Card;
-typedef int Long;
+  #endif
+  typedef long Long;
 #else
+  #ifdef STDINT
+  typedef uint32_t Card;
+  #else
 typedef unsigned long Card;
+  #endif
 typedef long Long;
 #endif
 
+#ifdef STDINT
 #ifdef EIGHTBIT
+  typedef uint8_t Pixel;
+  #else
+  #ifdef THIRTYTWOBIT
+  typedef int32_t Pixel;
+  #else
+  typedef int16_t Pixel;
+  #endif
+  #endif
+#else
+  #ifdef EIGHTBIT
 typedef unsigned char Pixel;
 #else
 #ifdef THIRTYTWOBIT
 typedef Long Pixel;
 #else
 typedef short Pixel;
+#endif
 #endif
 #endif
 
@@ -273,7 +302,7 @@ typedef short Pixel;
 #endif
 
 
-#define ItemCount       8
+#define ItemCount       9
 #define AdvPickAtom     0
 #define AdvPickNumber   1
 #define AdvSelectCount  2
@@ -282,6 +311,7 @@ typedef short Pixel;
 #define AdvClass        5
 #define AdvImage        6
 #define AdvPickCoord    7
+#define AdvDetail       8
 
 
 #define MSG_MAX 256

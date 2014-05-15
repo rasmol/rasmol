@@ -76,7 +76,7 @@
  *package and for license terms (GPL or RASLIC).                           *
  ***************************************************************************/
 /* infile.c
- $Log: infile.c,v $
+ $Log$
  Revision 1.14  2008/07/18 01:11:01  yaya
  Report a syntax error on rotate all 3 in command.c
  Change const char * to char * for datablock name in infile.c -- HJB
@@ -263,7 +263,7 @@
 
 typedef struct {
 	int init, term;
-	char chain;
+	int chrefno;
 	char type;
 	} FeatEntry;
 
@@ -501,7 +501,7 @@ static void UpdateFeature( FeatEntry __far *ptr, int mask )
     register Group __far *group;
  
     for( chain=Database->clist; chain; chain=chain->cnext )
-        if( chain->ident == ptr->chain )
+        if( chain->chrefno == ptr->chrefno )
         {   group=chain->glist;
             while( group && (group->serno<ptr->init) )
                 group = group->gnext;
@@ -550,9 +550,9 @@ static void ProcessFeatures( void )
     }
 }
  
-static void ApplyConfInfo( char __far *ResName1, char Chain1, int ResNum1, 
+static void ApplyConfInfo( char __far *ResName1, int Chain1, int ResNum1,
                            char Icode1, int sResNum1, char sIcode1,
-                           char __far *ResName2, char Chain2, int ResNum2, 
+                           char __far *ResName2, int Chain2, int ResNum2,
                            char Icode2, int sResNum2, char sIcode2,
                            char __far *CType )
 {
@@ -568,9 +568,9 @@ static void ApplyConfInfo( char __far *ResName1, char Chain1, int ResNum1,
    if ( ResName1[0] != '\0' ) refno1 = FindResNo( ResName1 );
    if ( ResName2[0] != '\0' ) refno2 = FindResNo( ResName2 );
    for(chn1=Database->clist;chn1;chn1=chn1->cnext)
-   if ( (Chain1 == '\0') ||  (Chain1 == chn1->ident) )
+   if ( (Chain1 == 52) ||  (Chain1 == chn1->chrefno) )
      for(chn2=Database->clist;chn2;chn2=chn2->cnext)
-     if ( (Chain2 == '\0' || Chain2 == chn2->ident ) )
+     if ( (Chain2 == 52 || Chain2 == chn2->chrefno ) )
        for(group1=chn1->glist;group1;group1=group1->gnext)
        if ( ( ResName1[0] == '\0' || group1->refno == refno1) &&
 	 (ResNum1 == -9999 || group1->serno == ResNum1) &&
@@ -600,18 +600,18 @@ static void ApplyConfInfo( char __far *ResName1, char Chain1, int ResNum1,
                }
              }             
            }
-           ptr->chain = chn1->ident;
+           ptr->chrefno = chn1->chrefno;
            ptr->init = group1->serno;
            ptr->term = group2->serno;       
 	 }
 
 }
 
-static void ApplyBondInfo( char __far *ResName1, char Chain1,int ResNum1, 
+static void ApplyBondInfo( char __far *ResName1, int Chain1,int ResNum1,
                            char Icode1, int sResNum1, char sIcode1,
                            char __far *AtomName1, int AtomNum1, 
                            char __far  Altl1, short Model1, char __far *Symm1,
-                           char __far *ResName2, char Chain2, int ResNum2, 
+                           char __far *ResName2, int Chain2, int ResNum2,
                            char Icode2, int sResNum2, char sIcode2,
                            char __far *AtomName2, int AtomNum2, 
                            char __far  Altl2, short Model2, char __far *Symm2,
@@ -645,9 +645,9 @@ static void ApplyBondInfo( char __far *ResName1, char Chain1,int ResNum1,
    if ( ResName1[0] != '\0' ) refno1 = FindResNo( ResName1 );
    if ( ResName2[0] != '\0' ) refno2 = FindResNo( ResName2 );
    for(chn1=Database->clist;chn1;chn1=chn1->cnext)
-   if ( (Chain1 == '\0') ||  (Chain1 == chn1->ident) )
+   if ( (Chain1 == 52) ||  (Chain1 == chn1->chrefno) )
      for(chn2=Database->clist;chn2;chn2=chn2->cnext)
-     if ( (Chain2 == '\0' || Chain2 == chn2->ident ) )
+     if ( (Chain2 == 52 || Chain2 == chn2->chrefno ) )
        for(group1=chn1->glist;group1;group1=group1->gnext)
        if ( ( ResName1[0] == '\0' || group1->refno == refno1) &&
 	 (ResNum1 == -9999 || group1->serno == ResNum1) &&
@@ -750,10 +750,27 @@ static Long ReadPDBCoord( int offset )
 
 static void ProcessPDBGroup( int heta, int serno )
 {
+    char chbuf[11];
+    int ii, jj;
+    jj = 0;
+    
+    if (WPDB) {
+        for (ii=45;ii<55;ii++) {
+            if (Record[ii]!=' ') {
+                chbuf[jj++] = Record[ii];
+            }
+        }
+        chbuf[jj++] = '\0';
+    } else {
+        chbuf[0] = Record[21];
+        chbuf[1] = '\0';
+    }
+    
     PDBInsert = Record[WPDB?64:26];
-    if( !CurChain || (CurChain->ident!=Record[WPDB?54:21]) )
+    
+    if( !CurChain || (CurChain->chrefno!=FindChNo(chbuf)) )
     {   ConnectAtom = (RAtom __far*)0;
-        CreateChain( Record[WPDB?54:21] );
+        CreateChain( FindChNo(chbuf) );
     }
     CreateGroup( GroupPool );
  
@@ -828,15 +845,27 @@ static void ProcessPDBAtom( int heta, double pdb_version )
         return;
  
     if (WPDB) {
+        char chbuf[11];
+        int ii, jj;
+        jj = 0;
+        for (ii=45; ii < 55; ii++) {
+            if (Record[ii]!=' ') {
+                chbuf[jj++] = Record[ii];
+            }
+        }
+        chbuf[jj++] = '\0';
     serno = (int)ReadValue(55,9);
     if( !CurGroup || (CurGroup->serno!=serno)
-        || (CurChain->ident!=Record[54])
+        || (CurChain->chrefno!=FindChNo(chbuf))
         || (PDBInsert!=Record[64]) )
         ProcessPDBGroup( heta, serno );
 	} else {
+        char chbuf[2];
+        chbuf[0] = Record[21];
+        chbuf[1] = '\0';
     serno = (int)ReadValue(22,4);
     if( !CurGroup || (CurGroup->serno!=serno)
-        || (CurChain->ident!=Record[21])
+        || (CurChain->chrefno!=FindChNo(chbuf))
         || (PDBInsert!=Record[26]) )
         ProcessPDBGroup( heta, serno );
 	}
@@ -1120,14 +1149,17 @@ int LoadPDBMolecule( FILE *fp,  int flag )
                                 ProcessPDBAtom( True, pdb_version );
                               }
                           } else if( !strncmp("HELI",Record,4) )
-                          {   if( ignore ) continue;
+                          {   char chain[2];
+                              if( ignore ) continue;
  
                               /* Remaining HELIX record fields   */
                               /* 38-39 .... Helix Classification */
                               /* 31 ....... Same Chain as 19?    */
                               ptr = AllocFeature();
                               ptr->type = FeatHelix;
-                              ptr->chain = Record[19];
+                              chain[0] = Record[19];
+                              chain[1] = '\0';
+                              ptr->chrefno = FindChNo(chain);
                               ptr->init = (int)ReadValue(21,4);
                               ptr->term = (int)ReadValue(33,4);
                               
@@ -1167,14 +1199,17 @@ int LoadPDBMolecule( FILE *fp,  int flag )
         	              }
  
             case('S'):    if( !strncmp("SHEE",Record,4) )
-                          {   if( ignore ) break;
+                          {   char chain[2];
+                              if( ignore ) break;
 						      if (WPDB && (Record[6]!='S')) break;
                               /* Remaining SHEET record fields   */
                               /* 38-39 .... Strand Parallelism   */
                               /* 32 ....... Same Chain as 21?    */
                               ptr = AllocFeature();
                               ptr->type = FeatSheet;
-                              ptr->chain = Record[WPDB?52:21];
+                              chain[0]=Record[WPDB?52:21];
+                              chain[1]='\0';
+                              ptr->chrefno = FindChNo(chain);
                               ptr->init = (int)ReadValue(WPDB?53:22,WPDB?9:4);
                               ptr->term = (int)ReadValue(WPDB?84:33,WPDB?9:4);
                           } else if (!strncmp("SCAL",Record,4) )
@@ -1209,11 +1244,14 @@ int LoadPDBMolecule( FILE *fp,  int flag )
                           break;
 
             case('T'):    if( !strncmp("TURN",Record,4) )
-                          {   if( ignore ) continue;
+                          {   char chain[2];
+                              if( ignore ) continue;
  
                               ptr = AllocFeature();
                               ptr->type = FeatTurn;
-                              ptr->chain = Record[WPDB?52:19];
+                              chain[0] = Record[WPDB?52:19];
+                              chain[1] = '\0';
+                              ptr->chrefno = FindChNo(chain);
                               ptr->init = (int)ReadValue(WPDB?53:20,WPDB?9:4);
                               ptr->term = (int)ReadValue(WPDB?84:31,WPDB?9:4);
                           } else if( !strncmp("TER",Record,3) )
@@ -1689,10 +1727,13 @@ int LoadCharmmMolecule( FILE *fp )
     {   FetchRecord(DataFile,Record);
  
         if( !CurChain || strncmp(Record+51,buffer,4) )
-        {   for( i=0; i<4; i++ )
+        {   char chbuf[2];
+            for( i=0; i<4; i++ )
                 buffer[i] = Record[51+i];
             ConnectAtom = (RAtom __far*)0;
-            CreateChain(chain+49);
+            chbuf[0] = chain+49;
+            chbuf[1] = '\0';
+            CreateChain(FindChNo(chbuf));
             chain++;
         }
 
@@ -2303,6 +2344,7 @@ int LoadCIFMolecule( FILE *fp )
 
 
     /* Recover the Space Group */
+    Info.spacegroup[0] = '\0';
     if ((!cif_findtag(cif, "_symmetry.space_group_name_H-M")) ||
       (!cif_findtag(cif, "_symmetry_space_group_name_H-M"))) {
       ReadcurCIFstr(cif,Info.spacegroup,12);
@@ -2601,12 +2643,12 @@ int LoadCIFMolecule( FILE *fp )
             if (*endptr != '\0') sicode = *endptr;
           }
           if ( !CurGroup || (CurGroup->serno!=seqnum)
-            || (CurChain->ident!=label_asym_id[0])
+            || (CurChain->chrefno!=FindChNo(label_asym_id))
 	    || (PDBInsert != icode) ) {
             PDBInsert = icode;
-            if( !CurChain || (CurChain->ident!=label_asym_id[0] )) {
+            if( !CurChain || (CurChain->chrefno!=FindChNo(label_asym_id))) {
               ConnectAtom = (RAtom __far*)0;
-              CreateChain (label_asym_id[0]);
+              CreateChain (FindChNo(label_asym_id));
             }
             CreateGroup( GroupPool );
             CurGroup->refno = FindResNo(label_comp_id);
@@ -2945,14 +2987,14 @@ int LoadCIFMolecule( FILE *fp )
         ConvertNames(NULL,AtomName1);
         ConvertNames(NULL,AtomName2);
 
-        ApplyBondInfo(CompId1, Asym1[0], ResNum1, Icode1, sResNum1, sIcode1,
+        ApplyBondInfo(CompId1, FindChNo(Asym1), ResNum1, Icode1, sResNum1, sIcode1,
                           AtomName1, Sitenum1, Alt1[0], Model1, Symm1,
-                          CompId2, Asym2[0], ResNum2, Icode2, sResNum2, 
+                          CompId2, FindChNo(Asym2), ResNum2, Icode2, sResNum2,
                           sIcode2, AtomName2, Sitenum2, Alt2[0], Model2, 
                           Symm2, CType);
-        ApplyBondInfo(CompId2, Asym2[0], ResNum2, Icode2, sResNum2, sIcode2,
+        ApplyBondInfo(CompId2, FindChNo(Asym2), ResNum2, Icode2, sResNum2, sIcode2,
                           AtomName2, Sitenum2, Alt2[0], Model2, Symm2,
-                          CompId1, Asym1[0], ResNum1, Icode1, sResNum1,
+                          CompId1, FindChNo(Asym1), ResNum1, Icode1, sResNum1,
                           sIcode1, AtomName1, Sitenum1, Alt1[0], Model1, 
                           Symm1, CType);
       }
@@ -3143,14 +3185,14 @@ int LoadCIFMolecule( FILE *fp )
         ConvertNames(NULL,AtomName1);
         ConvertNames(NULL,AtomName2);
 
-        ApplyBondInfo(CompId1, Asym1[0], ResNum1, Icode1, sResNum1, sIcode1,
+        ApplyBondInfo(CompId1, FindChNo(Asym1), ResNum1, Icode1, sResNum1, sIcode1,
                           AtomName1, Sitenum1, Alt1[0], Model1, Symm1,
-                          CompId2, Asym2[0], ResNum2, Icode2, sResNum2, 
+                          CompId2, FindChNo(Asym2), ResNum2, Icode2, sResNum2,
                           sIcode2, AtomName2, Sitenum2, Alt2[0], Model2, 
                           Symm2, NULL);
-        ApplyBondInfo(CompId2, Asym2[0], ResNum2, Icode2, sResNum2, sIcode2,
+        ApplyBondInfo(CompId2, FindChNo(Asym2), ResNum2, Icode2, sResNum2, sIcode2,
                           AtomName2, Sitenum2, Alt2[0], Model2, Symm2,
-                          CompId1, Asym1[0], ResNum1, Icode1, sResNum1,
+                          CompId1, FindChNo(Asym1), ResNum1, Icode1, sResNum1,
                           sIcode1, AtomName1, Sitenum1, Alt1[0], Model1, 
                           Symm1, NULL);
       }
@@ -3284,8 +3326,8 @@ int LoadCIFMolecule( FILE *fp )
         }
 
 
-        ApplyConfInfo(CompId1, Asym1[0], ResNum1, Icode1, sResNum1, sIcode1,
-                      CompId2, Asym2[0], ResNum2, Icode2, sResNum2, sIcode2,
+        ApplyConfInfo(CompId1, FindChNo(Asym1), ResNum1, Icode1, sResNum1, sIcode1,
+                      CompId2, FindChNo(Asym2), ResNum2, Icode2, sResNum2, sIcode2,
                       CType);
       }
 
@@ -3400,7 +3442,7 @@ int LoadCIFMolecule( FILE *fp )
             seroffset = 0;
             if (maxsernum >= minsernum)  {
                 NMRModel = maxnmrmodel;
-                seroffset=maxsernum+1;
+                seroffset=maxsernum;
             } else {
             	NMRModel = 0;
             }
@@ -3445,12 +3487,12 @@ int LoadCIFMolecule( FILE *fp )
                     seqnum = sseqnum = 1;
                     icode = sicode = ' ';
                     if ( !CurGroup || (CurGroup->serno!=seqnum)
-                         || (CurChain->ident!=label_asym_id[0])
+                         || (CurChain->chrefno!=FindChNo(label_asym_id))
                          || (PDBInsert != icode) ) {
                         PDBInsert = icode;
-                        if( !CurChain || (CurChain->ident!=label_asym_id[0] )) {
+                        if( !CurChain || (CurChain->chrefno!=FindChNo(label_asym_id) )) {
                             ConnectAtom = (RAtom __far*)0;
-                            CreateChain (label_asym_id[0]);
+                            CreateChain (FindChNo(label_asym_id));
                         }
                         CreateGroup( GroupPool );
                         CurGroup->refno = FindResNo(label_comp_id);
@@ -3604,9 +3646,9 @@ int LoadCIFMolecule( FILE *fp )
                         bvalue=AromBondFlag;
                     }else
                         bvalue=NormBondFlag;
-                    id1 = seroffset + find_chem_comp_id(cif,label_comp_id, atom_id_1);
-                    id2 = seroffset + find_chem_comp_id(cif,label_comp_id, atom_id_2);
-                    if (id1 > seroffset && id2 > seroffset) CreateBond(id1,id1,bvalue);
+                    id1 = seroffset + find_chem_comp_id(cif,label_comp_id, atom_id_1)-1;
+                    id2 = seroffset + find_chem_comp_id(cif,label_comp_id, atom_id_2)-1;
+                    if (id1 >= seroffset && id2 >= seroffset) CreateBond(id1,id1,bvalue);
                     else NullBonds++;
                     if (cif_findtag(cif,"_chem_comp_bond.ordinal"))
                         cif_findtag(cif,"_chem_comp_bond.pdbx_ordinal");
@@ -3664,8 +3706,13 @@ int SavePDBMolecule( char *filename )
     register char *ptr;
     register int count;
     register int model;
-    register char ch = '\0';
+    register int ch = -1;
     register int i;
+    register int models = 0;
+    register int modelcount = 0;
+    register int maxcountpermodel = 0;
+    register int resetmodelcount = 0;
+
     char eltype[2];
  
     if( !Database )
@@ -3695,18 +3742,62 @@ int SavePDBMolecule( char *filename )
     prev = (void __far*)0; 
     count = 1;
     model = 0;
-    ch = ' ';
+    ch = 52;
+
+        /* count the total max atoms per model */
+
+    if( SelectCount >= 100000 )
+    {
+    ForEachAtom
+        if( aptr->flag&SelectFlag )
+          {  
+            if( chain->model != model )
+             { 
+                model = chain->model;
+                models++;
+                if( modelcount > maxcountpermodel )
+                {
+                   maxcountpermodel = modelcount;
+                }
+                modelcount = 0;
+             }
+             modelcount++;
+          }
+       if( count >= 100000 )
+       {
+          WriteString("Notice: This PDB file contains more than 99,999 atoms\n" );
+          if ( modelcount )
+          {
+             if ( maxcountpermodel >= 100000 )
+             {
+                WriteString("Notice: Some individual models in this multi-model PDB file contain more than 99,999 atoms\n" );
+                WriteString("Notice: ATOM numbers will be modulo 100,000\n");
+             } else {
+                WriteString("Notice: Each model will restart at ATOM number 1\n");
+                resetmodelcount = 1;
+             }
+          } else {
+             WriteString("Notice: ATOM numbers will be modulo 100,000\n");
+          }
+       }
+    }
+
+    model = 0;
 
     ForEachAtom
         if( aptr->flag&SelectFlag )
-        {   if( prev && (chain->ident!=ch) )
-                fprintf( DataFile, "TER   %5d      %.3s %c%4d \n",
-                         count++, Residue[prev->refno], ch, prev->serno);
+        {   if( prev && (chain->chrefno!=ch) )
+                fprintf( DataFile, "TER   %5d      %.3s %s%4d \n",
+                         count++, Residue[prev->refno], ChIdents[ch], prev->serno);
             if( chain->model != model )
             {   if( model )
                     fputs("ENDMDL\n",DataFile);
                 fprintf(DataFile,"MODEL     %4d\n",chain->model);
                 model = chain->model;
+                if( resetmodelcount )
+                {
+                    count = 1;
+            }
             }
  
             if( aptr->flag&HeteroFlag )
@@ -3726,16 +3817,17 @@ int SavePDBMolecule( char *filename )
                 c[3]=ElemDesc[aptr->refno][2];
                 c[4]=0;
                 for (ic=0; ic<4; ic++) if (!c[ic]) c[ic]=' ';
-                fprintf( DataFile, "%5d %-4.4s%c%3.3s %c%4d    ",
-                     count++, c,
+                fprintf( DataFile, "%5d %-4.4s%c%3.3s %s%4d    ",
+                     1+((count-1)%99999), c,
                      aptr->altl, Residue[group->refno],
-                     chain->ident, group->serno );
-            	
+                     ChIdents[chain->chrefno], group->serno );
+                count++;
             } else {
-              fprintf( DataFile, "%5d %-4.4s%c%3.3s %c%4d    ",
-                     count++, ElemDesc[aptr->refno],
+              fprintf( DataFile, "%5d %-4.4s%c%3.3s %s%4d    ",
+                     1+((count-1)%99999), ElemDesc[aptr->refno],
                      aptr->altl, Residue[group->refno],
-                     chain->ident, group->serno );
+                     ChIdents[chain->chrefno], group->serno );
+                count++;
             }   
  
             x = (double)(aptr->xorg + aptr->fxorg + OrigCX)/250.0
@@ -3752,7 +3844,7 @@ int SavePDBMolecule( char *filename )
 #endif
             fprintf(DataFile,"  1.00%6.2f\n",aptr->temp/100.0);
  
-            ch = chain->ident;
+            ch = chain->chrefno;
             prev = group;
         }
  
@@ -3779,7 +3871,7 @@ int SaveWPDBMolecule( char *filename )
     register char *ptr;
     register int count;
     register int model;
-    register char ch = '\0';
+    register int ch = -1;
     register int i;
     char eltype[2];
  
@@ -3795,7 +3887,7 @@ int SaveWPDBMolecule( char *filename )
  
     if( *Info.classification || *Info.identcode )
              /*12345678901234567890123456789012*/
-    {   fputs("HEADER                          ",DataFile);
+    {   fputs("LEADER                          ",DataFile);
  
         ptr = Info.classification;
         for( i=11; i<=60; i++ )
@@ -3811,13 +3903,13 @@ int SaveWPDBMolecule( char *filename )
     prev = (void __far*)0; 
     count = 1;
     model = 0;
-    ch = ' ';
+    ch = 52;
 
     ForEachAtom
         if( aptr->flag&SelectFlag )
-        {   if( prev && (chain->ident!=ch) )
-                fprintf( DataFile, "TER     %9d                  %.10s         %c%9d \n",
-                         count++, Residue[prev->refno], ch, prev->serno);
+        {   if( prev && (chain->chrefno!=ch) )
+                fprintf( DataFile, "TER     %9d                  %.10s      %.4s%9d \n",
+                         count++, Residue[prev->refno], ChIdents[ch], prev->serno);
             if( chain->model != model )
             {   if( model )
                     fputs("ENDMDL\n",DataFile);
@@ -3843,17 +3935,17 @@ int SaveWPDBMolecule( char *filename )
                   if(!c[ic+1])c[ic+1]=' ';
                 }
                 c[10]=0;
-                fprintf( DataFile, "  %9d     %-10.10s  %c%10.10s         %c%9d ",
+                fprintf( DataFile, "  %9d     %-10.10s  %c%10.10s      %.4s%9d ",
                      count++, c,
                      aptr->altl, Residue[group->refno],
-                     chain->ident, group->serno );
+                     ChIdents[chain->chrefno], group->serno );
             	
             } else {
  
-              fprintf( DataFile, "  %9d     %-10.10s  %c%10.10s         %c%9d ",
+              fprintf( DataFile, "  %9d     %-10.10s  %c%10.10s      %.4s%9d ",
                      count++, ElemDesc[aptr->refno],
                      aptr->altl, Residue[group->refno],
-                     chain->ident, group->serno );
+                     ChIdents[chain->chrefno], group->serno );
             }
  
             x = (double)(aptr->xorg + aptr->fxorg + OrigCX)/250.0
@@ -3870,13 +3962,13 @@ int SaveWPDBMolecule( char *filename )
 #endif
             fprintf(DataFile,"  1.00%6.2f\n",aptr->temp/100.0);
  
-            ch = chain->ident;
+            ch = chain->chrefno;
             prev = group;
         }
  
     if( prev )
-        fprintf( DataFile, "TER     %9d                  %.10s         %c%9d \n",
-                 count, Residue[prev->refno], ch, prev->serno);
+        fprintf( DataFile, "TER     %9d                  %.10s      %.4s%9d \n",
+                 count, Residue[prev->refno], ChIdents[ch], prev->serno);
     if( model )
         fputs("ENDMDL\n",DataFile);
     fputs("END   \n",DataFile);
@@ -4198,12 +4290,265 @@ int SaveXYZMolecule( char *filename )
 }
  
  
+char * numnullify( char * buffer, size_t limit, long number) {
+    int limret;
+    if (limit < 2) return (char  *)NULL;
+    buffer[0] = '.';
+    buffer[1] = '\0';
+    if (number == 0) return buffer;
+    limret = snprintf(buffer,limit,"%ld",number);
+    if (limret >= limit) {
+        buffer[0] = '?';
+        buffer[1] = '\0';
+    }
+    return buffer;
+}
+
+char * strnullify( char * buffer, size_t limit, char * str) {
+    int ii;
+    int hasblanks;
+    int hassq;
+    int hasdq;
+    int isnull;
+    int firstnb;
+    int lastnb;
+    size_t lenstr;
+    if (limit < 2) return (char  *)NULL;
+    buffer[0] = '.';
+    buffer[1] = '\0';
+    if (str[0] == '\0') return buffer;
+    lenstr = strlen(str);
+    if (lenstr > limit+2) {
+        buffer[0]='?';
+        return buffer;
+    }
+    hasblanks = hassq = hasdq = isnull =0;
+    firstnb = lenstr;
+    lastnb = 0;
+    if ((str[0]=='.' || str[0]=='?') &&
+        (str[1]=='\0'||isspace(str[1]))) isnull++;
+    for(ii=0; ii<lenstr; ii++) {
+        if (str[ii] == '\'') hassq++;
+        if (str[ii] == '"')  hasdq++;
+        if (ii<firstnb && (!isspace(str[ii]))) firstnb=ii;
+        if (!isspace(str[ii])) lastnb = ii;
+    }
+    if (lastnb < firstnb) return buffer;
+    for (ii=firstnb; ii<=lastnb; ii++) {
+        if (isspace(str[ii])) hasblanks++;
+    }
+    if (!isnull && !hasblanks && !hassq && !hasdq) {
+        sprintf(buffer,"%s",str);
+        return buffer;
+    }
+    if (!hassq) {
+        sprintf(buffer,"'%s'",str+firstnb);
+        return buffer;
+    }
+    if (!hasdq) {
+        sprintf(buffer,"\"%s\"",str+firstnb);
+        return buffer;
+    }
+    sprintf(buffer,"\n;\\\n%s\\\n;\n",str);
+    return buffer;
+}
+
+ 
 int SaveCIFMolecule( char *filename )
 {
-    UnusedArgument(filename);
+    register double x, y, z;
+    register Group __far *prev;
+    register Chain __far *chain;
+    register Group __far *group;
+    register RAtom __far *aptr;
+    register long count;
+    register int model;
+    register int ch = -1;
+    char eltype[2];
+    char numbuf[20];
+    char resbuf[20];
+    char atombuf[20];
+    char chainx[11];
+    char chainbuf[5];
+    char altbuf[5];
+    char altx[2];
+    char strbuf[1025];
+    char elemx[3];
+    char elembuf[6];
 
     if( !Database )
         return False;
+    DataFile = fopen( filename, "w" );
+    if( !DataFile )
+    {   InvalidateCmndLine();
+        WriteString("Error: Unable to create file!\n\n");
+        return False;
+    }
+    
+    fprintf(DataFile,"data_%-10.10s\n",Info.identcode);
+    fprintf(DataFile,"_entry.id            %s\n",
+            strnullify(strbuf,1025,Info.identcode));
+    fprintf(DataFile,"_struct_biol.details %s\n",
+            strnullify(strbuf,1025, Info.classification));
+    fprintf(DataFile,"_struct.title        %s\n",
+            strnullify(strbuf,1025, Info.moleculename));
+    fprintf(DataFile,"_exptl.method        %s\n",
+            strnullify(strbuf,1025, Info.technique));
+    fprintf(DataFile,"_cell.length_a       %g\n",Info.cell[0]);
+    fprintf(DataFile,"_cell.length_b       %g\n",Info.cell[1]);
+    fprintf(DataFile,"_cell.length_c       %g\n",Info.cell[2]);
+    fprintf(DataFile,"_cell.angle_alpha    %g\n",Info.cell[3]);
+    fprintf(DataFile,"_cell.angle_beta     %g\n",Info.cell[4]);
+    fprintf(DataFile,"_cell.angle_gamma    %g\n",Info.cell[5]);
+    fprintf(DataFile,"_symmetry.space_group_name_H-M\n");
+    fprintf(DataFile,"                     %s\n",strnullify(strbuf,1025,Info.spacegroup));
+    fprintf(DataFile,"loop_\n");
+    fprintf(DataFile,"_atom_site.PDBcode\n");
+    fprintf(DataFile,"_atom_site.label_model_id\n");
+    fprintf(DataFile,"_atom_site.id\n");
+    fprintf(DataFile,"_atom_site.type_symbol\n");
+    fprintf(DataFile,"_atom_site.label_atom_id\n");
+    fprintf(DataFile,"_atom_site.label_alt_id\n");
+    fprintf(DataFile,"_atom_site.label_comp_id\n");
+    fprintf(DataFile,"_atom_site.label_asym_id\n");
+    fprintf(DataFile,"_atom_site.label_seq_id\n");
+    fprintf(DataFile,"_atom_site.cartn_x\n");
+    fprintf(DataFile,"_atom_site.cartn_y\n");
+    fprintf(DataFile,"_atom_site.cartn_z\n");
+    fprintf(DataFile,"_atom_site.occupancy\n");
+    fprintf(DataFile,"_atom_site.B_iso_or_equiv\n");
+     
+    count=1;
+    model = 0;
+    prev = (Group __far *)NULL;
+    ch = 52;
+    
+    ForEachAtom
+    if( aptr->flag&SelectFlag )
+    {   if( prev && (chain->chrefno!=ch) ){
+        fprintf( DataFile, "#TER    %s %ld %s %s %s %d . . . . . \n", 
+                numnullify(numbuf,20,chain->model),
+                count++, ". . .",
+                strnullify(resbuf,20,Residue[prev->refno]), 
+                strnullify(chainbuf,5,chainx), prev->serno);
+        }
+        if( chain->model != model )
+        {   
+            model = chain->model;
+        }
+        
+        strcpy(chainx,ChIdents[chain->chrefno]);
+        
+        altx[0] = aptr->altl;
+        altx[1] = '\0';
+        elemx[0] = ((Element[aptr->elemno]).symbol)[0];
+        elemx[1] = ((Element[aptr->elemno]).symbol)[1];
+        elemx[2] = '\0';
+        if( aptr->flag&HeteroFlag )
+        {      fputs("HETATM",DataFile);
+        } else fputs("ATOM  ",DataFile);
+        
+        eltype[0] = ElemDesc[aptr->refno][0];
+        eltype[1] = ElemDesc[aptr->refno][1];
+        if (isdigit(eltype[1])) eltype[1]=' ';
+        if (isdigit(eltype[0])) eltype[0]=' ';
+        if (eltype[0]!=' '
+            && GetElemDescNumber(eltype)!=aptr->elemno )
+        { char c[11];
+            int ic;
+            c[0]=' ';
+            for (ic=0; ic<9; ic++){
+                c[ic+1]=ElemDesc[aptr->refno][ic];
+                if(!c[ic+1])c[ic+1]=' ';
+            }
+            c[10]=0;
+            fprintf( DataFile, "  %s %ld %s %s %s %s %s %d ",
+                    numnullify(numbuf,20,chain->model),
+                    count++, 
+                    strnullify(elembuf,6,elemx),
+                    strnullify(atombuf,20,c),
+                    strnullify(altbuf,5,altx),
+                    strnullify(resbuf,20,Residue[group->refno]),
+                    strnullify(chainbuf,5,chainx), group->serno);
+            
+        } else {
+            
+            fprintf( DataFile, "  %s %ld %s %s %s %s %s %d ",
+                    numnullify(numbuf,20,chain->model),
+                    count++, 
+                    strnullify(elembuf,6,elemx),
+                    strnullify(atombuf,20,ElemDesc[aptr->refno]),
+                    strnullify(altbuf,5,altx),
+                    strnullify(resbuf,20,Residue[group->refno]),
+                    strnullify(chainbuf,5,chainx),
+                    group->serno );
+        }
+        
+        x = (double)(aptr->xorg + aptr->fxorg + OrigCX)/250.0
+        +(double)(aptr->xtrl)/10000.0;
+        y = (double)(aptr->yorg + aptr->fyorg + OrigCY)/250.0
+        +(double)(aptr->ytrl)/10000.0;
+        z = (double)(aptr->zorg + aptr->fzorg + OrigCZ)/250.0
+        +(double)(aptr->ztrl)/10000.0;
+        
+#ifdef INVERT
+        fprintf(DataFile,"%13.3f %13.3f %13.3f",x,-y,-z);
+#else
+        fprintf(DataFile,"%13.3f %13.3f %13.3f",x,y,-z);
+#endif
+        fprintf(DataFile,"  1.00 %6.2f\n",aptr->temp/100.0);
+        
+        ch = chain->chrefno;
+        prev = group;
+    }
+    
+    if( prev ) {
+        chainx[0] = ch;
+        chainx[1] = '\0';
+        fprintf( DataFile, "#TER    %s %ld %s %s %s %d . . . . . \n", 
+                numnullify(numbuf,20,model),
+                count, ". . .",
+                strnullify(resbuf,20,Residue[prev->refno]), 
+                strnullify(chainbuf,5,chainx), prev->serno);
+
+    }
+    fclose( DataFile );
+#ifdef APPLEMAC
+    SetFileInfo(filename,'RSML','TEXT',131);
+#endif
+
     return True;
 }
 
+
+/*=================================*/
+/* Atom Editing Functions          */
+/*=================================*/
+
+int AtomEdit(Long atomno, int heta,               /* atom serial no and
+                                                   hetatom flag          */
+                          double __far *coords,   /* X, Y, Z coordinates */ 
+                          double __far *offsets,  /* X, Y, Z offsets     */
+                          double __far *radius,   /* atomic radius       */
+                          double __far *temp,     /* temperature factor  */
+                          double __far *occupancy,/* occupancy           */
+                          char   __far *altl,     /* alternate conformer */
+                          Long   __far *colour,   /* RGB color           */ 
+                          Long   __far *atmserno, /* new atom serial no. */
+                          char   __far *resname,  /* new residue name    */
+                          Long   __far *resserno, /* new residue no.     */
+                          char   __far *icode,    /* inserion code       */
+                          char   __far *chainid,  /* new chain identifier*/
+                          Long   __far *model,    /* model number        */
+                          char*  __far *elem,     /* elemno              */
+                          int*   __far charge     /* element charge      */)
+{
+    
+}
+
+int AtomDelete(Long atomno){
+    
+}
+
+                          
+                        

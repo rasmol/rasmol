@@ -167,12 +167,12 @@ static int process_cx_atom( cx_Object atom, int serno )
     prop = cx_sprop(atom,prop_chain);
     if( prop && *prop ) 
     {   chain = *prop;
-    } else chain = ' ';
+    } else chain = 52;
 
-    if( CurChain && (CurChain->ident!=chain) )
+    if( CurChain && (CurChain->chrefno!=chain) )
     {   CurChain = CurMolecule->clist;
         while( CurChain )
-            if( CurChain->ident != chain )
+            if( CurChain->chrefno != chain )
             {   CurChain = CurChain->cnext;
             } else break;
     }

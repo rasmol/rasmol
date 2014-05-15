@@ -629,6 +629,29 @@ static void ProcessOptions( int argc, char *argv[] )
 }
 
 
+
+/* dummy ShowInterpNames */
+
+int ShowInterpNames ( void )
+{
+    return False;
+}
+
+/* dummy CheckInterpName */
+
+
+int CheckInterpName( char __huge *name, unsigned long __huge *interpid) {
+    return False;
+}
+
+/* dummy SendInterpCommand */
+
+int SendInterpCommand( char __huge *name, unsigned long interpid,
+                       char __huge *command){
+    return False;
+}
+
+
 int main( int argc, char *argv[] )
 {
     register FILE *fp;

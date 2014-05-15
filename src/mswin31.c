@@ -648,6 +648,7 @@ int OpenDisplay( HANDLE instance, int mode )
          DialValue[i] = 0.0;
          
     CQRMSet(DialQRot,0.,0.,0.,0.);
+    CQRMSet(AuxQRot,0.,0.,0.,0.);
 
     ULut[0] = True;
     RLut[0] = GLut[0] = BLut[0] = 0;

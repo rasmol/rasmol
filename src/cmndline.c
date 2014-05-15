@@ -512,6 +512,14 @@ void InvalidateCmndLine( void )
     CommandActive=False;
 }
 
+void InterruptCommands (char __huge * message)
+{
+    InvalidateCmndLine();
+    WriteString(message);
+    WriteChar('\n');
+    ResetCommandLine(0);
+}
+
 
 static void ClampDial( int dial, Real value )
 {
@@ -1035,5 +1043,6 @@ void InitialiseCmndLine( void )
 
     SetMouseMode(MMRasMol);
     HeldButton = False;
+    TkSendSerial = 0;
 }
 

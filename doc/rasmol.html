@@ -68,7 +68,7 @@ Latest Manual </a><br />&nbsp;<br />
 </center>
 <H3 ALIGN=CENTER>
 Molecular Graphics Visualisation Tool<BR>
-13 June 2009 (rev. 17 July 2009)<br />
+13 June 2009 (rev. 8 May 2012)<br />
 </H3>
 </font><font color="#000000">
 <CENTER>
@@ -179,7 +179,7 @@ version 2.7.1.1, April 2001 for RasMol version 2.7.2.1 and
 February 2005 for RasMol version 2.7.3 and November 2007,
 January 2008 and March 2008 for RasMol version 2.7.4.
 <p>
-<CENTER>Documentation Last Updated 17 July 2009<br>
+<CENTER>Documentation Last Updated 8 May 2012<br>
 Edited by Herbert J. Bernstein and Frances C. Bernstein
 </CENTER>
 
@@ -1521,7 +1521,7 @@ back and forth within a single command line statement. Hitting
 the current, <I>e.g.</I> selected or edited, command line contents.
 <P>
 <A NAME="go_dimensions"></A>
-<H3>Dimensions and Coordinates within RasMol</H3>
+<H3>Dimensions within RasMol</H3>
 All dimensions in RasMol, such as radii and distances, may be
 specified in either 'RasMol units' or &Aring;ngstroms (&Aring;). The
 RasMol units were first introduced to allow reasonably sized
@@ -1538,51 +1538,6 @@ However, dimensions within RasMol can also be specified in
 example, 'spacefill 1.2' specifies a sphere radius of 1.2 &Aring;.
 This is particularly useful for the cut-off distance parameter in
 <B><TT>within</B></TT> expressions.
-The coordinate frame most commonly used if structural biology
-is a right-handed coordinate system (X, Y, Z)  in &Aring;ngstroms (&Aring;)
-(10<sup>(-10)</sup> metres) with an arbitrary origin.
-Computer screens are organized in terms of &quot;pixels&quot;
-(picture elements), typically 1/72<sup>nd</sup> of inch with
-an origin at the top left, with the screen Y-axis running down,
-or, on some systems, with the origin at the bottom left, with the screen Y-axis running up.
-Rasmol converts from the original coordinate in several steps. <br />
-<br />
-The first coordinate transformation is from (X,Y,Z) in
-&Aring;ngstroms (&Aring;) to (xorg,yorg,zorg) in RasMol
-units with both the Y-axis and the Z-axis inverted
-if the C-preprocessor symbol INVERT is defined in
-rasmol.h (the most common case):  <br />
-<br />
-xorg = X*250; yorg = -Y*250; zorg = -Z*250;<br />
-<br />
-If the C-preprocessor symbol INVERT is <b>not</b> defined,
-then the Y-axis is not inverted, but the Z-axis is: <br />
-<br />
-xorg = X*250; yorg = Y*250; zorg = -Z*250;<br />
-<br />
-The origin is then shifted to the center of mass, by
-computing (OrigCX, OrigCY, OrigCZ) as the average of
-the atom coordinates in rasmol units (after the axis
-inversions), and subtracting that origin vector
-from all coordinates.  Note that each loaded molecule
-is assigned its own center-of-mass origin. <br />
-<br />
-In order to actually display the molecule on the screen
-the recentered rasmol unit coordinates need to be
-converted to pixels coordinates.<br />
-<br />
-RasMol uses a second centering vector (CenX,CenY,CenZ)
-in rasmol units (initially set to zero) which it
-subtracts from the recentered rasmol unit coordinates
-before the display transform, effectively translating
-the origin from the center of mass by that amount
-before any rotations and scaling.  Rotations and scaling
-to pixels are held in three vectors, MatX, MatY and MatZ
-which act as the rows of the final rotation matix.  Finally
-a vector in pixels (XOffset,YOffset,ZOffset) is added to
-conform to the requirements of the indexing of the pixel
-buffer.  Each molecule has its own centering vector a
-and display transform.
 <P>
 <A NAME="go_ini"></A>
 <H3>Start-up Initialisation Files</H3>
@@ -1975,7 +1930,7 @@ The RasMol
 '<tt><b>clipboard</b></tt>'
 command places a copy of the currently displayed image on the local
 graphics 'clipboard'. Note: this command is not yet supported on
-UNIX or VMS machines. It is intended to make transfering images
+UNIX or VMS machines. It is intended to make transferring images
 between applications easier under Microsoft Windows or on an Apple
 Macintosh.
 <p>
@@ -3155,16 +3110,29 @@ appropriate fonts have been installed.
 <a name="save"><h3>Save</h3></a><p>
 <pre>
 Syntax:  save {pdb} &lt;filename&gt;
+         save wpdb &lt;filename&gt;
+         save cif &lt;filename&gt;
          save mdl &lt;filename&gt;
          save alchemy &lt;filename&gt;
          save xyz &lt;filename&gt;
 </pre><p>
 Save the currently selected set of atoms in a Protein
-Data Bank (PDB), MDL, Alchemy(tm) or XYZ format file.
+Data Bank (PDB), Wide PDB (WPDB), mmCIF (CIF),
+MDL, Alchemy(tm) or XYZ format file.  Some of the
+implementations are are only sufficient for reloading
+in RasMol and may need to be supplemented for use by
+programs other than RasMol.
+<p>
+Atom serial numbers are regenerated.  When this will
+result in more than 99,999 atoms being written in
+PDB format, numbers may be repeated.  If possible
+the repeats are done by using the same numbers
+in different NMR models.
+<p>
 The distinction between this command and the RasMol
 '<a href="#write"><tt><b>write</b></tt></a>'
-command has been dropped. The only difference is that without a format
-specifier the
+command has been dropped. The only difference is that
+without a format specifier the
 '<tt><b>save</b></tt>'
 command generates a
 '<tt><b>PDB</b></tt>'
@@ -3241,7 +3209,7 @@ The RasMol
 command allows the user to alter various internal program parameters
 such as those controlling rendering options. Each parameter has its
 own set or permissible parameter options. Typically, omitting the
-paramter option resets that parameter to its default value. A list of
+parameter option resets that parameter to its default value. A list of
 valid parameter names is given below.
 <p>
 <center><table BORDER CELLPADDING=2>
@@ -3731,7 +3699,7 @@ command.
 
 If the selected bonds involved atoms of alternate conformers then
 the bonds are narrowed in the middle to a radius of .8 of the specified
-radius (or to the radius specifed as the optional second parameter).
+radius (or to the radius specified as the optional second parameter).
 <p>
 Non-bonded atoms, which could become invisible in an
 ordinary
@@ -4541,7 +4509,7 @@ shadows. Enabling shadowing will automatically disable the Z-clipping
 Ray-tracing typically takes about several seconds for a moderately sized protein.
 It is recommended that shadowing be normally disabled whilst the
 molecule is being transformed or manipulated, and only enabled once
-an appropiate viewpoint is selected, to provide a greater impression
+an appropriate viewpoint is selected, to provide a greater impression
 of depth.
 <p><hr>
 <a name="setslabmode"><h3>Set SlabMode</h3></a><p>

@@ -230,6 +230,7 @@
 #define MaskTok        299
 #define MoleculeTok    300
 #define MolSurfTok     301
+
 #define MonitorTok     302
 #define MoveTok        303
 #define MoveToTok      304
@@ -246,29 +247,33 @@
 #define RestoreTok     314
 #define RestrictTok    315
 #define RotateTok      316
-#define SaveTok        317
-#define ScriptTok      318
-#define SelectTok      319
-#define SetTok         320
-#define ShowTok        321
+#define SASurfTok      317
+#define SaveTok        318
+#define ScriptTok      319
+#define SelectTok      320
+#define SendTok        321
+#define SetTok         322
+#define ShowTok        323
 
-#define SlabTok        322
-#define SourceTok      323
-#define SpacefillTok   324
-#define StarTok        325
-#define StructureTok   326
-#define SurfaceTok     327
-#define SymmetryTok    328
-#define TitleTok       329
-#define TraceTok       330
-#define TranslateTok   331
+#define SlabTok        324
+#define SourceTok      325
+#define SpacefillTok   326
+#define StarTok        327
+#define StructureTok   328
+#define SubstructureTok 329
+#define SurfaceTok     330
+#define SymmetryTok    331
+#define TimeTok        332
+#define TitleTok       333
+#define TraceTok       334
+#define TranslateTok   335
 
-#define ViewTok        332
-#define WaitTok        333
-#define WireframeTok   334
-#define WriteTok       335
-#define ZapTok         336
-#define ZoomTok        337
+#define ViewTok        336
+#define WaitTok        337
+#define WireframeTok   338
+#define WriteTok       339
+#define ZapTok         340
+#define ZoomTok        341
 
 /* Predicate Tokens */
 #define IsPredTok(x)   (((x)>=AlphaTok) && ((x)<=SmallTok))
@@ -376,7 +381,8 @@
 #define MirrorTok      510
 
 /* Feature Tokens */
-#define AtomTok        521
+#define AtomTok        520
+#define HetAtomTok     521
 #define BondTok        522
 #define DotsTok        523
 #define HBondTok       524
@@ -532,6 +538,8 @@
 #define ScaleTok       765
 #define KabschTok      766
 #define LocalTok       767
+#define IPCDetailTok   768
+#define InterpTok      769
 
 #define PSTok          EPSFTok
 

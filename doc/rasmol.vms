@@ -816,7 +816,7 @@
  The RasMol 'clipboard' command places a copy of the currently 
  displayed image on the local graphics 'clipboard'. Note: this 
  command is not yet supported on UNIX or VMS machines. It is intended 
- to make transfering images between applications easier under 
+ to make transferring images between applications easier under 
  Microsoft Windows or on an Apple Macintosh. 
 
  When using RasMol on a UNIX or VMS system this functionality may be 
@@ -1485,11 +1485,20 @@
 
 3 Save
  Save the currently selected set of atoms in a Protein Data Bank 
- (PDB), MDL, Alchemy(tm) or XYZ format file. The distinction between 
- this command and the RasMol 'write' command has been dropped. The 
- only difference is that without a format specifier the 'save' 
- command generates a 'PDB' file and the 'write' command generates a 
- 'GIF' image. 
+ (PDB), Wide PDB (WPDB), mmCIF (CIF), MDL, Alchemy(tm) or XYZ format 
+ file. Some of the implementations are are only sufficient for 
+ reloading in RasMol and may need to be supplemented for use by 
+ programs other than RasMol. 
+
+ Atom serial numbers are regenerated. When this will result in more 
+ than 99,999 atoms being written in PDB format, numbers may be 
+ repeated. If possible the repeats are done by using the same numbers 
+ in different NMR models. 
+
+ The distinction between this command and the RasMol 'write' command 
+ has been dropped. The only difference is that without a format 
+ specifier the 'save' command generates a 'PDB' file and the 'write' 
+ command generates a 'GIF' image. 
 
 3 Script
  The RasMol 'script' command reads a set of RasMol commands 
@@ -1528,8 +1537,8 @@
  The RasMol 'set' command allows the user to alter various internal 
  program parameters such as those controlling rendering options. Each 
  parameter has its own set or permissible parameter options. 
- Typically, omitting the paramter option resets that parameter to its 
- default value. A list of valid parameter names is given below. 
+ Typically, omitting the parameter option resets that parameter to 
+ its default value. A list of valid parameter names is given below. 
 
 3 Show
  The RasMol 'show' command display details of the status of the 
@@ -1768,7 +1777,7 @@
  "Parameter value too large" error. Bonds may be coloured using the 
  'colour bonds' command. If the selected bonds involved atoms of 
  alternate conformers then the bonds are narrowed in the middle to a 
- radius of .8 of the specified radius (or to the radius specifed as 
+ radius of .8 of the specified radius (or to the radius specified as 
  the optional second parameter). 
 
  Non-bonded atoms, which could become invisible in an ordinary 
@@ -2164,7 +2173,7 @@ translations, rotations and zooms (default 10 A/second).
  command 'slab off'. Ray-tracing typically takes about several 
  seconds for a moderately sized protein. It is recommended that 
  shadowing be normally disabled whilst the molecule is being 
- transformed or manipulated, and only enabled once an appropiate 
+ transformed or manipulated, and only enabled once an appropriate 
  viewpoint is selected, to provide a greater impression of depth. 
 
 3 SlabMode

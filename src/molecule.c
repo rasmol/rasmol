@@ -244,6 +244,7 @@
 #define CVECTOR_FAR
 #endif
 #include <CNearTree.h>
+#include <time.h>
 
 #define MOLECULE
 #include "molecule.h"
@@ -506,7 +507,42 @@ void RegisterAlloc( void *data )
 /* Group & Chain Handling Functions */
 /*==================================*/
 
-void CreateChain( int ident )
+/* Dummy Delete Group to be added later */
+
+int DeleteGroup(Group __far *group) {
+    return -1;
+}
+
+int DeleteChain(Chain __far * chain) {
+    register Chain __far *cprev;
+    register Chain __far *cnext;
+    register Group __far *group;
+    int found;
+    if (!chain || !Database ||
+        (Molecule __far *)chain->parmolecule != Database ) 
+        return -1;
+    found = False;
+    cprev=(Chain __far *)NULL;
+    for (cnext=Database->clist;cnext;cnext=(cprev=cnext)->cnext) {
+        if (cnext==chain) {
+            if (!cprev) {
+                Database->clist = cnext->cnext;
+            } else {
+                cprev->cnext = cnext->cnext;
+            }
+            found = True;
+            break;
+        }
+    }
+    if (!found) return -1;
+    for (group=cnext->glist;group;group=group->gnext) {
+        if (!DeleteGroup(group)) return -1;
+    }
+    return 0;
+    
+}
+
+void CreateChain( int chrefno )
 {
     register Chain __far *prev;
 
@@ -548,11 +584,12 @@ void CreateChain( int ident )
     } else CurMolecule->clist = CurChain;
     CurChain->cnext = (void __far*)0;
      
-    CurChain->ident = ident;
+    CurChain->chrefno = chrefno;
     CurChain->model = NMRModel;
     CurChain->glist = (void __far*)0;
     CurChain->blist = (void __far*)0;
     CurGroup = (void __far*)0;
+    CurChain->parmolecule = (void __far *)CurMolecule;
     Info.chaincount++;
 
     Cache = (Group __far*)0;
@@ -585,6 +622,7 @@ void CreateGroup( int pool )
     CurGroup = ptr;
 
     CurAtom = (void __far*)0;
+    ptr->parchain = (void __far *)CurChain;
     ptr->alist = (void __far*)0;
     ptr->serno = -9999;
     ptr->sserno = -9999;
@@ -597,6 +635,32 @@ void CreateGroup( int pool )
     ptr->model = NMRModel;
 }
 
+
+int FindChNo( char *ptr )
+{
+    int chlen, refno;
+    
+    chlen = strlen(ptr);
+    if (chlen > 4) {
+        FatalDataError(MsgStrs[StrILong]);
+    }
+    if (chlen == 0) return 52;
+    if (chlen == 1 && ptr[0] >= 'A' && ptr[0] <= 'Z' ) return (int)(ptr[0]-'A');
+    if (chlen == 1 && ptr[0] >= 'a' && ptr[0] <= 'z' ) return 26+(int)(ptr[0]-'a');
+    if (chlen == 1 && ptr[0] == ' ') return 52;
+    if (chlen == 1 && ptr[0] == '*') return 53;
+
+    for( refno=MINCHIDENT; refno<ChNo; refno++ )
+        if( !strncmp(ChIdents[refno],ptr,4) )
+            return refno;
+    
+    if( ChNo++ == MAXCHIDENT )
+        FatalDataError("Too many new chains"); /* "Too many new chains" */
+
+    strcpy(ChIdents[refno],ptr);
+
+    return refno;
+}
 
 int FindResNo( char *ptr )
 {
@@ -920,7 +984,7 @@ void CreateMolGroup( void )
 {
     strcpy(Info.filename,DataFileName);
 
-    CreateChain( ' ' );
+    CreateChain( 52 );
     CreateGroup( 1 );
 
     CurGroup->refno = FindResNo( "MOL" );
@@ -935,7 +999,7 @@ void CreateMolGroup( void )
 void CreateNextMolGroup( void )
 {
     if( CurGroup->alist )
-    {   CreateChain(' ');
+    {   CreateChain(52);
         CreateGroup(1);
         MainGroupCount++;
         CurGroup->refno = FindResNo( "MOL" );
@@ -976,6 +1040,7 @@ RAtom __far *CreateAtom( void )
     CurAtom = ptr;
 
     SelectCount++;
+    ptr->pargroup = (void __far *) CurGroup;
     ptr->flag = SelectFlag | NonBondFlag;
     ptr->label = (void*)0;
     ptr->radius = 375;
@@ -994,7 +1059,9 @@ RAtom __far *CreateAtom( void )
     ptr->fieldx = 0; ptr->fieldy = 0; ptr->fieldz = 0; ptr->fieldw = 0;
     ptr->basex = 0; ptr->basey = 0; ptr->basez = 0;
     ptr->fieldradius = 60; ptr->fieldirad = 0; ptr->fieldcol = 0;
-
+    ptr->bondsvector = NULL;
+    ptr->distancevector = NULL;
+    NeedAtomTree = 1;
     return ptr;
 }
 
@@ -1377,6 +1444,7 @@ Bond __far *ProcessBond( RAtom __far *src, RAtom __far *dst, int flag )
 {
     register Bond __far *ptr;
     register int i;
+    register Long lx, ly, lz, lxyzsq;
 
     if( flag & (DoubBondFlag|TripBondFlag) )
         DrawDoubleBonds = True;
@@ -1404,6 +1472,11 @@ Bond __far *ProcessBond( RAtom __far *src, RAtom __far *dst, int flag )
     ptr->altl = '\0';
     if (src && src->altl != '\0' && src->altl != ' ') ptr->altl = src->altl;
     if (dst && dst->altl != '\0' && dst->altl != ' ') ptr->altl = dst->altl;
+    lx = src->xorg+src->fxorg-dst->xorg-dst->fxorg;
+    ly = src->yorg+src->fyorg-dst->yorg-dst->fyorg;
+    lz = src->zorg+src->fzorg-dst->zorg-dst->fzorg;
+    lxyzsq = lx*lx + ly*ly + lz*lz;
+    ptr->sxyz = (Long)(sqrt((double)lxyzsq)+.5);
 
     return ptr;
 }
@@ -1764,8 +1837,8 @@ static void TestSurface(  RAtom __far *sptr,  RAtom __far *dptr )
 
 /*
     TestBuriedSurface
-	    aptr -- pointer to one atom of the pair being checked
-		dptr -- pointer to the other atom of the par being checked
+	    aprt -- pointer to one atom of the pair being checked
+		dprt -- pointer to the other atom of the par being checked
 		eptr -- an atom that might bury the surface bond
 		C    -- the center of the circle at the neck of the surface bond
 		crad -- the radius of the orbit of the probe center around C
@@ -2107,13 +2180,19 @@ int CreateAtomTree( void ) {
 
     double coord[3];
 
+    clock_t tc1,tc2;
+
     int err;
     
     if (!Database) return 0;
     
     if (AtomTree)CNearTreeClear(AtomTree);
     
-    if (!AtomTree && (err = CNearTreeCreate(&AtomTree,3,CNEARTREE_TYPE_DOUBLE | CNEARTREE_DEFER_ALL ))) return err;
+    fprintf(stderr,"CNTF_FLAGSDEFAULT %x\n",CNTF_FLAGSDEFAULT);
+    
+    tc1 = clock();
+
+    if (!AtomTree && (err = CNearTreeCreate(&AtomTree,3,CNEARTREE_TYPE_DOUBLE | CNTF_FLAGSDEFAULT ))) return err;
     
     /* Load the NearTree with all selected atoms */
     
@@ -2133,6 +2212,14 @@ int CreateAtomTree( void ) {
 		}
     }
     
+    CNearTreeCompleteDelayedInsert(AtomTree);
+    tc2 = clock();
+    fprintf(stderr,"AtomTree created time %g size %ld depth %ld\n",
+            ((double)(tc2-tc1))/CLOCKS_PER_SEC,
+            (long)(AtomTree->m_szsize),(long)(AtomTree->m_szdepth));
+            
+    NeedAtomTree = 0;
+    
     return 0;
     
 }
@@ -2144,6 +2231,7 @@ void CreateSurfaceBonds( void ) {
     register Chain __far *chain;
     register Group __far *group;
 	register SurfBond __far *sbptr;
+    long maxrad;
 	
 	
 	CVectorHandle objInRing;
@@ -2169,7 +2257,7 @@ void CreateSurfaceBonds( void ) {
     /* Load the NearTree with all selected atoms and
 		clear SurfBondFlag */
 	
-    if (!AtomTree) {
+    if (!AtomTree || NeedAtomTree) {
         if (CreateAtomTree()) {
             RasMolFatalExit(MsgStrs[StrMalloc]);
         }
@@ -2182,6 +2270,20 @@ void CreateSurfaceBonds( void ) {
 	  RasMolFatalExit(MsgStrs[StrMalloc]);
 	}
 	
+    /* Max a pass to find the maximum radius */
+    
+    maxrad = 0;
+    
+    for( chain=Database->clist; chain; chain=chain->cnext ) {
+        for( group=chain->glist; group; group=group->gnext ) {
+            for( aptr=group->alist; aptr; aptr=aptr->anext ) {
+				if (aptr->flag&SelectFlag && (!(aptr->flag&ExpandFlag))) {
+				    if (aptr->radius > maxrad) maxrad=aptr->radius;
+                }
+            }
+        }
+    }
+                    
     /* Now run through the atoms again and check each atom
 		against the others using the neartree */
 	
@@ -2198,7 +2300,7 @@ void CreateSurfaceBonds( void ) {
 					probe radii of atom aptr */
 					
 				    if (!CNearTreeFindInAnnulus(AtomTree,125.,
-				    (double)(AbsMaxAtomDiam+ProbeRadius+ProbeRadius),
+				    (double)(aptr->radius+maxrad+ProbeRadius+ProbeRadius),
 				    NULL,objInRing,coord,True))  {
 				    	
 					
@@ -3161,7 +3263,6 @@ static void ResetDatabase( void )
 
     MinX = MinY = MinZ = 0;
     MaxX = MaxY = MaxZ = 0;
-
     MinMainTemp = MaxMainTemp = 0;
     MinHetaTemp = MaxHetaTemp = 0;
     MinMainRes = MaxMainRes = 0;
@@ -3184,6 +3285,7 @@ static void ResetDatabase( void )
     HasHydrogen = False;
     ElemNo = MINELEM;
     ResNo = MINRES;
+    ChNo = MINCHIDENT;
     MaskCount = 0;
     NMRModel = 0;
     NullBonds = 0;
@@ -3206,6 +3308,7 @@ static void ResetDatabase( void )
     }
     
     if (AtomTree)CNearTreeFree(&AtomTree);
+    NeedAtomTree = 1;
 
 }
 
@@ -3296,6 +3399,7 @@ void InitialiseDatabase( void )
     FreeAtom = (void __far*)0;
     FreeBond = (void __far*)0;
     AtomTree = (void __far*)0;
+    NeedAtomTree = 1;
     Info.cisbondcount = -1; /* to ititialize it has to be < 0 */   
     CisBondCutOff = CIS;
     MapLevel = 0.;
@@ -3322,6 +3426,7 @@ void LoadAtomSelection ( void )
 	register Group __far *group;
 	register RAtom __far *aptr;
 
+    NeedAtomTree = 1;
 	ForEachAtom
 		if (aptr->flag&SaveFlag)
 		{

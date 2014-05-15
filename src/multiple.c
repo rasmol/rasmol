@@ -324,9 +324,8 @@ struct {
    /* graphics.h */
     
     { DialValue,          sizeof (DialValue),      0 },
-     	
     { &DialQRot,          sizeof (DialQRot),       0 },
-
+    { &AuxQRot,           sizeof (AuxQRot),        0 },
 
     /* molecule.h */
     { &Info,              sizeof (Info),           0 },
@@ -364,8 +363,9 @@ struct {
     { &MaxHBondDist,      sizeof (MaxHBondDist),   0 },
     { &MinBondDist,       sizeof (MinBondDist),    0 },
     { &MaxBondDist,       sizeof (MaxBondDist),    0 },
-    { &ElemNo,            sizeof (ElemNo),         0 },
-    { &ResNo,             sizeof (ResNo),          0 },
+    /* { &ElemNo,            sizeof (ElemNo),         0 }, */
+    /* { &ResNo,             sizeof (ResNo),          0 }, */
+    /* { &ChNo,              sizeof (ChNo),           0 }, */
     { &HasHydrogen,       sizeof (HasHydrogen),    0 },
     { &MaskCount,         sizeof (MaskCount),      0 },
     { &NMRModel,          sizeof (NMRModel),       0 },
@@ -373,6 +373,7 @@ struct {
     { &MarkAtoms,         sizeof (MarkAtoms),      0 },
     { &HBondChainsFlag,   sizeof (HBondChainsFlag), 0 },
     { &AtomTree,          sizeof (AtomTree),       0 },
+    { &NeedAtomTree,      sizeof (NeedAtomTree),   0 },
 
     /* render.h */
     { &VoxelsClean,       sizeof (VoxelsClean),    0 },

@@ -312,7 +312,7 @@ typedef struct {
         int advise;
     } IPCConv;
 
-#define MaxIPCConvNum     8
+#define MaxIPCConvNum     9
 static IPCConv IPCConvData[MaxIPCConvNum];
 
 static SOCKET SocketNo;
@@ -331,6 +331,7 @@ static int UseSockets;
 #define AMSelectCount  0x04
 #define AMMolName      0x08
 #define AMPickCoord    0x10
+#define AMDetail       0x20
 
 typedef struct {
         int bitmask;
@@ -345,7 +346,8 @@ static AdviseType AdviseMap[ItemCount] = {
     { AMNone,        "Ident"   },  /* AdvIdent       */
     { AMNone,        "Class"   },  /* AdvClass       */
     { AMNone,        "Image"   },  /* AdvImage       */
-    { AMPickCoord,   "PickXYZ" }   /* AdvPickCoord   */
+    { AMPickCoord,   "PickXYZ" },  /* AdvPickCoord   */
+    { AMDetail,      "Detail"  },  /* AdvDetail      */
         };
 
 static char AdviseBuffer[256];
@@ -614,8 +616,12 @@ void WriteChar( int ch )
 			  SetCaretPos(TermXPos*CharWide,
 				      TermYPos*CharHigh);
 		      break;
-		      
     }
+    if (IPCResponseDetail && IPCResponsePtr) {
+        cc = (char)ch;
+        vector_add_element((GenericVec __far * )IPCResponsePtr,
+            (void __far *)(&ch));
+}
 }
 
 
@@ -623,6 +629,10 @@ void WriteMsg( char *ptr )
 {
     WriteString(ptr);
     WriteChar ('\n');
+    if (IPCResponseDetail && IPCResponsePtr) {
+        vector_add_elements((GenericVec __far * )IPCResponsePtr,
+                           (void __far *)(ptr),strlen(ptr));
+}
 }
 
 
@@ -1542,9 +1552,11 @@ static void SendItemData( HWND hSrc, HWND hDst,
 
 		      sprintf(dst,"%d",QGroup->serno);
 		      for( dst=Text; *dst; dst++ );
-		      if( QChain->ident!=' ' )
+		      if( QChain->chrefno!=52 )
 		      {   *dst++ = ':';
-			  *dst++ = QChain->ident;
+                  for (i=0;ChIdents[QChain->chrefno][i];i++){
+                      *dst++ = ChIdents[QChain->chrefno][i];
+		      }
 		      }
 		      *dst++ = '.';
 		      
@@ -1683,9 +1695,10 @@ static void PrepareIPCAdviseItem( int item )
                       if( flag ) *dst++ = ']';
                       sprintf(dst,"%d",QGroup->serno);
                       for( dst=AdviseBuffer; *dst; dst++ );
-                      if( QChain->ident!=' ' )
-                      {   if( isdigit(QChain->ident) ) *dst++ = ':';
-                          *dst++ = QChain->ident;
+                      if( QChain->chrefno!=52 )
+                      {   *dst++ = ':';
+                          for(i=0;ChIndents[QChain->chrefno][i];i++))
+                          *dst++ = ChIndents[QChain->chrefno][i];
                       }
                       *dst++ = '.';
 
@@ -2021,10 +2034,18 @@ LONG FAR PASCAL DDECallB( HWND hWin, UINT uMsg, WPARAM wArg, LPARAM lArg )
                     {   GenerateDDEReply((HWND)wArg,hWin,False,hiword);
                         return 0L;
                     }
-
+                    vector_set_elements((GenericVec __far * )IPCResponsePtr,
+                            (void __far *) "1\n", 2,0);
+                    IPCResponsePtr->size=2;
                     stat = ExecuteIPCCommand( cmnd );
                     GlobalUnlock((HANDLE)hiword);
                     GenerateDDEReply((HWND)wArg,hWin,stat,hiword);
+                    (IPCResponsePtr->array)[0]= stat? '1' : '0';
+                    if (!IPCResponseDetail) IPCResponsePtr->size=2;
+                    vector_add_element((GenericVec __far * )IPCResponsePtr,
+                        (void __far *)"\0");
+                    send(IPCConvData[conv].socket,IPCResponsePtr->array,
+                         (int)(IPCResponsePtr->size),0);
 
                     if( (stat==IPC_Quit) || (stat==IPC_Exit) )
                         RasMolExit();
@@ -2714,6 +2735,35 @@ static BOOL HandleMenu( WPARAM option )
     }
     return TRUE;
 }    
+
+
+/* dummy ShowInterpNames */
+
+int ShowInterpNames ( void )
+{
+    return False;
+}
+
+/* dummy CheckInterpName */
+
+
+int CheckInterpName( char __huge *name, unsigned long __huge * interpid) {
+    return False;
+}
+
+/* dummy SendInterpCommand */
+
+int SendInterpCommand( char __huge *name, unsigned long interpid,
+                       char __huge *command){
+    return False;
+}
+
+
+/* dummy CheckInterpName */
+
+int CheckInterpName( char __huge *name) {
+    return False;
+}
 
 
 static void InitiateServer( HWND hWinCli, LPARAM lParam )

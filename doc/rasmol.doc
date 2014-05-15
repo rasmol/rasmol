@@ -3,7 +3,7 @@
 %%
 %%                                  RasMol
 %%                  Molecular Graphics Visualisation Tool
-%%                      13 June 2009 (rev. 17 July 2009)
+%%                      13 June 2009 (rev. 4 May 2012)
 %%
 %%                    Based on RasMol 2.6 by Roger Sayle
 %%  Biomolecular Structures Group, Glaxo Wellcome Research & Development,
@@ -32,6 +32,8 @@
 %%                    RasMol 2.7.4.2 Mar 08
 %%                    RasMol 2.7.5   Jun 09
 %%                    RasMol 2.7.5.1 Jul 09
+%%                    RasMol 2.7.5.2 May 11
+%%                    RasMol 2.7.5.3 May 12
 %%
 %% RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev
 %% and L. Andrews (via the neartree package).  Work on RasMol 2.7.5
@@ -88,7 +90,7 @@
 %% and November 2007, January 2008 and March 2008 for RasMol version 2.7.4.
 %% 
 %%
-%%                Documentation Last Updated 17 July 2009
+%%                Documentation Last Updated 8 May 2012
 %%          Edited by Herbert J. Bernstein and Frances C. Bernstein
 %%
 %% Please read the file NOTICE for important notices which apply to this
@@ -125,7 +127,7 @@ PP
 TR                         R a s M o l   v 2 . 7 . 5
 TR                       =============================
 TR                    Molecular Graphics Visualisation Tool
-TR                      13 June 2009 (rev. 17 July 2009)
+TR                      13 June 2009 (rev. 4 May 2012)
 TR
 TR                    Based on RasMol 2.6 by Roger Sayle
 TR  Biomolecular Structures Group, Glaxo Wellcome Research & Development,
@@ -154,6 +156,8 @@ TR                    RasMol 2.7.4.1 Jan 08
 TR                    RasMol 2.7.4.2 Mar 08
 TR                    RasMol 2.7.5   Jun 09
 TR                    RasMol 2.7.5.1 Jul 09
+TR                    RasMol 2.7.5.2 May 11
+TR                    RasMol 2.7.5.3 May 12
 TR
 TR RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev
 TR and L. Andrews (via the neartree package).  Work on RasMol 2.7.5
@@ -210,7 +214,7 @@ TR for RasMol version 2.7.2.1, February 2005 for RasMol version 2.7.3
 TR and November 2007, January 2008 and March 2008 for RasMol version 2.7.4.
 TR 
 TR
-TR                 Documentation Last Updated 17 July 2009
+TR                 Documentation Last Updated 8 May 2012
 TR          Edited by Herbert J. Bernstein and Frances C. Bernstein
 TR
 TR Please read the file NOTICE for important notices which apply to this
@@ -304,7 +308,9 @@ RR{\fs16 \tab RasMol 2.7.4     \tab Nov 07 }\line
 RR{\fs16 \tab RasMol 2.7.4.1   \tab Jan 08 }\line
 RR{\fs16 \tab RasMol 2.7.4.2   \tab Mar 08 }\line
 RR{\fs16 \tab RasMol 2.7.5     \tab Jun 09 }\line
-RR{\fs16 \tab RasMol 2.7.5.1   \tab Jul 09 }
+RR{\fs16 \tab RasMol 2.7.5.1   \tab Jul 09 }\line
+RR{\fs16 \tab RasMol 2.7.5.2   \tab May 11 }\line
+RR{\fs16 \tab RasMol 2.7.5.3   \tab May 12 }
 
 RR{\fs8 \par\par }
 RR{\fs16 RasMol 2.7.5 incorporates changes by T. Ikonen, G. McQuillan, N. Darakev}\line
@@ -361,7 +367,7 @@ RTFebruary 2005 for RasMol version 2.7.3 and November 2007,
 RTJanuary 2008 and March 2008 for RasMol version 2.7.4.
 RR}
 RP
-RR{\fs16 Documentation Last Updated 17 July 2009}\line
+RR{\fs16 Documentation Last Updated 8 May 2012}\line
 RR{\fs16 Edited by Herbert J. Bernstein and Frances C. Bernstein}
 RP
 RR{\fs16 Please read the file NOTICE for important notices which apply to this}\line
@@ -443,7 +449,7 @@ HR</table>
 HR</center>
 HR<H3 ALIGN=CENTER>
 HRMolecular Graphics Visualisation Tool<BR>
-HR13 June 2009 (rev. 17 July 2009)<br />
+HR13 June 2009 (rev. 8 May 2012)<br />
 HR</H3>
 HR</font><font color="#000000">
 HR<CENTER>
@@ -557,7 +563,7 @@ HRFebruary 2005 for RasMol version 2.7.3 and November 2007,
 HRJanuary 2008 and March 2008 for RasMol version 2.7.4.
 
 HP
-HR<CENTER>Documentation Last Updated 17 July 2009<br>
+HR<CENTER>Documentation Last Updated 8 May 2012<br>
 HREdited by Herbert J. Bernstein and Frances C. Bernstein
 HR</CENTER>
 HR
@@ -942,7 +948,7 @@ AB
 NSCopyright
 NR                               RasMol 2.7.5
 NR                     Molecular Graphics Visualisation Tool
-NR                       13 June 2009 (rev. 17 July 2009)
+NR                       13 June 2009 (rev. 4 May 2012)
 NR
 NR                      Based on RasMol 2.6 by Roger Sayle
 NR       Biomolecular Structures Group,Glaxo Wellcome Research & Development
@@ -2216,7 +2222,7 @@ HR<P>
  
 HR<A NAME="go_dimensions"></A>
 
-HR<H3>Dimensions and Coordinates within RasMol</H3>
+HR<H3>Dimensions within RasMol</H3>
 
 HRAll dimensions in RasMol, such as radii and distances, may be 
 HRspecified in either 'RasMol units' or &Aring;ngstroms (&Aring;). The 
@@ -2940,7 +2946,7 @@ ATThe RasMol
 ACclipboard
 ATcommand places a copy of the currently displayed image on the local 
 ATgraphics 'clipboard'. Note: this command is not yet supported on 
-ATUNIX or VMS machines. It is intended to make transfering images 
+ATUNIX or VMS machines. It is intended to make transferring images 
 ATbetween applications easier under Microsoft Windows or on an Apple 
 ATMacintosh.
 AP
@@ -4669,12 +4675,16 @@ AB
 
 ASSave
 NRSyntax:  save {pdb} <filename>
+NR         save wpdb <filename>
+NR         save cif <filename>
 NR         save mdl <filename>
 NR         save alchemy <filename>
 NR         save xyz <filename>
 NR
 HR<pre>
 HRSyntax:  save {pdb} &lt;filename&gt;
+HR         save wpdb &lt;filename&gt;
+HR         save cif &lt;filename&gt;
 HR         save mdl &lt;filename&gt;
 HR         save alchemy &lt;filename&gt;
 HR         save xyz &lt;filename&gt;
@@ -4682,17 +4692,30 @@ HR</pre><p>
 RR\tx1200
 RR{\f2\b Syntax:\tab
 RRsave \{pdb\} <filename>\line\tab
+RRsave wpdd <filename>\line\tab
+RRsave cif <filename>\line\tab
 RRsave mdl <filename>\line\tab
 RRsave alchemy <filename>\line\tab
 RRsave xyz <filename>\par
 RR}\pard\par
 
 ATSave the currently selected set of atoms in a Protein 
-ATData Bank (PDB), MDL, Alchemy(tm) or XYZ format file.
+ATData Bank (PDB), Wide PDB (WPDB), mmCIF (CIF), 
+ATMDL, Alchemy(tm) or XYZ format file.  Some of the
+ATimplementations are are only sufficient for reloading
+ATin RasMol and may need to be supplemented for use by 
+ATprograms other than RasMol.
+AP
+ATAtom serial numbers are regenerated.  When this will
+ATresult in more than 99,999 atoms being written in
+ATPDB format, numbers may be repeated.  If possible
+ATthe repeats are done by using the same numbers
+ATin different NMR models.
+AP 
 ATThe distinction between this command and the RasMol
 AXwrite write
-ATcommand has been dropped. The only difference is that without a format
-ATspecifier the
+ATcommand has been dropped. The only difference is that 
+ATwithout a format specifier the
 ACsave
 ATcommand generates a 
 ACPDB
@@ -4797,7 +4820,7 @@ ACset
 ATcommand allows the user to alter various internal program parameters
 ATsuch as those controlling rendering options. Each parameter has its
 ATown set or permissible parameter options. Typically, omitting the
-ATparamter option resets that parameter to its default value. A list of 
+ATparameter option resets that parameter to its default value. A list of 
 ATvalid parameter names is given below. 
 PTFor more information on each internal parameter type "help set
 PTparameter".
@@ -5555,7 +5578,7 @@ ATcommand.
 AT
 ATIf the selected bonds involved atoms of alternate conformers then
 ATthe bonds are narrowed in the middle to a radius of .8 of the specified
-ATradius (or to the radius specifed as the optional second parameter).
+ATradius (or to the radius specified as the optional second parameter).
 AP
 ATNon-bonded atoms, which could become invisible in an
 ATordinary
@@ -6834,7 +6857,7 @@ AXslab slab off.
 ATRay-tracing typically takes about several seconds for a moderately sized protein.
 ATIt is recommended that shadowing be normally disabled whilst the
 ATmolecule is being transformed or manipulated, and only enabled once
-ATan appropiate viewpoint is selected, to provide a greater impression 
+ATan appropriate viewpoint is selected, to provide a greater impression 
 ATof depth.
 AB
 

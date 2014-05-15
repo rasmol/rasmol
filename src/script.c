@@ -431,8 +431,8 @@ static void WriteMolScriptAtomSel( Chain __far *chain,
             fputc(ptr[i],OutFile);
 
     fputs(" and in residue ",OutFile);
-    if( chain->ident!=' ' && !isdigit(chain->ident) )
-        fputc(chain->ident,OutFile);
+    if( chain->chrefno!=52 && !isdigit(ChIdents[chain->chrefno][0]) )
+        fputs(ChIdents[chain->chrefno],OutFile);
     fprintf(OutFile,"%d",group->serno);
 }
 
@@ -542,10 +542,10 @@ static void WriteMolScriptLabels( void )
 }
 
 
-static void MolScriptSegment( char *ptr, int src, int dst, int chain )
+static void MolScriptSegment( char *ptr, int src, int dst, int chrefno )
 {   
-    if( (chain!=' ') && !isdigit(chain) ) 
-    {   fprintf(OutFile,"  %s from %c%d to %c%d;\n",ptr,chain,src,chain,dst);
+    if( (chrefno!=52) && !isdigit(ChIdents[chrefno][0]) )
+    {   fprintf(OutFile,"  %s from %s%d to %s%d;\n",ptr,ChIdents[chrefno],src,ChIdents[chrefno],dst);
     } else fprintf(OutFile,"  %s from %d to %d;\n",ptr,src,dst);
 }
 
@@ -640,7 +640,7 @@ int WriteMolScriptFile( char *name )
                 if( next->serno < group->serno )
                 {   if( prev && prev!=group )
                         MolScriptSegment("coil",prev->serno,group->serno,
-                                                chain->ident);
+                                                chain->chrefno);
                     prev = (Group __far*)0;
                     continue;
                 }
@@ -655,8 +655,8 @@ int WriteMolScriptFile( char *name )
                 } else 
                 {   if( flag&TurnFlag )
                     {   fputs("  turn residue ",OutFile);
-                        if( chain->ident != ' ' )
-                            fputc(chain->ident,OutFile);
+                        if( chain->chrefno != 52 )
+                            fputs(ChIdents[chain->chrefno],OutFile);
                         fprintf(OutFile,"%d;\n",group->serno);
                     }
                     if( !prev ) prev = group;
@@ -673,15 +673,15 @@ int WriteMolScriptFile( char *name )
                 if( len>2 )
                 {   if( prev && prev!=group ) /* MolScript coil or turn? */
                        MolScriptSegment("coil",prev->serno,group->serno,
-                                              chain->ident);
+                                              chain->chrefno);
                     MolScriptSegment(ptr,group->serno,next->serno,
-                                         chain->ident);
+                                         chain->chrefno);
                     prev = next;
                 } 
             }
 
             if( prev && prev!=group )  /* C-terminal coil/turn */
-                MolScriptSegment("coil",prev->serno,group->serno,chain->ident);
+                MolScriptSegment("coil",prev->serno,group->serno,chain->chrefno);
         }
     }
 
@@ -792,6 +792,14 @@ static void WriteScriptBetween( int lo, int hi )
     if( lo != hi )
     {   fprintf(OutFile,"select (atomno>=%d) and (atomno<=%d)\n",lo,hi);
     } else fprintf(OutFile,"select atomno=%d\n",lo);
+    SelectAll = False;
+}
+
+static void WriteScriptBetweenAppend( int lo, int hi )
+{
+    if( lo != hi )
+    {   fprintf(OutFile,"select selection or ((atomno>=%d) and (atomno<=%d))\n",lo,hi);
+    } else fprintf(OutFile,"select selection or atomno=%d\n",lo);
     SelectAll = False;
 }
 
@@ -1675,6 +1683,80 @@ int WriteScriptFile( char *name )
 }
 
 
+/*================================================*/
+/*  Write the current selection to a script file  */
+/*================================================*/
+
+int WriteSelectionFile( char *name )
+{
+    register Chain __far *chain;
+    register Group __far *group;
+    register RAtom __far *aptr;
+    register Long first=0,last=0;
+    register int init, selcount;
+    register int selected, newselected;
+    
+    OutFile = fopen(name,"w");
+    if( !OutFile )
+    {   FatalScriptError(name);
+        return(False);
+    }
+    
+    if( !Database )
+    {   /* No Molecule! */
+        fclose(OutFile);
+#ifdef APPLEMAC
+        SetFileInfo(name,'RSML','RSML',133);
+#endif
+        return True;
+    }
+    
+    fputs("\n# Selection\n",OutFile);
+    
+    init = False;
+    selected = False;
+    selcount = 0;
+    
+    ForEachAtom
+    {
+        if( !init )
+        {   first = last = aptr->serno;
+            init = True;
+            selected = (aptr->flag)&SelectFlag;
+        } else {
+            newselected = (aptr->flag)&SelectFlag;
+            if (selected == newselected) {
+                last = aptr->serno;
+            } else {
+                if (!newselected) {
+                    if (selcount == 0) {
+                        WriteScriptBetween(first,last);
+                    } else {
+                        WriteScriptBetweenAppend(first,last);
+                    }
+                    selcount++;
+                }
+                first = last = aptr->serno;
+                selected = newselected;
+            }
+        }
+    }
+    if (selected) {
+        if (selcount == 0) {
+            WriteScriptBetween(first,last);
+        } else {
+            WriteScriptBetweenAppend(first,last);
+        }
+        selcount++;
+    }
+    
+    fclose(OutFile);
+#ifdef APPLEMAC
+    SetFileInfo(name,'RSML','RSML',133);
+#endif
+    return True;
+}
+
 
 /*=======================*/
 /*  Kinemage Generation  */
@@ -2139,7 +2221,7 @@ int WriteKinemageFile( char *name )
 
     if( Info.chaincount > 1 )
     {   for( chain=Database->clist; chain; chain=chain->cnext )
-        {   fprintf(OutFile,"@group {chain %c}\n",chain->ident);
+        {   fprintf(OutFile,"@group {chain %s}\n",ChIdents[chain->chrefno]);
             WriteKinemageSpheres( chain );
             WriteKinemageBonds( chain );
             WriteKinemageLabels( chain );
@@ -2436,7 +2518,7 @@ static void WriteVRMLAtoms( void )
                     z = -(double)(aptr->zorg + aptr->fzorg)/250.0
                       - (double)(aptr->ztrl)/10000.;
 
-                    fputs("    Translation { translation ",OutFile);
+                    fputs("    Transform { translation ",OutFile);
 
                     if ( vrml_mirror ) {
                       WriteVRMLTriple(-(x-ox),-(RestoreY(y-oy)),-(z-oz));
@@ -2775,9 +2857,9 @@ int WritePhiPsiAngles ( char *name, int ramachan )
 	  if(ramachan){     /* data for Ramachandran-plot */
 	    if(fabs(phi) <= 180.0 && 180.0 >= fabs(psi)) {
           if (ramachan > 0) {
-	        sprintf(buffer, "%3s\t%c%d\t%#.1f\t%#.1f\n", 
+	        sprintf(buffer, "%3s\t%s%d\t%#.1f\t%#.1f\n",
 		      Residue[group->refno], 
-		      chain->ident, 
+		      ChIdents[chain->chrefno],
 		      group->serno, 
 		      phi, psi);
 		    WriteBuffer(buffer);

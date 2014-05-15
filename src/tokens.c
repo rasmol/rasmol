@@ -904,6 +904,7 @@ int LookUpKeyword( char *ptr )
              HELICES              HelixTok
              HELIX                HelixTok
              HELP                 HelpTok
+             HETATM               HetatomTok
              HETERO               HeteroTok
              HOLLOW               HollowTok
              HOTPINK              HotPinkTok
@@ -943,6 +944,8 @@ int LookUpKeyword( char *ptr )
                         return( HelpTok );
                     } else if( !strcmp(ptr,"TERO") ) {
                         return( HeteroTok );
+                    } else if( !strcmp(ptr,"TA") || !strcmp(ptr,"TATM") ) {
+                        return( HetAtomTok );
                     }
                     break;
                     
@@ -976,6 +979,8 @@ int LookUpKeyword( char *ptr )
              INFORMATION          InfoTok
              INLINE               InLineTok
              INSIGHT              InsightTok
+             INTERPRETERS         InterpTok
+             INTERPS              InterpTok
              ION                  IonTok
              IONS                 IonTok
              IRIS                 IRISTok
@@ -1008,7 +1013,12 @@ int LookUpKeyword( char *ptr )
                         return( InLineTok );
                     } else if( !strcmp(ptr,"SIGHT") ) {
                         return( InsightTok );
+                    } else if( !strcmp(ptr,"TERPRETERS") ) {
+                        return( InterpTok );
+                    } else if( !strcmp(ptr,"TERPS") ) {
+                        return( InterpTok );
                     }
+
                     break;
                     
                 case('O'):
@@ -1019,6 +1029,12 @@ int LookUpKeyword( char *ptr )
                     }
                     break;
                     
+                case('P'):
+                    if( !strcmp(ptr,"CDETAIL") ) {
+                        return( IPCDetailTok );
+                    }
+                    break;
+
                 case('R'):
                     if( !strcmp(ptr,"IS") ) {
                         return( IRISTok );
@@ -1118,7 +1134,6 @@ int LookUpKeyword( char *ptr )
                     } else if( !strcmp(ptr,"CAL") ) {
                         return( LocalTok );
                     }
-
                     break;
                     
                 case('R'):
@@ -1691,6 +1706,8 @@ int LookUpKeyword( char *ptr )
             
             /*
              SALIR                ExitTok
+             SAS                  SASurfTok
+             SASurf               SASurfTok
              SAVE                 SaveTok
              SCALE                ScaleTok
              SCHELETRO            BackboneTok
@@ -1700,7 +1717,10 @@ int LookUpKeyword( char *ptr )
              SELECT               SelectTok
              SELECTED             SelectedTok
              SELECTION            SelectedTok
+             SEND                 SendTok
              SEQUENCE             SequenceTok
+             SES                  MolSurfTok
+             SESurf               MolSurfTok
              SET                  SetTok
              SHADEPOWER           ShadePowerTok
              SHADOW               ShadowTok
@@ -1732,6 +1752,7 @@ int LookUpKeyword( char *ptr )
              STEREO               StereoTok
              STRANDS              StrandsTok
              STRUCTURE            StructureTok
+             SUBSTRUCTURE         SubstructureTok
              SUN                  SUNTok
              SUNRLE               SUNRLETok
              SURFACE              SurfaceTok
@@ -1744,6 +1765,10 @@ int LookUpKeyword( char *ptr )
                 case('A'):
                     if( !strcmp(ptr,"LIR") ) {
                         return( ExitTok );
+                    } else if( !strcmp(ptr,"S") ) {
+                        return( SASurfTok );
+                    } else if( !strcmp(ptr,"SURF") ) {
+                        return( SASurfTok );
                     } else if( !strcmp(ptr,"VE") ) {
                         return( SaveTok );
                     }
@@ -1772,6 +1797,12 @@ int LookUpKeyword( char *ptr )
                         return( SelectedTok );
                     } else if( !strcmp(ptr,"QUENCE") ) {
                         return( SequenceTok );
+                    } else if( !strcmp(ptr,"ND") ) {
+                        return( SendTok );
+                    } else if( !strcmp(ptr,"S") ) {
+                        return( MolSurfTok );
+                    } else if( !strcmp(ptr,"Surf") ) {
+                        return( MolSurfTok );
                     } else if( (*ptr=='T') && !ptr[1] ) {
                         return( SetTok );
                     }
@@ -1872,7 +1903,9 @@ int LookUpKeyword( char *ptr )
                     break;
                     
                 case('U'):
-                    if( (*ptr=='N') && !ptr[1] ) {
+                    if( !strcmp(ptr,"BSTRUCTURE") ) {
+                        return( SubstructureTok );
+                    } else if( (*ptr=='N') && !ptr[1] ) {
                         return( SUNTok );
                     } else if( !strcmp(ptr,"NRLE") ) {
                         return( SUNRLETok );
@@ -1894,6 +1927,7 @@ int LookUpKeyword( char *ptr )
             
             /*
              TEMPERATURE          TemperatureTok
+             TIME                 TimeTok
              TITLE                TitleTok
              TODO                 AllTok
              TORSION              TorsionTok
@@ -1918,11 +1952,14 @@ int LookUpKeyword( char *ptr )
                     break;
                     
                 case('I'):
-                    if( !strcmp(ptr,"TLE") ) {
+                    if( !strcmp(ptr,"ME") ) {
+                        return( TimeTok );
+                    } else if( !strcmp(ptr,"TLE") ) {
                         return( TitleTok );
                     }
                     break;
                     
+
                 case('O'):
                     if( !strcmp(ptr,"DO") ) {
                         return( AllTok );

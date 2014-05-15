@@ -5,10 +5,10 @@
 #
 #  HJB, Apr 2002, Rev Apr 2005
 #
-cp Imakefile Imakefile_save
+cp Imakefile_clean Imakefile
 rm Imakefile
 echo "#define OLDX_LOCALE xx" > Imakefile
-echo "#define PIXELDEPTH 8"|cat - Imakefile_save >> Imakefile
+echo "#define PIXELDEPTH 8"|cat - Imakefile_clean >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
 xmkmf
 mv Makefile Makefile_8BIT
@@ -19,7 +19,7 @@ if [ "$1"  != "-nobuild" ]; then
 fi;
 rm Imakefile
 echo "#define OLDX_LOCALE xx" > Imakefile
-echo "#define PIXELDEPTH 16"|cat - Imakefile_save >> Imakefile
+echo "#define PIXELDEPTH 16"|cat - Imakefile_clean >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
 xmkmf
 mv Makefile Makefile_16BIT
@@ -30,7 +30,7 @@ if [ "$1" != "-nobuild" ]; then
 fi;
 rm Imakefile
 echo "#define OLDX_LOCALE xx" > Imakefile
-echo "#define PIXELDEPTH 32"|cat - Imakefile_save >> Imakefile
+echo "#define PIXELDEPTH 32"|cat - Imakefile_clean >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
 gcc checklong.c -o checklong
 VAL=`(./checklong; echo $1)`
@@ -52,7 +52,7 @@ rm Imakefile
 echo "#define OLDX_LOCALE xx" > Imakefile
 echo "#define PIXELDEPTH 8" >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
-echo "#define USE_XFORMSLIB xx"|cat - Imakefile_save >> Imakefile
+echo "#define USE_XFORMSLIB xx"|cat - Imakefile_clean >> Imakefile
 xmkmf
 mv Makefile Makefile_8BIT
 if [ "$1"  != "-nobuild" ]; then
@@ -64,7 +64,7 @@ rm Imakefile
 echo "#define OLDX_LOCALE xx" > Imakefile
 echo "#define PIXELDEPTH 16" >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
-echo "#define USE_XFORMSLIB xx"|cat - Imakefile_save >> Imakefile
+echo "#define USE_XFORMSLIB xx"|cat - Imakefile_clean >> Imakefile
 xmkmf
 mv Makefile Makefile_16BIT
 if [ "$1" != "-nobuild" ]; then
@@ -76,7 +76,7 @@ rm Imakefile
 echo "#define OLDX_LOCALE xx" > Imakefile
 echo "#define PIXELDEPTH 32" >> Imakefile
 echo "#define MACOSX_FINK xx">> Imakefile
-echo "#define USE_XFORMSLIB xx"|cat - Imakefile_save >> Imakefile
+echo "#define USE_XFORMSLIB xx"|cat - Imakefile_clean >> Imakefile
 if [ $VAL -gt 4 ]; then
   mv rasmol.h rasmol_amd64_save.h
 echo "#define _LONGLONG"|cat - rasmol_amd64_save.h > rasmol.h
@@ -91,5 +91,5 @@ if [ "$1" != "-nobuild" ]; then
     mv rasmol_amd64_save.h rasmol.h
   fi;
 fi;
-mv Imakefile_save Imakefile
+cp Imakefile_clean Imakefile
 rm checklong

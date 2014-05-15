@@ -164,11 +164,18 @@
  Parametrization for alt conformer bond radius
 
  */
+
+#ifndef MOLECULE_H
+#define MOLECULE_H
+#include <CVector.h>
+
 #define MAXMASK 40
 #define MAXELEM 1024
 #define MINELEM 29
 #define MAXRES  104
 #define MINRES  59
+#define MAXCHIDENT 512
+#define MINCHIDENT 54
 #define CIS     90  /* max. omega-angle to form a cis-peptide bond */
 
 
@@ -265,12 +272,14 @@
 /*  Molecule Database  */
 /*=====================*/
 
-#define MaxBonds 6
+#define MaxSDepth 4
+
 
 typedef struct _Atom {
         struct _Atom __far *anext;        /* Linked list of atoms  */
         struct _Atom __far *bucket;       /* Sphere Y-Bucket       */
         struct _Atom __far *next;         /* Active Object List    */
+        void __far * pargroup;            /* Parent Group          */ 
         Long   xorg, yorg, zorg;          /* World Co-ordinates    */
         Long   fxorg, fyorg, fzorg;       /* Offsets for rotations */
         Long   x, y, z;                   /* Image Co-ordinates    */
@@ -305,16 +314,28 @@ typedef struct _Atom {
         short  mbox;                      /* Shadow Casting NOnce  */
         short  model;                     /* Atom Model Number     */
         short  visited;                   /* For bond rotation     */
-        short  nbonds;                    /* For bond rotation     */ 
-        struct _Atom __far *bonds[MaxBonds];
-        void   *surfbonds;                /* Surface bonds list    */
+        int    nexttarget;                /* For sorts             */
+        Long   ordinal;                   /* ordinal of this atom  */
+        Long   ordlist[MaxSDepth+1];      /* ordinal in template matching  */
+        CVectorHandle bondsvector;        /* For Align and bond rotation */
+        CVectorHandle distancevector;     /* For Align             */
     } RAtom;
+
+/*  notes on ordlist:
+    For the atoms in a template, ordlist holds the ordinals in the
+    target molecule that match.  Zero means not assigned.
+
+    For the atoms in a target, ordlist holds the orinals in the
+    template that match.  Zero means not assigned.
+
+ */
 
 
 typedef struct _Bond {
         struct _Bond __far *bnext;       /* Linked list of bonds  */
         RAtom __far *srcatom;            /* Source Atom Ptr       */
         RAtom __far *dstatom;            /* Destination Atom Ptr  */
+        long  sxyz;                      /* Bond length           */
         short radius;                    /* World Radius          */
         short irad;                      /* Image Radius          */
         short aradius;                   /* World Alt Radius      */
@@ -342,6 +363,7 @@ typedef struct _SurfBond {
 typedef struct _Group {
         struct _Group __far *gnext;       /* Linked list of groups */
         RAtom __far *alist;               /* Linked list of atoms  */
+        void __far *parchain;             /* Parent Chain          */
         short serno;                      /* Group serial number   */
         short sserno;                     /* Secondary serial no.  */ 
         short width;                      /* Ribbon Width          */
@@ -353,6 +375,7 @@ typedef struct _Group {
         Byte  struc;                      /* Secondary Structure   */
         short flag;                       /* Database flags        */
         short model;                      /* Group Model Number    */
+        short tempmarker;                 /* Temporary Marker      */
     } Group;
  
 #ifdef APPLEMAC
@@ -362,9 +385,10 @@ typedef struct _Group {
 
 typedef struct _ChainSeg {
         struct _ChainSeg __far *cnext;    /* Linked list of chains     */
+        void __far * parmolecule;         /* Parent Molecule           */
         Group __far *glist;               /* Linked list of groups     */
         Bond __far *blist;                /* Linked list of back bonds */
-        char ident;                       /* Chain identifier          */
+        int  chrefno;                     /* Chain identifier refno    */
         Byte model;                       /* NMR Model / Symmetry      */
     } Chain;
 
@@ -466,10 +490,18 @@ void RegisterAlloc(void __far * );
 void FreeAlloc(void __far * );
 
 /* used to describe an defined part of the selected molecule */
-typedef enum{NO, ATM, CRD, GRP, CHN} Selection;
+typedef enum{NO, ATM, CRD, GRP, CHN, MDL} Selection;
 
 #include <CNearTree.h>
 #ifdef MOLECULE
+char ChIdents[MAXCHIDENT][5] = {
+    "A","B","C","D","E","F","G","H","I","J",
+    "K","L","M","N","O","P","Q","R","S","T",
+    "U","V","W","X","Y","Z",
+    "a","b","c","d","e","f","g","h","i","j",
+    "k","l","m","n","o","p","q","r","s","t",
+    "u","v","w","x","y","z"," ","*"};
+    
 /* Avoid SGI Compiler Warnings! */
 char Residue[MAXRES][4] = {
     /*===============*/
@@ -583,7 +615,7 @@ Molecule __far *Database;
 MaskDesc UserMask[MAXMASK];
 Long MinHBondDist, MaxHBondDist;
 Long MinBondDist,  MaxBondDist;
-int ElemNo,ResNo;
+int ElemNo,ResNo,ChNo;
 int HasHydrogen;
 int MaskCount;
 int NMRModel;
@@ -598,9 +630,11 @@ Bond __far *FreeBond;
 Bond __far *NewBond;
 
 CNearTreeHandle AtomTree;
+int NeedAtomTree;
 
 
 #else
+extern char ChIdents[MAXCHIDENT][5];
 extern char Residue[MAXRES][4];
 extern char ElemDesc[MAXELEM][12];
 extern InfoStruct Info;
@@ -633,7 +667,7 @@ extern Molecule __far *Database;
 extern MaskDesc UserMask[MAXMASK];
 extern Long MinHBondDist, MaxHBondDist;
 extern Long MinBondDist,  MaxBondDist;
-extern int ElemNo,ResNo;
+extern int ElemNo,ResNo,ChNo;
 extern int HasHydrogen;
 extern int MaskCount;
 extern int NMRModel;
@@ -648,6 +682,7 @@ extern Bond __far *FreeBond;
 extern Bond __far *NewBond;
 
 extern CNearTreeHandle AtomTree;
+extern int NeedAtomTree;
 
 #ifndef APPLEMAC
 #define RegisterAlloc(x)
@@ -660,6 +695,8 @@ void ProcessGroup( int );
 void CreateMolGroup( void );
 void CreateNextMolGroup( void );
 int FindResNo( char* );
+int FindResNo( char __far * );
+int FindChNo( char __far *);
 
 RAtom __far *CreateAtom( void );
 RAtom __far *FindGroupAtom( Group __far*, int );
@@ -705,3 +742,4 @@ void SaveAtomSelection( void );
 void RegisterAlloc( void *);
 #endif
 
+#endif
