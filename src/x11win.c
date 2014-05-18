@@ -1070,11 +1070,22 @@ int SendInterpCommand( char __huge *name, unsigned long interpid,
     return True;
 }
 
+#if defined(_ANSI_SOURCE) || (defined(__POSIX_C_SOURCE) && !defined(_DARWIN_C_SOURCE))
+#ifdef digittoint
+#undef digittoint
+#endif
+static int digittoint(const int c) {
+    if (c >= '0' || c <= '9') return c-'0';
+    if (c >= 'A' || c <= 'F') return 10+c-'A';
+    if (c >= 'a' || c <= 'f') return 10+c-'a';
+    return 0;
+}
+#endif
+
 
 int CheckInterpName( char __huge *name, unsigned long __huge *interpid) {
     unsigned char *registry;
     unsigned long len,left;
-    char buffer[32];
     int format;
     Atom type;
     
@@ -1317,7 +1328,7 @@ static void OpenIPCComms( void )
         ProcessFileName(TkNameTo);
         if (strcmp(DataFileName,"-")==0) {
             fprintf(stdout,"RasMol TkName: {");
-            fprintf(stdout,TkInterp);
+            fprintf(stdout,"%s",TkInterp);
             fprintf(stdout,"}\n");
         } else {
             TkNameFile = fopen(DataFileName,"w");
@@ -1326,9 +1337,9 @@ static void OpenIPCComms( void )
                 fclose(TkNameFile);
             } else {
                 fprintf(stderr,"TkNameTo Error: Unable to create file `");
-                fprintf(stderr, TkNameTo );  fprintf(stderr,"'!\n");
+                fprintf(stderr,"%s",TkNameTo );  fprintf(stderr,"'!\n");
                 fprintf(stderr,"RasMol TkName: {");
-                fprintf(stderr,TkInterp);
+                fprintf(stderr,"%s",TkInterp);
                 fprintf(stderr,"}\n");
             }
         } 
@@ -3330,7 +3341,6 @@ static void HandleIPCCommand( void )
     char *resultstr;
     char *errorInfostr;
     char *errorCodestr;
-    int ii;
 
     command = NULL;
     result = XGetWindowProperty( dpy, MainWin, CommAtom, 0, 1024, True, 
