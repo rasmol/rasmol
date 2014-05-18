@@ -1070,7 +1070,7 @@ int SendInterpCommand( char __huge *name, unsigned long interpid,
     return True;
 }
 
-#if defined(_ANSI_SOURCE) || (defined(__POSIX_C_SOURCE) && !defined(_DARWIN_C_SOURCE))
+#if defined(_ANSI_SOURCE) || ((defined(_POSIX_C_SOURCE)||defined(_POSIX_SOURCE)) && !defined(_DARWIN_C_SOURCE))
 #ifdef digittoint
 #undef digittoint
 #endif
