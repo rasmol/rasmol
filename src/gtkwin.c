@@ -911,10 +911,14 @@ void about_cb(GtkAction * action, gpointer user_data)
     gtk_show_about_dialog(GTK_WINDOW(mainwin),
                           "authors", authors,
                           "comments", "Molecular Renderer",
+                          "license", "GPL",
+                          "logo-icon-name", "rasmol",
+                          "version", VERSION,
+                          "website", "http://rasmol.org/",
+                          "website-label", "rasmol.org",
                           "copyright", "Copyright (C)\n\
 Roger Sayle 1992-1999\n\
-Herbert J. Bernstein 1998-2008\n\
-", "license", "GPL", "logo-icon-name", "rasmol", "version", VERSION, "website", "http://rasmol.org/", NULL);
+Herbert J. Bernstein 1998-2008\n", NULL);
 }
 
 
