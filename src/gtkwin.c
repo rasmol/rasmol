@@ -1351,20 +1351,20 @@ GtkWidget *build_gtkmenu(void)
 static void do_popup_menu(GtkWidget * widget, GdkEventButton * event)
 {
     GtkWidget *menu;
-    int button, event_time;
 
     menu = gtk_ui_manager_get_widget(ui_manager, "/popup");
     g_signal_connect(menu, "deactivate", G_CALLBACK(gtk_widget_hide), NULL);
-
+#ifdef GTK3
+    gtk_menu_popup_at_pointer(GTK_MENU(menu), NULL);
+#else
+    int event_time;
     if (event) {
-        button = event->button;
         event_time = event->time;
     } else {
-        button = 0;
         event_time = gtk_get_current_event_time();
     }
-
     gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, event_time);
+#endif
 }
 
 
