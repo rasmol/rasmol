@@ -1542,8 +1542,6 @@ gboolean configure_cb(GtkWidget * widget, GdkEventConfigure * event,
     WRange = XRange >> 1;
     Range = MinFun(XRange, YRange);
 
-    gtk_widget_set_size_request(widget, XRange, YRange);
-
     ReDrawFlag |= RFReSize;
     RefreshScreen();
     ReDrawFlag = NextReDrawFlag;
