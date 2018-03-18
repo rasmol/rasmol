@@ -132,6 +132,7 @@ GtkWidget *vscrollbar;
 GtkWidget *hscrollbar;
 GtkWidget *termhbox;
 GtkWidget *vte;
+cairo_t *cairoref = NULL;
 
 /* Export dialog and extras */
 enum {
@@ -166,6 +167,8 @@ GtkUIManager *ui_manager;
 GtkAccelGroup *accel_group;
 guint merge_id;
 gboolean dragging = FALSE;
+
+#define DEFAULT_CMD_FONT "Monospace Regular 10"
 
 #define ADDSIGNAL(A,B) g_signal_connect(gtk_ui_manager_get_action(ui_manager,\
 (A)),"activate", G_CALLBACK(handlemenu_cb), (gpointer) &(B));
@@ -939,7 +942,6 @@ void build_window(void)
     } else {
         gtk_box_pack_start(GTK_BOX(mainvbox), ctable, TRUE, TRUE, 0);
     }
-    gtk_adjustment_value_changed(VTE_TERMINAL(vte)->adjustment);
     gtk_widget_show_all(mainvbox);
 
     a = gtk_ui_manager_get_action(ui_manager, "/MainMenu/ViewMenu/Fullscreen");
@@ -975,21 +977,33 @@ void set_ui_elements(int mask)
 
 void setfont_cb(GtkAction * action, gpointer user_data)
 {
-    static char *fontname = NULL;
+    static char *fontname = DEFAULT_CMD_FONT;
     GtkWidget *d;
     gint result;
 
+#ifdef GTK3
+    d = gtk_font_chooser_dialog_new("Command prompt font", mainwin);
+    if (fontname)
+        gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d), fontname);
+#else
     d = gtk_font_selection_dialog_new("Command prompt font");
     if (fontname)
         gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(d),
                                                 fontname);
+#endif
 
     result = gtk_dialog_run(GTK_DIALOG(d));
     if (result == GTK_RESPONSE_OK) {
+#ifdef GTK3
+    fontname = gtk_font_chooser_get_font(GTK_FONT_CHOOSER(d));
+        vte_terminal_set_font(VTE_TERMINAL(vte),
+            pango_font_description_from_string(fontname));
+#else
         fontname =
             gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG
                                                     (d));
         vte_terminal_set_font_from_string(VTE_TERMINAL(vte), fontname);
+#endif
     }
     gtk_widget_destroy(d);
 }
@@ -1410,10 +1424,23 @@ void ReDrawWindow(void)
 
 void TransferImage(void)
 {
+#ifdef GTK3
+    cairo_surface_t *s;
+
+    if (cairoref) {
+        s = cairo_image_surface_create_for_data((unsigned char *) FBuffer,
+            CAIRO_FORMAT_RGB24, XRange, YRange, XRange * 4);
+        cairo_set_source_surface (cairoref, s, 0.0, 0.0);
+        cairo_paint(cairoref);
+        cairo_surface_destroy(s);
+        gtk_widget_queue_draw(canvasarea);
+    }
+#else
     gdk_draw_rgb_32_image(canvasarea->window,
                           canvasarea->style->fg_gc[GTK_STATE_NORMAL],
                           0, 0, XRange, YRange,
                           GDK_RGB_DITHER_NONE, (guchar *) FBuffer, XRange * 4);
+#endif
 }
 
 
@@ -1441,14 +1468,21 @@ static int GetStatus(int mask)
     return status;
 }
 
-
+#ifdef GTK3
+gboolean draw_cb(GtkWidget *widget, cairo_t *cr, gpointer user_data)
+{
+    cairoref = cr;
+    TransferImage();
+    return FALSE;
+}
+#else
 gboolean expose_cb(GtkWidget * widget, GdkEventExpose * event,
                    gpointer user_data)
 {
     TransferImage();
     return FALSE;
 }
-
+#endif
 
 gboolean configure_cb(GtkWidget * widget, GdkEventConfigure * event,
                       gpointer user_data)
@@ -1512,7 +1546,7 @@ static gboolean popup_cb(GtkWidget * widget)
 gboolean motion_cb(GtkWidget * canvas, GdkEventMotion * event,
                    gpointer user_data)
 {
-    int stat, x, y, xorig, yorig;
+    int stat;
     GdkModifierType mask;
 
     dragging = TRUE;
@@ -1522,9 +1556,6 @@ gboolean motion_cb(GtkWidget * canvas, GdkEventMotion * event,
         RefreshScreen();
         ReDrawFlag = NextReDrawFlag;
     }
-    xorig = event->x;
-    yorig = event->y;
-    gdk_window_get_pointer(canvas->window, &x, &y, &mask);
 
     return FALSE;
 }
@@ -1724,8 +1755,6 @@ int OpenDisplay(void)
     gtk_widget_add_events(canvasarea, GDK_BUTTON_PRESS_MASK);
     gtk_widget_add_events(canvasarea, GDK_BUTTON_RELEASE_MASK);
     gtk_widget_add_events(canvasarea, GDK_BUTTON_MOTION_MASK);
-    g_signal_connect(G_OBJECT(canvasarea), "expose-event",
-                     G_CALLBACK(expose_cb), NULL);
     g_signal_connect(G_OBJECT(canvasarea), "configure-event",
                      G_CALLBACK(configure_cb), NULL);
     g_signal_connect(G_OBJECT(canvasarea), "motion-notify-event",
@@ -1736,37 +1765,61 @@ int OpenDisplay(void)
                      G_CALLBACK(button_release_cb), NULL);
     g_signal_connect(G_OBJECT(canvasarea), "popup-menu",
                      G_CALLBACK(popup_cb), NULL);
+#ifdef GTK3
+    g_signal_connect(G_OBJECT (canvasarea), "draw",
+                     G_CALLBACK (draw_cb), NULL);
+    gtk_widget_set_vexpand(canvasarea, TRUE);
+    gtk_widget_set_hexpand(canvasarea, TRUE);
+#else
+    g_signal_connect(G_OBJECT(canvasarea), "expose-event",
+                     G_CALLBACK(expose_cb), NULL);
+#endif
 
     vscrollbar = gtk_vscrollbar_new(NULL);
-    gtk_range_set_update_policy(GTK_RANGE(vscrollbar), GTK_UPDATE_CONTINUOUS);
     gtk_range_set_range(GTK_RANGE(vscrollbar), -1.0, 1.0);
     gtk_range_set_increments(GTK_RANGE(vscrollbar), 0.01, 0.1);
     vscr_handler = g_signal_connect(G_OBJECT(vscrollbar), "value-changed",
                                     G_CALLBACK(vscroll_cb), NULL);
 
     hscrollbar = gtk_hscrollbar_new(NULL);
-    gtk_range_set_update_policy(GTK_RANGE(hscrollbar), GTK_UPDATE_CONTINUOUS);
     gtk_range_set_range(GTK_RANGE(hscrollbar), -1.0, 1.0);
     gtk_range_set_increments(GTK_RANGE(hscrollbar), 0.01, 0.1);
     hscr_handler = g_signal_connect(G_OBJECT(hscrollbar), "value-changed",
                                     G_CALLBACK(hscroll_cb), NULL);
+#ifdef GTK3
+    gtk_widget_set_vexpand(vscrollbar, TRUE);
+    gtk_widget_set_hexpand(hscrollbar, TRUE);
+#else
+    gtk_range_set_update_policy(GTK_RANGE(vscrollbar), GTK_UPDATE_CONTINUOUS);
+    gtk_range_set_update_policy(GTK_RANGE(hscrollbar), GTK_UPDATE_CONTINUOUS);
+#endif
 
     vte = vte_terminal_new();
     g_assert(vte);
     vte_terminal_set_size(VTE_TERMINAL(vte), 80, 10);
-    vte_terminal_set_font_from_string(VTE_TERMINAL(vte), "Monospace 10");
     vte_terminal_set_scroll_on_output(VTE_TERMINAL(vte), TRUE);
     vte_terminal_set_backspace_binding(VTE_TERMINAL(vte),
                                        VTE_ERASE_ASCII_BACKSPACE);
     vte_terminal_set_delete_binding(VTE_TERMINAL(vte),
                                     VTE_ERASE_DELETE_SEQUENCE);
     g_signal_connect(G_OBJECT(vte), "commit", G_CALLBACK(termin_cb), NULL);
+#ifdef GTK3
+    vte_terminal_set_font(VTE_TERMINAL(vte),
+        pango_font_description_from_string(DEFAULT_CMD_FONT));
+#else
+    vte_terminal_set_font_from_string(VTE_TERMINAL(vte), DEFAULT_CMD_FONT);
+#endif
 
     termhbox = gtk_hbox_new(FALSE, 0);
     gtk_box_pack_start(GTK_BOX(termhbox), vte, TRUE, TRUE, 0);
 
     GtkWidget *termscroll;
+#ifdef GTK3
+    termscroll = gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL,
+        gtk_scrollable_get_vadjustment(GTK_SCROLLABLE(vte)));
+#else
     termscroll = gtk_vscrollbar_new(VTE_TERMINAL(vte)->adjustment);
+#endif
     gtk_box_pack_start(GTK_BOX(termhbox), termscroll, FALSE, FALSE, 0);
 
     mainvpane = gtk_vpaned_new();
@@ -1782,7 +1835,7 @@ int OpenDisplay(void)
                                                         TRUE, &gerr));
 
     gtk_container_add(GTK_CONTAINER(mainwin), mainvbox);
-    gtk_widget_set_size_request(mainwin, XRange, YRange);
+    gtk_window_set_default_size(mainwin, XRange, YRange);
     gtk_widget_show_all(mainwin);
 
     test.longword = (Long) 0x000000ff;

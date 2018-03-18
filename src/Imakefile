@@ -126,8 +126,10 @@ PKGDIR = $(HOME)
 #endif
 
 #ifdef GTKWIN
-GTKLIBS = $(shell pkg-config --libs vte gtk+-2.0)
-GTKCFLAGS = $(shell pkg-config --cflags vte gtk+-2.0) -DGTK_DISABLE_SINGLE_INCLUDES
+#GTKLIBS = $(shell pkg-config --libs vte gtk+-2.0)
+#GTKCFLAGS = $(shell pkg-config --cflags vte gtk+-2.0) -DGTK_DISABLE_SINGLE_INCLUDES
+GTKLIBS = $(shell pkg-config --libs vte-2.91 gtk+-3.0)
+GTKCFLAGS = $(shell pkg-config --cflags vte-2.91 gtk+-3.0)
 GUISRC = gtkwin.c eggfileformatchooser.c
 GUIOBJ = gtkwin.o eggfileformatchooser.o
 GUIDEF = -DGTKWIN
