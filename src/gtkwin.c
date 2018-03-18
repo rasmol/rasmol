@@ -294,9 +294,9 @@ void open_cb(GtkAction * action, gpointer user_data)
     opendialog = gtk_file_chooser_dialog_new("Open File",
                                              GTK_WINDOW(mainwin),
                                              GTK_FILE_CHOOSER_ACTION_OPEN,
-                                             GTK_STOCK_CANCEL,
+                                             "_Cancel",
                                              GTK_RESPONSE_CANCEL,
-                                             GTK_STOCK_OPEN,
+                                             "_Open",
                                              GTK_RESPONSE_ACCEPT, NULL);
 
     filter = gtk_file_filter_new();
@@ -367,8 +367,8 @@ void save_cb(GtkAction * action, gpointer user_data)
     dialog = gtk_file_chooser_dialog_new("Save to a PDB file",
                                          GTK_WINDOW(mainwin),
                                          GTK_FILE_CHOOSER_ACTION_SAVE,
-                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                         GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+                                         "_Cancel", GTK_RESPONSE_CANCEL,
+                                         "_Save", GTK_RESPONSE_ACCEPT,
                                          NULL);
     gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
     if (prevname) {
@@ -534,9 +534,9 @@ void build_exportdialog(void)
     exportdialog = gtk_file_chooser_dialog_new("Export image to a file",
                                                GTK_WINDOW(mainwin),
                                                GTK_FILE_CHOOSER_ACTION_SAVE,
-                                               GTK_STOCK_CANCEL,
+                                               "_Cancel",
                                                GTK_RESPONSE_CANCEL,
-                                               GTK_STOCK_SAVE,
+                                               "_Save",
                                                GTK_RESPONSE_ACCEPT, NULL);
 
     format_chooser = egg_file_format_chooser_new();
@@ -1060,19 +1060,19 @@ void recent_cb(GtkAction * recent, gpointer user_data)
 
 static const GtkActionEntry menuentries[] = {
     {"FileMenu", NULL, "_File"},
-    {"Open", GTK_STOCK_OPEN, "_Open...", "<control>O", "Open a file",
+    {"Open", "document-open", "_Open...", "<control>O", "Open a file",
      G_CALLBACK(open_cb)},
-    {"SaveAs", GTK_STOCK_SAVE_AS, "_Save As...", "<control>S", "Save a file",
+    {"SaveAs", "document-save-as", "_Save As...", "<control>S", "Save a file",
      G_CALLBACK(save_cb)},
-    {"Export", GTK_STOCK_CONVERT, "_Export...", "<control>X",
+    {"Export", "gtk-convert", "_Export...", "<control>X",
      "Export current image", G_CALLBACK(export_cb)},
-    {"Close", GTK_STOCK_CLOSE, "_Close", "<control>W",
+    {"Close", "window-close", "_Close", "<control>W",
      "Close the selected molecule", NULL},
-    {"PageSetup", NULL, "Page Set_up...", "", "Set the page parameters",
-     G_CALLBACK(pagesetup_cb)},
-    {"Print", GTK_STOCK_PRINT, "_Print...", "<control>P",
+    {"PageSetup", "document-page-setup", "Page Set_up...", "",
+     "Set the page parameters", G_CALLBACK(pagesetup_cb)},
+    {"Print", "document-print", "_Print...", "<control>P",
      "Print the current image", G_CALLBACK(print_cb)},
-    {"Exit", GTK_STOCK_QUIT, "E_xit", "<control>Q", "Exit the program",
+    {"Exit", "application-exit", "E_xit", "<control>Q", "Exit the program",
      RasMolExit},
     {"ViewMenu", NULL, "_View"},
     {"Setfont", NULL, "Set command font...", "", "", G_CALLBACK(setfont_cb)},
@@ -1100,10 +1100,10 @@ static const GtkActionEntry menuentries[] = {
     {"OptMenu", NULL, "_Options"},
     {"SetMenu", NULL, "_Settings"},
     {"HelpMenu", NULL, "_Help"},
-    {"Manual", GTK_STOCK_HELP, "_User Manual", "F1", "", NULL},
+    {"Manual", "help-contents", "_User Manual", "F1", "", NULL},
     {"Register", NULL, "_Register", "", "", NULL},
     {"Donate", NULL, "_Donate", "", "", NULL},
-    {"About", GTK_STOCK_ABOUT, "_About", "", "", G_CALLBACK(about_cb)},
+    {"About", "help-about", "_About", "", "", G_CALLBACK(about_cb)},
 };
 
 static const GtkToggleActionEntry view_toggles[] = {
@@ -1254,7 +1254,8 @@ GtkWidget *build_gtkmenu(void)
                                  G_N_ELEMENTS(menuentries), NULL);
 
     recentaction = gtk_recent_action_new("Recent", "Open _Recent",
-                                         "Open a recently opened file", NULL);
+                                         "Open a recently opened file",
+                                         "document-open-recent");
     filter = gtk_recent_filter_new();
     gtk_recent_filter_add_application(filter, "RasMol");
     gtk_recent_chooser_set_filter(GTK_RECENT_CHOOSER(recentaction), filter);
