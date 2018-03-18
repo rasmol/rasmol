@@ -1257,7 +1257,13 @@ GtkWidget *build_gtkmenu(void)
                                          "Open a recently opened file",
                                          "document-open-recent");
     filter = gtk_recent_filter_new();
-    gtk_recent_filter_add_application(filter, "RasMol");
+    gtk_recent_filter_add_mime_type(filter, "chemical/x-pdb");
+    gtk_recent_filter_add_mime_type(filter, "chemical/x-xyz");
+    gtk_recent_filter_add_mime_type(filter, "chemical/x-mol2");
+    gtk_recent_filter_add_mime_type(filter, "chemical/x-mopac-input");
+    gtk_recent_filter_add_mime_type(filter, "chemical/x-alchemy");
+    gtk_recent_filter_add_mime_type(filter, "chemical/x-cif");
+    gtk_recent_filter_add_mime_type(filter, "chemical/x-mmcif");
     gtk_recent_chooser_set_filter(GTK_RECENT_CHOOSER(recentaction), filter);
     gtk_recent_chooser_set_local_only(GTK_RECENT_CHOOSER(recentaction), TRUE);
     gtk_recent_chooser_set_sort_type(GTK_RECENT_CHOOSER(recentaction),
