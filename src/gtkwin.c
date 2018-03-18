@@ -157,6 +157,7 @@ enum {
 uintptr_t print_resolution = RES_CURRENT;
 GtkPrintSettings *print_settings = NULL;
 GtkPageSetup *print_pagesetup = NULL;
+guchar *printbuf = NULL;
 
 /* other global junk */
 gulong vscr_handler;
@@ -666,6 +667,11 @@ void export_cb(GtkAction * action, gpointer user_data)
 
         tmpbuf = g_new(Pixel, export_x * export_y);
         render_buffer(tmpbuf, export_x, export_y);
+#ifdef GTK3
+        bgr_to_rgb((guint8 *) tmpbuf, export_x*export_y);
+#else
+        // No conversion needed
+#endif
         pbuf = gdk_pixbuf_new_from_data((guchar *) tmpbuf,
                                         GDK_COLORSPACE_RGB,
                                         TRUE, 8,
@@ -705,20 +711,38 @@ void pagesetup_cb(GtkAction * action, gpointer user_data)
 }
 
 
-/* Shuffle bytes from gdk_draw_rgb_32_image format to cairo rgb format */
-void rgb_convert(guint8 * buf, int len)
+/* gdk rgb format to cairo rgb format */
+void rgb_to_bgr(guint8 *buf, int len)
 {
     int i;
     guint8 r, g, b;
 
-    for (i = 0; i < 4 * len; i += 4) {
-        r = buf[i + 0];
-        g = buf[i + 1];
-        b = buf[i + 2];
-        buf[i + 0] = b;
-        buf[i + 1] = g;
-        buf[i + 2] = r;
-        buf[i + 3] = 0xff;
+    for (i = 0; i < 4*len; i += 4) {
+        r = buf[i+0];
+        g = buf[i+1];
+        b = buf[i+2];
+        buf[i+0] = b;
+        buf[i+1] = g;
+        buf[i+2] = r;
+        buf[i+3] = 0xff;
+    }
+}
+
+
+/* cairo rgb format to gdk rgb format */
+void bgr_to_rgb(guint8 *buf, int len)
+{
+    int i;
+    guint8 r, g, b;
+
+    for (i = 0; i < 4*len; i += 4) {
+        b = buf[i+0];
+        g = buf[i+1];
+        r = buf[i+2];
+        buf[i+0] = r;
+        buf[i+1] = g;
+        buf[i+2] = b;
+        buf[i+3] = 0xff;
     }
 }
 
@@ -731,7 +755,6 @@ void print_draw(GtkPrintOperation * printop, GtkPrintContext * context,
     cairo_pattern_t *pat;
     cairo_matrix_t mat;
     gdouble width, height;
-    guchar *tmpbuf;
     int print_x, print_y;
     gdouble scale;
 
@@ -756,12 +779,16 @@ void print_draw(GtkPrintOperation * printop, GtkPrintContext * context,
     print_x &= ~3;
     print_y &= ~3;
 
-    tmpbuf = g_new(guchar, 4 * print_x * print_y);
-    render_buffer((Pixel *) tmpbuf, print_x, print_y);
-    rgb_convert((guint8 *) tmpbuf, print_x * print_y);
+    printbuf = g_new(guchar, 4 * print_x * print_y);
+    render_buffer((Pixel *) printbuf, print_x, print_y);
+#ifdef GTK3
+    // No conversion needed
+#else
+    rgb_to_bgr((guint8 *) printbuf, print_x * print_y);
+#endif
 
     cr = gtk_print_context_get_cairo_context(context);
-    sur = cairo_image_surface_create_for_data((unsigned char *) tmpbuf,
+    sur = cairo_image_surface_create_for_data((unsigned char *) printbuf,
                                               CAIRO_FORMAT_RGB24, print_x,
                                               print_y, 4 * print_x);
     pat = cairo_pattern_create_for_surface(sur);
@@ -774,7 +801,6 @@ void print_draw(GtkPrintOperation * printop, GtkPrintContext * context,
 
     cairo_pattern_destroy(pat);
     cairo_surface_destroy(sur);
-    g_free(tmpbuf);
 }
 
 
@@ -865,6 +891,11 @@ void print_cb(GtkAction * action, gpointer user_data)
     }
 
     g_object_unref(print);
+
+    if (printbuf != NULL) {
+        g_free(printbuf);
+        printbuf = NULL;
+    }
 }
 
 
@@ -1342,9 +1373,15 @@ void AllocateColourMap(void)
 
     for (i = 0; i < LutSize; i++)
         if (ULut[i]) {
+#ifdef GTK3
+            /* This is the correct byteorder for CAIRO_FORMAT_RGB24 */
+            Col.pixel =
+                (BLut[i] << 24) | (GLut[i] << 16) | (RLut[i] << 8) | 0xFF;
+#else
             /* This is the correct byteorder for gdk_draw_rgb_32_image */
             Col.pixel =
                 (RLut[i] << 24) | (GLut[i] << 16) | (BLut[i] << 8) | 0xFF;
+#endif
             if (SwapBytes) {
                 buf.longword = (Long) Col.pixel;
                 temp = buf.bytes[0];
