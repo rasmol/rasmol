@@ -128,7 +128,7 @@ PKGDIR = $(HOME)
 #ifdef GTKWIN
 #ifdef GTK3
 GTKLIBS = $(shell pkg-config --libs vte-2.91 gtk+-3.0)
-GTKCFLAGS = $(shell pkg-config --cflags vte-2.91 gtk+-3.0)
+GTKCFLAGS = $(shell pkg-config --cflags vte-2.91 gtk+-3.0) -Wno-deprecated-declarations
 GUIDEF = -DGTKWIN -DGTK3
 #else
 GTKLIBS = $(shell pkg-config --libs vte gtk+-2.0)
