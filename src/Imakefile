@@ -263,7 +263,7 @@ CBFLIB_OBJDEP = $(CBFLIB_DIR)/lib/libcbf.a
 ifeq ($(strip $(CBFLIB_DIR)),)
 CBFLIB_DIR = $(PKGDIR)
 endif
-CBFLIB_INCLUDE_DIR = $(CBFLIB_DIR)/include/cbflib
+CBFLIB_INCLUDE_DIR = $(CBFLIB_DIR)/include/cbflib $(shell pkg-config --cflags hdf5-serial)
 CBFLIB_LDLIB = -L$(CBFLIB_DIR)/lib -lcbf
 CBFLIB_OBJDEP =
 #define NO_CBFLIB_BUILD
