@@ -1018,7 +1018,7 @@ void setfont_cb(GtkAction * action, gpointer user_data)
     gint result;
 
 #ifdef GTK3
-    d = gtk_font_chooser_dialog_new("Command prompt font", mainwin);
+    d = gtk_font_chooser_dialog_new("Command prompt font", GTK_WINDOW(mainwin));
     if (fontname)
         gtk_font_chooser_set_font(GTK_FONT_CHOOSER(d), fontname);
 #else
@@ -1882,7 +1882,7 @@ int OpenDisplay(void)
                                                         TRUE, &gerr));
 
     gtk_container_add(GTK_CONTAINER(mainwin), mainvbox);
-    gtk_window_set_default_size(mainwin, XRange, YRange);
+    gtk_window_set_default_size(GTK_WINDOW(mainwin), XRange, YRange);
     gtk_widget_show_all(mainwin);
 
     test.longword = (Long) 0x000000ff;
