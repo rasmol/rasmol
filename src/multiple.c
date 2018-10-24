@@ -224,6 +224,10 @@
 
 #include "rasmol.h"
 
+#ifdef GTKWIN
+#include "gtkwin.h"
+#endif
+
 #ifdef IBMPC
 #include <windows.h>
 #include <malloc.h>

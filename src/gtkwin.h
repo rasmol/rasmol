@@ -4,3 +4,6 @@
 #define UI_FULLSCREEN (1 << 3)
 
 void set_ui_elements(int mask);
+void set_gtk_open_file(int index);
+void UpdateGtkMoleculeList(void);
+void EnableRotBondMenu(int rot_enable);

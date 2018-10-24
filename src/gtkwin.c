@@ -103,6 +103,7 @@
 #include "vector.h"
 #include "wbrotate.h"
 #include "langsel.h"
+#include "infile.h"
 #include "gtkwin.h"
 #include "gtkui.h"
 #include "eggfileformatchooser.h"
