@@ -195,7 +195,10 @@
 extern "C" {
 #endif
 
+#ifndef _USE_RASMOL_H_
 #define _USE_RASMOL_H_
+#endif
+
 #ifdef _USE_RASMOL_H_
 #include "rasmol.h"
 #else
