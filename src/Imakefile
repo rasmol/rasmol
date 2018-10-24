@@ -119,7 +119,7 @@ DEPTHDEF = -DTHIRTYTWOBIT
   LOCALEDEF =
 #endif
 
-PKGDIR = $(HOME)
+PKGDIR ?= $(HOME)
 
 #ifndef GTKWIN
 #define X11WIN
