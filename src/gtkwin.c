@@ -586,6 +586,42 @@ void build_exportdialog(void)
 }
 
 
+/* gdk rgb format to cairo rgb format */
+void rgb_to_bgr(guint8 *buf, int len)
+{
+    int i;
+    guint8 r, g, b;
+
+    for (i = 0; i < 4*len; i += 4) {
+        r = buf[i+0];
+        g = buf[i+1];
+        b = buf[i+2];
+        buf[i+0] = b;
+        buf[i+1] = g;
+        buf[i+2] = r;
+        buf[i+3] = 0xff;
+    }
+}
+
+
+/* cairo rgb format to gdk rgb format */
+void bgr_to_rgb(guint8 *buf, int len)
+{
+    int i;
+    guint8 r, g, b;
+
+    for (i = 0; i < 4*len; i += 4) {
+        b = buf[i+0];
+        g = buf[i+1];
+        r = buf[i+2];
+        buf[i+0] = r;
+        buf[i+1] = g;
+        buf[i+2] = b;
+        buf[i+3] = 0xff;
+    }
+}
+
+
 void export_cb(GtkAction * action, gpointer user_data)
 {
     static char *fname = NULL;
@@ -709,42 +745,6 @@ void pagesetup_cb(GtkAction * action, gpointer user_data)
     print_pagesetup =
         gtk_print_run_page_setup_dialog(GTK_WINDOW(mainwin), print_pagesetup,
                                         print_settings);
-}
-
-
-/* gdk rgb format to cairo rgb format */
-void rgb_to_bgr(guint8 *buf, int len)
-{
-    int i;
-    guint8 r, g, b;
-
-    for (i = 0; i < 4*len; i += 4) {
-        r = buf[i+0];
-        g = buf[i+1];
-        b = buf[i+2];
-        buf[i+0] = b;
-        buf[i+1] = g;
-        buf[i+2] = r;
-        buf[i+3] = 0xff;
-    }
-}
-
-
-/* cairo rgb format to gdk rgb format */
-void bgr_to_rgb(guint8 *buf, int len)
-{
-    int i;
-    guint8 r, g, b;
-
-    for (i = 0; i < 4*len; i += 4) {
-        b = buf[i+0];
-        g = buf[i+1];
-        r = buf[i+2];
-        buf[i+0] = r;
-        buf[i+1] = g;
-        buf[i+2] = b;
-        buf[i+3] = 0xff;
-    }
 }
 
 
