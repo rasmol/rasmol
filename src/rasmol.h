@@ -191,7 +191,7 @@
 /*==============================*/
 
 #define MAIN_COPYRIGHT "Copyright (C) Roger Sayle 1992-1999"
-#define VERSION "2.7.5.2"
+#define VERSION "2.7.6.0"
 #define VER_COPYRIGHT "Copyright (C) Herbert J. Bernstein 1998-2011"
 #define VER_DATE "May 2011"
 
