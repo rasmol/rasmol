@@ -1,4 +1,3 @@
-.PU
 .TH RASMOL 1 "July 2009"
 .SH NAME
 rasmol \- Molecular Graphics Visualisation Tool v2.7.5
@@ -76,7 +75,7 @@ or an earlier version, type the RasMol command
 .SH COPYING
 
 This version is based directly on RasMol version 2.7.4.2,
-on RasMol verion 2.7.4.2, on RasMol version 2.7.4,
+on RasMol version 2.7.4.2, on RasMol version 2.7.4,
 on RasMol version 2.7.3.1, on RasMol version 2.7.3,
 on RasMol version 2.7.2.1.1, Rasmol version 2.7.2, RasMol
 version 2.7.1.1 and RasTop version 1.3 and indirectly on
@@ -1352,7 +1351,7 @@ to select one or more maps,
 to display information about one or more maps or about the
 parameters to be used in generating or loading the next map,
 .B map spacing,
-to set the spacing betwen contour lines of selected maps,
+to set the spacing between contour lines of selected maps,
 .B map spread,
 to set the variance of the Gaussians for map generation as a fraction
 of the atomic radius, and
@@ -2155,7 +2154,7 @@ command the position of the cysteine's alpha carbons may be used instead.
 The RasMol
 .B star
 command is used to represent all of the currently selected atoms as
-stars (six strokes, one each in the x, -x, y, -y, z and -z directions).
+stars (six strokes, one each in the x, \-x, y, \-y, z and \-z directions).
 The commands
 .B select not bonded
 followed by
@@ -2355,7 +2354,7 @@ is to be moved and the integer parameter specifies the absolute
 position of the molecule centre from the middle of the screen.
 Permitted values for the axis parameter are
 "x", "y" and "z".
-Displacement values must be between -100 and 100 which correspond to
+Displacement values must be between \-100 and 100 which correspond to
 moving the current molecule just off the screen. A positive
 "x"
 displacement moves the molecule to the right, and a positive
@@ -2939,7 +2938,7 @@ RasMol commands
 .B set picking centre
 or
 .B set picking center.
-In this mode, picking an atom causes all futher rotations to be
+In this mode, picking an atom causes all further rotations to be
 about that point.
 
 .B Picking a Bond as a Rotation Axis:
@@ -3062,7 +3061,7 @@ parameter).
 A value of 0 distributes the light on the entire object.
 
 This implementation of shadepower differs from the one in RasTop
-only in the choice of range (0 to 100 versus -20 to 20 in RasTop).
+only in the choice of range (0 to 100 versus \-20 to 20 in RasTop).
 
 .TP
 .B Set Shadow
@@ -4112,7 +4111,7 @@ colour scheme applies only to dot surfaces, hence is used in the command
 This scheme colours each currently displayed dot by the electrostatic
 potential at that point in space. This potential is calculated using
 Coulomb's law taking the temperature/charge field of the input file to
-be the charge assocated with that atom. This is the same interpretation
+be the charge associated with that atom. This is the same interpretation
 used by the
 .B colour charge
 command. Like the
@@ -4126,9 +4125,10 @@ codes of each of the amino acids.
 
 .TP
 .B Booleans
-A boolean parameter is a truth value. Valid boolean values are 'true' and
-'false', and their synonyms 'on' and 'off'. Boolean parameters are commonly
-used by RasMol to either enable or disable a representation or option.
+A boolean parameter is a truth value. Valid boolean values are 'true'
+and 'false', and their synonyms 'on' and 'off'. Boolean parameters are
+commonly used by RasMol to either enable or disable a representation or
+option.
 
 .SH FILE FORMATS
 
