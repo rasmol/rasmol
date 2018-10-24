@@ -833,7 +833,7 @@ GObject *print_build_reswidget_cb(GtkPrintOperation * operation,
 
     b = gtk_builder_new();
     if (!gtk_builder_add_from_string(b, print_resolution_str, -1, &err)) {
-        g_message("building size chooser failed: s", err->message);
+        g_message("building size chooser failed: %s", err->message);
         g_error_free(err);
         exit(EXIT_FAILURE);
     }

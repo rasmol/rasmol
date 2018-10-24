@@ -2912,7 +2912,7 @@ int PickAtoms( int shift, int xpos, int ypos )
     AtomRef ref;
     char msg[MSG_MAX];
     char *cur;
-#define MsgString(mstr) cur += sprintf(cur, (mstr))
+#define MsgString(mstr) cur += sprintf(cur, "%s", (mstr))
 #define MsgChar(c) *(cur++) = (c)
 
     cur = msg;
